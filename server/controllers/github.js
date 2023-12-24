@@ -20,18 +20,10 @@ exports.updateAccount = GithubFactory.updateOne;
 exports.deleteAccount = GithubFactory.deleteOne;
 
 exports.authCallback = catchAsync(async (req, res) => {
-    const { user } = req;
-    const { githubId, accessToken, username, avatarUrl } = req.github;
-    const github = await Github.create({
-        user: user._id,
-        githubId,
-        accessToken,
-        username,
-        avatarUrl
-    });
-    github.__v = undefined;
+    const { accessToken, profile, refreshToken } = req.user;
     res.status(200).json({
-        status: 'success',
-        data: github
+        accessToken,
+        profile,
+        refreshToken
     });
 });

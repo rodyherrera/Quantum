@@ -4,10 +4,8 @@ const githubController = require('../controllers/github');
 const githubMiddleware = require('../middlewares/github');
 const authMiddleware = require('../middlewares/authentication');
 
-router.use(authMiddleware.protect);
-
 router.get('/authenticate/', githubMiddleware.authenticate);
-router.get('/callback', githubMiddleware.authenticateCallback, githubController.authCallback);
+router.get('/callback/', githubMiddleware.authenticateCallback, githubController.authCallback);
 
 router.use(authMiddleware.restrictTo('admin'));
 router.route('/:id')

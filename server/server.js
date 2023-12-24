@@ -7,8 +7,7 @@ const bodyParser = require('body-parser');
 const session = require('express-session');
 
 const passport = require('passport');
-const GitHubStrategy = require('passport-github').Strategy;
-
+const GithubStrategy = require('passport-github').Strategy;
 const { connectToMongoDb } = require('./utilities/runtime');
 const bootHelper = require('./utilities/bootHelper');
 const globalErrorHandler = require('./controllers/globalErrorHandler');
@@ -18,12 +17,12 @@ const httpServer = http.createServer(app);
 const serverPort = process.env.SERVER_PORT || 8000;
 const serverHostname = process.env.SERVER_HOSTNAME || '0.0.0.0';
 
-passport.use(new GitHubStrategy({
+passport.use(new GithubStrategy({
     clientID: process.env.GITHUB_CLIENT_ID,
     clientSecret: process.env.GITHUB_CLIENT_SECRET,
-    callbackURL: `http://${serverHostname}:${serverPort}/auth/github/callback`
+    callbackURL: `http://${process.env.SERVER_HOSTNAME}:${process.env.SERVER_PORT}/api/v1/github/callback/`,
 }, (accessToken, refreshToken, profile, cb) => {
-    return cb(null, profile);
+    return cb(null, { accessToken, profile, refreshToken  });
 }));
 
 passport.serializeUser((user, cb) => {
@@ -42,14 +41,14 @@ bootHelper.standardizedBindingToApp({
         'auth',
     ],
     middlewares: [
-        cors({ origin: process.env.CORS_ORIGIN }),
-        bodyParser.json(),
-        bodyParser.urlencoded({ extended: true }),
         session({
             secret: process.env.SESSION_SECRET,
             resave: false,
-            saveUninitialized: false
+            saveUninitialized: true
         }),
+        cors({ origin: process.env.CORS_ORIGIN, credentials: true }),
+        bodyParser.json(),
+        bodyParser.urlencoded({ extended: true }),
         passport.initialize(),
         passport.session()
     ],

@@ -1,9 +1,18 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
+import { authenticate } from '@services/github/actions';
 
 const HomePage = () => {
+    const { isAuthenticated, user } = useSelector(state => state.auth);
+
     return (
-        <div>
-        </div>
+        <main id='Home-Page-Main'>
+            {isAuthenticated && (
+                <div>
+                    <button onClick={() => authenticate(user._id)}>Authenticate</button>
+                </div>
+            )}
+        </main>
     );
 };
 
