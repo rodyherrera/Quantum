@@ -1,0 +1,25 @@
+.Input-Wrapper-Container{
+    outline: 1px solid #272727;
+    padding: .5rem 1rem;
+}
+
+.Input-Container{
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    gap: .5rem;
+}
+
+.Input-Wrapper-Container input{
+    width: 100%;
+    font-size: .9rem;
+    font-weight: 400;
+    color: #272727;
+    border: none;
+    outline: none;
+}
+
+.Input-Helper-Text-Container{
+    font-size: .9rem;
+    opacity: .9;
+}

@@ -1,0 +1,58 @@
+#Header-Navigation-Container,
+#Header-Brand-Container,
+#Header .Header-Child-Container,
+#Header{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+#Header{
+    justify-content: space-between;
+    width: 100%;
+    padding: 1.5rem 2rem;
+}
+
+#Header-Brand-Container{
+    gap: .8rem;
+}
+
+#Header-Brand-Logo{
+    width: 20px;
+    height: 20px;
+    border-radius: 6px;
+    outline: 1px solid #000000;
+}
+
+#Header #Header-Left-Container{
+    justify-content: flex-start;
+    width: auto;
+    max-width: 50%;
+}
+
+#Header-Brand-Title{
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #000000;
+}
+
+#Header #Header-Right-Container{
+    justify-content: flex-end;
+    width: auto;
+    max-width: 50%;
+}
+
+#Header-Navigation-Container{
+    gap: 1rem;
+}
+
+@media screen and (max-width: 768px){
+    #Header{
+        padding: 1rem;
+    }
+
+    #Header #Header-Left-Container,
+    #Header #Header-Right-Container{
+        max-width: 100%;
+    }
+}

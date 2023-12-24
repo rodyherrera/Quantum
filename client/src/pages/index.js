@@ -1,7 +1,9 @@
-import Everybody from './everybody';
+import everybody from './everybody';
+import guest from './guest';
 
-const Pages = {
-    Everybody
+const pages = {
+    everybody,
+    guest
 };
 
-export default Pages;
+export default pages;

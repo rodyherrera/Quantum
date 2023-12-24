@@ -1,0 +1,53 @@
+.Button{
+    padding: .5rem 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    outline: 1px solid #000000;
+    background-color: transparent;
+}
+
+.Button .Button-Text{
+    text-transform: uppercase;
+    font-size: .875rem;
+    font-weight: 400;
+    line-height: 1.28572;
+    letter-spacing: .16px;
+}
+
+.Button.Contained{
+    background-color: #272727;
+    color: #FFFFFF;
+}
+
+.Button:hover{
+    background-color: #ececec;
+}
+
+.Button.Contained:hover{
+    background-color: #000000;
+    opacity: .8;
+}
+
+.Button.Form-Contained{
+    padding: .9rem 1.5rem;
+    gap: 8rem;
+    background-color: #0f62fe;
+    color: #FFFFFF;
+    outline: none;
+}
+
+.Button.Form-Contained .Button-Text{
+    text-transform: none;
+}
+
+@media screen and (max-width: 768px){
+    .Button{
+        padding: .5rem .8rem;
+    }
+
+    .Button .Button-Text{
+        font-size: .75rem;
+    }
+}

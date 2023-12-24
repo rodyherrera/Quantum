@@ -1,0 +1,47 @@
+.Minimal-Form-Container{
+    padding: 1rem 2rem;
+    gap: 2rem;
+}
+
+.Minimal-Form-Title-Container,
+.Minimal-Form-Container,
+.Minimal-Form-Body-Container{
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+}
+
+.Minimal-Form-Title{
+    font-size: 3rem;
+    font-weight: 700;
+    color: #272727;
+}
+
+.Minimal-Form-Subtitle{
+    font-size: 1.3rem;
+    font-weight: 400;
+    color: #272727;
+}
+
+.Minimal-Form-Body-Container{
+    max-width: 40%;
+    gap: 1.5rem;
+}
+
+@media screen and (max-width: 768px){
+    .Minimal-Form-Container{
+        padding: 1rem;
+    }
+
+    .Minimal-Form-Body-Container{
+        max-width: 100%;
+    }
+
+    .Minimal-Form-Title{
+        font-size: 2rem;
+    }
+
+    .Minimal-Form-Subtitle{
+        font-size: 1rem;
+    }
+}

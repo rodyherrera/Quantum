@@ -1,7 +1,9 @@
-import ServerRequestBuilder from "./serverRequestBuilder";
+import ServerRequestBuilder from '@utilities/serverRequestBuilder';
+import { getCurrentUserToken } from '@services/authentication/service';
+import axios from 'axios';
 
 export default class StandardizedAPIRequestBuilder{
-    constructor({ endpoint }){
+    constructor(endpoint){
         this.endpoint = endpoint;
         this.setError = function(){};
     };
@@ -56,6 +58,10 @@ export default class StandardizedAPIRequestBuilder{
                 filter: undefined
             }
         }) => {
+            const authenticationToken = getCurrentUserToken();
+            if(authenticationToken){
+                axios.defaults.headers.common['Authorization'] = `Bearer ${authenticationToken}`;
+            }
             let queryParams = '';
             let parsedPath = path;
             if(query?.params){
