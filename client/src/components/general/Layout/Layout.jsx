@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '@services/authentication/actions';
 import { authenticateWithCachedToken } from '@services/authentication/utils';
@@ -7,12 +7,19 @@ import Button from '@components/general/Button';
 import './Layout.css';
 
 const Layout = () => {
-    const { isAuthenticated } = useSelector(state => state.auth);
+    const { isAuthenticated, user, isLoading, isCacheLoading } = useSelector(state => state.auth);
+    const { isLoading: githubIsLoading } = useSelector(state => state.github);
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     useEffect(() => {
         authenticateWithCachedToken(dispatch);
     }, []);
+
+    useEffect(() => {
+        if(isAuthenticated && !user?.github?._id)
+            navigate('/github/need-authenticate/');
+    }, [user, isLoading, isCacheLoading, githubIsLoading, isAuthenticated]);
 
     return (
         <React.Fragment>

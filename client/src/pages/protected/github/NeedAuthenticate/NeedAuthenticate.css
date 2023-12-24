@@ -1,0 +1,49 @@
+#Github-Need-Authenticate-Main{
+    height: 70%;
+    width: 100%;
+}
+
+#Github-Need-Authenticate-Body,
+#Github-Need-Authenticate-Main{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+#Github-Need-Authenticate-Body{
+    align-items: flex-start;
+    gap: 2rem;
+}
+
+#Github-Need-Authenticate-Title{
+    font-size: 2rem;
+    font-weight: 600;
+}
+
+#Github-Need-Authenticate-Subtitle{
+    font-size: 1.3rem;
+    font-weight: 500;
+    margin-top: .5rem;
+    max-width: 80%;
+}
+
+@media screen and (max-width: 600px){
+    #Github-Need-Authenticate-Main{
+        padding: 1rem;
+    }
+
+    #Github-Need-Authenticate-Body{
+        gap: 3rem;
+    }
+
+    #Github-Need-Authenticate-Title{
+        font-size: 2rem;
+        margin-bottom: 1rem;
+    }
+
+    #Github-Need-Authenticate-Subtitle{
+        font-size: .95rem;
+        max-width: unset;
+    }
+}
