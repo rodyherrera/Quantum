@@ -26,6 +26,9 @@ const authSlice = createSlice({
         },
         setIsAuthenticated: (state, action) => {
             state.isAuthenticated = action.payload;
+        },
+        setGithubAccount: (state, action) => {
+            state.user.github = action.payload;
         }
     }
 });
@@ -33,6 +36,7 @@ const authSlice = createSlice({
 export const { 
     setIsLoading,
     setIsCachedAuthLoading, 
+    setGithubAccount,
     setUser, 
     setError,
     setIsAuthenticated 

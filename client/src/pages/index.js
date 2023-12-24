@@ -1,9 +1,11 @@
 import everybody from './everybody';
 import guest from './guest';
+import protectedPages from './protected';
 
 const pages = {
     everybody,
-    guest
+    guest,
+    protected: protectedPages
 };
 
 export default pages;

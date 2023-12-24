@@ -13,17 +13,13 @@ const GithubFactory = new HandlerFactory({
     ]
 });
 
-exports.getAccounts = GithubFactory.getAll;
-exports.getAccount = GithubFactory.getOne;
-exports.createAccount = GithubFactory.createOne;
-exports.updateAccount = GithubFactory.updateOne;
-exports.deleteAccount = GithubFactory.deleteOne;
+exports.getAccounts = GithubFactory.getAll();
+exports.getAccount = GithubFactory.getOne();
+exports.createAccount = GithubFactory.createOne();
+exports.updateAccount = GithubFactory.updateOne();
+exports.deleteAccount = GithubFactory.deleteOne();
 
 exports.authCallback = catchAsync(async (req, res) => {
-    const { accessToken, profile, refreshToken } = req.user;
-    res.status(200).json({
-        accessToken,
-        profile,
-        refreshToken
-    });
+    const { accessToken, profile } = req.user;
+    res.redirect(`${process.env.CLIENT_HOST}/github/authenticate/?accessToken=${accessToken}&profile=${JSON.stringify(profile)}`);
 });

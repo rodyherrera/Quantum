@@ -34,7 +34,7 @@ export default class StandardizedAPIRequestBuilder{
         (query?.sort) && (appendParameter('sort', query.sort.join(',')));
         (query?.paginate?.limit) && (appendParameter('limit', query.paginate.limit));
         (query?.paginate?.page) && (appendParameter('page', query.paginate.page));
-        (query?.populate) && (appendParameter('Populate', (typeof query.populate === 'object') ? (JSON.stringify(query.populate)) : (query.populate)));
+        (query?.populate) && (appendParameter('populate', (typeof query.populate === 'object') ? (JSON.stringify(query.populate)) : (query.populate)));
 
         if(query?.filter){
             const keys = Object.keys(query.filter);

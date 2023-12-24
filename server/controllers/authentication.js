@@ -36,7 +36,7 @@ exports.signIn = catchAsync(async (req, res, next) => {
     if(!email || !password){
         return next(new Error('Authentication::EmailOrPasswordRequired'));
     }
-    const requestedUser = await User.findOne({ email }).select('+password').populate('workspaces');
+    const requestedUser = await User.findOne({ email }).select('+password').populate('github');
     if(!requestedUser || !(await requestedUser.isCorrectPassword(password, requestedUser.password))){
         return next(new Error('Authentication::EmailOrPasswordIncorrect', 401));
     }
@@ -72,7 +72,7 @@ exports.deleteMyAccount = catchAsync(async (req, res, next) => {
 });
 
 exports.getMyAccount = catchAsync(async (req, res, next) => {
-    const requestedUser = await User.findById(req.user.id);
+    const requestedUser = await User.findById(req.user.id).populate('github');
     if(!requestedUser){
         return next(new Error('Authentication::Get::UserNotFound'));
     }

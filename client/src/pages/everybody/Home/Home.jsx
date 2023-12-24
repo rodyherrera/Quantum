@@ -7,7 +7,7 @@ const HomePage = () => {
 
     return (
         <main id='Home-Page-Main'>
-            {isAuthenticated && (
+            {(isAuthenticated && !user?.github?._id) && (
                 <div>
                     <button onClick={() => authenticate(user._id)}>Authenticate</button>
                 </div>

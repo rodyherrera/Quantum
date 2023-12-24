@@ -8,8 +8,7 @@ const GithubSchema = new mongoose.Schema({
     },
     githubId: {
         type: String,
-        required: [true, 'Github::GithubId::Required'],
-        unique: true
+        required: [true, 'Github::GithubId::Required']
     },
     accessToken: {
         type: String,
@@ -26,6 +25,10 @@ const GithubSchema = new mongoose.Schema({
 
 GithubSchema.plugin(TextSearch);
 GithubSchema.index({ username: 'text' });
+
+GithubSchema.post('save', async function(){
+    await this.model('User').findByIdAndUpdate(this.user, { github: this._id });
+}); 
 
 GithubSchema.pre('remove', async function(next){
     await this.model('User').findByIdAndUpdate(this.user, { github: undefined });

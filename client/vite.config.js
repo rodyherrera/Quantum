@@ -32,6 +32,7 @@ export default defineConfig({
          '@styles': '/src/assets/stylesheets/',
          '@utilities': '/src/utilities/',
          '@services': '/src/services/',
+         '@hooks': '/src/hooks/',
       }
    },
 });

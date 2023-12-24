@@ -15,6 +15,10 @@ const Application = () => {
                     <Route path='/auth/sign-up' element={<pages.guest.SignUp />} />
                     <Route path='/auth/sign-in' element={<pages.guest.SignIn />} />
                 </Route>
+
+                <Route element={<ProtectedRoute mode='protect' />}>
+                    <Route path='/github/authenticate/' element={<pages.protected.github.Authenticate />} />
+                </Route>
             </Route>
         </Routes>
     );

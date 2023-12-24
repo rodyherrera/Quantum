@@ -7,6 +7,9 @@ const authMiddleware = require('../middlewares/authentication');
 router.get('/authenticate/', githubMiddleware.authenticate);
 router.get('/callback/', githubMiddleware.authenticateCallback, githubController.authCallback);
 
+router.use(authMiddleware.protect);
+router.post('/', githubController.createAccount);
+
 router.use(authMiddleware.restrictTo('admin'));
 router.route('/:id')
     .get(githubController.getAccount)
@@ -14,7 +17,6 @@ router.route('/:id')
     .delete(githubController.deleteAccount);
 
 router.route('/')
-    .get(githubController.getAccounts)
-    .post(githubController.createAccount);
+    .get(githubController.getAccounts);
 
 module.exports = router;
