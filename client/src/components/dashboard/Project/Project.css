@@ -1,0 +1,56 @@
+.Project-Container{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    padding: 1rem;
+    flex-direction: column;
+    width: 450px;
+    position: relative;
+    border: 1px solid #272727;
+    border-radius: .2rem;
+}
+
+.Project-Update-Message{
+    display: flex;
+    flex-wrap: wrap;
+    gap: .3rem;
+    opacity: .8;
+    font-size: .9rem;
+}
+
+.Project-More-Icon-Container{
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+}
+
+.Project-Header-Container{
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    height: 40px;
+    align-items: flex-start;
+    width: 100%;
+    gap: 1rem;
+}
+
+.Project-Title-Container{
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 0.2rem;
+}
+
+.Project-Image{
+    border-radius: .2rem;
+    width: 100%;
+    height: 40px;
+    object-fit: cover;
+}
+
+.Project-URL{
+    font-size: .95rem;
+    opacity: .8;
+}

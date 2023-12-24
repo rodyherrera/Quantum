@@ -8,7 +8,6 @@
 }
 
 body{
-    line-height: 1.5;
     background-color: var(--Secondary-Color);
     color: var(--Primary-Color);
     font-family: 'Times New Roman', Times, serif;

@@ -19,6 +19,8 @@ const Application = () => {
                 <Route element={<ProtectedRoute mode='protect' />}>
                     <Route path='/github/authenticate/' element={<pages.protected.github.Authenticate />} />
                     <Route path='/github/need-authenticate/' element={<pages.protected.github.NeedAuthenticate />} />
+                    
+                    <Route path='/dashboard/' element={<pages.protected.Dashboard />} />
                 </Route>
             </Route>
         </Routes>
