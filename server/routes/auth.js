@@ -8,8 +8,11 @@ router.post('/sign-up', authenticationController.signUp);
 
 router.use(authenticationMiddleware.protect);
 router.patch('/me/update/password/', authenticationController.updateMyPassword);
-router.patch('/me/update/profile/', authenticationController.updateMyAccount);
-router.delete('/me/delete/', authenticationController.deleteMyAccount);
+
+router.route('/me')
+    .get(authenticationController.getMyAccount)
+    .patch(authenticationController.updateMyAccount)
+    .delete(authenticationController.deleteMyAccount);
 
 router.use(authenticationMiddleware.restrictTo('admin'));
 

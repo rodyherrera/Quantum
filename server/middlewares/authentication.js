@@ -1,7 +1,8 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
+const RuntimeError = require('../utilities/runtimeError');
 const { promisify } = require('util');
-const { catchAsync, RuntimeError } = require('../utilities/runtime');
+const { catchAsync } = require('../utilities/runtime');
 
 exports.protect = catchAsync(async (req, res, next) => {
     let token;

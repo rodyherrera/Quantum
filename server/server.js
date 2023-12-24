@@ -11,6 +11,7 @@ const GitHubStrategy = require('passport-github').Strategy;
 
 const { connectToMongoDb } = require('./utilities/runtime');
 const bootHelper = require('./utilities/bootHelper');
+const globalErrorHandler = require('./controllers/globalErrorHandler');
 
 const app = express();
 const httpServer = http.createServer(app);
@@ -58,6 +59,21 @@ bootHelper.standardizedBindingToApp({
         ]
     }
 });
+
+app.all('*', (Request, Response) => {
+    if(Request.path.startsWith('/api/v1/')){
+        return Response.status(404).json({
+            Status: 'Error',
+            Data: {
+                Message: 'INVALID_API_REQUEST',
+                URL: Request.originalUrl
+            }
+        })
+    }
+    Response.redirect(process.env.CLIENT_HOST);
+});
+
+app.use(globalErrorHandler);
 
 httpServer.listen(serverPort, serverHostname, async () => {
     await connectToMongoDb();

@@ -71,6 +71,17 @@ exports.deleteMyAccount = catchAsync(async (req, res, next) => {
     });
 });
 
+exports.getMyAccount = catchAsync(async (req, res, next) => {
+    const requestedUser = await User.findById(req.user.id);
+    if(!requestedUser){
+        return next(new Error('Authentication::Get::UserNotFound'));
+    }
+    res.status(200).json({
+        status: 'success',
+        data: requestedUser
+    });
+});
+
 exports.updateMyAccount = catchAsync(async (req, res, next) => {
     const filteredBody = filterObject(req.body, 'username', 'fullname', 'email');
     const requestedUser = await User.findByIdAndUpdate(req.user.id, filteredBody, {
