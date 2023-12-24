@@ -7,7 +7,7 @@ import Button from '@components/general/Button';
 import './Layout.css';
 
 const Layout = () => {
-    const { isAuthenticated } = useSelector(state => state.authentication);
+    const { isAuthenticated } = useSelector(state => state.auth);
     const dispatch = useDispatch();
 
     useEffect(() => {

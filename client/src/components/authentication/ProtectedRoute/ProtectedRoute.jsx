@@ -20,10 +20,10 @@ import { useSelector } from 'react-redux';
 import './ProtectedRoute.css';
 
 const ProtectedRoute = ({ mode, restrictTo = undefined }) => {
-    const { isCachedAuthenticationLoading, isAuthenticated, user } = useSelector(state => state.authentication);
+    const { isCachedAuthLoading, isAuthenticated, user } = useSelector(state => state.auth);
     const location = useLocation();
 
-    return (isCachedAuthenticationLoading) ? (
+    return (isCachedAuthLoading) ? (
         <main id='Authentication-Loading-Main'>
             <CircularProgress size={'2.5rem'} />
         </main>

@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import './SignIn.css';
 
 const SignIn = () => {
-    const { isLoading } = useSelector(state => state.authentication);
+    const { isLoading } = useSelector(state => state.auth);
     const dispatch = useDispatch();
 
     const handleFormSubmit = (e, formValues) => {

@@ -42,7 +42,7 @@ bootHelper.standardizedBindingToApp({
         'auth',
     ],
     middlewares: [
-        cors(),
+        cors({ origin: process.env.CORS_ORIGIN }),
         bodyParser.json(),
         bodyParser.urlencoded({ extended: true }),
         session({

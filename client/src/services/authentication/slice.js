@@ -3,13 +3,13 @@ import { createSlice } from '@reduxjs/toolkit';
 const state = {
     user: {},
     isAuthenticated: false,
-    isCachedAuthenticationLoading: true,
+    isCachedAuthLoading: true,
     isLoading: false,
     error: null
 };
 
-const authenticationSlice = createSlice({
-    name: 'authentication',
+const authSlice = createSlice({
+    name: 'auth',
     initialState: state,
     reducers: {
         setIsLoading: (state, action) => {
@@ -18,8 +18,8 @@ const authenticationSlice = createSlice({
         setError: (state, action) => {
             state.error = action.payload;
         },
-        setIsCachedAuthenticationLoading(state, action) {
-            state.isCachedAuthenticationLoading = action.payload;
+        setIsCachedAuthLoading(state, action) {
+            state.isCachedAuthLoading = action.payload;
         },
         setUser: (state, action) => {
             state.user = action.payload;
@@ -32,10 +32,10 @@ const authenticationSlice = createSlice({
 
 export const { 
     setIsLoading,
-    setIsCachedAuthenticationLoading, 
+    setIsCachedAuthLoading, 
     setUser, 
     setError,
     setIsAuthenticated 
-} = authenticationSlice.actions;
+} = authSlice.actions;
 
-export default authenticationSlice.reducer;
+export default authSlice.reducer;

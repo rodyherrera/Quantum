@@ -5,7 +5,7 @@ import { signUp } from '@services/authentication/actions';
 import './SignUp.css';
 
 const SignUp = () => {
-    const { isLoading } = useSelector(state => state.authentication);
+    const { isLoading } = useSelector(state => state.auth);
     const dispatch = useDispatch();
 
     const handleFormSubmit = (e, formValues) => {

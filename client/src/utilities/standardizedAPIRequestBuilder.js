@@ -1,5 +1,5 @@
 import ServerRequestBuilder from '@utilities/serverRequestBuilder';
-import { getCurrentUserToken } from '@services/authentication/service';
+import { getCurrentUserToken } from '@services/authentication/localStorageService';
 import axios from 'axios';
 
 export default class StandardizedAPIRequestBuilder{
@@ -58,9 +58,9 @@ export default class StandardizedAPIRequestBuilder{
                 filter: undefined
             }
         }) => {
-            const authenticationToken = getCurrentUserToken();
-            if(authenticationToken){
-                axios.defaults.headers.common['Authorization'] = `Bearer ${authenticationToken}`;
+            const authToken = getCurrentUserToken();
+            if(authToken){
+                axios.defaults.headers.common['Authorization'] = `Bearer ${authToken}`;
             }
             let queryParams = '';
             let parsedPath = path;
