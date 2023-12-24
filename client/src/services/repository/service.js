@@ -5,3 +5,8 @@ export const getMyGithubRepositories = RepositoryAPI.register({
     path: '/me/github/',
     method: 'GET'
 });
+
+export const createRepository = RepositoryAPI.register({
+    path: '/',
+    method: 'POST'
+});

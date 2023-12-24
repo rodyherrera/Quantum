@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const TextSearch = require('mongoose-partial-search');
+const simpleGit = require('simple-git');
 
 const RepositorySchema = new mongoose.Schema({
     name: {
@@ -29,7 +30,12 @@ RepositorySchema.pre('remove', async function(){
 });
 
 RepositorySchema.pre('save', async function(next){
-    await this.model('Deployment').deleteMany({ repository: this._id });
+    try{
+        console.log(`Cloning ${this.url} to ./storage/repositories/${this._id}`);
+        await simpleGit().clone(this.url, `./storage/repositories/${this._id}`);
+    }catch(error){
+        console.log(error)
+    }
     next();
 });
 

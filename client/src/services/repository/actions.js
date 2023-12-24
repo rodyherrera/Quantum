@@ -13,3 +13,16 @@ export const getMyGithubRepositories = () => async (dispatch) => {
         dispatch(repositorySlice.setIsLoading(false));
     }
 };
+
+export const createRepository = ({ name, html_url }) => async (dispatch) => {
+    try{
+        dispatch(repositorySlice.setIsCreatingRepo(true));
+        const response = await repositoryService.createRepository({ body: { name, url: html_url } });
+        console.log(response.data)
+    }catch(error){
+        console.log(error)
+        dispatch(repositorySlice.setError(error));
+    }finally{
+        dispatch(repositorySlice.setIsCreatingRepo(false));
+    }
+};

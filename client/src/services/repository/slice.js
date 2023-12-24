@@ -3,6 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 const state = {
     error: null,
     isLoading: true,
+    isCreatingRepo: false,
     repositories: []
 };
 
@@ -12,6 +13,9 @@ const repositorySlice = createSlice({
     reducers: {
         setIsLoading: (state, action) => {
             state.isLoading = action.payload;
+        },
+        setIsCreatingRepo: (state, action) => {
+            state.isCreatingRepo = action.payload;
         },
         setRepositories: (state, action) => {
             state.repositories = action.payload;
@@ -25,7 +29,8 @@ const repositorySlice = createSlice({
 export const {
     setError,
     setIsLoading,
-    setRepositories
+    setRepositories,
+    setIsCreatingRepo
 } = repositorySlice.actions;
 
 export default repositorySlice.reducer;

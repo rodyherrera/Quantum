@@ -6,6 +6,7 @@ const githubMiddleware = require('../middlewares/github');
 
 router.use(authMiddleware.protect);
 router.get('/me/github/', githubMiddleware.populateGithubAccount, repositoryController.getMyGithubRepositories);
+router.post('/', repositoryController.createRepository);
 
 router.use(authMiddleware.restrictTo('admin'));
 router.route('/:id')
@@ -14,7 +15,6 @@ router.route('/:id')
     .delete(repositoryController.deleteRepository);
 
 router.route('/')
-    .get(repositoryController.getRepositories)
-    .post(repositoryController.createRepository);
+    .get(repositoryController.getRepositories);
 
 module.exports = router;

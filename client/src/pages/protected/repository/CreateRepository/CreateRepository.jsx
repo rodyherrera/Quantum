@@ -1,12 +1,12 @@
 import React, { useEffect } from 'react';
-import { getMyGithubRepositories } from '@services/repository/actions';
+import { getMyGithubRepositories, createRepository } from '@services/repository/actions';
 import { useSelector, useDispatch } from 'react-redux';
 import { CircularProgress } from '@mui/material';
 import RepositoryBasicItem from '@components/repository/RepositoryBasicItem';
 import './CreateRepository.css';
 
 const CreateRepository = () => {
-    const { repositories, isLoading } = useSelector(state => state.repository);
+    const { repositories, isLoading, isCreatingRepo } = useSelector(state => state.repository);
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -22,14 +22,20 @@ const CreateRepository = () => {
                 </article>
             </section>
 
-            <section id='Create-Repository-Body'>
+            <section id='Create-Repository-Body' data-iscreatingrepo={isCreatingRepo}>
+                {isCreatingRepo && (
+                    <div id='Create-Repository-Loading-Container'>
+                        <CircularProgress />
+                    </div>
+                )}
                 <article id='Github-Account-Repository-List-Container'>
                     {(isLoading) ? (
                         <CircularProgress />
                     ) : (
-                        repositories.map(repository => (
+                        repositories.map((repository, index) => (
                             <RepositoryBasicItem 
-                                key={repository.id} 
+                                key={index} 
+                                onClick={() => dispatch(createRepository(repository))}
                                 repository={repository} />
                         ))
                     )}

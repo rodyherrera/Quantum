@@ -26,3 +26,8 @@
     opacity: .7;
     font-size: .98rem;
 }
+
+.Repository-Item-Import-Icon .MuiCircularProgress-root{
+    width: 20px !important;
+    height: 20px !important;
+}
