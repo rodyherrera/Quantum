@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import Input from '@components/general/Input';
 import Button from '@components/general/Button';
-import { BsArrowRight } from "react-icons/bs";
+import { BsArrowRight } from 'react-icons/bs';
+import { CircularProgress } from '@mui/material';
 import './MinimalForm.css';
 
 const MinimalForm = ({
@@ -9,7 +10,8 @@ const MinimalForm = ({
     headerSubtitle,
     formInputs,
     submitButtonTitle,
-    handleFormSubmit
+    handleFormSubmit,
+    isLoading = false
 }) => {
     const [formValues, setFormValues] = useState(
         formInputs.map(input => ({ [input.name]: '' })).reduce((acc, cur) => ({ ...acc, ...cur }), {}));
@@ -47,7 +49,7 @@ const MinimalForm = ({
                     type='submit'
                     title={submitButtonTitle} 
                     variant='Form-Contained' 
-                    icon={<BsArrowRight />} />
+                    icon={isLoading ? <CircularProgress/> : <BsArrowRight />} />
             </div>
         </form>
     );

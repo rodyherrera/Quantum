@@ -1,9 +1,11 @@
 import React, { useContext } from 'react';
 import MinimalForm from '@components/general/MinimalForm';
 import { AuthenticationContext } from '@services/authentication/context';
+import { useSelector } from 'react-redux';
 import './SignUp.css';
 
 const SignUp = () => {
+    const { isLoading } = useSelector(state => state.authentication);
     const { signUp } = useContext(AuthenticationContext);
 
     const handleFormSubmit = (e, formValues) => {
@@ -16,6 +18,7 @@ const SignUp = () => {
         headerSubtitle="Tell us a little more about yourself..."
         submitButtonTitle='Create account'
         handleFormSubmit={handleFormSubmit}
+        isLoading={isLoading}
         formInputs={[
             { 
                 type: 'email', 

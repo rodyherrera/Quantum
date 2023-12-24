@@ -28,6 +28,12 @@
     gap: 1.5rem;
 }
 
+.Minimal-Form-Container .MuiCircularProgress-root{
+    color: #FFFFFF;
+    width: 20px !important;
+    height: 20px !important;
+}
+
 @media screen and (max-width: 768px){
     .Minimal-Form-Container{
         padding: 1rem;
