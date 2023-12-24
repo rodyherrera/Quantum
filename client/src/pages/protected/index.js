@@ -1,9 +1,11 @@
 import github from './github';
 import Dashboard from './Dashboard';
+import repository from './repository';
 
 const pages = {
     github,
-    Dashboard
+    Dashboard,
+    repository
 };
 
 export default pages;

@@ -20,7 +20,8 @@
     "react-icons": "^4.12.0",
     "react-pendulum": "^0.0.1",
     "react-redux": "^9.0.4",
-    "react-router-dom": "^6.21.1"
+    "react-router-dom": "^6.21.1",
+    "simple-git": "^3.21.0"
   },
   "devDependencies": {
     "@types/react": "^18.2.43",

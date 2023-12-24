@@ -8,8 +8,8 @@
 }
 
 body{
-    background-color: var(--Secondary-Color);
-    color: var(--Primary-Color);
+    background-color: #FFFFFF;
+    color: #000000;
     font-family: 'Times New Roman', Times, serif;
 }
 
@@ -25,11 +25,11 @@ body{
 
 ::-webkit-scrollbar-thumb{
     border-radius: 0.5rem;
-    background-color: var(--Scrollbar-Thumb-Background-Color);
+    background-color: #000000;
 }
 
 ::-webkit-scrollbar-thumb:hover{
-    background-color: var(--Scrollbar-Thumb-Hover-Background-Color);
+    background-color: #000000;
 }
 
 #QuantumCloud-ROOT, html, body{

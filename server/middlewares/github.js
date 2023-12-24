@@ -7,9 +7,14 @@ exports.authenticate = (req, res, next) => {
     }
     const userId = req.query.userId;
     req.session.userId = userId;
-    passport.authenticate('github')(req, res, next);
+    passport.authenticate('github', { scope: ['user', 'repo'] })(req, res, next);
 };
 
-exports.authenticateCallback = passport.authenticate('github', { failureRedirect: '/' });
+exports.populateGithubAccount = async (req, res, next) => {
+    req.user = await req.user.populate('github');
+    next();
+};
+
+exports.authenticateCallback = passport.authenticate('github',  { failureRedirect: '/' });
 
 module.exports = exports;

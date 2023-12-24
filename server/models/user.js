@@ -13,6 +13,10 @@ const UserSchema = new mongoose.Schema({
         lowercase: true,
         trim: true
     },
+    deployments: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Deployment'
+    }],
     github: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Github'
@@ -76,7 +80,8 @@ UserSchema.pre('save', async function(next){
 });
 
 UserSchema.pre('remove', async function(next) {
-    await mongoose.model('Github').findOneAndRemove({ user: this._id });
+    await this.model('Github').findOneAndRemove({ user: this._id });
+    await this.model('Deployment').deleteMany({ user: this._id });
     next();
 });
 

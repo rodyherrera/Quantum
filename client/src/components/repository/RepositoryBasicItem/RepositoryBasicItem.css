@@ -1,0 +1,28 @@
+.Repository-Item-Title{
+    font-size: 1.1rem;
+}
+
+.Repository-Item-Content{
+    display: flex;
+    gap: .5rem;
+    align-items: center;
+}
+
+.Repository-Item{
+    padding: 1rem;
+    border: 1px solid #000000;
+    display: flex;
+    justify-content: space-between;
+    cursor: pointer;
+    align-items: center;
+}
+
+.Repository-Item:hover{
+    position: relative;
+    border-color: #0f62fe;
+}
+
+.Repository-Creation-Date{
+    opacity: .7;
+    font-size: .98rem;
+}
