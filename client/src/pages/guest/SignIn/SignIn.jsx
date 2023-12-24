@@ -1,16 +1,16 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import MinimalForm from '@components/general/MinimalForm';
-import { AuthenticationContext } from '@services/authentication/context';
-import { useSelector } from 'react-redux';
+import { signIn } from '@services/authentication/actions';
+import { useSelector, useDispatch } from 'react-redux';
 import './SignIn.css';
 
 const SignIn = () => {
     const { isLoading } = useSelector(state => state.authentication);
-    const { signIn } = useContext(AuthenticationContext);
+    const dispatch = useDispatch();
 
     const handleFormSubmit = (e, formValues) => {
         e.preventDefault();
-        signIn(formValues);
+        dispatch(signIn(formValues));
     };
 
     return <MinimalForm 

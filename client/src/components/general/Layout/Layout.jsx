@@ -1,13 +1,18 @@
-import React, { useContext } from 'react';
+import React, { useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
-import { AuthenticationContext } from '../../../services/authentication/context';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { logout } from '@services/authentication/actions';
+import { authenticateWithCachedToken } from '@services/authentication/utils';
 import Button from '@components/general/Button';
 import './Layout.css';
 
 const Layout = () => {
-    const { logout } = useContext(AuthenticationContext);
     const { isAuthenticated } = useSelector(state => state.authentication);
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        authenticateWithCachedToken(dispatch);
+    }, []);
 
     return (
         <React.Fragment>
@@ -21,7 +26,7 @@ const Layout = () => {
                 <section id='Header-Right-Container' className='Header-Child-Container'>
                     <article id='Header-Navigation-Container'>
                         {isAuthenticated ? (
-                            <Button title='Logout' onClick={logout} />
+                            <Button title='Logout' onClick={() => logout(dispatch)} />
                         ) : (
                             <React.Fragment>
                                 <Button title='Sign Up' to='/auth/sign-up' />

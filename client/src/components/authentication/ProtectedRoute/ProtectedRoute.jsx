@@ -13,17 +13,17 @@
  * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
  ****/
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { CircularProgress } from '@mui/material';
 import { useSelector } from 'react-redux';
 import './ProtectedRoute.css';
 
 const ProtectedRoute = ({ mode, restrictTo = undefined }) => {
-    const { isAuthenticated, isLoading, user } = useSelector(state => state.authentication);
+    const { isCachedAuthenticationLoading, isAuthenticated, user } = useSelector(state => state.authentication);
     const location = useLocation();
 
-    return (isLoading) ? (
+    return (isCachedAuthenticationLoading) ? (
         <main id='Authentication-Loading-Main'>
             <CircularProgress size={'2.5rem'} />
         </main>
