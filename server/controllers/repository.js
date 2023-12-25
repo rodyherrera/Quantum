@@ -19,15 +19,24 @@ exports.createRepository = RepositoryFactory.createOne();
 exports.updateRepository = RepositoryFactory.updateOne();
 exports.deleteRepository = RepositoryFactory.deleteOne();
 
-exports.getMyGithubRepositories = catchAsync(async (req, res) => {
-    const { accessToken } = req.user.github;
+const getGithubRepositories = async (accessToken) => {
     const response = await axios.get(`https://api.github.com/user/repos`, {
         headers: { Authorization: `Bearer ${accessToken}` },
         params: { visibility: 'all' }
     });
-    const sanitizedRepositories = response.data.filter((repository) => {
-        return !req.user.repositories.some((userRepository) => userRepository.name === repository.full_name);
+    return response.data;
+};
+
+const filterRepositories = (githubRepositories, userRepositories) => {
+    return githubRepositories.filter((repository) => {
+        return !userRepositories.some((userRepository) => userRepository.name === repository.full_name);
     });
+};
+
+exports.getMyGithubRepositories = catchAsync(async (req, res) => {
+    const { accessToken } = req.user.github;
+    const githubRepositories = await getGithubRepositories(accessToken);
+    const sanitizedRepositories = filterRepositories(githubRepositories, req.user.repositories);
     res.status(200).json({
         status: 'success',
         data: sanitizedRepositories

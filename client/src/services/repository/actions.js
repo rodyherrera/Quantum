@@ -1,39 +1,15 @@
 import * as repositoryService from '@services/repository/service';
 import * as repositorySlice from '@services/repository/slice';
+import { handleAction } from '@services/repository/utils';
 
 export const getMyGithubRepositories = () => async (dispatch) => {
-    try{
-        dispatch(repositorySlice.setIsLoading(true));
-        const response = await repositoryService.getMyGithubRepositories({});
-        dispatch(repositorySlice.setRepositories(response.data));
-    }catch(error){
-        console.log(error)
-        dispatch(repositorySlice.setError(error));
-    }finally{
-        dispatch(repositorySlice.setIsLoading(false));
-    }
+    handleAction(dispatch, repositorySlice.setIsLoading, repositoryService.getMyGithubRepositories, {});
 };
 
 export const createRepository = (body) => async (dispatch) => {
-    try{
-        dispatch(repositorySlice.setIsCreatingRepo(true));
-        await repositoryService.createRepository({ body });
-    }catch(error){
-        dispatch(repositorySlice.setError(error));
-    }finally{
-        dispatch(repositorySlice.setIsCreatingRepo(false));
-    }
+    handleAction(dispatch, repositorySlice.setIsCreatingRepo, repositoryService.createRepository, { body });
 };
 
 export const getRepositories = () => async (dispatch) => {
-    try{
-        dispatch(repositorySlice.setIsLoading(true));
-        const response = await repositoryService.getRepositories({  });
-        dispatch(repositorySlice.setRepositories(response.data));
-    }catch(error){
-        console.log(error)
-        dispatch(repositorySlice.setError(error));
-    }finally{
-        dispatch(repositorySlice.setIsLoading(false));
-    }
+    handleAction(dispatch, repositorySlice.setIsLoading, repositoryService.getRepositories, {});
 };

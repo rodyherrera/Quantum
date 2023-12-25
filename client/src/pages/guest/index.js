@@ -1,9 +1,7 @@
-import SignIn from './SignIn';
-import SignUp from './SignUp';
+import authentication from './authentication';
 
 const pages = {
-    SignIn,
-    SignUp
+    authentication
 };
 
 export default pages;

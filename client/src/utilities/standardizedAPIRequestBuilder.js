@@ -25,43 +25,42 @@ export default class StandardizedAPIRequestBuilder{
         }).join('/');
     };
 
-    handleQuery(query, queryParams){
-        const appendParameter = (key, value) => {
-            queryParams += `${queryParams.length ? '&' : '?'}${key}=${value}`;
-        };
+    appendParameter(key, value, queryParams){
+        return queryParams += `${queryParams.length ? '&' : '?'}${key}=${value}`;
+    };
 
-        (query?.fields) && (appendParameter('fields', query.fields.join(',')));
-        (query?.sort) && (appendParameter('sort', query.sort.join(',')));
-        (query?.paginate?.limit) && (appendParameter('limit', query.paginate.limit));
-        (query?.paginate?.page) && (appendParameter('page', query.paginate.page));
-        (query?.populate) && (appendParameter('populate', (typeof query.populate === 'object') ? (JSON.stringify(query.populate)) : (query.populate)));
+    handleQuery(query, queryParams){
+        const { appendParameter } = this;
+
+        (query?.fields) && (appendParameter('fields', query.fields.join(','), queryParams));
+        (query?.sort) && (appendParameter('sort', query.sort.join(','), queryParams));
+        (query?.paginate?.limit) && (appendParameter('limit', query.paginate.limit, queryParams));
+        (query?.paginate?.page) && (appendParameter('page', query.paginate.page, queryParams));
+        (query?.populate) && (appendParameter('populate', (typeof query.populate === 'object') ? (JSON.stringify(query.populate)) : (query.populate), queryParams));
 
         if(query?.filter){
             const keys = Object.keys(query.filter);
-            keys.forEach((key) => appendParameter(key, query.filter[key]));
+            keys.forEach((key) => appendParameter(key, query.filter[key], queryParams));
         }
 
         return queryParams;
     };
 
+    createEndpoint = (parsedPath, queryParams) => {
+        return `${import.meta.env.VITE_SERVER + import.meta.env.VITE_API_SUFFIX + this.endpoint}${parsedPath}`.concat(queryParams);
+    };
+
+    setAuthorizationHeader = () => {
+        const authToken = getCurrentUserToken();
+        if (authToken) {
+            axios.defaults.headers.common['Authorization'] = `Bearer ${authToken}`;
+        }
+    };
+
     register({ path, method = 'GET' }){
         const buffer = { args: [], method: method.toLowerCase() };
-        return ({
-            body,
-            query = {
-                params: undefined,
-                fields: undefined,
-                sort: undefined,
-                search: undefined,
-                paginate: undefined,
-                populate: undefined,
-                filter: undefined
-            }
-        }) => {
-            const authToken = getCurrentUserToken();
-            if(authToken){
-                axios.defaults.headers.common['Authorization'] = `Bearer ${authToken}`;
-            }
+        return ({ body, query = {} }) => {
+            this.setAuthorizationHeader();
             let queryParams = '';
             let parsedPath = path;
             if(query?.params){
@@ -72,7 +71,7 @@ export default class StandardizedAPIRequestBuilder{
                 const keys = Object.keys(body);
                 keys.forEach((key) => appendParameter(key, body[key]));
             }
-            const endpoint = `${import.meta.env.VITE_SERVER + import.meta.env.VITE_API_SUFFIX + this.endpoint}${parsedPath}`.concat(queryParams);
+            const endpoint = this.createEndpoint(parsedPath, queryParams);
             buffer.args = [endpoint];
             if(['post', 'put', 'patch'].includes(buffer.method)){
                 buffer.args.push(body);

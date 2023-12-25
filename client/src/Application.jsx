@@ -9,11 +9,11 @@ const Application = () => {
     return (
         <Routes location={location} key={location.pathname}>
             <Route element={<Layout />}>
-                <Route index element={<pages.everybody.Home />} />
+                <Route index element={<pages.everybody.general.Home />} />
 
                 <Route element={<ProtectedRoute mode='guest' />}>
-                    <Route path='/auth/sign-up' element={<pages.guest.SignUp />} />
-                    <Route path='/auth/sign-in' element={<pages.guest.SignIn />} />
+                    <Route path='/auth/sign-up' element={<pages.guest.authentication.SignUp />} />
+                    <Route path='/auth/sign-in' element={<pages.guest.authentication.SignIn />} />
                 </Route>
 
                 <Route element={<ProtectedRoute mode='protect' />}>
@@ -21,8 +21,7 @@ const Application = () => {
                     <Route path='/github/need-authenticate/' element={<pages.protected.github.NeedAuthenticate />} />
 
                     <Route path='/repository/create/' element={<pages.protected.repository.CreateRepository />} />
-
-                    <Route path='/dashboard/' element={<pages.protected.Dashboard />} />
+                    <Route path='/dashboard/' element={<pages.protected.general.Dashboard />} />
                 </Route>
             </Route>
         </Routes>

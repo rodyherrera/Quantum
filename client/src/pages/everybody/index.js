@@ -1,7 +1,7 @@
-import Home from './Home';
+import general from './general';
 
 const pages = {
-    Home
+    general
 };
 
 export default pages;
