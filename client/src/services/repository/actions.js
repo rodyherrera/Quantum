@@ -14,15 +14,26 @@ export const getMyGithubRepositories = () => async (dispatch) => {
     }
 };
 
-export const createRepository = ({ name, html_url }) => async (dispatch) => {
+export const createRepository = (body) => async (dispatch) => {
     try{
         dispatch(repositorySlice.setIsCreatingRepo(true));
-        const response = await repositoryService.createRepository({ body: { name, url: html_url } });
-        console.log(response.data)
+        await repositoryService.createRepository({ body });
+    }catch(error){
+        dispatch(repositorySlice.setError(error));
+    }finally{
+        dispatch(repositorySlice.setIsCreatingRepo(false));
+    }
+};
+
+export const getRepositories = () => async (dispatch) => {
+    try{
+        dispatch(repositorySlice.setIsLoading(true));
+        const response = await repositoryService.getRepositories({  });
+        dispatch(repositorySlice.setRepositories(response.data));
     }catch(error){
         console.log(error)
         dispatch(repositorySlice.setError(error));
     }finally{
-        dispatch(repositorySlice.setIsCreatingRepo(false));
+        dispatch(repositorySlice.setIsLoading(false));
     }
 };

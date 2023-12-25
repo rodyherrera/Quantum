@@ -8,6 +8,11 @@ const RepositorySchema = new mongoose.Schema({
         required: [true, 'Repository::Name::Required'],
         unique: true,
     },
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: [true, 'Repository::User::Required'],
+    },
     url: {
         type: String,
         required: [true, 'Repository::URL::Required'],
@@ -27,14 +32,15 @@ RepositorySchema.index({ name: 'text' });
 
 RepositorySchema.pre('remove', async function(){
     await this.model('Deployment').deleteMany({ repository: this._id });
+    await this.model('User').findByIdAndUpdate(this.user, { $pull: { repositories: this._id } });
 });
 
 RepositorySchema.pre('save', async function(next){
     try{
-        console.log(`Cloning ${this.url} to ./storage/repositories/${this._id}`);
-        await simpleGit().clone(this.url, `./storage/repositories/${this._id}`);
+        await simpleGit().clone(this.url, `./storage/repositories/${this.name}`);
+        await this.model('User').findByIdAndUpdate(this.user, { $push: { repositories: this._id } });
     }catch(error){
-        console.log(error)
+        return next(error);
     }
     next();
 });

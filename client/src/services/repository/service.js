@@ -10,3 +10,8 @@ export const createRepository = RepositoryAPI.register({
     path: '/',
     method: 'POST'
 });
+
+export const getRepositories = RepositoryAPI.register({
+    path: '/me/',
+    method: 'GET'
+});

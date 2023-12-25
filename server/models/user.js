@@ -13,6 +13,10 @@ const UserSchema = new mongoose.Schema({
         lowercase: true,
         trim: true
     },
+    repositories: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Repository'
+    }],
     deployments: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Deployment'

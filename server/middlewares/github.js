@@ -15,6 +15,11 @@ exports.populateGithubAccount = async (req, res, next) => {
     next();
 };
 
+exports.populateRepositories = async (req, res, next) => {
+    req.user = await req.user.populate('repositories');
+    next();
+};
+
 exports.authenticateCallback = passport.authenticate('github',  { failureRedirect: '/' });
 
 module.exports = exports;

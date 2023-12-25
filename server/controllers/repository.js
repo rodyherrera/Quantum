@@ -8,6 +8,7 @@ const RepositoryFactory = new HandlerFactory({
     fields: [
         'name',
         'url',
+        'user',
         'deployments'
     ]
 });
@@ -24,8 +25,19 @@ exports.getMyGithubRepositories = catchAsync(async (req, res) => {
         headers: { Authorization: `Bearer ${accessToken}` },
         params: { visibility: 'all' }
     });
+    const sanitizedRepositories = response.data.filter((repository) => {
+        return !req.user.repositories.some((userRepository) => userRepository.name === repository.full_name);
+    });
     res.status(200).json({
         status: 'success',
-        data: response.data
+        data: sanitizedRepositories
+    });
+});
+
+exports.getMyRepositories = catchAsync(async (req, res) => {
+    const repositories = await Repository.find({ user: req.user._id });
+    res.status(200).json({
+        status: 'success',
+        data: repositories
     });
 });
