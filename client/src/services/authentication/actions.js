@@ -4,11 +4,11 @@ import * as authSlice from '@services/authentication/slice';
 import * as authLocalStorageService from '@services/authentication/localStorageService';
 
 export const signUp = (body) => async (dispatch) => {
-    handleAuthentication(dispatch, body, authService.signUp);
+    await handleAuthentication(dispatch, body, authService.signUp);
 };
 
 export const signIn = (body) => async (dispatch) => {
-    handleAuthentication(dispatch, body, authService.signIn);
+    await handleAuthentication(dispatch, body, authService.signIn);
 };
 
 export const logout = async (dispatch) => {

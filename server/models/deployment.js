@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 const TextSearch = require('mongoose-partial-search');
-const { startRepository } = require('../utilities/github');
 
 const DeploymentSchema = new mongoose.Schema({
     user: {

@@ -20,8 +20,7 @@ const githubSlice = createSlice({
 
 export const {
     setError,
-    setIsLoading,
-    setAccount
+    setIsLoading
 } = githubSlice.actions;
 
 export default githubSlice.reducer;
