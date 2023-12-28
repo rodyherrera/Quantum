@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const TextSearch = require('mongoose-partial-search');
-const simpleGit = require('simple-git');
+const { deployRepository, startRepository } = require('../utilities/github');
 
 const RepositorySchema = new mongoose.Schema({
     name: {
@@ -37,8 +37,12 @@ RepositorySchema.pre('remove', async function(){
 
 RepositorySchema.pre('save', async function(next){
     try{
-        await simpleGit().clone(this.url, `./storage/repositories/${this.name}`);
-        await this.model('User').findByIdAndUpdate(this.user, { $push: { repositories: this._id } });
+        const user = await this.model('User').findById(this.user).populate('github');
+        const deployment = await deployRepository(this, user);
+        this.deployments.push(deployment._id);
+        await this.model('User').findByIdAndUpdate(this.user, { 
+            $push: { repositories: this._id, deployments: deployment._id } 
+        });
     }catch(error){
         return next(error);
     }

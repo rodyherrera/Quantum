@@ -22,7 +22,7 @@ const CreateRepository = () => {
 
     const handleClick = async (repository) => {
         const body = {
-            name: repository.full_name,
+            name: repository.name,
             url: repository.html_url,
             user: user._id
         };

@@ -18,10 +18,6 @@ const Dashboard = () => {
         };
     }, []);
 
-    useEffect(() => {
-        console.log(repositories);
-    }, [repositories]);
-    
     return (
         <main id='Dashboard-Main'>
             <section id='Dashboard-Header-Container'>

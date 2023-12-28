@@ -29,7 +29,6 @@ const authSlice = createSlice({
         },
         setGithubAccount: (state, action) => {
             state.user.github = action.payload;
-            console.log('OK', state.user);
         }
     }
 });

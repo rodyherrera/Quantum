@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 exports.connectToMongoDb = async () => {
     const databaseName = (process.NODE_ENV === 'production') 
         ? (process.env.PRODUCTION_DATABASE) : (process.env.DEVELOPMENT_DATABASE);
-    console.log('[Quantum Cloud] Connecting to MongoDB...');
+    console.log('[Quantum Cloud]: Connecting to MongoDB...');
     const mongoURI = process.env.MONGO_URI.replace('<DATABASE_NAME>', databaseName);
     mongoose.set('strictQuery', false);
     mongoose.set('strictPopulate', false);

@@ -11,9 +11,8 @@ const Authenticate = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const { user } = useSelector(state => state.auth);
-    const { isLoading } = useSelector(state => state.github);
 
-    useEffect(() => {
+    const handleAccountCreation = async () => {
         const accessToken = query.get('accessToken');
         const { id, username, _json } = JSON.parse(query.get('profile'));
         const { avatar_url } = _json;
@@ -24,14 +23,13 @@ const Authenticate = () => {
             user: user._id,
             avatarUrl: avatar_url
         };
-        dispatch(createAccount(body));
-    }, []);
+        await dispatch(createAccount(body));
+        navigate('/');
+    };
 
     useEffect(() => {
-        if(isLoading)
-            return;
-        navigate('/');
-    }, [isLoading]);
+        handleAccountCreation();
+    }, []);
 
     return (
         <main id='Github-Authenticate-Main'>
