@@ -12,8 +12,8 @@ export const signIn = (body) => async (dispatch) => {
 };
 
 export const logout = async (dispatch) => {
-    dispatch(authSlice.setIsLoading(true));
+    await dispatch(authSlice.setIsLoading(true));
     authLocalStorageService.removeCurrentUserToken();
-    dispatch(authSlice.setIsAuthenticated(false));
-    dispatch(authSlice.setIsLoading(false));
+    await dispatch(authSlice.setIsAuthenticated(false));
+    await dispatch(authSlice.setIsLoading(false));
 };

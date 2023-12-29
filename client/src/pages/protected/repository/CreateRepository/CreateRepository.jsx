@@ -10,6 +10,7 @@ import './CreateRepository.css';
 const CreateRepository = () => {
     const { repositories, isLoading, isCreatingRepo } = useSelector(state => state.repository);
     const { user } = useSelector(state => state.auth);
+
     const dispatch = useDispatch();
     const navigate = useNavigate();
     
@@ -26,12 +27,7 @@ const CreateRepository = () => {
             url: repository.html_url,
             user: user._id
         };
-        try{
-            await dispatch(createRepository(body));
-            navigate('/dashboard/');
-        }catch(error){
-            console.log(error);
-        }
+        await dispatch(createRepository(body, navigate));
     };
 
     return (

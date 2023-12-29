@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import useQuery from '@hooks/useQuery';
 import { useSelector, useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
 import { createAccount } from '@services/github/actions';
 import { CircularProgress } from '@mui/material';
 import './Authenticate.css';
@@ -9,7 +8,6 @@ import './Authenticate.css';
 const Authenticate = () => {
     const query = useQuery();
     const dispatch = useDispatch();
-    const navigate = useNavigate();
     const { user } = useSelector(state => state.auth);
 
     const handleAccountCreation = async () => {
@@ -24,7 +22,6 @@ const Authenticate = () => {
             avatarUrl: avatar_url
         };
         await dispatch(createAccount(body));
-        navigate('/');
     };
 
     useEffect(() => {

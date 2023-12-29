@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const state = {
     error: null,
-    isLoading: true
+    isLoading: false
 };
 
 const githubSlice = createSlice({

@@ -3,10 +3,12 @@ import { BsArrowRight } from 'react-icons/bs';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { authenticate } from '@services/github/actions';
+import { CircularProgress } from '@mui/material';
 import Button from '@components/general/Button';
 import './NeedAuthenticate.css';
 
 const NeedAuthenticate = () => {
+    const { isLoading } = useSelector(state => state.github);
     const { user } = useSelector(state => state.auth);
     const navigate = useNavigate();
 
@@ -15,7 +17,12 @@ const NeedAuthenticate = () => {
             navigate('/');
     }, [user]);
 
-    return (
+    return (isLoading) ? (
+        <main id='Github-Need-Authenticate-Loading-Main'>
+            <CircularProgress size={'2.5rem'} />
+            <p>Connecting to your Github account...</p>
+        </main>
+    ) : (
         <main id='Github-Need-Authenticate-Main'>
             <section id='Github-Need-Authenticate-Body'>
                 <article id='Github-Need-Authenticate-Title-Container'>

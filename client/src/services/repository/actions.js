@@ -3,13 +3,14 @@ import * as repositorySlice from '@services/repository/slice';
 import { handleAction } from '@services/repository/utils';
 
 export const getMyGithubRepositories = () => async (dispatch) => {
-    handleAction(dispatch, repositorySlice.setIsLoading, repositoryService.getMyGithubRepositories, {});
+    await handleAction(dispatch, repositorySlice.setIsLoading, repositoryService.getMyGithubRepositories, {});
 };
 
-export const createRepository = (body) => async (dispatch) => {
-    handleAction(dispatch, repositorySlice.setIsCreatingRepo, repositoryService.createRepository, { body });
+export const createRepository = (body, navigate) => async (dispatch) => {
+    await handleAction(dispatch, repositorySlice.setIsCreatingRepo, repositoryService.createRepository, { body });
+    navigate('/dashboard');
 };
 
 export const getRepositories = () => async (dispatch) => {
-    handleAction(dispatch, repositorySlice.setIsLoading, repositoryService.getRepositories, {});
+   await handleAction(dispatch, repositorySlice.setIsLoading, repositoryService.getRepositories, {});
 };

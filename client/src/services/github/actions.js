@@ -7,14 +7,14 @@ export const authenticate = async (userId) => {
     window.location.href = Endpoint;
 };
 
-export const createAccount = (body) => async (dispatch) => {
+export const createAccount = (body, navigate) => async (dispatch) => {
     try{
-        dispatch(githubSlice.setIsLoading(true));
+        await dispatch(githubSlice.setIsLoading(true));
         const response = await githubService.createAccount({ body });
-        dispatch(authSlice.setGithubAccount(response.data));
+        await dispatch(authSlice.setGithubAccount(response.data));
     }catch(error){
-        dispatch(githubSlice.setError(error));
+        await dispatch(githubSlice.setError(error));
     }finally{
-        dispatch(githubSlice.setIsLoading(false));
+        await dispatch(githubSlice.setIsLoading(false));
     }
 };
