@@ -9,6 +9,9 @@ router.use(authMiddleware.protect);
 router.get('/repository/:repositoryName/', 
     githubMiddleware.populateGithubAccount, deploymentController.getRepositoryDeployments);
 
+router.delete('/repository/:repositoryName/:deploymentId', 
+    githubMiddleware.populateGithubAccount, deploymentController.deleteGithubDeployment);
+
 router.use(authMiddleware.restrictTo('admin'));
 router.route('/:id')
     .get(deploymentController.getDeployment)

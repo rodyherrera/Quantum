@@ -63,6 +63,15 @@ exports.getRepositoryDeployments = async (user, repositoryName) => {
     return deployments;
 };
 
+exports.deleteRepositoryDeployment = async (user, repositoryName, deploymentId) => {
+    const octokit = new Octokit({ auth: user.github.accessToken });
+    await octokit.repos.deleteDeployment({
+        owner: user.github.username,
+        repo: repositoryName,
+        deployment_id: deploymentId
+    });
+};
+
 exports.deployRepository = async (repository, user) => {
     try{
         await cloneRepository(repository);

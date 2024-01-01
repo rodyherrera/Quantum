@@ -1,0 +1,62 @@
+#Repository-Deployments-Main{
+    width: 700px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    height: 85%;
+    gap: 2rem;
+    flex-direction: column;
+    margin: 0 auto;
+}
+
+#Repository-Deployments-Header-Title{
+    font-size: 2.5rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+#Repository-Deployments-Body-List{
+    max-height: 500px;
+    padding-right: .5rem;
+    overflow-y: scroll;
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+}
+
+#Repository-Deployments-Header-Subtitle{
+    font-size: 1.1rem;
+}
+
+.Repository-Deployment-Container{
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    border: 1px solid #000000;
+    align-items: center;
+    padding: 1rem;
+}
+
+.Repository-Deployment-Created-At-Container{
+    display: flex;
+    gap: .5rem;
+    align-items: center;
+    opacity: .7;
+}
+
+.Repository-Deployment-Environment{
+    font-size: .9rem;
+    text-transform: uppercase;
+    opacity: .8;
+}
+
+.Repository-Deployment-Id{
+    font-size: 1.2rem;
+}
+
+.Repository-Deployment-Left-Container{
+    display: flex;
+    flex-direction: column;
+    gap: .3rem;
+}

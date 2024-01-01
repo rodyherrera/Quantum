@@ -2,7 +2,7 @@ const Deployment = require('../models/deployment');
 const HandlerFactory = require('./handlerFactory');
 const RuntimeError = require('../utilities/runtimeError');
 const { catchAsync } = require('../utilities/runtime');
-const { getRepositoryDeployments } = require('../utilities/github');
+const { getRepositoryDeployments, deleteRepositoryDeployment } = require('../utilities/github');
 
 const DeploymentFactory = new HandlerFactory({
     model: Deployment,
@@ -29,4 +29,11 @@ exports.getRepositoryDeployments = catchAsync(async (req, res) => {
     if(!deployments)
         throw new RuntimeError('Deployment::Not::Found', 404);
     res.status(200).json({ status: 'success', data: deployments });
+});
+
+exports.deleteGithubDeployment = catchAsync(async (req, res) => {
+    const { user } = req;
+    const { repositoryName, deploymentId } = req.params;
+    await deleteRepositoryDeployment(user, repositoryName, deploymentId);
+    res.status(204).json({ status: 'success', data: null });
 });
