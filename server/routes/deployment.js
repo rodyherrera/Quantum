@@ -2,6 +2,12 @@ const express = require('express');
 const router = express.Router();
 const deploymentController = require('../controllers/deployment');
 const authMiddleware = require('../middlewares/authentication');
+const githubMiddleware = require('../middlewares/github');
+
+router.use(authMiddleware.protect);
+
+router.get('/repository/:repositoryName/', 
+    githubMiddleware.populateGithubAccount, deploymentController.getRepositoryDeployments);
 
 router.use(authMiddleware.restrictTo('admin'));
 router.route('/:id')

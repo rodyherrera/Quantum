@@ -1,5 +1,4 @@
 const { Octokit } = require('@octokit/rest');
-const { exec } = require('child_process');
 const simpleGit = require('simple-git');
 const Deployment = require('../models/deployment');
 
@@ -40,17 +39,28 @@ const createNewDeployment = async (repository, user, latestCommit) => {
     return newDeployment;
 };
 
-const createGithubDeployment = async (repository, user) => {
+const createGithubDeployment = async (repositoryName, githubUsername) => {
     const octokit = new Octokit({ auth: user.github.accessToken });
     const { data: { id: deploymentId } } = await octokit.repos.createDeployment({
-        owner: user.github.username,
-        repo: repository.name,
+        owner: githubUsername,
+        repo: repositoryName,
         ref: 'main',
         auto_merge: false,
         required_contexts: [],
         environment: 'production'
     });
+    if(!deploymentId)
+        throw new RuntimeError('Deployment::Not::Created', 500);
     return deploymentId;
+};
+
+exports.getRepositoryDeployments = async (user, repositoryName) => {
+    const octokit = new Octokit({ auth: user.github.accessToken });
+    const { data: deployments } = await octokit.repos.listDeployments({
+        owner: user.github.username,
+        repo: repositoryName
+    });
+    return deployments;
 };
 
 exports.deployRepository = async (repository, user) => {

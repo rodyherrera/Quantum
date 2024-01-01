@@ -1,7 +1,9 @@
 import CreateRepository from './CreateRepository';
+import RepositoryDeployments from './RepositoryDeployments';
 
 const pages = {
-    CreateRepository
+    CreateRepository,
+    RepositoryDeployments
 };
 
 export default pages;
