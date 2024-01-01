@@ -35,5 +35,8 @@ exports.deleteGithubDeployment = catchAsync(async (req, res) => {
     const { user } = req;
     const { repositoryName, deploymentId } = req.params;
     await deleteRepositoryDeployment(user, repositoryName, deploymentId);
-    res.status(204).json({ status: 'success', data: null });
+    const deployments = await getRepositoryDeployments(user, repositoryName);
+    if(!deployments)
+        throw new RuntimeError('Deployment::Not::Found', 404);
+    res.status(200).json({ status: 'success', data: deployments });
 });

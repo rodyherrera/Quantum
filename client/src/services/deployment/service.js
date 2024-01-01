@@ -5,3 +5,8 @@ export const getRepositoryDeployments = DeploymentAPI.register({
     path: '/repository/:repositoryName/',
     method: 'GET'
 });
+
+export const deleteRepositoryDeployment = DeploymentAPI.register({
+    path: '/repository/:repositoryName/:deploymentId',
+    method: 'DELETE'
+});

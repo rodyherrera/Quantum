@@ -1,0 +1,60 @@
+.Repository-Deployment-Container{
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    border: 1px solid #000000;
+    align-items: center;
+    padding: 1rem;
+}
+
+.Repository-Deployment-Created-At-Container{
+    display: flex;
+    gap: .5rem;
+    align-items: center;
+    opacity: .7;
+}
+
+.Repository-Deployment-Environment{
+    font-size: .9rem;
+    text-transform: uppercase;
+    opacity: .8;
+}
+
+.Repository-Deployment-Id{
+    font-size: 1.2rem;
+}
+
+.Repository-Deployment-Left-Container{
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+}
+
+.Repository-Deployment-Top-Container{
+    display: flex;
+    flex-direction: column;
+    gap: .3rem;
+}
+
+.Repository-Deployment-Extras-Container{
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.Repository-Deployment-User-Image{
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.Repository-Deployment-Container:hover{
+    border-color: #0f62fe;
+}
+
+.Repository-Deployment-More-Icon,
+.Repository-Deployment-User-Image-Container{
+    cursor: pointer;
+}
