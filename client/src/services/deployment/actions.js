@@ -17,7 +17,7 @@ export const getRepositoryDeployments = (repositoryName) => async (dispatch) => 
 
 export const deleteRepositoryDeployment = (repositoryName, deploymentId) => async (dispatch) => {
     try{
-        await dispatch(deploymentSlice.setIsLoading(true));
+        await dispatch(deploymentSlice.setIsOperationLoading(true));
         const response = await deploymentService.deleteRepositoryDeployment({ 
             query: { params: { repositoryName: repositoryName, deploymentId: deploymentId } }
         });
@@ -25,6 +25,6 @@ export const deleteRepositoryDeployment = (repositoryName, deploymentId) => asyn
     }catch(error){
         await dispatch(deploymentSlice.setError(error));
     }finally{
-        await dispatch(deploymentSlice.setIsLoading(false));
+        await dispatch(deploymentSlice.setIsOperationLoading(false));
     }
 };

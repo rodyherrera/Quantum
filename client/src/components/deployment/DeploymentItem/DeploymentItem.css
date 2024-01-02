@@ -12,17 +12,12 @@
     display: flex;
     gap: .5rem;
     align-items: center;
-    opacity: .7;
 }
 
 .Repository-Deployment-Environment{
     font-size: .9rem;
     text-transform: uppercase;
     opacity: .8;
-}
-
-.Repository-Deployment-Id{
-    font-size: 1.2rem;
 }
 
 .Repository-Deployment-Left-Container{
@@ -54,7 +49,11 @@
     border-color: #0f62fe;
 }
 
-.Repository-Deployment-More-Icon,
-.Repository-Deployment-User-Image-Container{
+.Repository-Deployment-More-Icon{
+    cursor: not-allowed;
+}
+
+.Repository-Deployment-User-Image-Container,
+.Repository-Deployment-Delete-Icon{
     cursor: pointer;
 }
