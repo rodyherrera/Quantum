@@ -38,7 +38,7 @@
     gap: 2rem;
 }
 
-#Dashboard-Projects-Container{
+#Dashboard-Projects-Empty-Container{
     display: flex;
     justify-content: center;
     align-items: center;

@@ -31,7 +31,7 @@ const Dashboard = () => {
                     <CircularProgress size='2.5rem' />
                 ) : (
                     (repositories.length === 0) ? (
-                        <article id='Dashboard-Projects-Container'>
+                        <article id='Dashboard-Projects-Empty-Container'>
                             <p id='Dashboard-Projects-Empty'>You have no projects yet.</p>
                         </article>
                     ) : (
