@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const TextSearch = require('mongoose-partial-search');
-const { deployRepository, startRepository } = require('../utilities/github');
+const Github = require('../utilities/github');
 
 const RepositorySchema = new mongoose.Schema({
     name: {
@@ -38,7 +38,8 @@ RepositorySchema.pre('remove', async function(){
 RepositorySchema.pre('save', async function(next){
     try{
         const user = await this.model('User').findById(this.user).populate('github');
-        const deployment = await deployRepository(this, user);
+        const github = new Github(user, this);
+        const deployment = await github.deployRepository();
         this.deployments.push(deployment._id);
         await this.model('User').findByIdAndUpdate(this.user, { 
             $push: { repositories: this._id, deployments: deployment._id } 

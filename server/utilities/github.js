@@ -2,110 +2,108 @@ const { Octokit } = require('@octokit/rest');
 const simpleGit = require('simple-git');
 const Deployment = require('../models/deployment');
 
-const cloneRepository = async (repository) => {
-    await simpleGit().clone(repository.url, `./storage/repositories/${repository._id}`);
-};
-
-const getLatestCommit = async (user, repository) => {
-    const octokit = new Octokit({ auth: user.github.accessToken });
-    const { data: commits } = await octokit.repos.listCommits({
-        owner: user.github.username,
-        repo: repository.name,
-        per_page: 1,
-        sha: 'main'
-    });
-    return commits[0];
-};
-
-const createNewDeployment = async (repository, user, latestCommit) => {
-    const newDeployment = new Deployment({
-        user: user._id,
-        repository: repository._id,
-        environment: {
-            name: 'production',
-            variables: {}
-        },
-        commit: {
-            message: latestCommit.commit.message,
-            author: {
-                name: latestCommit.commit.author.name,
-                email: latestCommit.commit.author.email
-            },
-            date: latestCommit.commit.author.date
-        },
-        status: 'pending'
-    });
-    await newDeployment.save();
-    return newDeployment;
-};
-
-const createGithubDeployment = async (repositoryName, githubUsername) => {
-    const octokit = new Octokit({ auth: user.github.accessToken });
-    const { data: { id: deploymentId } } = await octokit.repos.createDeployment({
-        owner: githubUsername,
-        repo: repositoryName,
-        ref: 'main',
-        auto_merge: false,
-        required_contexts: [],
-        environment: 'production'
-    });
-    if(!deploymentId)
-        throw new RuntimeError('Deployment::Not::Created', 500);
-    return deploymentId;
-};
-
-const getRepositoryDetails = async (user, repository) => {
-    const octokit = new Octokit({ auth: user.github.accessToken });
-    const { data: repositoryDetails } = await octokit.repos.get({
-        owner: user.github.username,
-        repo: repository.name
-    });
-    return repositoryDetails;
-};
-
-exports.getRepositoryInfo = async (user, repository) => {
-    const latestCommit = await getLatestCommit(user, repository);
-    const repositoryDetails = await getRepositoryDetails(user, repository);
-    const repositoryInfo = {
-        branch: repositoryDetails.default_branch,
-        website: repositoryDetails.homepage,
-        latestCommitMessage: latestCommit.commit.message,
-        latestCommit: latestCommit.commit.author.date
+class Github{
+    constructor(user, repository){
+        this.user = user;
+        this.repository = repository;
+        this.octokit = new Octokit({ auth: user.github.accessToken });
     };
-    return repositoryInfo;
-};
 
-exports.getRepositoryDeployments = async (user, repositoryName) => {
-    const octokit = new Octokit({ auth: user.github.accessToken });
-    const { data: deployments } = await octokit.repos.listDeployments({
-        owner: user.github.username,
-        repo: repositoryName
-    });
-    return deployments;
-};
+    async cloneRepository(){
+        await simpleGit().clone(this.repository.url, `./storage/repositories/${this.repository._id}`);
+    };
 
-exports.deleteRepositoryDeployment = async (user, repositoryName, deploymentId) => {
-    const octokit = new Octokit({ auth: user.github.accessToken });
-    await octokit.repos.deleteDeployment({
-        owner: user.github.username,
-        repo: repositoryName,
-        deployment_id: deploymentId
-    });
-};
+    async getLatestCommit(){
+        const { data: commits } = await this.octokit.repos.listCommits({
+            owner: this.user.github.username,
+            repo: this.repository.name,
+            per_page: 1,
+            sha: 'main'
+        });
+        return commits[0];
+    };
 
-exports.deployRepository = async (repository, user) => {
-    try{
-        await cloneRepository(repository);
-        const latestCommit = await getLatestCommit(user, repository);
-        const newDeployment = await createNewDeployment(repository, user, latestCommit);
-        const deploymentId = await createGithubDeployment(repository, user);
-        newDeployment.url = `https://github.com/${user.github.username}/${repository.name}/deployments/${deploymentId}`;
+    async createNewDeployment(){
+        const latestCommit = await this.getLatestCommit();
+        const newDeployment = new Deployment({
+            user: this.user._id,
+            repository: this.repository._id,
+            environment: {
+                name: 'production',
+                variables: {}
+            },
+            commit: {
+                message: latestCommit.commit.message,
+                author: {
+                    name: latestCommit.commit.author.name,
+                    email: latestCommit.commit.author.email
+                },
+                status: 'pending'
+            }
+        });
+        await newDeployment.save();
+        return newDeployment;
+    };
+
+    async createGithubDeployment(){
+        const { data: { id: deploymentId } } = await this.octokit.repos.createDeployment({
+            owner: this.user.github.username,
+            repo: this.repository.name,
+            ref: 'main',
+            auto_merge: false,
+            required_contexts: [],
+            environment: 'Production'
+        });
+        if(!deploymentId)
+            throw new RuntimeError('Deployment::Not::Created', 500);
+        return deploymentId;
+    };
+
+    async getRepositoryDetails(){
+        const { data: repositoryDetails } = await this.octokit.repos.get({
+            owner: this.user.github.username,
+            repo: this.repository.name
+        });
+        return repositoryDetails;
+    };
+
+    async getRepositoryInfo(){
+        const latestCommit = await this.getLatestCommit();
+        const details = await this.getRepositoryDetails();
+        const information = {
+            branch: details.default_branch,
+            website: details.homepage,
+            latestCommitMessage: latestCommit.commit.message,
+            latestCommit: latestCommit.commit.author.date
+        };
+        return information;
+    };
+
+    async getRepositoryDeployments(){
+        const { data: deployments } = await this.octokit.repos.listDeployments({
+            owner: this.user.github.username,
+            repo: this.repository.name
+        });
+        return deployments;
+    };
+
+    async deleteRepositoryDeployment(deploymentId){
+        await this.octokit.repos.deleteDeployment({
+            owner: this.user.github.username,
+            repo: this.repository.name,
+            deployment_id: deploymentId
+        });
+    };
+
+    async deployRepository(){
+        await this.cloneRepository();
+        const newDeployment = await this.createNewDeployment();
+        const deploymentId = await this.createGithubDeployment();
+        newDeployment.url = `https://github.com/${this.user.github.username}/${this.repository.name}/deployments/${deploymentId}`;
         newDeployment.status = 'success';
         await newDeployment.save();
         return newDeployment;
-    }catch(error){
-        console.log('[Quantum Cloud]:', error);
-    }
+    };
 };
 
-module.exports = exports;
+module.exports = Github;

@@ -1,8 +1,8 @@
 const Deployment = require('../models/deployment');
 const HandlerFactory = require('./handlerFactory');
 const RuntimeError = require('../utilities/runtimeError');
+const Github = require('../utilities/github');
 const { catchAsync } = require('../utilities/runtime');
-const { getRepositoryDeployments, deleteRepositoryDeployment } = require('../utilities/github');
 
 const DeploymentFactory = new HandlerFactory({
     model: Deployment,
@@ -25,7 +25,8 @@ exports.deleteDeployment = DeploymentFactory.deleteOne();
 exports.getRepositoryDeployments = catchAsync(async (req, res) => {
     const { user } = req;
     const { repositoryName } = req.params;
-    const deployments = await getRepositoryDeployments(user, repositoryName);
+    const github = new Github(user, { name: repositoryName });
+    const deployments = await github.getRepositoryDeployments();
     if(!deployments)
         throw new RuntimeError('Deployment::Not::Found', 404);
     res.status(200).json({ status: 'success', data: deployments });
@@ -34,8 +35,9 @@ exports.getRepositoryDeployments = catchAsync(async (req, res) => {
 exports.deleteGithubDeployment = catchAsync(async (req, res) => {
     const { user } = req;
     const { repositoryName, deploymentId } = req.params;
-    await deleteRepositoryDeployment(user, repositoryName, deploymentId);
-    const deployments = await getRepositoryDeployments(user, repositoryName);
+    const github = new Github(user, { name: repositoryName });
+    await github.deleteRepositoryDeployment(deploymentId);
+    const deployments = await github.getRepositoryDeployments();
     if(!deployments)
         throw new RuntimeError('Deployment::Not::Found', 404);
     res.status(200).json({ status: 'success', data: deployments });
