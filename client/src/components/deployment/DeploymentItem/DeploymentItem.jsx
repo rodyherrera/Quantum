@@ -3,23 +3,12 @@ import { BsCalendarDate } from 'react-icons/bs';
 import { IoIosMore } from 'react-icons/io';
 import { RiDeleteBin7Line } from 'react-icons/ri';
 import { useDispatch } from 'react-redux';
+import { formatDate } from '@utilities/runtime';
 import * as deploymentActions from '@services/deployment/actions';
 import './DeploymentItem.css';
 
 const DeploymentItem = ({ deployment, repositoryName }) => {
     const dispatch = useDispatch();
-
-    const formatDate = (date) => {
-        const dateNow = new Date();
-        const dateThen = new Date(date);
-        const difference = dateNow - dateThen;
-        const hours = Math.floor(difference / 1000 / 60 / 60);
-        const days = Math.floor(hours / 24);
-        if(hours < 24){
-            return `${hours} hours ago`;
-        }
-        return `${days} days ago`;
-    };
 
     return (
         <div className='Repository-Deployment-Container'>

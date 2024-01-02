@@ -1,20 +1,35 @@
 #Dashboard-Main{
     padding: 1rem 2rem;
     margin: 0 auto;
-}
-
-#Dashboard-Header-Container{
+    max-width: 1200px;
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    height: 80%;
+    flex-direction: column;
+    gap: 3rem;
+    justify-content: center;
 }
 
-#Dashboard-Input-Container{
-    width: 50%;
+#Dashboard-Header-Title-Container{
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+}
+
+#Dashboard-Header-Title{
+    font-size: 3rem;
+    font-weight: 600;
+}
+
+#Dashboard-Header-Subtitle{
+    font-size: 1.1rem;
+    font-weight: 400;
 }
 
 #Dashboard-Body-Container{
-    margin-top: 3rem;
+    min-height: 450px;
+    max-height: 450px;
+    overflow-y: scroll;
+    padding-right: .5rem;
 }
 
 #Dashboard-Projects-Container{

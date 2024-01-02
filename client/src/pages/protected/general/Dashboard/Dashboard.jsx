@@ -1,9 +1,8 @@
 import React, { useEffect } from 'react';
-import Input from '@components/general/Input';
-import Button from '@components/general/Button';
 import Project from '@components/dashboard/Project';
 import { useSelector, useDispatch } from 'react-redux';
 import { getRepositories } from '@services/repository/actions';
+import { CircularProgress } from '@mui/material';
 import * as repositoriesSlice from '@services/repository/slice';
 import './Dashboard.css';
 
@@ -21,25 +20,28 @@ const Dashboard = () => {
     return (
         <main id='Dashboard-Main'>
             <section id='Dashboard-Header-Container'>
-                <article id='Dashboard-Input-Container'>
-                    <Input  type='text' placeholder='Search' />
+                <article id='Dashboard-Header-Title-Container'>
+                    <h1 id='Dashboard-Header-Title'>Dashboard</h1>
+                    <p id='Dashboard-Header-Subtitle'>The instances of your applications stored on the server.</p>
                 </article>
-                <Button title='Create new' />
             </section>
 
             <section id='Dashboard-Body-Container'>
-                <article id='Dashboard-Projects-Container'>
-                    {repositories.map((repository, index) => (
-                        <Project
-                            key={index}
-                            title={repository.name}
-                            url='quantum-cloud.codewithrodi.com'
-                            commitMessage='lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
-                            lastUpdate='2'
-                            branch='master'
-                        />
-                    ))}
-                </article>
+                {(isLoading) ? (
+                    <CircularProgress size='2.5rem' />
+                ) : (
+                    (repositories.length === 0) ? (
+                        <article id='Dashboard-Projects-Container'>
+                            <p id='Dashboard-Projects-Empty'>You have no projects yet.</p>
+                        </article>
+                    ) : (
+                        <article id='Dashboard-Projects-Container'>
+                            {repositories.map((repository, index) => (
+                                <Project key={index} repository={repository} />
+                            ))}
+                        </article>
+                    )
+                )}
             </section>
         </main>
     );

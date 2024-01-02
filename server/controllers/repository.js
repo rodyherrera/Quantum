@@ -2,6 +2,7 @@ const axios = require('axios');
 const Repository = require('../models/repository');
 const HandlerFactory = require('./handlerFactory');
 const { catchAsync } = require('../utilities/runtime');
+const { getRepositoryInfo } = require('../utilities/github');
 
 const RepositoryFactory = new HandlerFactory({
     model: Repository,
@@ -45,8 +46,16 @@ exports.getMyGithubRepositories = catchAsync(async (req, res) => {
 
 exports.getMyRepositories = catchAsync(async (req, res) => {
     const repositories = await Repository.find({ user: req.user._id });
+    // add repository info to each repository
+    const repositoriesWithInfo = await Promise.all(repositories.map(async (repository) => {
+        const repositoryInfo = await getRepositoryInfo(req.user, repository);
+        return {
+            ...repository.toObject(),
+            ...repositoryInfo
+        };
+    }));
     res.status(200).json({
         status: 'success',
-        data: repositories
+        data: repositoriesWithInfo
     });
 });

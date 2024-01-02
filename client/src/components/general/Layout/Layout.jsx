@@ -25,7 +25,7 @@ const Layout = () => {
         <React.Fragment>
             <header id='Header'>
                 <section id='Header-Left-Container' className='Header-Child-Container'>
-                    <article id='Header-Brand-Container'>
+                    <article id='Header-Brand-Container' onClick={() => navigate('/')}>
                         <i id='Header-Brand-Logo'></i>
                         <h1 id='Header-Brand-Title'>Quantum</h1>
                     </article>

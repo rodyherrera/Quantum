@@ -54,6 +54,27 @@ const createGithubDeployment = async (repositoryName, githubUsername) => {
     return deploymentId;
 };
 
+const getRepositoryDetails = async (user, repository) => {
+    const octokit = new Octokit({ auth: user.github.accessToken });
+    const { data: repositoryDetails } = await octokit.repos.get({
+        owner: user.github.username,
+        repo: repository.name
+    });
+    return repositoryDetails;
+};
+
+exports.getRepositoryInfo = async (user, repository) => {
+    const latestCommit = await getLatestCommit(user, repository);
+    const repositoryDetails = await getRepositoryDetails(user, repository);
+    const repositoryInfo = {
+        branch: repositoryDetails.default_branch,
+        website: repositoryDetails.homepage,
+        latestCommitMessage: latestCommit.commit.message,
+        latestCommit: latestCommit.commit.author.date
+    };
+    return repositoryInfo;
+};
+
 exports.getRepositoryDeployments = async (user, repositoryName) => {
     const octokit = new Octokit({ auth: user.github.accessToken });
     const { data: deployments } = await octokit.repos.listDeployments({

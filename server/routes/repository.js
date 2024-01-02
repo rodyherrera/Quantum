@@ -8,7 +8,10 @@ router.use(authMiddleware.protect);
 
 router.get('/me/github/', githubMiddleware.populateRepositories, 
             githubMiddleware.populateGithubAccount, repositoryController.getMyGithubRepositories);
-router.get('/me/', githubMiddleware.populateRepositories, repositoryController.getMyRepositories);
+
+router.get('/me/', githubMiddleware.populateRepositories, 
+            githubMiddleware.populateGithubAccount, repositoryController.getMyRepositories);
+
 router.post('/', repositoryController.createRepository);
 
 router.use(authMiddleware.restrictTo('admin'));

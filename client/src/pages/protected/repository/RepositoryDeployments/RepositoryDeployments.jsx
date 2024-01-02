@@ -41,7 +41,7 @@ const RepositoryDeployments = () => {
                     <article id='Repository-Deployments-Body-List'>
                         {(isOperationLoading) && (
                             <div id='Repository-Deployments-Operation-Loading-Container'>
-                                <CircularProgress id='Repository-Deployments-Operation-Loading' />
+                                <CircularProgress id='Repository-Deployments-Operation-Loading' size='2.5rem' />
                                 <p>Processing, please wait a few seconds...</p>
                             </div>
                         
