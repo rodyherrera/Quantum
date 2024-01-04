@@ -14,7 +14,7 @@ const MinimalForm = ({
     isLoading = false
 }) => {
     const [formValues, setFormValues] = useState(
-        formInputs.map(input => ({ [input.name]: '' })).reduce((acc, cur) => ({ ...acc, ...cur }), {}));
+        formInputs.map(input => ({ [input.name]: input?.value || '' })).reduce((acc, cur) => ({ ...acc, ...cur }), {}));
 
     useEffect(() => {
         return () => {

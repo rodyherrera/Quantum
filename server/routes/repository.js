@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const repositoryController = require('../controllers/repository');
+const repositoryMiddleware = require('../middlewares/repository');
 const authMiddleware = require('../middlewares/authentication');
 const githubMiddleware = require('../middlewares/github');
 
@@ -14,13 +15,12 @@ router.get('/me/', githubMiddleware.populateRepositories,
 
 router.post('/', repositoryController.createRepository);
 
-router.use(authMiddleware.restrictTo('admin'));
-router.route('/:id')
-    .get(repositoryController.getRepository)
-    .patch(repositoryController.updateRepository)
-    .delete(repositoryController.deleteRepository);
+router.use('/:id', repositoryMiddleware.verifyRepositoryAccess)
+    .get('/:id', repositoryController.getRepository)
+    .patch('/:id', repositoryController.updateRepository)
+    .delete('/:id', repositoryController.deleteRepository);
 
-router.route('/')
-    .get(repositoryController.getRepositories);
+router.use(authMiddleware.restrictTo('admin'));
+router.get('/', repositoryController.getRepositories);
 
 module.exports = router;

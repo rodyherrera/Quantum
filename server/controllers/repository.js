@@ -10,7 +10,11 @@ const RepositoryFactory = new HandlerFactory({
         'name',
         'url',
         'user',
-        'deployments'
+        'deployments',
+        'buildCommand',
+        'installCommand',
+        'startCommand',
+        'rootDirectory'
     ]
 });
 

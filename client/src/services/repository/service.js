@@ -11,6 +11,11 @@ export const createRepository = RepositoryAPI.register({
     method: 'POST'
 });
 
+export const updateRepository = RepositoryAPI.register({
+    path: '/:id/',
+    method: 'PATCH'
+});
+
 export const getRepositories = RepositoryAPI.register({
     path: '/me/',
     method: 'GET'

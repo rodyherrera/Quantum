@@ -16,6 +16,7 @@ const Dashboard = () => {
         dispatch(getRepositories());
         return () => {
             dispatch(repositoriesSlice.setRepositories([]));
+            dispatch(repositoriesSlice.setIsLoading(true));
         };
     }, [dispatch]);
 

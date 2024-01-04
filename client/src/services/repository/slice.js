@@ -4,6 +4,7 @@ const state = {
     error: null,
     isLoading: true,
     isCreatingRepo: false,
+    isUpdatingRepo: false,
     repositories: []
 };
 
@@ -20,6 +21,9 @@ const repositorySlice = createSlice({
         setRepositories: (state, action) => {
             state.repositories = action.payload;
         },
+        setIsUpdatingRepo: (state, action) => {
+            state.isUpdatingRepo = action.payload;
+        },
         setError: (state, action) => {
             state.error = action.payload;
         }
@@ -30,7 +34,8 @@ export const {
     setError,
     setIsLoading,
     setRepositories,
-    setIsCreatingRepo
+    setIsCreatingRepo,
+    setIsUpdatingRepo
 } = repositorySlice.actions;
 
 export default repositorySlice.reducer;

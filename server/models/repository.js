@@ -8,6 +8,22 @@ const RepositorySchema = new mongoose.Schema({
         required: [true, 'Repository::Name::Required'],
         unique: true,
     },
+    buildCommand: {
+        type: String,
+        default: 'npm run build',
+    },
+    installCommand: {
+        type: String,
+        default: 'npm install',
+    },
+    startCommand: {
+        type: String,
+        default: 'npm start',
+    },
+    rootDirectory: {
+        type: String,
+        default: '/',
+    },
     user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',

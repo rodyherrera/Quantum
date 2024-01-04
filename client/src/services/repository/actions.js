@@ -14,3 +14,8 @@ export const createRepository = (body, navigate) => async (dispatch) => {
 export const getRepositories = () => async (dispatch) => {
    await handleAction(dispatch, repositorySlice.setIsLoading, repositoryService.getRepositories, {});
 };
+
+export const updateRepository = (id, body, navigate) => async (dispatch) => {
+    await handleAction(dispatch, repositorySlice.setIsUpdatingRepo, repositoryService.updateRepository, { body, query: { params: { id } } });
+    navigate('/dashboard');
+};
