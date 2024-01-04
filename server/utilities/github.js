@@ -13,6 +13,20 @@ class Github{
         await simpleGit().clone(this.repository.url, `./storage/repositories/${this.repository._id}`);
     };
 
+    async readEnvironmentVariables(){
+        let envFiles = await simpleGit(`./storage/repositories/${this.repository._id}`).raw(['ls-tree', 'HEAD', '-r', '--name-only']);
+        envFiles = envFiles.split('\n').filter(file => file.includes('.env'));
+        const environmentVariables = {};
+        for(const envFile of envFiles){
+            const file = await simpleGit(`./storage/repositories/${this.repository._id}`).raw(['show', 'HEAD:' + envFile]);
+            file.split('\n').forEach(line => {
+                if(line.includes('='))
+                    environmentVariables[line.split('=')[0]] = line.split('=')[1];
+            });
+        };
+        return environmentVariables;
+    };
+
     async getLatestCommit(){
         const { data: commits } = await this.octokit.repos.listCommits({
             owner: this.user.github.username,
@@ -30,7 +44,7 @@ class Github{
             repository: this.repository._id,
             environment: {
                 name: 'production',
-                variables: {}
+                variables: await this.readEnvironmentVariables()
             },
             commit: {
                 message: latestCommit.commit.message,
