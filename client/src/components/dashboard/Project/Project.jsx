@@ -5,13 +5,9 @@ import { IoIosGitBranch } from 'react-icons/io';
 import { formatDate } from '@utilities/runtime';
 import './Project.css';
 
-const Project = ({ repository }) => {
-    useEffect(() => {
-        console.log(repository);
-    }, []);
-
+const Project = ({ repository, ...props }) => {
     return (
-        <div className='Project-Container'>
+        <div className='Project-Container' {...props}>
             <i className='Project-More-Icon-Container'>
                 <IoIosMore />
             </i>

@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import Project from '@components/dashboard/Project';
 import { useSelector, useDispatch } from 'react-redux';
 import { getRepositories } from '@services/repository/actions';
+import { useNavigate } from 'react-router-dom';
 import { CircularProgress } from '@mui/material';
 import * as repositoriesSlice from '@services/repository/slice';
 import './Dashboard.css';
@@ -9,13 +10,14 @@ import './Dashboard.css';
 const Dashboard = () => {
     const { repositories, isLoading } = useSelector(state => state.repository);
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     useEffect(() => {
         dispatch(getRepositories());
         return () => {
             dispatch(repositoriesSlice.setRepositories([]));
         };
-    }, []);
+    }, [dispatch]);
 
     return (
         <main id='Dashboard-Main'>
@@ -37,7 +39,10 @@ const Dashboard = () => {
                     ) : (
                         <article id='Dashboard-Projects-Container'>
                             {repositories.map((repository, index) => (
-                                <Project key={index} repository={repository} />
+                                <Project 
+                                    key={index} 
+                                    onClick={() => navigate(`/repository/${repository.name}/deployment/setup/`, { state: { repository } })}
+                                    repository={repository} />
                             ))}
                         </article>
                     )

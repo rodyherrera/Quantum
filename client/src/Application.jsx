@@ -22,6 +22,7 @@ const Application = () => {
 
                     <Route path='/repository/create/' element={<pages.protected.repository.CreateRepository />} />
                     <Route path='/repository/:repositoryName/deployments/' element={<pages.protected.repository.RepositoryDeployments />} />
+                    <Route path='/repository/:repositoryName/deployment/setup/' element={<pages.protected.repository.SetupDeployment />} />
 
                     <Route path='/dashboard/' element={<pages.protected.general.Dashboard />} />
                 </Route>

@@ -4,10 +4,12 @@
     gap: 2rem;
     padding: 1rem;
     flex-direction: column;
+    cursor: pointer;
     width: 450px;
     position: relative;
     border: 1px solid #272727;
     border-radius: .2rem;
+    transition: .5s;
 }
 
 .Project-Update-Message{
@@ -53,4 +55,16 @@
 .Project-URL{
     font-size: .95rem;
     opacity: .8;
+}
+
+.Project-Container:hover{
+    border-color: #0f62fe;
+}
+
+.Project-Container:hover .Project-Title{
+    text-decoration: underline;
+}
+
+.Project-Container:active{
+    transform: scale(0.98);
 }

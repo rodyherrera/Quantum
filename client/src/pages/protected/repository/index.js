@@ -1,9 +1,11 @@
 import CreateRepository from './CreateRepository';
 import RepositoryDeployments from './RepositoryDeployments';
+import SetupDeployment from './SetupDeployment';
 
 const pages = {
     CreateRepository,
-    RepositoryDeployments
+    RepositoryDeployments,
+    SetupDeployment
 };
 
 export default pages;
