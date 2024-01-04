@@ -1,16 +1,39 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { IoIosMore } from 'react-icons/io';
 import { FaGithub } from 'react-icons/fa';
 import { IoIosGitBranch } from 'react-icons/io';
 import { formatDate } from '@utilities/runtime';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import ContextMenu from '@components/general/ContextMenu';
+import * as repositoryActions from '@services/repository/actions';
 import './Project.css';
 
 const Project = ({ repository, ...props }) => {
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const { repositories } = useSelector(state => state.repository);
+
     return (
-        <div className='Project-Container' {...props}>
-            <i className='Project-More-Icon-Container'>
-                <IoIosMore />
-            </i>
+        <div 
+            className='Project-Container' 
+            {...props}
+            onClick={(e) => {
+                if(e.target.className.includes('Context-Menu-Container') || e.target.className.includes('Context-Menu-Option')) 
+                    return;
+                props.onClick();
+            }}
+        >
+            <ContextMenu 
+                className='Project-More-Icon-Container' 
+                options={[
+                    { title: 'Delete', onClick: () => dispatch(repositoryActions.deleteRepository(repository._id, repositories, navigate)) },
+                ]}
+            >
+                <i>
+                    <IoIosMore />
+                </i>
+            </ContextMenu>
 
             <div className='Project-Header-Container'>
                 <div className='Project-Image-Container'>

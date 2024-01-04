@@ -6,7 +6,7 @@ import * as repositoryActions from '@services/repository/actions';
 import './SetupDeployment.css';
 
 const SetupDeployment = () => {
-    const { isUpdatingRepo } = useSelector(state => state.repository);
+    const { isOperationLoading } = useSelector(state => state.repository);
     const { state } = useLocation();
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -23,10 +23,10 @@ const SetupDeployment = () => {
     }, [state]);
 
     return <MinimalForm
-        headerTitle='We are almost ready to deploy...'
+        headerTitle='Build & Development Setting'
         headerSubtitle='We need to know some information about your project.'
         submitButtonTitle='Continue'
-        isLoading={isUpdatingRepo}
+        isLoading={isOperationLoading}
         handleFormSubmit={handleFormSubmit}
         formInputs={[
             {

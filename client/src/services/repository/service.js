@@ -16,6 +16,11 @@ export const updateRepository = RepositoryAPI.register({
     method: 'PATCH'
 });
 
+export const deleteRepository = RepositoryAPI.register({
+    path: '/:id/',
+    method: 'DELETE'
+});
+
 export const getRepositories = RepositoryAPI.register({
     path: '/me/',
     method: 'GET'

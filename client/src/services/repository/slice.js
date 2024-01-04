@@ -3,8 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 const state = {
     error: null,
     isLoading: true,
-    isCreatingRepo: false,
-    isUpdatingRepo: false,
+    isOperationLoading: false,
     repositories: []
 };
 
@@ -15,14 +14,14 @@ const repositorySlice = createSlice({
         setIsLoading: (state, action) => {
             state.isLoading = action.payload;
         },
-        setIsCreatingRepo: (state, action) => {
-            state.isCreatingRepo = action.payload;
+        isOperationLoading: (state, action) => {
+            state.isOperationLoading = action.payload;
         },
         setRepositories: (state, action) => {
             state.repositories = action.payload;
         },
-        setIsUpdatingRepo: (state, action) => {
-            state.isUpdatingRepo = action.payload;
+        setIsOperationLoading: (state, action) => {
+            state.isOperationLoading = action.payload;
         },
         setError: (state, action) => {
             state.error = action.payload;
@@ -34,8 +33,7 @@ export const {
     setError,
     setIsLoading,
     setRepositories,
-    setIsCreatingRepo,
-    setIsUpdatingRepo
+    setIsOperationLoading
 } = repositorySlice.actions;
 
 export default repositorySlice.reducer;

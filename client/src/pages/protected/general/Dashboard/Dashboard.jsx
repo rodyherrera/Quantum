@@ -8,7 +8,7 @@ import * as repositoriesSlice from '@services/repository/slice';
 import './Dashboard.css';
 
 const Dashboard = () => {
-    const { repositories, isLoading } = useSelector(state => state.repository);
+    const { repositories, isLoading, isOperationLoading } = useSelector(state => state.repository);
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
@@ -22,6 +22,12 @@ const Dashboard = () => {
 
     return (
         <main id='Dashboard-Main'>
+            {(isOperationLoading) && (
+                <aside id='Dashboard-Loading-Container'>
+                    <CircularProgress size='2.5rem' />
+                </aside>
+            )}
+
             <section id='Dashboard-Header-Container'>
                 <article id='Dashboard-Header-Title-Container'>
                     <h1 id='Dashboard-Header-Title'>Dashboard</h1>

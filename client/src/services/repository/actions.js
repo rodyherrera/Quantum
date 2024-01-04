@@ -7,7 +7,7 @@ export const getMyGithubRepositories = () => async (dispatch) => {
 };
 
 export const createRepository = (body, navigate) => async (dispatch) => {
-    await handleAction(dispatch, repositorySlice.setIsCreatingRepo, repositoryService.createRepository, { body });
+    await handleAction(dispatch, repositorySlice.setIsOperationLoading, repositoryService.createRepository, { body });
     navigate('/dashboard');
 };
 
@@ -16,6 +16,13 @@ export const getRepositories = () => async (dispatch) => {
 };
 
 export const updateRepository = (id, body, navigate) => async (dispatch) => {
-    await handleAction(dispatch, repositorySlice.setIsUpdatingRepo, repositoryService.updateRepository, { body, query: { params: { id } } });
+    await handleAction(dispatch, repositorySlice.setIsOperationLoading, repositoryService.updateRepository, { body, query: { params: { id } } });
+    navigate('/dashboard');
+};
+
+export const deleteRepository = (id, repositories, navigate) => async (dispatch) => {
+    await handleAction(dispatch, repositorySlice.setIsOperationLoading, repositoryService.deleteRepository, { query: { params: { id } } });
+    const updatedRepositories = repositories.filter((repository) => repository._id !== id);
+    await dispatch(repositorySlice.setRepositories(updatedRepositories));
     navigate('/dashboard');
 };

@@ -12,7 +12,6 @@ module.exports = class HandlerFactory{
         const databaseRecord = await this.model.findOneAndDelete(checkIfSlugOrId(req.params.id));
         if(!databaseRecord)
             return next(new RuntimeError('Core::DeleteOne::RecordNotFound', 404));
-        await databaseRecord.remove();
         res.status(204).json({
             status: 'success',
             data: databaseRecord

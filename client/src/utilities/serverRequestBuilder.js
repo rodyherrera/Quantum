@@ -16,6 +16,7 @@ export default class ServerRequestBuilder{
                 const response = await callback(...(args || []));
                 resolve(response?.data || response);
             }catch(rejection){
+                console.log(rejection);
                 reject(this.handleError(rejection));
             }
         });

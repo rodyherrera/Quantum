@@ -8,7 +8,7 @@ import * as repositoriesSlice from '@services/repository/slice';
 import './CreateRepository.css';
 
 const CreateRepository = () => {
-    const { repositories, isLoading, isCreatingRepo } = useSelector(state => state.repository);
+    const { repositories, isLoading, isOperationLoading } = useSelector(state => state.repository);
     const { user } = useSelector(state => state.auth);
 
     const dispatch = useDispatch();
@@ -39,8 +39,8 @@ const CreateRepository = () => {
                 </article>
             </section>
 
-            <section id='Create-Repository-Body' data-iscreatingrepo={isCreatingRepo}>
-                {isCreatingRepo && (
+            <section id='Create-Repository-Body' data-iscreatingrepo={isOperationLoading}>
+                {isOperationLoading && (
                     <div id='Create-Repository-Loading-Container'>
                         <CircularProgress />
                     </div>
