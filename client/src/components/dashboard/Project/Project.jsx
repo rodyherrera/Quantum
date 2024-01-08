@@ -29,7 +29,7 @@ const Project = ({ repository, ...props }) => {
                 options={[
                     { title: 'Delete', onClick: () => dispatch(repositoryActions.deleteRepository(repository._id, repositories, navigate)) },
                     { title: 'Deployments', onClick: () => navigate(`/repository/${repository.name}/deployments/`) },
-                    { title: 'Terminal', onClick: () => navigate(`/repository/${repository.name}/terminal/`) },
+                    { title: 'Shell', onClick: () => navigate(`/repository/${repository.name}/shell/`) },
                 ]}
             >
                 <i>

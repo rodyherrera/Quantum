@@ -1,13 +1,13 @@
 import CreateRepository from './CreateRepository';
 import RepositoryDeployments from './RepositoryDeployments';
 import SetupDeployment from './SetupDeployment';
-import Terminal from './Terminal';
+import Shell from './Shell';
 
 const pages = {
     CreateRepository,
     RepositoryDeployments,
     SetupDeployment,
-    Terminal
+    Shell
 };
 
 export default pages;

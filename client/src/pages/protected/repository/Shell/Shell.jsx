@@ -3,9 +3,9 @@ import { Xterm } from 'xterm-react';
 import { io } from 'socket.io-client';
 import { getCurrentUserToken } from '@services/authentication/localStorageService';
 import { useParams } from 'react-router-dom';
-import './Terminal.css';
+import './Shell.css';
 
-const TerminalPage = () => {
+const Shell = () => {
     const { repositoryName } = useParams();
     const [socket, setSocket] = useState(null);
     const [terminal, setTerminal] = useState(null);
@@ -27,16 +27,16 @@ const TerminalPage = () => {
     }, [terminal]);
 
     return (
-        <main id='Repository-Terminal-Main'>
-            <section id='Repository-Terminal-Header-Container'>
-                <article id='Repository-Terminal-Title-Container'>
-                    <h1 id='Repository-Terminal-Title'>Advanced repository management</h1>
-                    <p id='Repository-Terminal-Subtitle'>Interact with the root of your repository through the command line. <br /> A connection with the server will be initiated to manage communication.</p>
+        <main id='Repository-Shell-Main'>
+            <section id='Repository-Shell-Header-Container'>
+                <article id='Repository-Shell-Title-Container'>
+                    <h1 id='Repository-Shell-Title'>Advanced repository management</h1>
+                    <p id='Repository-Shell-Subtitle'>Interact with the root of your repository through the command line. <br /> A connection with the server will be initiated to manage communication.</p>
                 </article>
             </section>
 
-            <section id='Repository-Terminal-Body-Container'>
-                <article id='Repository-Terminal'>
+            <section id='Repository-Shell-Body-Container'>
+                <article id='Repository-Shell'>
                     <Xterm
                         onInit={(term) => setTerminal(term)}
                         onDispose={() => setTerminal(null)}
@@ -48,4 +48,4 @@ const TerminalPage = () => {
     );
 };
 
-export default TerminalPage;
+export default Shell;
