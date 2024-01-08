@@ -23,10 +23,7 @@
     line-height: 1.3rem;
 }
 
-.react-terminal{
-    height: 400px !important;
-}
-
-.react-terminal-line{
-    white-space: unset !important;
+.ReactBash{
+    height: 500px !important;
+    border: 1px solid #ccc;
 }

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Terminal, { ColorMode, TerminalOutput } from 'react-terminal-ui';
-import { useSelector } from 'react-redux';
+import { Xterm } from 'xterm-react';
 import { io } from 'socket.io-client';
 import { getCurrentUserToken } from '@services/authentication/localStorageService';
 import { useParams } from 'react-router-dom';
@@ -8,54 +7,24 @@ import './Terminal.css';
 
 const TerminalPage = () => {
     const { repositoryName } = useParams();
-    const { user } = useSelector(state => state.auth);
     const [socket, setSocket] = useState(null);
-    const [terminalInput, setTerminalInput] = useState('');
-    const [terminalOutput, setTerminalOutput] = useState([
-        <TerminalOutput>Connecting to server...</TerminalOutput>
-    ]);
-
-    const handleTerminalInput = (input) => {
-        setTerminalInput(input);
-        setTerminalOutput([
-            ...terminalOutput,
-            <TerminalOutput>$: {input}</TerminalOutput>
-        ]);
-    };
-
-    const handleCommandResponse = (response) => {
-        setTerminalOutput([
-            ...terminalOutput,
-            <TerminalOutput>{response}</TerminalOutput>
-        ]);
-    };
+    const [terminal, setTerminal] = useState(null);
 
     useEffect(() => {
-        if(!socket) return;
-        if(terminalInput === 'clear'){
-            setTerminalOutput([]);
-            return;
-        }
-        socket.emit('command', terminalInput, handleCommandResponse);
-    }, [terminalInput]);
-
-    useEffect(() => {
+        if(!terminal) return;
+        terminal.reset();
         const socket = io(import.meta.env.VITE_SERVER, { 
             transports: ['websocket'],
             auth: { token: getCurrentUserToken() },
             query: { repositoryName }
         });
         setSocket(socket);
-        socket.on('connect', () => {
-            setTerminalOutput([
-                ...terminalOutput,
-                <TerminalOutput>Connection established.</TerminalOutput>
-            ]);
-        });
+        socket.on('response', (response) => terminal.write(response));
         return () => {
             socket.close();
+            setSocket(null);
         };
-    }, []);
+    }, [terminal]);
 
     return (
         <main id='Repository-Terminal-Main'>
@@ -68,14 +37,11 @@ const TerminalPage = () => {
 
             <section id='Repository-Terminal-Body-Container'>
                 <article id='Repository-Terminal'>
-                    <Terminal 
-                        name={repositoryName} 
-                        colorMode={ColorMode.Dark}
-                        onInput={handleTerminalInput}
-                        prompt={`${user.username}@${repositoryName}:~$`}
-                    >
-                        {terminalOutput}
-                    </Terminal>
+                    <Xterm
+                        onInit={(term) => setTerminal(term)}
+                        onDispose={() => setTerminal(null)}
+                        onData={(data) => socket.emit('command', data)}
+                    />
                 </article>
             </section>
         </main>

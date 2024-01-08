@@ -1,7 +1,7 @@
-const RuntimeError = require('../utilities/runtimeError');
 const { getUserByToken } = require('../middlewares/authentication');
+const RuntimeError = require('../utilities/runtimeError');
 const Repository = require('../models/repository');
-const { exec } = require('child_process');
+const pty = require('node-pty');
 
 const authenticateSocket = async (socket, next) => {
     const { token } = socket.handshake.auth;
@@ -18,23 +18,32 @@ const authenticateSocket = async (socket, next) => {
     next();
 };
 
-const handleCommand = async (command, callback, socket) => {
+const handleRepositoryShell = (socket) => {
     const { repository } = socket;
-    const workingDir = `${__dirname}/../storage/repositories/${repository._id}/`;
-    exec(command, { cwd: workingDir }, (error, stdout, stderr) => {
-        let response = '';
-        if(stdout) response = stdout;
-        if(stderr) response = stderr;
-        if(error) response = error.message;
-        // Sometimes, "stderr" can be a object!
-        if(typeof response === 'object') response = stderr.cmd;
-        callback(response);
+    const shell = pty.spawn('bash', [], {
+        name: 'xterm-color',
+        cols: 80,
+        rows: 30,
+        cwd: `${__dirname}/../storage/repositories/${repository._id}/`,
+        env: process.env
+    });
+
+    socket.on('command', (command) => {
+        shell.write(command);
+    });
+
+    shell.on('data', (data) => {
+        socket.emit('response', data);
+    });
+
+    socket.on('exit', () => {
+        shell.kill();
     });
 };
 
 module.exports = (io) => {
     io.use(authenticateSocket);
     io.on('connection', (socket) => {
-        socket.on('command', (command, callback) => handleCommand(command, callback, socket));
+        handleRepositoryShell(socket);
     });
 };
