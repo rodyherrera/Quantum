@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { CircularProgress } from '@mui/material';
 import { VscGithubInverted } from 'react-icons/vsc';
 import DeploymentItem from '@components/deployment/DeploymentItem';
+import Button from '@components/general/Button';
 import * as deploymentActions from '@services/deployment/actions';
 import './RepositoryDeployments.css';
 
@@ -48,7 +49,8 @@ const RepositoryDeployments = () => {
                         )}
                         {(deployments.length === 0) ? (
                             <div id='Repository-Deployments-Body-List-Empty-Container'>
-                                <p id='Repository-Deployments-Body-List-Empty'>No deployments found.</p>
+                                <p id='Repository-Deployments-Body-List-Empty'>There is no deployment registered in the repository.</p>
+                                <Button title='Create Deployment' variant='primary' to='/repository/create/' />
                             </div>
                         ) : (
                             deployments.map((deployment, index) => (

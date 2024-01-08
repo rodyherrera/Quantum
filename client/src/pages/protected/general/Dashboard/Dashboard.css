@@ -39,9 +39,15 @@
     gap: 2rem;
 }
 
+#Dashboard-Projects-Empty{
+    font-size: 1.12rem;
+}
+
 #Dashboard-Projects-Empty-Container{
     display: flex;
     justify-content: center;
+    flex-direction: column;
+    gap: 2rem;
     align-items: center;
     height: 100%;
 }

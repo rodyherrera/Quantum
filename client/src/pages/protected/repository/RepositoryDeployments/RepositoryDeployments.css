@@ -51,6 +51,10 @@
     background-color: #f5f5f5;
 }
 
+#Repository-Deployments-Body-List-Empty{
+    font-size: 1.1rem;
+}
+
 #Repository-Deployments-Operation-Loading-Container,
 #Repository-Deployments-Body-List-Empty-Container{
     position: absolute;
