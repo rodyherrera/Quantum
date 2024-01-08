@@ -28,7 +28,8 @@ const Project = ({ repository, ...props }) => {
                 className='Project-More-Icon-Container' 
                 options={[
                     { title: 'Delete', onClick: () => dispatch(repositoryActions.deleteRepository(repository._id, repositories, navigate)) },
-                    { title: 'Deployments', onClick: () => navigate(`/repository/${repository.name}/deployments/`) }
+                    { title: 'Deployments', onClick: () => navigate(`/repository/${repository.name}/deployments/`) },
+                    { title: 'Terminal', onClick: () => navigate(`/repository/${repository.name}/terminal/`) },
                 ]}
             >
                 <i>

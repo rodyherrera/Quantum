@@ -20,6 +20,7 @@
     "passport": "^0.7.0",
     "passport-github": "^1.1.0",
     "simple-git": "^3.21.0",
+    "socket.io": "^4.7.3",
     "validator": "^13.11.0"
   }
 }

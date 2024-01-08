@@ -5,15 +5,18 @@ const cors = require('cors');
 const http = require('http');
 const bodyParser = require('body-parser');
 const session = require('express-session');
+const socketIO = require('socket.io');
 
 const passport = require('passport');
 const GithubStrategy = require('passport-github').Strategy;
 const { connectToMongoDb } = require('./utilities/runtime');
 const bootHelper = require('./utilities/bootHelper');
 const globalErrorHandler = require('./controllers/globalErrorHandler');
+const webSocketController = require('./controllers/wsController');
 
 const app = express();
 const httpServer = http.createServer(app);
+const io = socketIO(httpServer, { cors: { origin: process.env.CORS_ORIGIN } });
 const serverPort = process.env.SERVER_PORT || 8000;
 const serverHostname = process.env.SERVER_HOSTNAME || '0.0.0.0';
 
@@ -76,6 +79,8 @@ app.all('*', (Request, Response) => {
 });
 
 app.use(globalErrorHandler);
+
+webSocketController(io);
 
 httpServer.listen(serverPort, serverHostname, async () => {
     await connectToMongoDb();
