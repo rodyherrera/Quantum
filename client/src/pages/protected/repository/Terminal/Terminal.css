@@ -1,0 +1,32 @@
+#Repository-Terminal-Main{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 90%;
+    gap: 3rem;
+    width: 800px;
+    margin: 0 auto;
+}
+
+#Repository-Terminal-Title{
+    font-size: 2.5rem;
+}
+
+#Repository-Terminal-Title-Container{
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+}
+
+#Repository-Terminal-Subtitle{
+    font-size: 1rem;
+    line-height: 1.3rem;
+}
+
+.react-terminal{
+    height: 400px !important;
+}
+
+.react-terminal-line{
+    white-space: unset !important;
+}
