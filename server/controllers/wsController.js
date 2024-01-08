@@ -19,13 +19,13 @@ const authenticateSocket = async (socket, next) => {
 };
 
 const handleRepositoryShell = (socket) => {
-    const { repository } = socket;
-    const shell = pty.spawn('bash', [], {
+    const { repository, user } = socket;
+    const workingDir = `${__dirname}/../storage/repositories/${repository._id}/`;
+    const shell = pty.spawn('bash', ['-i'], {
         name: 'xterm-color',
         cols: 80,
         rows: 30,
-        cwd: `${__dirname}/../storage/repositories/${repository._id}/`,
-        env: process.env
+        cwd: workingDir,
     });
 
     socket.on('command', (command) => {
@@ -33,6 +33,9 @@ const handleRepositoryShell = (socket) => {
     });
 
     shell.on('data', (data) => {
+        if(data.includes(`../storage/repositories/${repository._id}/`)){
+            data = `\x1b[1;92m${user.username}\x1b[0m@\x1b[1;94m${repository.name}:~$\x1b[0m `;
+        }
         socket.emit('response', data);
     });
 
