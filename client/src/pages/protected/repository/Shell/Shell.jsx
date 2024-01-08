@@ -3,28 +3,36 @@ import { Xterm } from 'xterm-react';
 import { io } from 'socket.io-client';
 import { getCurrentUserToken } from '@services/authentication/localStorageService';
 import { useParams } from 'react-router-dom';
+import { CircularProgress } from '@mui/material';
 import './Shell.css';
 
 const Shell = () => {
     const { repositoryName } = useParams();
     const [socket, setSocket] = useState(null);
     const [terminal, setTerminal] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         if(!terminal) return;
-        terminal.reset();
         const socket = io(import.meta.env.VITE_SERVER, { 
             transports: ['websocket'],
             auth: { token: getCurrentUserToken() },
             query: { repositoryName }
         });
         setSocket(socket);
-        socket.on('response', (response) => terminal.write(response));
+        socket.on('response', (response) => {
+            if(terminal.buffer.active.type === 'normal'){
+                setIsLoading(false);
+            }
+            terminal.write(response);
+        });
         return () => {
             socket.close();
             setSocket(null);
+            setTerminal(null);            
+            setIsLoading(true);
         };
-    }, [terminal]);
+    }, [terminal, repositoryName]);
 
     return (
         <main id='Repository-Shell-Main'>
@@ -37,6 +45,12 @@ const Shell = () => {
 
             <section id='Repository-Shell-Body-Container'>
                 <article id='Repository-Shell'>
+                    {(isLoading) && (
+                        <aside id='Socket-Connection-Loading-Container'>
+                            <CircularProgress size='2.5rem' />
+                        </aside>
+                    )}
+
                     <Xterm
                         onInit={(term) => setTerminal(term)}
                         onDispose={() => setTerminal(null)}
