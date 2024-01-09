@@ -5,6 +5,7 @@ import { logout } from '@services/authentication/actions';
 import { authenticateWithCachedToken } from '@services/authentication/utils';
 import HeaderNavItem from '@components/general/HeaderNavItem';
 import HeaderLink from '@components/general/HeaderLink';
+import Waves from '@components/general/Waves';
 import './Layout.css';
 
 const Layout = () => {
@@ -58,6 +59,8 @@ const Layout = () => {
             </header>
 
             <Outlet />
+            
+            <Waves />
         </React.Fragment>
     );
 };

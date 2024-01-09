@@ -1,0 +1,27 @@
+#Circle-Content-Container{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 1rem;
+    align-items: center;
+    gap: 1rem;
+    border-radius: 50%;
+    height: 200px;
+    width: 200px;
+    background-color: #0c0c0c;
+    color: #FFFFFF;
+    border: 1px solid #000000;
+    transition: all .1s ease-in-out;
+    text-align: center;
+    cursor: pointer;
+}
+
+#Circle-Content-Container:hover{
+    background-color: #FFFFFF;
+    color: #000000;
+}
+
+#Circle-Content-Container-Title{
+    font-size: 1.5rem;
+    font-weight: 600;
+}

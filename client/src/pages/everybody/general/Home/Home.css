@@ -33,3 +33,9 @@
     display: flex;
     gap: 1rem;  
 }
+
+#Circle-Contained-Text-Wrapper{
+    position: absolute;
+    bottom: 2rem;
+    right: .5rem;
+}

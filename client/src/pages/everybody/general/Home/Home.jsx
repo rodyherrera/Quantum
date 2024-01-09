@@ -1,11 +1,14 @@
 import React from 'react';
 import Button from '@components/general/Button';
 import DashedContainer from '@components/general/DashedContainer';
+import CircleContainedText from '@components/general/CircleContainedText';
 import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import './Home.css';
 
 const HomePage = () => {
     const { isAuthenticated } = useSelector(state => state.auth);
+    const navigate = useNavigate();
 
     return (
         <main id='Home-Page-Main'>
@@ -26,6 +29,12 @@ const HomePage = () => {
                     <Button title='Learn More' variant='Contained' />
                 </article>
             </section>
+
+            <aside id='Circle-Contained-Text-Wrapper'>
+                <CircleContainedText 
+                    onClick={() => navigate('/repository/create/')}
+                    title='Deploy, Scale, Repeat.' />
+            </aside>
         </main>
     );
 };

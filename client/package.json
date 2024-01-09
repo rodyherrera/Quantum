@@ -13,6 +13,7 @@
     "@emotion/react": "^11.11.3",
     "@emotion/styled": "^11.11.0",
     "@mui/material": "^5.15.1",
+    "@react-three/fiber": "^8.15.13",
     "@reduxjs/toolkit": "^2.0.1",
     "axios": "^1.6.2",
     "react": "^18.2.0",
@@ -22,6 +23,7 @@
     "react-redux": "^9.0.4",
     "react-router-dom": "^6.21.1",
     "socket.io-client": "^4.7.3",
+    "three": "^0.160.0",
     "xterm-react": "^1.0.0"
   },
   "devDependencies": {
