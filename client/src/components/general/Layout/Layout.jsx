@@ -1,16 +1,18 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '@services/authentication/actions';
 import { authenticateWithCachedToken } from '@services/authentication/utils';
 import HeaderNavItem from '@components/general/HeaderNavItem';
 import HeaderLink from '@components/general/HeaderLink';
+import HamburguerMenu from '@components/general/HamburguerMenu';
 import Waves from '@components/general/Waves';
 import './Layout.css';
 
 const Layout = () => {
     const { isAuthenticated, user, isLoading, isCacheLoading } = useSelector(state => state.auth);
     const { isLoading: githubIsLoading } = useSelector(state => state.github);
+    const [isHamburguerMenuActive, setIsHamburguerMenuActive] = useState(false);
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
@@ -54,6 +56,11 @@ const Layout = () => {
                                 <HeaderNavItem title='Log In' to='/auth/sign-in/' />
                             </React.Fragment>
                         )}
+                        <HeaderNavItem id='Hamburguer-Menu-Container'>
+                            <HamburguerMenu
+                                onClick={() => setIsHamburguerMenuActive(!isHamburguerMenuActive)}
+                                isactive={isHamburguerMenuActive.toString()} />
+                        </HeaderNavItem>
                     </article>
                 </section>
             </header>
