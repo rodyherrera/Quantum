@@ -5,8 +5,7 @@ const Github = require('../utilities/github');
 const RepositorySchema = new mongoose.Schema({
     name: {
         type: String,
-        required: [true, 'Repository::Name::Required'],
-        unique: true,
+        required: [true, 'Repository::Name::Required']
     },
     buildCommand: {
         type: String,
@@ -43,9 +42,8 @@ const RepositorySchema = new mongoose.Schema({
     },
 });
 
-// STORE IN RUNTIME
-
 RepositorySchema.plugin(TextSearch);
+RepositorySchema.index({ name: 1, user: 1 }, { unique: true });
 RepositorySchema.index({ name: 'text' });
 
 RepositorySchema.pre('remove', async function(){

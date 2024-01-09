@@ -1,6 +1,7 @@
 const { Octokit } = require('@octokit/rest');
 const simpleGit = require('simple-git');
 const Deployment = require('../models/deployment');
+const PTYHandler = require('./ptyHandler');
 
 class Github{
     constructor(user, repository){
@@ -111,7 +112,7 @@ class Github{
 
     async deployRepository(){
         await this.cloneRepository();
-        global.ptyStore[this.repository._id] = this.createRepositorPTY(this.repository._id);
+        global.ptyStore[this.repository._id] = PTYHandler.create(this.repository._id);
         const newDeployment = await this.createNewDeployment();
         const deploymentId = await this.createGithubDeployment();
         newDeployment.url = `https://github.com/${this.user.github.username}/${this.repository.name}/deployments/${deploymentId}`;
