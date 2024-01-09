@@ -14,8 +14,12 @@
     align-items: center;
 }
 
-.Repository-Deployment-Environment{
+.Repository-Deployment-Created-At-Name{
     font-size: .9rem;
+}
+
+.Repository-Deployment-Environment{
+    font-size: .8rem;
     text-transform: uppercase;
     opacity: .8;
 }

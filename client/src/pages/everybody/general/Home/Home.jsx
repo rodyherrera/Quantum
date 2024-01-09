@@ -10,7 +10,7 @@ const HomePage = () => {
     return (
         <main id='Home-Page-Main'>
             <section id='Home-Left-Container'>
-                <article id='Home-Left-Container-Title-Container'>
+                <article id='Home-Left-Container-Platform-Container'>
                     <h1 id='Home-Left-Container-Title'>Unlock your <br/>entrepreneurial spirit!</h1>
                     <p id='Home-Left-Container-Subtitle'>
                         <span>Invest in applications, not operations.</span>

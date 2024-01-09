@@ -5,6 +5,7 @@
     margin: 0;
     padding: 0;
     outline: none;
+    background-color: transparent;
     list-style-type: none;
     border: none;
 }
@@ -43,6 +44,11 @@ i{
     justify-content: center;
     align-items: center;
     font-size: 1.1rem;
+}
+
+main{
+    /* 79px -> #Header element height */
+    height: calc(100% - 79px);
 }
 
 @media screen and (min-width: 768px) and (max-width: 1366px){

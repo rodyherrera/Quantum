@@ -1,16 +1,16 @@
 #Home-Page-Main{
     padding: 2rem;
-    height: 100%;
 }
 
 #Home-Left-Container{
     height: 100%;
+    padding: 0 1rem 1rem;
 }
 
-#Home-Left-Container-Title-Container{
+#Home-Left-Container-Platform-Container{
     display: flex;
     flex-direction: column;
-    height: 80%;
+    height: 100%;
     justify-content: center;
     gap: 1rem;
 }
@@ -31,5 +31,5 @@
 
 #Home-Left-Container-Actions-Container{
     display: flex;
-    gap: 1rem;
+    gap: 1rem;  
 }

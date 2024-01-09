@@ -10,16 +10,19 @@
 #Header{
     justify-content: space-between;
     width: 100%;
-    padding: 1.5rem 2rem;
+    height: 79px;
+    border-bottom: 1px solid #000000;
 }
 
 #Header-Brand-Container{
     gap: .8rem;
+    padding: 1.5rem 3rem;
     cursor: pointer;
+    border-right: 1px solid #000000;
 }
 
 #Header-Brand-Container:hover{
-    opacity: .8;
+    opacity: .6;
 }
 
 #Header-Brand-Logo{
@@ -27,6 +30,15 @@
     height: 30px;
     border-radius: 50%;
     background-color: #000000;
+}
+
+#Header-Links-Container{
+    display: flex;
+    gap: 2rem;
+}
+
+#Header-Center-Container{
+    width: 50%;
 }
 
 #Header #Header-Left-Container{

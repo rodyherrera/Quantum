@@ -3,7 +3,8 @@ import { Outlet, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '@services/authentication/actions';
 import { authenticateWithCachedToken } from '@services/authentication/utils';
-import Button from '@components/general/Button';
+import HeaderNavItem from '@components/general/HeaderNavItem';
+import HeaderLink from '@components/general/HeaderLink';
 import './Layout.css';
 
 const Layout = () => {
@@ -32,14 +33,24 @@ const Layout = () => {
                         <h1 id='Header-Brand-Title'>Quantum</h1>
                     </article>
                 </section>
+                <section id='Header-Center-Container' className='Header-Child-Container'>
+                    <article id='Header-Links-Container'>
+                        <HeaderLink title='Create Deployment' to='/repository/create/' />
+                        <HeaderLink title='Terms & Privacy' to='/' />
+                        <HeaderLink title='Service Status' to='/' />
+                    </article>
+                </section>
                 <section id='Header-Right-Container' className='Header-Child-Container'>
                     <article id='Header-Navigation-Container'>
                         {isAuthenticated ? (
-                            <Button title='Logout' onClick={() => logout(dispatch)} />
+                            <React.Fragment>
+                                <HeaderNavItem title='Dashboard' to='/dashboard/' />
+                                <HeaderNavItem title='Sign Out' onClick={() => logout(dispatch)} />
+                            </React.Fragment>
                         ) : (
                             <React.Fragment>
-                                <Button title='Sign Up' to='/auth/sign-up' />
-                                <Button title='Sign In' variant='Contained' to='/auth/sign-in/' />
+                                <HeaderNavItem title='Sign Up' to='/auth/sign-up/' />
+                                <HeaderNavItem title='Log In' to='/auth/sign-in/' />
                             </React.Fragment>
                         )}
                     </article>

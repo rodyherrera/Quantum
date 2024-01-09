@@ -1,13 +1,14 @@
 .Minimal-Form-Container{
     padding: 1rem 2rem;
     gap: 2rem;
+    height: calc(100% - 79px);
+    justify-content: center;
 }
 
 .Minimal-Form-Title-Container,
 .Minimal-Form-Container,
 .Minimal-Form-Body-Container{
     display: flex;
-    flex-wrap: wrap;
     flex-direction: column;
 }
 
@@ -25,6 +26,9 @@
 
 .Minimal-Form-Body-Container{
     max-width: 40%;
+    overflow-y: scroll;
+    max-height: 75%;
+    padding: 1px 1.5rem 1px 1px;
     gap: 1.5rem;
 }
 

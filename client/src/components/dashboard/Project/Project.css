@@ -1,14 +1,13 @@
 .Project-Container{
     display: flex;
     flex-wrap: wrap;
-    gap: 2rem;
-    max-height: 200px;
-    min-height: 200px;
+    max-height: 150px;
+    min-height: 150px;
     justify-content: space-between;
     padding: 1rem;
     flex-direction: column;
     cursor: pointer;
-    width: 450px;
+    width: 400px;
     position: relative;
     border: 1px solid #272727;
     border-radius: .2rem;
@@ -16,7 +15,7 @@
 }
 
 .Project-Description{
-    width: calc(450px - 2rem);
+    width: calc(400px - 2rem);
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
@@ -26,9 +25,10 @@
 .Project-Update-Message{
     display: flex;
     flex-wrap: wrap;
-    gap: .3rem;
+    gap: .5rem;
+    align-items: center;
     opacity: .8;
-    font-size: .9rem;
+    font-size: .72rem;
 }
 
 .Project-More-Icon-Container{
@@ -64,7 +64,7 @@
 }
 
 .Project-URL{
-    font-size: .95rem;
+    font-size: .8rem;
     opacity: .8;
 }
 

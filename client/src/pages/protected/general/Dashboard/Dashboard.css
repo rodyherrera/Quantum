@@ -3,11 +3,14 @@
     margin: 0 auto;
     max-width: 1200px;
     display: flex;
-    height: 100%;
     flex-direction: column;
+    gap: 2rem;
     justify-content: center;
-    gap: 3rem;
     position: relative;
+}
+
+#Dashboard-Header-Container{
+    margin-top: 4rem;
 }
 
 #Dashboard-Header-Title-Container{
@@ -27,8 +30,8 @@
 }
 
 #Dashboard-Body-Container{
-    min-height: 450px;
-    max-height: 450px;
+    max-height: 250px;
+    min-height: 250px;
     overflow-y: scroll;
     padding-right: .5rem;
 }

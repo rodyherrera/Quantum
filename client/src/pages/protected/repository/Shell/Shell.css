@@ -1,9 +1,9 @@
 #Repository-Shell-Main{
     display: flex;
     flex-direction: column;
+    padding: 1rem;
     justify-content: center;
-    height: 100%;
-    gap: 3rem;
+    gap: 2rem;
     width: 800px;
     margin: 0 auto;
 }
@@ -23,9 +23,13 @@
     line-height: 1.3rem;
 }
 
-#Repository-Shell{
-    width: 700px;
+#Repository-Shell-Body-Container{
     height: 500px;
+    width: 700px;
+    overflow: hidden;
+}
+
+#Repository-Shell{
     position: relative;
 }
 

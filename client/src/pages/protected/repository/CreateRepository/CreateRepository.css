@@ -2,7 +2,6 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    height: 100%;
     gap: 3rem;
     width: 700px;
     margin: 0 auto;
@@ -45,8 +44,8 @@
     display: flex;
     flex-direction: column;
     gap: .5rem;
-    min-height: 400px;
-    max-height: 400px;
+    min-height: 350px;
+    max-height: 350px;
     overflow-y: scroll;
     padding-right: .5rem;
 }
