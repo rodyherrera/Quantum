@@ -13,7 +13,9 @@ const Layout = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        authenticateWithCachedToken(dispatch);
+        if(!isAuthenticated){
+            authenticateWithCachedToken(dispatch);
+        }
     }, []);
 
     useEffect(() => {
