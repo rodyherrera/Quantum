@@ -1,63 +1,12 @@
 const { Octokit } = require('@octokit/rest');
 const simpleGit = require('simple-git');
 const Deployment = require('../models/deployment');
-const pty = require('node-pty');
-const fs = require('fs');
 
 class Github{
     constructor(user, repository){
         this.user = user;
         this.repository = repository;
         this.octokit = new Octokit({ auth: user.github.accessToken });
-    };
-
-    static getPTYLogPath = (repositoryId) => `${__dirname}/../storage/pty-log/${repositoryId}.log`;
-
-    static storePTYLog(repositoryId){
-        if(!fs.existsSync(`${__dirname}/../storage/pty-log`))
-            fs.mkdirSync(`${__dirname}/../storage/pty-log`);
-        const ptyLog = this.getPTYLog(repositoryId);
-        fs.writeFileSync(this.getPTYLogPath(repositoryId), ptyLog);
-    };
-
-    static clearRuntimePTYLog(repositoryId){
-        global.ptyLog[repositoryId] = '';
-    };
-    
-    static readStoredPTYLog(repositoryId){
-        if(!fs.existsSync(this.getPTYLogPath(repositoryId)))
-            return '';
-        return fs.readFileSync(this.getPTYLogPath(repositoryId)).toString();
-    };
-
-    static getPTYLog(repositoryId){
-        let log = global.ptyLog?.[repositoryId];
-        if(!log) log = this.readStoredPTYLog(repositoryId);
-        return log;
-    };
-
-    static concatPTYLog(repositoryId, log, storeCondition = true){
-        const currentLog = this.getPTYLog(repositoryId);
-        global.ptyLog[repositoryId] = currentLog + log;
-        this.storePTYLog(repositoryId);
-    };
-
-    static getRepositoryPTYOrCreate(repositoryId){
-        if(global.ptyStore[repositoryId])
-            return global.ptyStore[repositoryId];
-        global.ptyStore[repositoryId] = this.createRepositorPTY(repositoryId);
-        return global.ptyStore[repositoryId];
-    };
-
-    static createRepositorPTY(repositoryId){
-        const workingDir = `${__dirname}/../storage/repositories/${repositoryId}/`;
-        const shell = pty.spawn('bash', ['-i'], {
-            name: 'xterm-color',
-            cols: 80,
-            rows: 30,
-            cwd: workingDir,
-        });
-        return shell;
     };
 
     async cloneRepository(){

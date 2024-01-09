@@ -1,7 +1,7 @@
 const { getUserByToken } = require('../middlewares/authentication');
 const RuntimeError = require('../utilities/runtimeError');
 const Repository = require('../models/repository');
-const Github = require('../utilities/github');
+const PTYHandler = require('../utilities/ptyHandler');
 
 const authenticateSocket = async (socket, next) => {
     const { token } = socket.handshake.auth;
@@ -20,28 +20,25 @@ const authenticateSocket = async (socket, next) => {
 
 const handleRepositoryShell = (socket) => {
     const { repository, user } = socket;
-    const prompt = `\x1b[1;92m${user.username}\x1b[0m@\x1b[1;94m${repository.name}:~$\x1b[0m `;
-    let commandInProgress = '';
-    const shell = Github.getRepositoryPTYOrCreate(repository._id);
+    const prompt = `\x1b[1;92m${user.username}\x1b[0m@\x1b[1;94m${repository.name}:~$\x1b[0m`;
+    const PTY = new PTYHandler(repository._id);
+    const shell = PTY.getOrCreate();
 
-    socket.emit('history', Github.getPTYLog(repository._id));
+    socket.emit('history', PTY.getLog());
 
     socket.on('command', (command) => {
         shell.write(command);
-        commandInProgress += command;
     });
 
     shell.on('data', (data) => {
-        if(data.includes(`/repositories/${repository._id}/`) || data.includes('bash-5.0$'))
-            data = prompt;
-        if(data.includes(commandInProgress))
-            Github.concatPTYLog(repository._id, data.replace(commandInProgress, ''));
+        data = data.replace(/.*\$/, prompt);
+        PTY.appendLog(data);
         socket.emit('response', data);
     });
 
-    socket.on('exit', () => {
-        shell.kill();
-        Github.clearRuntimePTYLog(repository._id);
+    shell.on('exit', () => {
+        socket.disconnect();
+        PTY.clearRuntimePTYLog();
     });
 };
 

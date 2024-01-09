@@ -12,7 +12,7 @@ const socketIO = require('socket.io');
 const passport = require('passport');
 const GithubStrategy = require('passport-github').Strategy;
 const { connectToMongoDb } = require('./utilities/runtime');
-const bootHelper = require('./utilities/bootHelper');
+const bootstrap = require('./utilities/bootstrap');
 const globalErrorHandler = require('./controllers/globalErrorHandler');
 const webSocketController = require('./controllers/wsController');
 
@@ -39,7 +39,7 @@ passport.deserializeUser((obj, cb) => {
     cb(null, obj);
 });
 
-bootHelper.standardizedBindingToApp({
+bootstrap.standardizedBindingToApp({
     app,
     suffix: '/api/v1/',
     routes: [
@@ -86,5 +86,6 @@ webSocketController(io);
 
 httpServer.listen(serverPort, serverHostname, async () => {
     await connectToMongoDb();
+    await bootstrap.loadRepositoriesPTYs();
     console.log(`[Quantum Cloud]: Server running at http://${serverHostname}:${serverPort}/`);
 });
