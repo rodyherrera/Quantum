@@ -47,7 +47,7 @@ i{
 }
 
 main{
-    height: calc(100% - 100px);
+    height: calc(100% - 140px);
 }
 
 @media screen and (min-width: 768px) and (max-width: 1366px){
