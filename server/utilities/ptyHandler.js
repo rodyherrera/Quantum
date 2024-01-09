@@ -12,6 +12,9 @@ class PTYHandler {
     };
 
     createLogStream(){
+        if(!fs.existsSync(`${__dirname}/../storage/pty-log`)){
+            fs.mkdirSync(`${__dirname}/../storage/pty-log`);
+        }
         return fs.createWriteStream(this.getLogAbsPath(), { flags: 'a' });
     };
 
