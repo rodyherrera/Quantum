@@ -1,0 +1,41 @@
+#Home-Page-Main{
+    padding: 2rem;
+}
+
+#Home-Left-Container{
+    height: 100%;
+    padding: 0 1rem 1rem;
+}
+
+#Home-Left-Container-Platform-Container{
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    justify-content: center;
+    gap: 1rem;
+}
+
+#Home-Left-Container-Title{
+    font-family: 'Bebas Neue', cursive;
+    font-size: 6rem;
+    font-weight: 600;
+    letter-spacing: 0.13rem;
+}
+
+#Home-Left-Container-Subtitle{
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+}
+
+#Home-Left-Container-Actions-Container{
+    display: flex;
+    gap: 1rem;  
+}
+
+#Circle-Contained-Text-Wrapper{
+    position: absolute;
+    bottom: 5rem;
+    right: .5rem;
+}

@@ -1,0 +1,8 @@
+#Waves-Container{
+    background-color: #000000;
+    height: 300px !important;
+}
+
+#Waves-Container canvas{
+    height: 300px !important;
+}

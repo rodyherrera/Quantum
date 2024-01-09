@@ -1,0 +1,57 @@
+.Minimal-Form-Container{
+    padding: 1rem 2rem;
+    gap: 2rem;
+    height: calc(100% - 139px);
+    justify-content: center;
+}
+
+.Minimal-Form-Title-Container,
+.Minimal-Form-Container,
+.Minimal-Form-Body-Container{
+    display: flex;
+    flex-direction: column;
+}
+
+.Minimal-Form-Title{
+    font-size: 3rem;
+    font-weight: 700;
+    color: #272727;
+}
+
+.Minimal-Form-Subtitle{
+    font-size: 1.3rem;
+    font-weight: 400;
+    color: #272727;
+}
+
+.Minimal-Form-Body-Container{
+    max-width: 40%;
+    overflow-y: scroll;
+    max-height: 75%;
+    padding: 1px 1.5rem 1px 1px;
+    gap: 1.5rem;
+}
+
+.Minimal-Form-Container .MuiCircularProgress-root{
+    color: #FFFFFF;
+    width: 20px !important;
+    height: 20px !important;
+}
+
+@media screen and (max-width: 768px){
+    .Minimal-Form-Container{
+        padding: 1rem;
+    }
+
+    .Minimal-Form-Body-Container{
+        max-width: 100%;
+    }
+
+    .Minimal-Form-Title{
+        font-size: 2rem;
+    }
+
+    .Minimal-Form-Subtitle{
+        font-size: 1rem;
+    }
+}

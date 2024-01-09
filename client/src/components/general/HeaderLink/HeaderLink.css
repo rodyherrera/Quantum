@@ -1,0 +1,11 @@
+.Header-Link-Title{
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    color: #000000;
+}
+
+.Header-Link-Title:hover{
+    opacity: .8;
+    text-decoration: underline;
+}

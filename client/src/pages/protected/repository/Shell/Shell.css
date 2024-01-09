@@ -1,0 +1,49 @@
+#Repository-Shell-Main{
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+    justify-content: center;
+    gap: 2rem;
+    width: 800px;
+    margin: 0 auto;
+}
+
+.xterm .xterm-viewport{
+    border-radius: .5rem;
+}
+
+#Repository-Shell-Title{
+    font-size: 2.5rem;
+}
+
+#Repository-Shell-Title-Container{
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+}
+
+#Repository-Shell-Subtitle{
+    font-size: 1rem;
+    line-height: 1.3rem;
+}
+
+#Repository-Shell-Body-Container{
+    height: 500px;
+    width: 700px;
+    overflow: hidden;
+}
+
+#Repository-Shell{
+    position: relative;
+}
+
+#Socket-Connection-Loading-Container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+    background-color: rgba(0, 0, 0, .7);
+    width: 100%;
+    height: 100%;
+    position: absolute;
+}

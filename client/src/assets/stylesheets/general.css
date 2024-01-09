@@ -1,0 +1,57 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
+
+*{
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    outline: none;
+    background-color: transparent;
+    list-style-type: none;
+    border: none;
+}
+
+body{
+    background-color: #FFFFFF;
+    color: #000000;
+    font-family: 'Times New Roman', Times, serif;
+}
+
+::-webkit-scrollbar-track{
+    background-color: transparent;
+}
+
+::-webkit-scrollbar{
+    width: 2px;
+    height: 2px;
+    background-color: transparent;
+}
+
+::-webkit-scrollbar-thumb{
+    border-radius: 0.5rem;
+    background-color: #000000;
+}
+
+::-webkit-scrollbar-thumb:hover{
+    background-color: #000000;
+}
+
+#QuantumCloud-ROOT, html, body{
+    height: 100%;
+}
+
+i{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.1rem;
+}
+
+main{
+    height: calc(100% - 140px);
+}
+
+@media screen and (min-width: 768px) and (max-width: 1366px){
+    i{
+        font-size: 1.4vw;
+    }
+}

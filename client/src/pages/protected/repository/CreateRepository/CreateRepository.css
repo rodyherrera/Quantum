@@ -1,0 +1,63 @@
+#Create-Repository-Main{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 3rem;
+    width: 700px;
+    margin: 0 auto;
+}
+
+#Create-Repository-Body{
+    position: relative;
+}
+
+#Create-Repository-Body[data-iscreatingrepo="true"]{
+    pointer-events: none;
+}
+
+#Create-Repository-Loading-Container{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+    background-color: rgba(255, 255, 255, .9);
+    display: flex;
+    justify-content: center;
+    align-items:center;
+}
+
+#Create-Repository-Header-Title-Container{
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+}
+
+#Create-Repository-Header-Title{
+    font-size: 3rem;
+}
+
+#Create-Repository-Header-Subtitle{
+    font-size: 1.1rem;
+}
+
+#Github-Account-Repository-List-Container{
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+    min-height: 350px;
+    max-height: 350px;
+    overflow-y: scroll;
+    padding-right: .5rem;
+}
+
+@media screen and (max-width: 768px){
+    #Create-Repository-Main{
+        width: 100%;
+        height: 100%;
+        padding: 1rem;
+    }
+
+    #Github-Account-Repository-List-Container{
+        max-height: 500px;
+    }
+}

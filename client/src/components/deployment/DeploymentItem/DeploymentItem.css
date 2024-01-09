@@ -1,0 +1,63 @@
+.Repository-Deployment-Container{
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    border: 1px solid #000000;
+    align-items: center;
+    padding: 1rem;
+}
+
+.Repository-Deployment-Created-At-Container{
+    display: flex;
+    gap: .5rem;
+    align-items: center;
+}
+
+.Repository-Deployment-Created-At-Name{
+    font-size: .9rem;
+}
+
+.Repository-Deployment-Environment{
+    font-size: .8rem;
+    text-transform: uppercase;
+    opacity: .8;
+}
+
+.Repository-Deployment-Left-Container{
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+}
+
+.Repository-Deployment-Top-Container{
+    display: flex;
+    flex-direction: column;
+    gap: .3rem;
+}
+
+.Repository-Deployment-Extras-Container{
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.Repository-Deployment-User-Image{
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.Repository-Deployment-Container:hover{
+    border-color: #0f62fe;
+}
+
+.Repository-Deployment-More-Icon{
+    cursor: not-allowed;
+}
+
+.Repository-Deployment-User-Image-Container,
+.Repository-Deployment-Delete-Icon{
+    cursor: pointer;
+}

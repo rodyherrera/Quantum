@@ -1,0 +1,77 @@
+.Project-Container{
+    display: flex;
+    flex-wrap: wrap;
+    max-height: 150px;
+    min-height: 150px;
+    justify-content: space-between;
+    padding: 1rem;
+    flex-direction: column;
+    cursor: pointer;
+    width: 400px;
+    position: relative;
+    border: 1px solid #272727;
+    border-radius: .2rem;
+    transition: .5s;
+}
+
+.Project-Description{
+    width: calc(400px - 2rem);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.Project-Update-Message{
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem;
+    align-items: center;
+    opacity: .8;
+    font-size: .72rem;
+}
+
+.Project-More-Icon-Container{
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+}
+
+.Project-Header-Container{
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    height: 40px;
+    align-items: flex-start;
+    width: 100%;
+    gap: 1rem;
+}
+
+.Project-Title-Container{
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 0.2rem;
+}
+
+.Project-Image{
+    border-radius: .2rem;
+    width: 100%;
+    height: 40px;
+    object-fit: cover;
+}
+
+.Project-URL{
+    font-size: .8rem;
+    opacity: .8;
+}
+
+.Project-Container:hover{
+    border-color: #0f62fe;
+}
+
+.Project-Container:hover .Project-Title{
+    text-decoration: underline;
+}
