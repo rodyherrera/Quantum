@@ -3,7 +3,7 @@
     margin: 0 auto;
     max-width: 1200px;
     display: flex;
-    height: 80%;
+    height: 100%;
     flex-direction: column;
     justify-content: center;
     gap: 3rem;

@@ -1,7 +1,7 @@
 const { getUserByToken } = require('../middlewares/authentication');
 const RuntimeError = require('../utilities/runtimeError');
 const Repository = require('../models/repository');
-const pty = require('node-pty');
+const Github = require('../utilities/github');
 
 const authenticateSocket = async (socket, next) => {
     const { token } = socket.handshake.auth;
@@ -20,27 +20,28 @@ const authenticateSocket = async (socket, next) => {
 
 const handleRepositoryShell = (socket) => {
     const { repository, user } = socket;
-    const workingDir = `${__dirname}/../storage/repositories/${repository._id}/`;
-    const shell = pty.spawn('bash', ['-i'], {
-        name: 'xterm-color',
-        cols: 80,
-        rows: 30,
-        cwd: workingDir,
-    });
+    const prompt = `\x1b[1;92m${user.username}\x1b[0m@\x1b[1;94m${repository.name}:~$\x1b[0m `;
+    let commandInProgress = '';
+    const shell = Github.getRepositoryPTYOrCreate(repository._id);
+
+    socket.emit('history', Github.getPTYLog(repository._id));
 
     socket.on('command', (command) => {
         shell.write(command);
+        commandInProgress += command;
     });
 
     shell.on('data', (data) => {
-        if(data.includes(`../storage/repositories/${repository._id}/`)){
-            data = `\x1b[1;92m${user.username}\x1b[0m@\x1b[1;94m${repository.name}:~$\x1b[0m `;
-        }
+        if(data.includes(`/repositories/${repository._id}/`) || data.includes('bash-5.0$'))
+            data = prompt;
+        if(data.includes(commandInProgress))
+            Github.concatPTYLog(repository._id, data.replace(commandInProgress, ''));
         socket.emit('response', data);
     });
 
     socket.on('exit', () => {
         shell.kill();
+        Github.clearRuntimePTYLog(repository._id);
     });
 };
 

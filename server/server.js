@@ -1,4 +1,6 @@
 require('dotenv').config({ path: './.env' });
+global.ptyStore = {};
+global.ptyLog = {};
 
 const express = require('express');
 const cors = require('cors');

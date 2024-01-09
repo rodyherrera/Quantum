@@ -3,7 +3,7 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    height: 85%;
+    height: 100%;
     gap: 2rem;
     flex-direction: column;
     margin: 0 auto;

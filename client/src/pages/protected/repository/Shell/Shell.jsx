@@ -10,7 +10,7 @@ const Shell = () => {
     const { repositoryName } = useParams();
     const [socket, setSocket] = useState(null);
     const [terminal, setTerminal] = useState(null);
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         if(!terminal) return;
@@ -20,6 +20,9 @@ const Shell = () => {
             query: { repositoryName }
         });
         setSocket(socket);
+        socket.on('history', (history) => {
+            terminal.write(history);
+        });
         socket.on('response', (response) => {
             if(terminal.buffer.active.type === 'normal'){
                 setIsLoading(false);

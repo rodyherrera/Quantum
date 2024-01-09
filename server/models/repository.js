@@ -43,6 +43,8 @@ const RepositorySchema = new mongoose.Schema({
     },
 });
 
+// STORE IN RUNTIME
+
 RepositorySchema.plugin(TextSearch);
 RepositorySchema.index({ name: 'text' });
 
