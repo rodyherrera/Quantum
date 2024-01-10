@@ -22,9 +22,9 @@
 
 #Environment-Variables-Container{
     display: flex;
-    width: fit-content;
     flex-direction: column;
     gap: 1rem;
+    width: 100%;
     padding: 1rem 1.5rem 1px 1px;
     overflow-y: scroll;
     height: 100%;
@@ -35,6 +35,7 @@
     flex-direction: column;
     padding: 2rem;
     justify-content: space-between;
+    width: 45%;
     border-right: 1px solid #000000;
 }
 
@@ -42,6 +43,7 @@
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
+    gap: 1rem;
 }
 
 #Environment-Variables-Navigation-Container{
@@ -56,9 +58,9 @@
     text-align: center;
     cursor: pointer;
     align-items: center;
-    width: 200px;
+    width: 40%;
     padding: 1rem;
-    height: 200px;
+    height: 100%;
 }
 
 #Environment-Variables-Actions-Left-Container{
@@ -77,8 +79,8 @@
 }
 
 #Environment-Variables-Body{
-    min-width: 740px;
-    width: 740px;
+    min-width: 55%;
+    width: 55%;
 }
 
 #Environment-Variables-Loader-Container{
@@ -103,7 +105,7 @@
 #Environment-Variables-Delete-Container{
     display: flex;
     cursor: pointer;
-    width: 305px;
+    width: 100%;
     justify-content: center;
     align-items: center;
     background-color: #000000;
@@ -120,4 +122,42 @@
     text-transform: uppercase;
     font-size: 1.3rem;
     line-height: 2rem;
+}
+
+@media screen and (max-width: 768px){
+    #Environment-Variables-Main{
+        flex-direction: column;
+        height: calc(100% - 140px);
+        justify-content: flex-start;
+        gap: 0;
+    }
+
+    #Environment-Variables-Actions-Container{
+        display: none;
+    }
+    
+    #Environment-Variables-Left-Container{
+        width: 100%;
+        padding: 2rem 1rem 1rem;
+    }
+
+    #Environment-Variables-Container{
+        padding: 0;
+        overflow-y: unset;
+    }
+
+    #Environment-Variables-Body{
+        min-width: unset;
+        width: 100%;
+        padding: 1.1rem;
+    }
+    
+    #Environment-Variables-Left-Subtitle{
+        max-width: unset;
+        font-size: .9rem;
+    }
+    
+    #Environment-Variables-Left-Title{
+        font-size: 1.7rem;
+    }
 }

@@ -6,7 +6,7 @@
 
 .Environment-Variable-Key-Container,
 .Environment-Variable-Value-Container{
-    width: 350px;
+    width: 100%;
 }
 
 .Environment-Variable-Container:nth-child(odd) .Environment-Variable-Key-Container .Input-Wrapper-Container,
