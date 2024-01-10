@@ -1,6 +1,6 @@
-const { catchAsync } = require('../utilities/runtime');
-const Github = require('../models/github');
-const HandlerFactory = require('./handlerFactory');
+const { catchAsync } = require('@utilities/runtime');
+const Github = require('@models/github');
+const HandlerFactory = require('@controllers/handlerFactory');
 
 const GithubFactory = new HandlerFactory({
     model: Github,

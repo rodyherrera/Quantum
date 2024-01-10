@@ -39,3 +39,32 @@
     bottom: 5rem;
     right: .5rem;
 }
+
+@media screen and (max-width: 768px){
+    #Home-Page-Main{
+        padding: 0;
+    }
+
+    #Home-Left-Container-Title{
+        font-size: 3rem;
+    }
+
+    #Home-Left-Container{
+        height: 90%;
+    }
+
+    #Home-Left-Container-Subtitle{
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        align-items: flex-start;
+    }
+
+    #Home-Left-Container-Subtitle .Dashed-Container{
+        font-size: 1rem;
+    }
+
+    #Circle-Contained-Text-Wrapper{
+        display: none;
+    }
+}

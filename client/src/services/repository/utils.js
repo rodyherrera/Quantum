@@ -8,6 +8,7 @@ export const handleAction = async (dispatch, action, serviceFunction, body) => {
             await dispatch(repositorySlice.setRepositories(response.data));
             return;
         }
+        return response;
     }catch(error){
         await dispatch(repositorySlice.setError(error));
     }finally{

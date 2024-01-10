@@ -1,8 +1,8 @@
-const Deployment = require('../models/deployment');
-const HandlerFactory = require('./handlerFactory');
-const RuntimeError = require('../utilities/runtimeError');
-const Github = require('../utilities/github');
-const { catchAsync } = require('../utilities/runtime');
+const Deployment = require('@models/deployment');
+const HandlerFactory = require('@controllers/handlerFactory');
+const RuntimeError = require('@utilities/runtimeError');
+const Github = require('@utilities/github');
+const { catchAsync } = require('@utilities/runtime');
 
 const DeploymentFactory = new HandlerFactory({
     model: Deployment,

@@ -1,5 +1,5 @@
-const Repository = require('../models/repository');
-const { catchAsync } = require('../utilities/runtime');
+const Repository = require('@models/repository');
+const { catchAsync } = require('@utilities/runtime');
 
 exports.verifyRepositoryAccess = catchAsync(async (req, res, next) => {
     const { user } = req;

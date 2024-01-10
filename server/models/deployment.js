@@ -44,9 +44,13 @@ const DeploymentSchema = new mongoose.Schema({
 DeploymentSchema.plugin(TextSearch);
 DeploymentSchema.index({ environment: 'text', commit: 'text', url: 'text' });
 
-DeploymentSchema.pre('remove', async function(){
-    await this.model('User').findByIdAndUpdate(this.user, { $pull: { deployments: this._id } });
-    await this.model('Repository').findByIdAndUpdate(this.repository, { $pull: { deployments: this._id } });
+DeploymentSchema.post('findOneAndDelete', function() {
+    const { user, repository, _id } = this;
+
+    const userUpdatePromise = this.model('User').updateOne({ _id: user }, { $pull: { deployments: _id } }).lean().exec();
+    const repoUpdatePromise = this.model('Repository').updateOne({ _id: repository }, { $pull: { deployments: _id } }).lean().exec();
+
+    return Promise.all([userUpdatePromise, repoUpdatePromise]);
 });
 
 const Deployment = mongoose.model('Deployment', DeploymentSchema);

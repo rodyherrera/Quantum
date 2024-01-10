@@ -75,25 +75,29 @@ const UserSchema = new mongoose.Schema({
 UserSchema.plugin(TextSearch);
 UserSchema.index({ username: 'text', fullname: 'text', email: 'text' });
 
-UserSchema.pre('save', async function(next){
-    if(!this.isModified('password'))
-        return next();
-    this.username = this.username.replace(/\s/g, '');
-    this.password = await bcrypt.hash(this.password, 12);
-    this.passwordConfirm = undefined;
-});
-
-UserSchema.pre('remove', async function(next) {
+UserSchema.methods.deleteAssociatedData = async function(){
     await this.model('Github').findOneAndRemove({ user: this._id });
     await this.model('Deployment').deleteMany({ user: this._id });
+};
+
+UserSchema.post('findOneAndDelete', async function(next){
+    await this.deleteAssociatedData();
     next();
 });
 
-UserSchema.pre('save', function(next){
-    if(!this.isModified('password') || this.isNew)
-        return next();
-    this.passwordChangedAt = Date.now() - 1000;
-    next();
+UserSchema.pre('save', async function(next){
+    try{
+        if(!this.isModified('password')) return next();
+        this.username = this.username.replace(/\s/g, '');
+        this.password = await bcrypt.hash(this.password, 12);
+        this.passwordConfirm = undefined;
+        
+        if(!this.isModified('password') || this.isNew) return next();
+        this.passwordChangedAt = Date.now() - 1000;
+        next();
+    }catch(error){
+        next(error);
+    }
 });
 
 UserSchema.methods.isCorrectPassword = async function(candidatePassword, userPassword){
