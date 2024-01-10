@@ -11,11 +11,15 @@ class Github{
         this.octokit = new Octokit({ auth: user.github.accessToken });
     };
 
-    static deleteLogAndDirectory(logPath, directoryPath){
-        fs.unlinkSync(logPath);
-        fs.rmdirSync(directoryPath, { recursive: true });
+    static async deleteLogAndDirectory(logPath, directoryPath){
+        try{
+            await fs.promises.rm(logPath);
+            await fs.promises.rm(directoryPath, { recursive: true });
+        }catch (error){
+            console.error('[Quantum Cloud]: CRITCAL ERROR -> Deletion failed:', error.message);
+        }
     };
-
+    
     async cloneRepository(){
         await simpleGit().clone(this.repository.url, `./storage/repositories/${this.repository._id}`);
     };

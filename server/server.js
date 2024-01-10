@@ -1,6 +1,9 @@
 const dotenv = require('dotenv');
 const moduleAlias = require('module-alias');
 
+global.ptyLog = {};
+global.ptyStore = {};
+
 dotenv.config({ path: './.env' });
 
 moduleAlias.addAliases({

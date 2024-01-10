@@ -5,6 +5,9 @@ class PTYHandler {
     constructor(repositoryId, repositoryDocument){
         this.repositoryId = repositoryId;
         this.repositoryDocument = repositoryDocument;
+        // I think I'm managing this wrong, this stream is being 
+        // created in each class instance and not being 
+        // destroyed, maybe it should also be in this global pty variable.
         this.logStream = this.createLogStream();
     };
 
@@ -19,8 +22,18 @@ class PTYHandler {
     };
 
     clearRuntimePTYLog(){
-        global.ptyLog[this.repositoryId] = '';
+        delete global.ptyLog[this.repositoryId];
         this.logStream.end();
+    };
+
+    removeFromRuntimeStore(){
+        delete global.ptyStore[this.repositoryId];
+    };
+
+    removeFromRuntimeStoreAndKill(){
+        const shell = this.getOrCreate();
+        shell.kill();
+        this.removeFromRuntimeStore();
     };
 
     getPrompt(){
