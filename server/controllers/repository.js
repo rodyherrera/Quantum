@@ -1,8 +1,8 @@
 const axios = require('axios');
-const Repository = require('../models/repository');
-const HandlerFactory = require('./handlerFactory');
-const Github = require('../utilities/github');
-const { catchAsync } = require('../utilities/runtime');
+const Repository = require('@models/repository');
+const HandlerFactory = require('@controllers/handlerFactory');
+const Github = require('@utilities/github');
+const { catchAsync } = require('@utilities/runtime');
 
 const RepositoryFactory = new HandlerFactory({
     model: Repository,

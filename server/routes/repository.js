@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const repositoryController = require('../controllers/repository');
-const repositoryMiddleware = require('../middlewares/repository');
-const authMiddleware = require('../middlewares/authentication');
-const githubMiddleware = require('../middlewares/github');
+const repositoryController = require('@controllers/repository');
+const repositoryMiddleware = require('@middlewares/repository');
+const authMiddleware = require('@middlewares/authentication');
+const githubMiddleware = require('@middlewares/github');
 
 router.use(authMiddleware.protect);
 

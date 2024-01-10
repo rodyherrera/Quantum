@@ -2,7 +2,7 @@ import ServerRequestBuilder from '@utilities/serverRequestBuilder';
 import { getCurrentUserToken } from '@services/authentication/localStorageService';
 import axios from 'axios';
 
-export default class StandardizedAPIRequestBuilder{
+class StandardizedAPIRequestBuilder{
     constructor(endpoint){
         this.endpoint = endpoint;
         this.setError = function(){};
@@ -52,7 +52,7 @@ export default class StandardizedAPIRequestBuilder{
 
     setAuthorizationHeader = () => {
         const authToken = getCurrentUserToken();
-        if (authToken) {
+        if(authToken){
             axios.defaults.headers.common['Authorization'] = `Bearer ${authToken}`;
         }
     };
@@ -81,3 +81,5 @@ export default class StandardizedAPIRequestBuilder{
         };
     };
 };
+
+export default StandardizedAPIRequestBuilder;

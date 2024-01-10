@@ -1,7 +1,8 @@
 const { Octokit } = require('@octokit/rest');
 const simpleGit = require('simple-git');
-const Deployment = require('../models/deployment');
-const PTYHandler = require('./ptyHandler');
+const Deployment = require('@models/deployment');
+const PTYHandler = require('@utilities/ptyHandler');
+const fs = require('fs');
 
 class Github{
     constructor(user, repository){
@@ -10,6 +11,15 @@ class Github{
         this.octokit = new Octokit({ auth: user.github.accessToken });
     };
 
+    static async deleteLogAndDirectory(logPath, directoryPath){
+        try{
+            await fs.promises.rm(logPath);
+            await fs.promises.rm(directoryPath, { recursive: true });
+        }catch (error){
+            console.error('[Quantum Cloud]: CRITCAL ERROR -> Deletion failed:', error.message);
+        }
+    };
+    
     async cloneRepository(){
         await simpleGit().clone(this.repository.url, `./storage/repositories/${this.repository._id}`);
     };

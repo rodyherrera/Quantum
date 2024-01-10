@@ -1,8 +1,8 @@
 const jwt = require('jsonwebtoken');
-const User = require('../models/user');
-const RuntimeError = require('../utilities/runtimeError');
+const User = require('@models/user');
+const RuntimeError = require('@utilities/runtimeError');
 const { promisify } = require('util');
-const { catchAsync } = require('../utilities/runtime');
+const { catchAsync } = require('@utilities/runtime');
 
 exports.getUserByToken = async (token) => {
     const decodedToken = await promisify(jwt.verify)(token, process.env.SECRET_KEY);

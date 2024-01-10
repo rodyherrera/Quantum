@@ -7,8 +7,8 @@ export const getMyGithubRepositories = () => async (dispatch) => {
 };
 
 export const createRepository = (body, navigate) => async (dispatch) => {
-    await handleAction(dispatch, repositorySlice.setIsOperationLoading, repositoryService.createRepository, { body });
-    navigate('/dashboard');
+    const { data } = await handleAction(dispatch, repositorySlice.setIsOperationLoading, repositoryService.createRepository, { body });
+    navigate(`/repository/${data.name}/deployment/setup/`, { state: { repository: data } })
 };
 
 export const getRepositories = () => async (dispatch) => {

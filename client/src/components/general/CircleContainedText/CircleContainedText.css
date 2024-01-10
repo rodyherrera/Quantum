@@ -1,11 +1,29 @@
+@keyframes Circle-Runtime-Anim{
+    0%{ 
+        border-radius: 40% 50% 60% 50%; 
+    }
+    25%{ 
+        border-radius: 60% 70% 47% 90%;
+    }
+    50%{ 
+        border-radius: 42% 60% 42% 40%;
+    }
+    75%{ 
+        border-radius: 45% 50% 45% 50%;
+    }
+    100%{ 
+        border-radius: 38% 45% 34% 50%;
+    }
+}
+
 #Circle-Content-Container{
     display: flex;
     flex-direction: column;
     justify-content: center;
+    animation: Circle-Runtime-Anim 5s infinite alternate;
     padding: 1rem;
     align-items: center;
     gap: 1rem;
-    border-radius: 50%;
     height: 200px;
     width: 200px;
     background-color: #0c0c0c;

@@ -1,6 +1,6 @@
-const APIFeatures = require('../utilities/apiFeatures');
-const RuntimeError = require('../utilities/runtimeError');
-const { catchAsync, filterObject, checkIfSlugOrId } = require('../utilities/runtime');
+const APIFeatures = require('@utilities/apiFeatures');
+const RuntimeError = require('@utilities/runtimeError');
+const { catchAsync, filterObject, checkIfSlugOrId } = require('@utilities/runtime');
 
 module.exports = class HandlerFactory{
     constructor({ model, fields = [] }){

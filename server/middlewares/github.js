@@ -1,5 +1,5 @@
 const passport = require('passport');
-const RuntimeError = require('../utilities/runtimeError');
+const RuntimeError = require('@utilities/runtimeError');
 
 exports.authenticate = (req, res, next) => {
     if(!req.query.userId){

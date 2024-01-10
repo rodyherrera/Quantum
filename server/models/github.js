@@ -27,12 +27,13 @@ GithubSchema.plugin(TextSearch);
 GithubSchema.index({ username: 'text' });
 
 GithubSchema.post('save', async function(){
-    await this.model('User').findByIdAndUpdate(this.user, { github: this._id });
+    const { user, _id } = this;
+    await this.model('User').findByIdAndUpdate(user, { github: _id });
 }); 
 
-GithubSchema.pre('remove', async function(next){
-    await this.model('User').findByIdAndUpdate(this.user, { github: undefined });
-    next();
+GithubSchema.post('findOneAndDelete', async function(){
+    const { user } = this;
+    await this.model('User').findByIdAndUpdate(user, { $unset: { github: 1 } });
 });
 
 const Github = mongoose.model('Github', GithubSchema);

@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
-const User = require('../models/user');
-const HandlerFactory = require('./handlerFactory');
-const { catchAsync, filterObject } = require('../utilities/runtime');
+const User = require('@models/user');
+const HandlerFactory = require('@controllers/handlerFactory');
+const { catchAsync, filterObject } = require('@utilities/runtime');
 
 const UserFactory = new HandlerFactory({
     model: User,
