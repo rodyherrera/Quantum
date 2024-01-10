@@ -124,10 +124,31 @@
     line-height: 2rem;
 }
 
+#Mobile-Environment-Actions-Container{
+    display: none;
+}
+
 @media screen and (max-width: 768px){
+    #Mobile-Environment-Actions-Container{
+        display: block;
+        position: fixed;
+        bottom: 0;
+        background-color: #FFFFFF;
+        width: 100%;
+        z-index: 200;
+        border-top: 1px solid #eeeeee;
+    }
+
+    #Mobile-Environment-Actions{
+        display: flex;
+        padding: 1rem;
+        gap: .5rem;
+    }
+
     #Environment-Variables-Main{
+        position: relative;
         flex-direction: column;
-        height: calc(100% - 140px);
+        height: auto;
         justify-content: flex-start;
         gap: 0;
     }

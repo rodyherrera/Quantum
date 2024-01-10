@@ -1,20 +1,28 @@
 .Environment-Variable-Container{
     display: flex;
-    gap: 1rem;
     align-items: center;
+}
+
+.Environment-Variable-Union{
+    width: 5%;
+    height: 1px;
+    background-color: #101010;
 }
 
 .Environment-Variable-Key-Container,
 .Environment-Variable-Value-Container{
-    width: 100%;
+    width: 45%;
 }
 
-.Environment-Variable-Container:nth-child(odd) .Environment-Variable-Key-Container .Input-Wrapper-Container,
-.Environment-Variable-Container:nth-child(even) .Environment-Variable-Value-Container .Input-Wrapper-Container{
+.Environment-Variable-Container .Environment-Variable-Key-Container .Input-Wrapper-Container{
     background-color: #101010;
 }
 
-.Environment-Variable-Container:nth-child(odd) .Environment-Variable-Key-Container .Input,
-.Environment-Variable-Container:nth-child(even) .Environment-Variable-Value-Container .Input{
+.Environment-Variable-Container .Input{
+    font-size: .8rem;
+}
+
+.Environment-Variable-Container .Environment-Variable-Key-Container .Input{
+    font-weight: bold;
     color: #FFFFFF;
 }

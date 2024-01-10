@@ -78,6 +78,15 @@ const EnvironmentVariables = () => {
                     </article>
                 )}
             </section>
+        
+            {(!isEnvironmentLoading) && (
+                <aside id='Mobile-Environment-Actions-Container'>
+                    <article id='Mobile-Environment-Actions'>
+                        <Button title='Add new variable' />
+                        <Button title='Save changes' variant='Contained' />
+                    </article>
+                </aside>
+            )}
         </main>
     );
 };

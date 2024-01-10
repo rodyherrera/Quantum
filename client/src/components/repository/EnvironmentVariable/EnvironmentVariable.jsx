@@ -29,6 +29,7 @@ const EnvironmentVariable = ({ name, value, index, ...props }) => {
                     name={name} 
                     value={name} /> 
             </div>
+            <div className='Environment-Variable-Union' />
             <div className='Environment-Variable-Value-Container'>
                 <Input 
                     placeholder='Enter a value for the variable.'
