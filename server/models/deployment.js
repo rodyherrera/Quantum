@@ -13,7 +13,6 @@ const DeploymentSchema = new mongoose.Schema({
         required: [true, 'Deployment::Repository::Required'],
     },
     environment: {
-        name: String,
         variables: {
             type: Map,
             of: String,

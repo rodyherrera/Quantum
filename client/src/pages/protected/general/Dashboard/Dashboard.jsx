@@ -50,7 +50,6 @@ const Dashboard = () => {
                             {repositories.map((repository, index) => (
                                 <Project 
                                     key={index} 
-                                    onClick={() => navigate(`/repository/${repository.name}/deployment/setup/`, { state: { repository } })}
                                     repository={repository} />
                             ))}
                         </article>

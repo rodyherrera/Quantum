@@ -10,3 +10,13 @@ export const deleteRepositoryDeployment = DeploymentAPI.register({
     path: '/repository/:repositoryName/:deploymentId',
     method: 'DELETE'
 });
+
+export const getActiveDeploymentEnvironment = DeploymentAPI.register({
+    path: '/repository/:repositoryName/environment/',
+    method: 'GET'
+});
+
+export const updateDeployment = DeploymentAPI.register({
+    path: '/:id/',
+    method: 'PATCH'
+});

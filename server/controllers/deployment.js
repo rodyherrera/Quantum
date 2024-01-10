@@ -1,4 +1,5 @@
 const Deployment = require('@models/deployment');
+const Repository = require('@models/repository');
 const HandlerFactory = require('@controllers/handlerFactory');
 const RuntimeError = require('@utilities/runtimeError');
 const Github = require('@utilities/github');
@@ -41,4 +42,18 @@ exports.deleteGithubDeployment = catchAsync(async (req, res) => {
     if(!deployments)
         throw new RuntimeError('Deployment::Not::Found', 404);
     res.status(200).json({ status: 'success', data: deployments });
+});
+
+exports.getActiveDeploymentEnvironment = catchAsync(async (req, res) => {
+    const { user } = req;
+    const { repositoryName } = req.params;
+    const repository = await Repository
+        .findOne({ name: repositoryName, user: user._id })
+        .select('deployments')
+        .populate('deployments');
+    if(!repository)
+        throw new RuntimeError('Repository::Not::Found');
+    const activeDeployment = repository.deployments[0];
+    const { environment } = activeDeployment;
+    res.status(200).json({ status: 'success', data: environment });
 });

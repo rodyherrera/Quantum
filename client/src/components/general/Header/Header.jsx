@@ -3,7 +3,7 @@ import HeaderNavItem from '@components/general/HeaderNavItem';
 import HeaderLink from '@components/general/HeaderLink';
 import HamburguerMenu from '@components/general/HamburguerMenu';
 import { logout } from '@services/authentication/actions';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import './Header.css';
 
@@ -11,6 +11,7 @@ const Header = () => {
     const [isHamburguerMenuActive, setIsHamburguerMenuActive] = useState(false);
     const { isAuthenticated } = useSelector(state => state.auth);
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     useEffect(() => {
         return () => {

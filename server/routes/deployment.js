@@ -9,6 +9,9 @@ router.use(authMiddleware.protect);
 router.get('/repository/:repositoryName/', 
     githubMiddleware.populateGithubAccount, deploymentController.getRepositoryDeployments);
 
+router.get('/repository/:repositoryName/environment/',
+    githubMiddleware.populateGithubAccount, deploymentController.getActiveDeploymentEnvironment);
+
 router.delete('/repository/:repositoryName/:deploymentId', 
     githubMiddleware.populateGithubAccount, deploymentController.deleteGithubDeployment);
 

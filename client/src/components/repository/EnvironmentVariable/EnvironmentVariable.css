@@ -1,0 +1,20 @@
+.Environment-Variable-Container{
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.Environment-Variable-Key-Container,
+.Environment-Variable-Value-Container{
+    width: 350px;
+}
+
+.Environment-Variable-Container:nth-child(odd) .Environment-Variable-Key-Container .Input-Wrapper-Container,
+.Environment-Variable-Container:nth-child(even) .Environment-Variable-Value-Container .Input-Wrapper-Container{
+    background-color: #101010;
+}
+
+.Environment-Variable-Container:nth-child(odd) .Environment-Variable-Key-Container .Input,
+.Environment-Variable-Container:nth-child(even) .Environment-Variable-Value-Container .Input{
+    color: #FFFFFF;
+}

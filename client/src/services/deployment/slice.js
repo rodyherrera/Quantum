@@ -4,7 +4,9 @@ const state = {
     error: null,
     isLoading: false,
     isOperationLoading: false,
-    deployments: []
+    isEnvironmentLoading: true,
+    deployments: [],
+    environmentVariables: []
 };
 
 const deploymentSlice = createSlice({
@@ -13,6 +15,12 @@ const deploymentSlice = createSlice({
     reducers: {
         setIsLoading: (state, action) => {
             state.isLoading = action.payload;
+        },
+        setIsEnvironmentLoading: (state, action) => {
+            state.isEnvironmentLoading = action.payload;
+        },
+        setEnvironmentVariables: (state, action) => {
+            state.environmentVariables = action.payload;
         },
         setError: (state, action) => {
             state.error = action.payload;
@@ -28,9 +36,11 @@ const deploymentSlice = createSlice({
 
 export const {
     setError,
+    setIsEnvironmentLoading,
     setIsOperationLoading,
     setIsLoading,
-    setDeployments
+    setDeployments,
+    setEnvironmentVariables
 } = deploymentSlice.actions;
 
 export default deploymentSlice.reducer;
