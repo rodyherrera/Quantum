@@ -12,15 +12,17 @@ moduleAlias.addAliases({
     '@controllers': `${__dirname}/controllers/`
 });
 
-const { connectToMongoDb } = require('@utilities/runtime');
+const { httpServer } = require('@config/express');
+const mongoConnector = require('@utilities/mongoConnector');
 const bootstrap = require('@utilities/bootstrap');
-const server = require('@config/express');
+
+require('@config/ws');
 
 const SERVER_PORT = process.env.SERVER_PORT || 8000;
 const SERVER_HOST = process.env.SERVER_HOSTNAME || '0.0.0.0';
 
-server.listen(SERVER_PORT, SERVER_HOST, async () => {
-    await connectToMongoDb();
+httpServer.listen(SERVER_PORT, SERVER_HOST, async () => {
+    await mongoConnector();
     await bootstrap.loadRepositoriesPTYs();
     console.log(`[Quantum Cloud]: Server running at http://${SERVER_HOST}:${SERVER_PORT}/.`);
 });

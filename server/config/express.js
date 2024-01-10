@@ -7,7 +7,6 @@ const socketIO = require('socket.io');
 
 const passport = require('@config/passport');
 const bootstrap = require('@utilities/bootstrap');
-const webSocketController = require('@controllers/wsController');
 const globalErrorHandler = require('@controllers/globalErrorHandler');
 
 const app = express();
@@ -56,6 +55,5 @@ app.all('*', (req, res) => {
 });
 
 app.use(globalErrorHandler);
-webSocketController(io);
 
-module.exports = app;
+module.exports = { app, httpServer, io };
