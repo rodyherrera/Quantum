@@ -30,9 +30,8 @@ GithubSchema.post('save', async function(){
     await this.model('User').findByIdAndUpdate(this.user, { github: this._id });
 }); 
 
-GithubSchema.post('findOneAndDelete', async function(next){
+GithubSchema.post('findOneAndDelete', async function(doc){
     await this.model('User').findByIdAndUpdate(this.user, { github: undefined });
-    next();
 });
 
 const Github = mongoose.model('Github', GithubSchema);

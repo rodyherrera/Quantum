@@ -2,12 +2,18 @@ const { Octokit } = require('@octokit/rest');
 const simpleGit = require('simple-git');
 const Deployment = require('../models/deployment');
 const PTYHandler = require('./ptyHandler');
+const fs = require('fs');
 
 class Github{
     constructor(user, repository){
         this.user = user;
         this.repository = repository;
         this.octokit = new Octokit({ auth: user.github.accessToken });
+    };
+
+    static deleteLogAndDirectory(logPath, directoryPath){
+        fs.unlinkSync(logPath);
+        fs.rmdirSync(directoryPath, { recursive: true });
     };
 
     async cloneRepository(){
