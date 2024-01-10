@@ -43,7 +43,7 @@ const Dashboard = () => {
                     (repositories.length === 0) ? (
                         <article id='Dashboard-Projects-Empty-Container'>
                             <p id='Dashboard-Projects-Empty'>You still don't have projects with us.</p>
-                            <Button title='Create Project' to='/repository/create' variant='primary' />
+                            <Button title='Create Project' to='/repository/create' />
                         </article>
                     ) : (
                         <article id='Dashboard-Projects-Container'>

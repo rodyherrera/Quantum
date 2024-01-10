@@ -16,7 +16,7 @@ const handleDispatch = async (dispatch, action, operation, setIsLoading = false)
 export const getRepositoryDeployments = (repositoryName) => async (dispatch) => {
     const query = { params: { repositoryName } };
     const action = () => deploymentService.getRepositoryDeployments({ query });
-    await handleDispatch(dispatch, action, 'setIsLoading');
+    await handleDispatch(dispatch, action, 'setIsLoading', true);
 };
 
 export const deleteRepositoryDeployment = (repositoryName, deploymentId) => async (dispatch) => {

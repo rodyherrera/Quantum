@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const state = {
     error: null,
-    isLoading: false,
+    isLoading: true,
     isOperationLoading: false,
     isEnvironmentLoading: true,
     deployments: [],
