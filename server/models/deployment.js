@@ -44,7 +44,7 @@ const DeploymentSchema = new mongoose.Schema({
 DeploymentSchema.plugin(TextSearch);
 DeploymentSchema.index({ environment: 'text', commit: 'text', url: 'text' });
 
-DeploymentSchema.pre('remove', async function(){
+DeploymentSchema.post('findOneAndDelete', async function(){
     await this.model('User').findByIdAndUpdate(this.user, { $pull: { deployments: this._id } });
     await this.model('Repository').findByIdAndUpdate(this.repository, { $pull: { deployments: this._id } });
 });

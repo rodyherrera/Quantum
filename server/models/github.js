@@ -30,7 +30,7 @@ GithubSchema.post('save', async function(){
     await this.model('User').findByIdAndUpdate(this.user, { github: this._id });
 }); 
 
-GithubSchema.pre('remove', async function(next){
+GithubSchema.post('findOneAndDelete', async function(next){
     await this.model('User').findByIdAndUpdate(this.user, { github: undefined });
     next();
 });

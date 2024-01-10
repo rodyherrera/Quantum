@@ -2,8 +2,9 @@ const pty = require('node-pty');
 const fs = require('fs');
 
 class PTYHandler {
-    constructor(repositoryId) {
+    constructor(repositoryId, repositoryDocument){
         this.repositoryId = repositoryId;
+        this.repositoryDocument = repositoryDocument;
         this.logStream = this.createLogStream();
     };
 
@@ -21,11 +22,29 @@ class PTYHandler {
         global.ptyLog[this.repositoryId] = '';
         this.logStream.end();
     };
+
+    getPrompt(){
+        const { name, user } = this.repositoryDocument;
+        return `\x1b[1;92m${user.username}\x1b[0m@\x1b[1;94m${name}:~$\x1b[0m`;
+    };
     
     readLog(){
         if(!fs.existsSync(this.getLogAbsPath(this.repositoryId)))
             return '';
         return fs.readFileSync(this.getLogAbsPath(this.repositoryId)).toString();
+    };
+
+    startRepository(){
+        const { buildCommand, installCommand, startCommand } = this.repositoryDocument;
+        const commands = [buildCommand, installCommand, startCommand];
+        const shell = this.getOrCreate();
+        shell.on('data', (data) => {
+            data = data.replace(/.*\$/, this.getPrompt());
+            this.appendLog(data);
+        });
+        for(const command of commands){
+            shell.write(command + '\r\n');
+        }
     };
 
     getLog(){

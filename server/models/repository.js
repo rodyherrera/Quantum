@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 const TextSearch = require('mongoose-partial-search');
 const Github = require('../utilities/github');
+const PTYHandler = require('../utilities/ptyHandler');
+const fs = require('fs');
 
 const RepositorySchema = new mongoose.Schema({
     name: {
@@ -9,15 +11,15 @@ const RepositorySchema = new mongoose.Schema({
     },
     buildCommand: {
         type: String,
-        default: 'npm run build',
+        default: '',
     },
     installCommand: {
         type: String,
-        default: 'npm install',
+        default: '',
     },
     startCommand: {
         type: String,
-        default: 'npm start',
+        default: '',
     },
     rootDirectory: {
         type: String,
@@ -46,9 +48,26 @@ RepositorySchema.plugin(TextSearch);
 RepositorySchema.index({ name: 1, user: 1 }, { unique: true });
 RepositorySchema.index({ name: 'text' });
 
-RepositorySchema.pre('remove', async function(){
+RepositorySchema.post('findOneAndDelete', async function(){
     await this.model('Deployment').deleteMany({ repository: this._id });
     await this.model('User').findByIdAndUpdate(this.user, { $pull: { repositories: this._id } });
+    fs.unlinkSync(`${__dirname}/../storage/pty-log/${this._id}.log`);
+    fs.unlinkSync(`${__dirname}/../storage/repositories/${this._id}/`);
+});
+
+RepositorySchema.post('findOneAndUpdate', async function(next){
+    const { buildCommand, installCommand, startCommand } = this._update;
+    const { _id } = this._conditions;
+    const buildCommandLength = buildCommand.trim().length;
+    const installCommandLength = installCommand.trim().length;
+    const startCommandLength = startCommand.trim().length;
+    if(buildCommandLength && installCommandLength && startCommandLength){
+        const { user, name } = await (await Repository.findById(_id).select('user name')).populate({
+            path: 'user', select: 'username' });
+        const document = { ...{ user, name }, ...this._update };
+        new PTYHandler(_id, document).startRepository();
+    }
+    next();
 });
 
 RepositorySchema.pre('save', async function(next){
@@ -60,10 +79,10 @@ RepositorySchema.pre('save', async function(next){
         await this.model('User').findByIdAndUpdate(this.user, { 
             $push: { repositories: this._id, deployments: deployment._id } 
         });
+        next();
     }catch(error){
         return next(error);
     }
-    next();
 });
 
 const Repository = mongoose.model('Repository', RepositorySchema);

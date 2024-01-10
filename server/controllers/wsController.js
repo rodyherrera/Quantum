@@ -20,8 +20,8 @@ const authenticateSocket = async (socket, next) => {
 
 const handleRepositoryShell = (socket) => {
     const { repository, user } = socket;
-    const prompt = `\x1b[1;92m${user.username}\x1b[0m@\x1b[1;94m${repository.name}:~$\x1b[0m`;
-    const PTY = new PTYHandler(repository._id);
+    repository.user = user;
+    const PTY = new PTYHandler(repository._id, repository);
     const shell = PTY.getOrCreate();
 
     socket.emit('history', PTY.getLog());
@@ -31,7 +31,7 @@ const handleRepositoryShell = (socket) => {
     });
 
     shell.on('data', (data) => {
-        data = data.replace(/.*\$/, prompt);
+        data = data.replace(/.*\$/, PTY.getPrompt());
         PTY.appendLog(data);
         socket.emit('response', data);
     });

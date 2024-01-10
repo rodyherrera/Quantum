@@ -75,21 +75,19 @@ const UserSchema = new mongoose.Schema({
 UserSchema.plugin(TextSearch);
 UserSchema.index({ username: 'text', fullname: 'text', email: 'text' });
 
+UserSchema.post('findOneAndDelete', async function(next) {
+    await this.model('Github').findOneAndRemove({ user: this._id });
+    await this.model('Deployment').deleteMany({ user: this._id });
+    next();
+});
+
 UserSchema.pre('save', async function(next){
     if(!this.isModified('password'))
         return next();
     this.username = this.username.replace(/\s/g, '');
     this.password = await bcrypt.hash(this.password, 12);
     this.passwordConfirm = undefined;
-});
-
-UserSchema.pre('remove', async function(next) {
-    await this.model('Github').findOneAndRemove({ user: this._id });
-    await this.model('Deployment').deleteMany({ user: this._id });
-    next();
-});
-
-UserSchema.pre('save', function(next){
+    
     if(!this.isModified('password') || this.isNew)
         return next();
     this.passwordChangedAt = Date.now() - 1000;
