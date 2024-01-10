@@ -1,6 +1,6 @@
-const { capitalizeToLowerCaseWithDelimitier } = require('./algorithms');
-const Repository = require('../models/repository');
-const PTYHandler = require('../utilities/ptyHandler');
+const { capitalizeToLowerCaseWithDelimitier } = require('@utilities/algorithms');
+const Repository = require('@models/repository');
+const PTYHandler = require('@utilities/ptyHandler');
 
 exports.standardizedBindingToApp = ({ app, routes, suffix, middlewares, settings }) => {
     middlewares.forEach((middleware) => app.use(middleware));

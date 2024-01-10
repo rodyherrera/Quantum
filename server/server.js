@@ -8,13 +8,23 @@ const http = require('http');
 const bodyParser = require('body-parser');
 const session = require('express-session');
 const socketIO = require('socket.io');
+const moduleAlias = require('module-alias');
+
+moduleAlias.addAliases({
+    '@utilities': `${__dirname}/utilities/`,
+    '@routes': `${__dirname}/routes/`,
+    '@models': `${__dirname}/models/`,
+    '@middlewares': `${__dirname}/middlewares/`,
+    '@controllers': `${__dirname}/controllers/`
+});
 
 const passport = require('passport');
 const GithubStrategy = require('passport-github').Strategy;
-const { connectToMongoDb } = require('./utilities/runtime');
-const bootstrap = require('./utilities/bootstrap');
-const globalErrorHandler = require('./controllers/globalErrorHandler');
-const webSocketController = require('./controllers/wsController');
+
+const { connectToMongoDb } = require('@utilities/runtime');
+const bootstrap = require('@utilities/bootstrap');
+const globalErrorHandler = require('@controllers/globalErrorHandler');
+const webSocketController = require('@controllers/wsController');
 
 const app = express();
 const httpServer = http.createServer(app);

@@ -1,7 +1,7 @@
-const { getUserByToken } = require('../middlewares/authentication');
-const RuntimeError = require('../utilities/runtimeError');
-const Repository = require('../models/repository');
-const PTYHandler = require('../utilities/ptyHandler');
+const { getUserByToken } = require('@middlewares/authentication');
+const RuntimeError = require('@utilities/runtimeError');
+const Repository = require('@models/repository');
+const PTYHandler = require('@utilities/ptyHandler');
 
 const authenticateSocket = async (socket, next) => {
     const { token } = socket.handshake.auth;

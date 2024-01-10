@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const TextSearch = require('mongoose-partial-search');
-const Github = require('../utilities/github');
-const PTYHandler = require('../utilities/ptyHandler');
+const Github = require('@utilities/github');
+const PTYHandler = require('@utilities/ptyHandler');
 
 const RepositorySchema = new mongoose.Schema({
     name: {
