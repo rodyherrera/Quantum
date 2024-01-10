@@ -26,3 +26,10 @@
     font-weight: bold;
     color: #FFFFFF;
 }
+
+@media screen and (max-width: 768px){
+    .Environment-Variable-Container .Input{
+        font-size: .7rem;
+        padding: .5rem;
+    }
+}
