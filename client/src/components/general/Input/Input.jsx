@@ -8,8 +8,8 @@ const Input = ({ helperText, endIcon = null, ...props }) => {
             <div className='Input-Wrapper-Container'>
                 <input className='Input' {...props} />
                 {(endIcon) && (
-                    <i className='Input-End-Icon-Container'>
-                        {endIcon}
+                    <i className='Input-End-Icon-Container' {...endIcon.props}>
+                        {endIcon.render}
                     </i>
                 )}
             </div> 

@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { CircularProgress } from '@mui/material';
 import Breadcrumbs from '@components/general/Breadcrumbs';
 import EnvironmentVariable from '@components/repository/EnvironmentVariable';
 import Button from '@components/general/Button';
+import EnvironmentMobileActions from '@components/repository/EnvironmentMobileActions';
 import * as deploymentSlice from '@services/deployment/slice';
 import * as deploymentActions from '@services/deployment/actions';
 import './EnvironmentVariables.css';
@@ -14,22 +15,20 @@ const EnvironmentVariables = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const { environmentVariables, isEnvironmentLoading } = useSelector(state => state.deployment);
-    const [selectedVariable, setSelectedVariable] = useState(null);
     const { repositoryName } = useParams();
 
     useEffect(() => {
         if(!state?.repository)
             return navigate('/dashboard/');
         dispatch(deploymentActions.getActiveDeploymentEnvironment(state.repository.name));
-        return () => {
-            setSelectedVariable(null);
-        };
     }, []);
 
     const handleCreateNew = () => {
-        const lastInserted = environmentVariables[0];
-        const [key] = lastInserted;
-        if(!key.length) return;
+        if(environmentVariables.length){
+            const lastInserted = environmentVariables[0];
+            const [key] = lastInserted;
+            if(!key.length) return;
+        }
         const state = [ ['', ''], ...environmentVariables ];
         dispatch(deploymentSlice.setEnvironmentVariables(state));
     };
@@ -71,27 +70,27 @@ const EnvironmentVariables = () => {
                         <CircularProgress size='2.5rem' />
                     </div>
                 ) : (
-                    <article id='Environment-Variables-Container'>
-                        {environmentVariables.map(([ key, value ], index) => (
-                            <EnvironmentVariable
-                                onClick={() => setSelectedVariable(key)}
-                                value={value}
-                                index={index}
-                                name={key}
-                                key={index} />
-                        ))}
-                    </article>
+                    (environmentVariables.length === 0) ? (
+                        <article id='Environment-Variables-Empty-Container'>
+                            <h3 id='Environment-Variables-Empty-Title'>There are no environment variables to display.</h3>
+                            <Button title='Create new variable' onClick={handleCreateNew} variant='Contained' />
+                        </article>
+                    ) : (
+                        <article id='Environment-Variables-Container'>
+                            {environmentVariables.map(([ key, value ], index) => (
+                                <EnvironmentVariable
+                                    onClick={() => setSelectedVariable(key)}
+                                    value={value}
+                                    index={index}
+                                    name={key}
+                                    key={index} />
+                            ))}
+                        </article>
+                    )
                 )}
             </section>
         
-            {(!isEnvironmentLoading) && (
-                <aside id='Mobile-Environment-Actions-Container'>
-                    <article id='Mobile-Environment-Actions'>
-                        <Button title='Add new variable' />
-                        <Button title='Save changes' variant='Contained' />
-                    </article>
-                </aside>
-            )}
+            {!isEnvironmentLoading && <EnvironmentMobileActions addNewVariableHandler={handleCreateNew} />}
         </main>
     );
 };

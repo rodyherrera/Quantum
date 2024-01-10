@@ -13,12 +13,15 @@ const EnvironmentVariable = ({ name, value, index, ...props }) => {
 
     const updateEnvironmentVariable = (newKey, newValue) => {
         const updatedVariables = environmentVariables.map((variable, i) => {
-            if(i === index){
-                return [newKey, newValue];
-            }
+            if(i === index) return [newKey, newValue];
             return variable;
         });
 
+        dispatch(deploymentSlice.setEnvironmentVariables(updatedVariables));
+    };
+
+    const handleDeletion = () => {
+        const updatedVariables = environmentVariables.filter((_, i) => (i !== index));
         dispatch(deploymentSlice.setEnvironmentVariables(updatedVariables));
     };
 
@@ -52,7 +55,10 @@ const EnvironmentVariable = ({ name, value, index, ...props }) => {
                 <Input 
                     placeholder='Enter a value for the variable.'
                     type='text' 
-                    endIcon={<CiTrash />}
+                    endIcon={{
+                        render: <CiTrash />,
+                        props: { onClick: handleDeletion }
+                    }}
                     onChange={(e) => updateEnvironmentVariable(name, e.target.value)}
                     name={value} 
                     value={value} />
