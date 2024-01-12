@@ -14,7 +14,7 @@ const EnvironmentVariables = () => {
     const { state } = useLocation();
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const { environmentVariables, isEnvironmentLoading } = useSelector(state => state.deployment);
+    const { environmentVariables, isEnvironmentLoading, environment } = useSelector(state => state.deployment);
     const { repositoryName } = useParams();
 
     useEffect(() => {
@@ -22,6 +22,11 @@ const EnvironmentVariables = () => {
             return navigate('/dashboard/');
         dispatch(deploymentActions.getActiveDeploymentEnvironment(state.repository.name));
     }, []);
+
+    const handleEnvironmentUpdate = () => {
+        const body = { environment: { variables: environmentVariables } };
+        dispatch(deploymentActions.updateDeployment(0, body, navigate));
+    };
 
     const handleCreateNew = () => {
         if(environmentVariables.length){
@@ -55,7 +60,7 @@ const EnvironmentVariables = () => {
                     <div id='Environment-Variables-Actions-Left-Container'>
                         <div id='Environment-Variables-Navigation-Container'>
                             <Button title='Go Back' />
-                            <Button title='Save Changes' variant='Contained' />
+                            <Button title='Save Changes' variant='Contained' onClick={handleEnvironmentUpdate} />
                         </div>
                     </div>
                     <div id='Environment-Variables-Create-New-Container' onClick={handleCreateNew}>

@@ -16,9 +16,9 @@ router.get('/me/', githubMiddleware.populateRepositories,
 router.post('/', repositoryController.createRepository);
 
 router.use('/:id', repositoryMiddleware.verifyRepositoryAccess)
-    .get('/:id', repositoryController.getRepository)
-    .patch('/:id', repositoryController.updateRepository)
-    .delete('/:id', repositoryController.deleteRepository);
+    .get(repositoryController.getRepository)
+    .patch(repositoryController.updateRepository)
+    .delete(repositoryController.deleteRepository);
 
 router.use(authMiddleware.restrictTo('admin'));
 router.get('/', repositoryController.getRepositories);

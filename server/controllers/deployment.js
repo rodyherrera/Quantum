@@ -54,6 +54,6 @@ exports.getActiveDeploymentEnvironment = catchAsync(async (req, res) => {
     if(!repository)
         throw new RuntimeError('Repository::Not::Found');
     const activeDeployment = repository.deployments[0];
-    const { environment } = activeDeployment;
-    res.status(200).json({ status: 'success', data: environment });
+    const { environment, _id } = activeDeployment;
+    res.status(200).json({ status: 'success', data: { environment, _id } });
 });

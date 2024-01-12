@@ -30,8 +30,16 @@ export const getActiveDeploymentEnvironment = (repositoryName) => async (dispatc
 
     await handleDispatch(dispatch, async () => {
         const response = await deploymentService.getActiveDeploymentEnvironment({ query });
+        await dispatch(deploymentSlice.setEnvironment(response.data._id));
         const sanitizedData = Object.entries(response.data.variables);
-
         await dispatch(deploymentSlice.setEnvironmentVariables(sanitizedData));
     }, 'setIsEnvironmentLoading', true);
+};
+
+export const updateDeployment = (id, body, navigate) => async (dispatch) => {
+    const query = { params: { id } };
+    await handleDispatch(dispatch, async () => {
+        await deploymentService.updateDeployment({ query, body });
+        navigate('/dashboard/');
+    }, 'setIsLoading', true);
 };
