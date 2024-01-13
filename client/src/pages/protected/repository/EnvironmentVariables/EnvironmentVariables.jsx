@@ -25,7 +25,7 @@ const EnvironmentVariables = () => {
 
     const handleEnvironmentUpdate = () => {
         const body = { environment: { variables: environmentVariables } };
-        dispatch(deploymentActions.updateDeployment(0, body, navigate));
+        dispatch(deploymentActions.updateDeployment(environment._id, body, navigate));
     };
 
     const handleCreateNew = () => {

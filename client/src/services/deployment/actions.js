@@ -30,7 +30,8 @@ export const getActiveDeploymentEnvironment = (repositoryName) => async (dispatc
 
     await handleDispatch(dispatch, async () => {
         const response = await deploymentService.getActiveDeploymentEnvironment({ query });
-        await dispatch(deploymentSlice.setEnvironment(response.data._id));
+        console.log(response);
+        await dispatch(deploymentSlice.setEnvironment(response.data));
         const sanitizedData = Object.entries(response.data.variables);
         await dispatch(deploymentSlice.setEnvironmentVariables(sanitizedData));
     }, 'setIsEnvironmentLoading', true);

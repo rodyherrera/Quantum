@@ -7,7 +7,7 @@ const state = {
     isEnvironmentLoading: true,
     deployments: [],
     // DO IT BETTER, WHY TWO STATES FOR THE SAME REFERENCE!!!!!
-    environment: [],
+    environment: {},
     environmentVariables: []
 };
 

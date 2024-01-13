@@ -15,7 +15,7 @@ router.get('/me/', githubMiddleware.populateRepositories,
 
 router.post('/', repositoryController.createRepository);
 
-router.use('/:id', repositoryMiddleware.verifyRepositoryAccess)
+router.route('/:id', repositoryMiddleware.verifyRepositoryAccess)
     .get(repositoryController.getRepository)
     .patch(repositoryController.updateRepository)
     .delete(repositoryController.deleteRepository);

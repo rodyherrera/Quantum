@@ -16,7 +16,7 @@ router.get('/repository/:repositoryName/environment/',
 router.delete('/repository/:repositoryName/:deploymentId', 
     githubMiddleware.populateGithubAccount, deploymentController.deleteGithubDeployment);
 
-router.use('/:id', deploymentMiddleware.verifyDeploymentAccess)
+router.route('/:id', deploymentMiddleware.verifyDeploymentAccess)
     .get(deploymentController.getDeployment)
     .patch(deploymentController.updateDeployment)
     .delete(deploymentController.deleteDeployment);
