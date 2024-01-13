@@ -49,7 +49,7 @@ class PTYHandler {
 
     startRepository(){
         const { buildCommand, installCommand, startCommand } = this.repositoryDocument;
-        const commands = [buildCommand, installCommand, startCommand];
+        const commands = [installCommand, buildCommand, startCommand];
         const shell = this.getOrCreate();
         shell.on('data', (data) => {
             data = data.replace(/.*\$/, this.getPrompt());

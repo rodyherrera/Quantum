@@ -30,7 +30,7 @@
 #Repository-Shell-Body-Container{
     height: 350px;
     width: 700px;
-    overflow: hidden;
+    overflow: scroll;
 }
 
 #Repository-Shell{
