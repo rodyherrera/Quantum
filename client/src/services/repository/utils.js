@@ -10,7 +10,7 @@ export const handleAction = async (dispatch, action, serviceFunction, body) => {
         }
         return response;
     }catch(error){
-        await dispatch(repositorySlice.setError(error));
+        await dispatch(repositorySlice.setError(error.message));
     }finally{
         await dispatch(action(false));
     }

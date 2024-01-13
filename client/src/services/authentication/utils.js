@@ -10,7 +10,7 @@ export const handleAuthentication = async (dispatch, body, authFunction) => {
         await dispatch(authSlice.setUser(response.data.user));
         await dispatch(authSlice.setIsAuthenticated(true));
     }catch(error){
-        await dispatch(authSlice.setError(error));
+        await dispatch(authSlice.setError(error.message));
     }finally{
         await dispatch(authSlice.setIsLoading(false));
     }
@@ -26,7 +26,7 @@ export const authenticateWithCachedToken = async (dispatch) => {
         await dispatch(authSlice.setUser(authenticatedUser.data));
         await dispatch(authSlice.setIsAuthenticated(true));
     }catch(error){
-        await dispatch(authSlice.setError(error));
+        await dispatch(authSlice.setError(error.message));
     }finally{
         await dispatch(authSlice.setIsCachedAuthLoading(false));
     }

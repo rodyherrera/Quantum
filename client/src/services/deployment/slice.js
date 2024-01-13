@@ -6,9 +6,7 @@ const state = {
     isOperationLoading: false,
     isEnvironmentLoading: true,
     deployments: [],
-    // DO IT BETTER, WHY TWO STATES FOR THE SAME REFERENCE!!!!!
-    environment: {},
-    environmentVariables: []
+    environment: {}
 };
 
 const deploymentSlice = createSlice({
@@ -23,9 +21,6 @@ const deploymentSlice = createSlice({
         },
         setIsEnvironmentLoading: (state, action) => {
             state.isEnvironmentLoading = action.payload;
-        },
-        setEnvironmentVariables: (state, action) => {
-            state.environmentVariables = action.payload;
         },
         setError: (state, action) => {
             state.error = action.payload;
@@ -45,8 +40,7 @@ export const {
     setIsOperationLoading,
     setEnvironment,
     setIsLoading,
-    setDeployments,
-    setEnvironmentVariables
+    setDeployments
 } = deploymentSlice.actions;
 
 export default deploymentSlice.reducer;

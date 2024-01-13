@@ -7,7 +7,7 @@ const handleDispatch = async (dispatch, action, operation, setIsLoading = false)
         const response = await action();
         await dispatch(deploymentSlice.setDeployments(response.data));
     }catch(error){
-        await dispatch(deploymentSlice.setError(error));
+        await dispatch(deploymentSlice.setError(error.message));
     }finally{
         if(setIsLoading) await dispatch(deploymentSlice[operation](false));
     }
@@ -30,10 +30,8 @@ export const getActiveDeploymentEnvironment = (repositoryName) => async (dispatc
 
     await handleDispatch(dispatch, async () => {
         const response = await deploymentService.getActiveDeploymentEnvironment({ query });
-        console.log(response);
+        response.data.variables = Object.entries(response.data.variables);
         await dispatch(deploymentSlice.setEnvironment(response.data));
-        const sanitizedData = Object.entries(response.data.variables);
-        await dispatch(deploymentSlice.setEnvironmentVariables(sanitizedData));
     }, 'setIsEnvironmentLoading', true);
 };
 
@@ -42,5 +40,5 @@ export const updateDeployment = (id, body, navigate) => async (dispatch) => {
     await handleDispatch(dispatch, async () => {
         await deploymentService.updateDeployment({ query, body });
         navigate('/dashboard/');
-    }, 'setIsLoading', true);
+    }, 'setIsOperationLoading', true);
 };

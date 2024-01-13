@@ -9,20 +9,20 @@ const EnvironmentVariable = ({ name, value, index, ...props }) => {
     const dispatch = useDispatch();
     const unionRef = useRef(null);
     const variableContainerRef = useRef(null);
-    const { environmentVariables } = useSelector(state => state.deployment);
+    const { environment } = useSelector(state => state.deployment);
 
     const updateEnvironmentVariable = (newKey, newValue) => {
-        const updatedVariables = environmentVariables.map((variable, i) => {
+        const updatedVariables = environment.variables.map((variable, i) => {
             if(i === index) return [newKey, newValue];
             return variable;
         });
 
-        dispatch(deploymentSlice.setEnvironmentVariables(updatedVariables));
+        dispatch(deploymentSlice.setEnvironment({ ...environment, variables: updatedVariables }));
     };
 
     const handleDeletion = () => {
-        const updatedVariables = environmentVariables.filter((_, i) => (i !== index));
-        dispatch(deploymentSlice.setEnvironmentVariables(updatedVariables));
+        const updatedVariables = environment.variables.filter((_, i) => (i !== index));
+        dispatch(deploymentSlice.setEnvironment({ ...environment, variables: updatedVariables }));
     };
 
     useEffect(() => {

@@ -13,7 +13,7 @@ export const createAccount = (body, navigate) => async (dispatch) => {
         const response = await githubService.createAccount({ body });
         await dispatch(authSlice.setGithubAccount(response.data));
     }catch(error){
-        await dispatch(githubSlice.setError(error));
+        await dispatch(githubSlice.setError(error.message));
     }finally{
         await dispatch(githubSlice.setIsLoading(false));
     }

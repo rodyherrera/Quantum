@@ -63,6 +63,18 @@
     height: 100%;
 }
 
+#Environment-Variables-Operation-Loading-Container{
+    position: absolute;
+    width: 100%;
+    gap: 1.5rem;
+    text-align: center;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(255, 255, 255, .8);
+}
+
 #Environment-Variables-Actions-Left-Container{
     display: flex;
     flex-direction: column;
@@ -71,6 +83,7 @@
 }
 
 #Environment-Variables-Body{
+    position: relative;
     padding-right: .5rem;
     min-width: 55%;
     width: 55%;
