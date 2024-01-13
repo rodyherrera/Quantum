@@ -48,6 +48,11 @@
     color: #FFFFFF;
 }
 
+.Button.Start-Icon{
+    flex-direction: row-reverse;
+    gap: .5rem;
+}
+
 @media screen and (max-width: 768px){
     .Button{
         padding: .5rem .8rem;

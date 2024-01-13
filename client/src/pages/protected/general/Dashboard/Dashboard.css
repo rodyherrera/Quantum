@@ -11,6 +11,11 @@
 
 #Dashboard-Header-Container{
     margin-top: 4rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    width: 100%;
+    align-items: flex-end;
 }
 
 #Dashboard-Header-Title-Container{
@@ -25,13 +30,13 @@
 }
 
 #Dashboard-Header-Subtitle{
-    font-size: 1.1rem;
+    font-size: 1rem;
     font-weight: 400;
 }
 
 #Dashboard-Body-Container{
-    max-height: 250px;
-    min-height: 250px;
+    max-height: 75%;
+    min-height: 75%;
     overflow-y: scroll;
     padding-right: .5rem;
 }
