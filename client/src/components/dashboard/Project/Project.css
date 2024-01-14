@@ -7,19 +7,22 @@
     padding: 1rem;
     flex-direction: column;
     cursor: pointer;
-    width: 400px;
+    width: 360px;
     position: relative;
     border: 1px solid #272727;
     border-radius: .2rem;
     transition: .5s;
 }
 
+
+
 .Project-Description{
-    width: calc(400px - 2rem);
+    width: calc(360px - 2rem);
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
+    font-size: .8rem;
 }
 
 .Project-Update-Message{
@@ -70,6 +73,10 @@
 
 .Project-Container:hover{
     border-color: #0f62fe;
+}
+
+.Project-Title{
+    font-size: 1rem;
 }
 
 .Project-Container:hover .Project-Title{

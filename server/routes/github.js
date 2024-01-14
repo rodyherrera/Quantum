@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const githubController = require('../controllers/github');
-const githubMiddleware = require('../middlewares/github');
-const authMiddleware = require('../middlewares/authentication');
+const githubController = require('@controllers/github');
+const githubMiddleware = require('@middlewares/github');
+const authMiddleware = require('@middlewares/authentication');
 
 router.get('/authenticate/', githubMiddleware.authenticate);
 router.get('/callback/', githubMiddleware.authenticateCallback, githubController.authCallback);

@@ -1,7 +1,6 @@
 {
   "scripts": {
-    "start": "node server.js",
-    "dev": "nodemon server.js"
+    "start": "node server.js"
   },
   "dependencies": {
     "@octokit/rest": "^20.0.2",
@@ -14,10 +13,10 @@
     "express-session": "^1.17.3",
     "http": "*",
     "jsonwebtoken": "^9.0.2",
+    "module-alias": "^2.2.3",
     "mongoose": "^8.0.3",
     "mongoose-partial-search": "^1.0.6",
     "node-pty": "^1.0.0",
-    "nodemon": "^3.0.2",
     "passport": "^0.7.0",
     "passport-github": "^1.1.0",
     "simple-git": "^3.21.0",

@@ -1,0 +1,15 @@
+#Mobile-Environment-Actions-Container{
+    display: none;
+}
+
+@media screen and (max-width: 768px){
+    #Mobile-Environment-Actions-Container{
+        display: block;
+        position: fixed;
+        bottom: 0;
+        background-color: #FFFFFF;
+        width: 100%;
+        z-index: 200;
+        border-top: 1px solid #eeeeee;
+    }
+}

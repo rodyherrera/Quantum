@@ -10,3 +10,11 @@
 .Header-Navigation-Item-Container:hover{
     opacity: .6;
 }
+
+@media screen and (max-width: 768px){
+    .Header-Navigation-Item-Container{
+        padding: .5rem 1rem;
+        font-size: .67rem;
+        height: 50px;
+    }
+}

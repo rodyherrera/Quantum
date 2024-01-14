@@ -1,23 +1,29 @@
 const mongoose = require('mongoose');
 const TextSearch = require('mongoose-partial-search');
-const Github = require('../utilities/github');
+const Github = require('@utilities/github');
+const PTYHandler = require('@utilities/ptyHandler');
+const Deployment = require('@models/deployment');
+const User = require('@models/user');
 
 const RepositorySchema = new mongoose.Schema({
     name: {
         type: String,
         required: [true, 'Repository::Name::Required']
     },
+    webhookId: {
+        type: String
+    },
     buildCommand: {
         type: String,
-        default: 'npm run build',
+        default: '',
     },
     installCommand: {
         type: String,
-        default: 'npm install',
+        default: '',
     },
     startCommand: {
         type: String,
-        default: 'npm start',
+        default: '',
     },
     rootDirectory: {
         type: String,
@@ -46,25 +52,66 @@ RepositorySchema.plugin(TextSearch);
 RepositorySchema.index({ name: 1, user: 1 }, { unique: true });
 RepositorySchema.index({ name: 'text' });
 
-RepositorySchema.pre('remove', async function(){
-    await this.model('Deployment').deleteMany({ repository: this._id });
-    await this.model('User').findByIdAndUpdate(this.user, { $pull: { repositories: this._id } });
+RepositorySchema.post('findOneAndDelete', async function(deletedDoc){
+    await Deployment.deleteMany({ repository: deletedDoc._id });
+    await User.findByIdAndUpdate(deletedDoc.user, { $pull: { repositories: deletedDoc._id } });
+
+    const ptyHandler = new PTYHandler(deletedDoc._id, deletedDoc);
+    ptyHandler.clearRuntimePTYLog();
+    ptyHandler.removeFromRuntimeStoreAndKill();
+
+    await Github.deleteLogAndDirectory(
+        `${__dirname}/../storage/pty-log/${deletedDoc._id}.log`,
+        `${__dirname}/../storage/repositories/${deletedDoc._id}/`
+    );
+
+    // HERE DELETE WEBHOOK
+});
+
+RepositorySchema.pre('findOneAndUpdate', async function(next){
+    try {
+        await handleUpdateCommands(this);
+        next();
+    } catch (error) {
+        next(error);
+    }
 });
 
 RepositorySchema.pre('save', async function(next){
     try{
-        const user = await this.model('User').findById(this.user).populate('github');
-        const github = new Github(user, this);
+        const repositoryUser = await this.model('User')
+            .findById(this.user)
+            .populate('github');
+        const github = new Github(repositoryUser, this);
         const deployment = await github.deployRepository();
+        this.webhookId = await github.createWebhook('http://172.20.10.9:8000/webhook/', 'TEST_SECRET');
         this.deployments.push(deployment._id);
         await this.model('User').findByIdAndUpdate(this.user, { 
             $push: { repositories: this._id, deployments: deployment._id } 
         });
+        next();
     }catch(error){
         return next(error);
     }
-    next();
 });
+
+const handleUpdateCommands = async (context) => {
+    const { buildCommand, installCommand, startCommand } = context._update;
+    const { _id } = context._conditions;
+    const buildCommandLength = buildCommand.trim().length;
+    const installCommandLength = installCommand.trim().length;
+    const startCommandLength = startCommand.trim().length;
+    if(buildCommandLength && installCommandLength && startCommandLength){
+        const { user, name } = await Repository
+            .findById(_id)
+            .select('user name')
+            .populate({ path: 'user', select: 'username' });
+
+        const document = { ...{ user, name }, ...context._update };
+        const ptyHandler = new PTYHandler(_id, document);
+        ptyHandler.startRepository();
+    }
+};
 
 const Repository = mongoose.model('Repository', RepositorySchema);
 

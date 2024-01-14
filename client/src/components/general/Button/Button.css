@@ -5,6 +5,7 @@
     align-items: center;
     cursor: pointer;
     outline: 1px solid #000000;
+    color: #000000;
     background-color: transparent;
 }
 
@@ -45,6 +46,11 @@
 .Button.Form-Contained.Black{
     background-color: #181818;
     color: #FFFFFF;
+}
+
+.Button.Start-Icon{
+    flex-direction: row-reverse;
+    gap: .5rem;
 }
 
 @media screen and (max-width: 768px){

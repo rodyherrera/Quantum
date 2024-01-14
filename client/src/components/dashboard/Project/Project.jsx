@@ -28,8 +28,10 @@ const Project = ({ repository, ...props }) => {
                 className='Project-More-Icon-Container' 
                 options={[
                     { title: 'Delete', onClick: () => dispatch(repositoryActions.deleteRepository(repository._id, repositories, navigate)) },
+                    { title: 'Build & Dev Settings',  onClick: () => navigate(`/repository/${repository.name}/deployment/setup/`, { state: { repository } }) },
+                    { title: 'Environment Variables',  onClick: () => navigate(`/repository/${repository.name}/deployment/environment-variables/`, { state: { repository } }) },
                     { title: 'Deployments', onClick: () => navigate(`/repository/${repository.name}/deployments/`) },
-                    { title: 'Shell', onClick: () => navigate(`/repository/${repository.name}/shell/`) },
+                    { title: 'Shell', onClick: () => navigate(`/repository/${repository.name}/shell/`) }
                 ]}
             >
                 <i>

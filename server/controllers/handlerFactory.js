@@ -1,6 +1,6 @@
-const APIFeatures = require('../utilities/apiFeatures');
-const RuntimeError = require('../utilities/runtimeError');
-const { catchAsync, filterObject, checkIfSlugOrId } = require('../utilities/runtime');
+const APIFeatures = require('@utilities/apiFeatures');
+const RuntimeError = require('@utilities/runtimeError');
+const { catchAsync, filterObject, checkIfSlugOrId } = require('@utilities/runtime');
 
 module.exports = class HandlerFactory{
     constructor({ model, fields = [] }){
@@ -19,7 +19,7 @@ module.exports = class HandlerFactory{
     });
 
     updateOne = () => catchAsync(async (req, res, next) => {
-        const queryFilter = { ...filterObject(req.body, ...this.fields) };
+        const queryFilter = filterObject(req.body, ...this.fields)
         const databaseRecord = await this.model.findOneAndUpdate(checkIfSlugOrId(req.params.id),
             queryFilter, { new: true, runValidators: true });
         if(!databaseRecord)
@@ -31,7 +31,7 @@ module.exports = class HandlerFactory{
     });
 
     createOne = () => catchAsync(async (req, res) => {
-        const queryFilter = { ...filterObject(req.body, ...this.fields) };
+        const queryFilter = filterObject(req.body, ...this.fields);
         const databaseRecord = await this.model.create(queryFilter);
         res.status(201).json({
             status: 'success',

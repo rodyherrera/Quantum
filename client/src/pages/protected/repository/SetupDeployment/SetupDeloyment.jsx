@@ -17,7 +17,6 @@ const SetupDeployment = () => {
     };
 
     useEffect(() => {
-        console.log(state);
         if(!state?.repository)
             return navigate('/dashboard/');
     }, [state]);

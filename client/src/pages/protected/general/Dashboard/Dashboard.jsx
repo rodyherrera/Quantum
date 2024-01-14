@@ -3,7 +3,7 @@ import Project from '@components/dashboard/Project';
 import Button from '@components/general/Button';
 import { useSelector, useDispatch } from 'react-redux';
 import { getRepositories } from '@services/repository/actions';
-import { useNavigate } from 'react-router-dom';
+import { HiPlus } from 'react-icons/hi';
 import { CircularProgress } from '@mui/material';
 import * as repositoriesSlice from '@services/repository/slice';
 import './Dashboard.css';
@@ -11,7 +11,6 @@ import './Dashboard.css';
 const Dashboard = () => {
     const { repositories, isLoading, isOperationLoading } = useSelector(state => state.repository);
     const dispatch = useDispatch();
-    const navigate = useNavigate();
 
     useEffect(() => {
         dispatch(getRepositories());
@@ -34,6 +33,13 @@ const Dashboard = () => {
                     <h1 id='Dashboard-Header-Title'>Dashboard</h1>
                     <p id='Dashboard-Header-Subtitle'>The instances of your applications stored on the server.</p>
                 </article>
+                <article id='Dashboard-Header-Actions-Container'>
+                    <Button 
+                        to='/repository/create/'
+                        title='Create new' 
+                        variant='Contained Start-Icon' 
+                        icon={<HiPlus />} />
+                </article>
             </section>
 
             <section id='Dashboard-Body-Container'>
@@ -43,14 +49,13 @@ const Dashboard = () => {
                     (repositories.length === 0) ? (
                         <article id='Dashboard-Projects-Empty-Container'>
                             <p id='Dashboard-Projects-Empty'>You still don't have projects with us.</p>
-                            <Button title='Create Project' to='/repository/create' variant='primary' />
+                            <Button title='Create Project' to='/repository/create' />
                         </article>
                     ) : (
                         <article id='Dashboard-Projects-Container'>
                             {repositories.map((repository, index) => (
                                 <Project 
                                     key={index} 
-                                    onClick={() => navigate(`/repository/${repository.name}/deployment/setup/`, { state: { repository } })}
                                     repository={repository} />
                             ))}
                         </article>

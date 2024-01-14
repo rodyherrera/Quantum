@@ -2,8 +2,12 @@ const pty = require('node-pty');
 const fs = require('fs');
 
 class PTYHandler {
-    constructor(repositoryId) {
+    constructor(repositoryId, repositoryDocument){
         this.repositoryId = repositoryId;
+        this.repositoryDocument = repositoryDocument;
+        // I think I'm managing this wrong, this stream is being 
+        // created in each class instance and not being 
+        // destroyed, maybe it should also be in this global pty variable.
         this.logStream = this.createLogStream();
     };
 
@@ -18,14 +22,42 @@ class PTYHandler {
     };
 
     clearRuntimePTYLog(){
-        global.ptyLog[this.repositoryId] = '';
+        delete global.ptyLog[this.repositoryId];
         this.logStream.end();
+    };
+
+    removeFromRuntimeStore(){
+        delete global.ptyStore[this.repositoryId];
+    };
+
+    removeFromRuntimeStoreAndKill(){
+        const shell = this.getOrCreate();
+        shell.kill();
+        this.removeFromRuntimeStore();
+    };
+
+    getPrompt(){
+        const { name, user } = this.repositoryDocument;
+        return `\x1b[1;92m${user.username}\x1b[0m@\x1b[1;94m${name}:~$\x1b[0m`;
     };
     
     readLog(){
         if(!fs.existsSync(this.getLogAbsPath(this.repositoryId)))
             return '';
         return fs.readFileSync(this.getLogAbsPath(this.repositoryId)).toString();
+    };
+
+    startRepository(){
+        const { buildCommand, installCommand, startCommand } = this.repositoryDocument;
+        const commands = [installCommand, buildCommand, startCommand];
+        const shell = this.getOrCreate();
+        shell.on('data', (data) => {
+            data = data.replace(/.*\$/, this.getPrompt());
+            this.appendLog(data);
+        });
+        for(const command of commands){
+            shell.write(command + '\r\n');
+        }
     };
 
     getLog(){

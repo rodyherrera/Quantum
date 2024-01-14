@@ -1,7 +1,8 @@
 const { Octokit } = require('@octokit/rest');
 const simpleGit = require('simple-git');
-const Deployment = require('../models/deployment');
-const PTYHandler = require('./ptyHandler');
+const Deployment = require('@models/deployment');
+const PTYHandler = require('@utilities/ptyHandler');
+const fs = require('fs');
 
 class Github{
     constructor(user, repository){
@@ -10,6 +11,15 @@ class Github{
         this.octokit = new Octokit({ auth: user.github.accessToken });
     };
 
+    static async deleteLogAndDirectory(logPath, directoryPath){
+        try{
+            await fs.promises.rm(logPath);
+            await fs.promises.rm(directoryPath, { recursive: true });
+        }catch (error){
+            console.error('[Quantum Cloud]: CRITCAL ERROR -> Deletion failed:', error.message);
+        }
+    };
+    
     async cloneRepository(){
         await simpleGit().clone(this.repository.url, `./storage/repositories/${this.repository._id}`);
     };
@@ -92,6 +102,38 @@ class Github{
             latestCommit: latestCommit.commit.author.date
         };
         return information;
+    };
+
+    async createWebhook(webhookUrl, webhookSecret){
+        const response = await this.octokit.repos.createWebhook({
+            owner: this.user.github.username,
+            repo: this.repository.name,
+            name: 'web',
+            config: {
+                url: webhookUrl,
+                content_type: 'json',
+                secret: webhookSecret
+            },
+            events: ['push'],
+            active: true
+        });
+        console.log(response);
+        const { id } = response.data;
+        return id;
+    };
+
+    async deleteWebhook(webhookId){
+        try{
+            const response = await this.octokit.repos.deleteWebhook({
+                owner: this.user.github.username,
+                repo: this.repository.name,
+                hook_id: webhookId
+            });
+            return response;
+        }catch (error){
+            console.error('[Quantum Cloud]: Error deleting webhook:', error.message);
+            throw error;
+        }
     };
 
     async getRepositoryDeployments(){
