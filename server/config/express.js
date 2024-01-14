@@ -20,6 +20,7 @@ bootstrap.standardizedBindingToApp({
         'github',
         'auth',
         'repository',
+        'webhook',
         'deployment'
     ],
     middlewares: [

@@ -10,6 +10,9 @@ const RepositorySchema = new mongoose.Schema({
         type: String,
         required: [true, 'Repository::Name::Required']
     },
+    webhookId: {
+        type: String
+    },
     buildCommand: {
         type: String,
         default: '',
@@ -61,6 +64,8 @@ RepositorySchema.post('findOneAndDelete', async function(deletedDoc){
         `${__dirname}/../storage/pty-log/${deletedDoc._id}.log`,
         `${__dirname}/../storage/repositories/${deletedDoc._id}/`
     );
+
+    // HERE DELETE WEBHOOK
 });
 
 RepositorySchema.pre('findOneAndUpdate', async function(next){
@@ -79,6 +84,7 @@ RepositorySchema.pre('save', async function(next){
             .populate('github');
         const github = new Github(repositoryUser, this);
         const deployment = await github.deployRepository();
+        this.webhookId = await github.createWebhook('http://172.20.10.9:8000/webhook/', 'TEST_SECRET');
         this.deployments.push(deployment._id);
         await this.model('User').findByIdAndUpdate(this.user, { 
             $push: { repositories: this._id, deployments: deployment._id } 

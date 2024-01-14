@@ -104,6 +104,38 @@ class Github{
         return information;
     };
 
+    async createWebhook(webhookUrl, webhookSecret){
+        const response = await this.octokit.repos.createWebhook({
+            owner: this.user.github.username,
+            repo: this.repository.name,
+            name: 'web',
+            config: {
+                url: webhookUrl,
+                content_type: 'json',
+                secret: webhookSecret
+            },
+            events: ['push'],
+            active: true
+        });
+        console.log(response);
+        const { id } = response.data;
+        return id;
+    };
+
+    async deleteWebhook(webhookId){
+        try{
+            const response = await this.octokit.repos.deleteWebhook({
+                owner: this.user.github.username,
+                repo: this.repository.name,
+                hook_id: webhookId
+            });
+            return response;
+        }catch (error){
+            console.error('[Quantum Cloud]: Error deleting webhook:', error.message);
+            throw error;
+        }
+    };
+
     async getRepositoryDeployments(){
         const { data: deployments } = await this.octokit.repos.listDeployments({
             owner: this.user.github.username,
