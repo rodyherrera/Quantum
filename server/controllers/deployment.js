@@ -53,7 +53,9 @@ exports.getActiveDeploymentEnvironment = catchAsync(async (req, res) => {
         .populate('deployments');
     if(!repository)
         throw new RuntimeError('Repository::Not::Found');
-    const activeDeployment = repository.deployments[0];
+    // Is .slice(-1) the correct way of retrieve the last
+    // item of deployments array?
+    const activeDeployment = repository.deployments.pop();
     const { environment, _id } = activeDeployment;
     res.status(200).json({ status: 'success', data: { ...environment, _id } });
 });

@@ -64,15 +64,14 @@ RepositorySchema.post('findOneAndDelete', async function(deletedDoc){
         `${__dirname}/../storage/pty-log/${deletedDoc._id}.log`,
         `${__dirname}/../storage/repositories/${deletedDoc._id}/`
     );
-
     // HERE DELETE WEBHOOK
 });
 
 RepositorySchema.pre('findOneAndUpdate', async function(next){
-    try {
+    try{
         await handleUpdateCommands(this);
         next();
-    } catch (error) {
+    }catch (error){
         next(error);
     }
 });
@@ -84,7 +83,8 @@ RepositorySchema.pre('save', async function(next){
             .populate('github');
         const github = new Github(repositoryUser, this);
         const deployment = await github.deployRepository();
-        this.webhookId = await github.createWebhook('http://172.20.10.9:8000/webhook/', 'TEST_SECRET');
+        const webhookEndpoint = `${process.env.DOMAIN}/api/v1/webhook/${this._id}/`;
+        this.webhookId = await github.createWebhook(webhookEndpoint, process.env.SECRET_KEY)
         this.deployments.push(deployment._id);
         await this.model('User').findByIdAndUpdate(this.user, { 
             $push: { repositories: this._id, deployments: deployment._id } 
