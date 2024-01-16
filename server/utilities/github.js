@@ -122,12 +122,12 @@ class Github{
         return id;
     };
 
-    async deleteWebhook(webhookId){
+    async deleteWebhook(){
         try{
             const response = await this.octokit.repos.deleteWebhook({
                 owner: this.user.github.username,
                 repo: this.repository.name,
-                hook_id: webhookId
+                hook_id: this.repository.webhookId
             });
             return response;
         }catch (error){

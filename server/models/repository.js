@@ -53,8 +53,12 @@ RepositorySchema.index({ name: 1, user: 1 }, { unique: true });
 RepositorySchema.index({ name: 'text' });
 
 RepositorySchema.post('findOneAndDelete', async function(deletedDoc){
+    const repositoryUser = await User
+        .findByIdAndUpdate(deletedDoc.user, { 
+            $pull: { repositories: deletedDoc._id } 
+        })
+        .populate('github');
     await Deployment.deleteMany({ repository: deletedDoc._id });
-    await User.findByIdAndUpdate(deletedDoc.user, { $pull: { repositories: deletedDoc._id } });
 
     const ptyHandler = new PTYHandler(deletedDoc._id, deletedDoc);
     ptyHandler.clearRuntimePTYLog();
@@ -64,7 +68,9 @@ RepositorySchema.post('findOneAndDelete', async function(deletedDoc){
         `${__dirname}/../storage/pty-log/${deletedDoc._id}.log`,
         `${__dirname}/../storage/repositories/${deletedDoc._id}/`
     );
-    // HERE DELETE WEBHOOK
+    
+    const github = new Github(repositoryUser, deletedDoc);
+    await github.deleteWebhook();
 });
 
 RepositorySchema.pre('findOneAndUpdate', async function(next){
