@@ -49,13 +49,23 @@ class Github{
     };
 
     async createNewDeployment(){
+        const environmentVariables = await this.readEnvironmentVariables();
+        const currentDeployment = this.repository.deployments.pop();
+        if(currentDeployment){
+            const { environment } = await Deployment.findById(currentDeployment._id);
+            for(const [key, value] of environment.variables.entries()){
+                if(!(key in environmentVariables)){
+                    continue;
+                }
+                environmentVariables[key] = value;
+            }
+        }
         const latestCommit = await this.getLatestCommit();
         const newDeployment = new Deployment({
             user: this.user._id,
             repository: this.repository._id,
             environment: {
-                name: 'production',
-                variables: await this.readEnvironmentVariables()
+                variables: environmentVariables
             },
             commit: {
                 message: latestCommit.commit.message,
