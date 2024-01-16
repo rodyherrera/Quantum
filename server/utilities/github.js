@@ -49,6 +49,8 @@ class Github{
     };
 
     async createNewDeployment(){
+        const pty = new PTYHandler(this.repository._id, this.repository);
+        pty.removeFromRuntimeStoreAndKill();
         const environmentVariables = await this.readEnvironmentVariables();
         const currentDeployment = this.repository.deployments.pop();
         if(currentDeployment){
