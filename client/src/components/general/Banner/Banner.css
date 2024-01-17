@@ -1,0 +1,13 @@
+#Banner-Container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: .5rem 0;
+    color: #FFFFFF;
+    background-color: #000000;
+}
+
+#Banner-Text{
+    font-size: .8rem;
+    font-family: Roboto;
+}

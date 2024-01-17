@@ -1,13 +1,14 @@
 #Home-Page-Main{
+    position: relative;
     padding: 2rem;
 }
 
-#Home-Left-Container{
+#Home-Presentation-Container{
     height: 100%;
     padding: 0 1rem 1rem;
 }
 
-#Home-Left-Container-Platform-Container{
+#Home-Presentation-Container-Platform-Container{
     display: flex;
     flex-direction: column;
     height: 100%;
@@ -15,28 +16,33 @@
     gap: 1rem;
 }
 
-#Home-Left-Container-Title{
+#Home-Presentation-Container-Title{
     font-family: 'Bebas Neue', cursive;
     font-size: 6rem;
     font-weight: 600;
     letter-spacing: 0.13rem;
 }
 
-#Home-Left-Container-Subtitle{
+#Home-Presentation-Container-Subtitle{
     font-size: 1.2rem;
     display: flex;
     align-items: center;
     gap: .5rem;
 }
 
-#Home-Left-Container-Actions-Container{
+#Home-Presentation-Container-Actions-Container{
     display: flex;
     gap: 1rem;  
 }
 
+#Docs-Button{
+    position: absolute;
+    right: 2rem;
+}
+
 #Circle-Contained-Text-Wrapper{
     position: absolute;
-    bottom: 5rem;
+    bottom: 1rem;
     right: .5rem;
 }
 
@@ -45,22 +51,22 @@
         padding: 0;
     }
 
-    #Home-Left-Container-Title{
+    #Home-Presentation-Container-Title{
         font-size: 3rem;
     }
 
-    #Home-Left-Container{
+    #Home-Presentation-Container{
         height: 90%;
     }
 
-    #Home-Left-Container-Subtitle{
+    #Home-Presentation-Container-Subtitle{
         display: flex;
         flex-direction: column;
         gap: 1rem;
         align-items: flex-start;
     }
 
-    #Home-Left-Container-Subtitle .Dashed-Container{
+    #Home-Presentation-Container-Subtitle .Dashed-Container{
         font-size: 1rem;
     }
 

@@ -3,6 +3,7 @@ import { Outlet, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { authenticateWithCachedToken } from '@services/authentication/utils';
 import Waves from '@components/general/Waves';
+import Banner from '@components/general/Banner';
 import Header from '@components/general/Header';
 import './Layout.css';
 
@@ -26,6 +27,7 @@ const Layout = () => {
 
     return (
         <React.Fragment>
+            <Banner text='We make your production deployment a little easier. 🎉️' />
             <Header />
             <Outlet />
             <Waves />

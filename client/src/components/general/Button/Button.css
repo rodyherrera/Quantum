@@ -50,6 +50,10 @@
 
 .Button.Start-Icon{
     flex-direction: row-reverse;
+}
+
+.Button.End-Icon,
+.Button.Start-Icon{
     gap: .5rem;
 }
 
