@@ -1,11 +1,13 @@
 #Home-Page-Main{
     position: relative;
-    padding: 2rem;
 }
 
 #Home-Presentation-Container{
     height: 100%;
-    padding: 0 1rem 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 0 2rem 1rem;
 }
 
 #Home-Presentation-Container-Platform-Container{
@@ -38,19 +40,16 @@
 #Docs-Button{
     position: absolute;
     right: 2rem;
+    top: 3rem;
 }
 
 #Circle-Contained-Text-Wrapper{
     position: absolute;
     bottom: 1rem;
-    right: .5rem;
+    right: 1rem;
 }
 
 @media screen and (max-width: 768px){
-    #Home-Page-Main{
-        padding: 0;
-    }
-
     #Home-Presentation-Container-Title{
         font-size: 3rem;
     }

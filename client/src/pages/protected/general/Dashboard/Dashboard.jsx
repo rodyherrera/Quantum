@@ -37,7 +37,7 @@ const Dashboard = () => {
                     <Button 
                         to='/repository/create/'
                         title='Create new' 
-                        variant='Contained Start-Icon' 
+                        variant='Contained End-Icon' 
                         icon={<HiPlus />} />
                 </article>
             </section>
