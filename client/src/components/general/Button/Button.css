@@ -19,7 +19,7 @@
 
 .Button.Contained{
     background-color: #272727;
-    color: #FFFFFF;
+    color: #F5F5F5;
 }
 
 .Button:hover{
@@ -35,7 +35,7 @@
     padding: .9rem 1.5rem;
     gap: 8rem;
     background-color: #0f62fe;
-    color: #FFFFFF;
+    color: #F5F5F5;
     outline: none;
 }
 
@@ -45,7 +45,7 @@
 
 .Button.Form-Contained.Black{
     background-color: #181818;
-    color: #FFFFFF;
+    color: #F5F5F5;
 }
 
 .Button.Start-Icon{

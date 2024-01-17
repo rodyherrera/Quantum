@@ -24,7 +24,7 @@
 
 .Environment-Variable-Container .Environment-Variable-Key-Container .Input{
     font-weight: bold;
-    color: #FFFFFF;
+    color: #F5F5F5;
 }
 
 @media screen and (max-width: 768px){

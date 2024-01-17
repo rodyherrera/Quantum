@@ -27,7 +27,7 @@
     height: 200px;
     width: 200px;
     background-color: #0c0c0c;
-    color: #FFFFFF;
+    color: #F5F5F5;
     border: 1px solid #000000;
     transition: all .1s ease-in-out;
     text-align: center;
@@ -35,7 +35,7 @@
 }
 
 #Circle-Content-Container:hover{
-    background-color: #FFFFFF;
+    background-color: #f5f5f5;
     color: #000000;
 }
 
