@@ -82,6 +82,16 @@ class Github{
         return newDeployment;
     };
 
+    async updateDeploymentStatus(deploymentId, state){
+        await this.octokit.repos.createDeploymentStatus({
+            owner: this.user.github.username,
+            repo: this.repository.name,
+            deployment_id: deploymentId,
+            // state -> ['success', 'failure', 'error', 'inactive', 'in_progress']
+            state
+        });
+    };
+
     async createGithubDeployment(){
         const { data: { id: deploymentId } } = await this.octokit.repos.createDeployment({
             owner: this.user.github.username,
@@ -172,6 +182,7 @@ class Github{
         newDeployment.url = `https://github.com/${this.user.github.username}/${this.repository.name}/deployments/${deploymentId}`;
         newDeployment.status = 'success';
         await newDeployment.save();
+        await this.updateDeploymentStatus(deploymentId, 'success');
         return newDeployment;
     };
 };
