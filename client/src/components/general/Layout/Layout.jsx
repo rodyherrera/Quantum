@@ -31,7 +31,7 @@ const Layout = () => {
         <React.Fragment>
             <ClickSpark />
             <SquaredBackground />
-            <Banner text='We make your production deployment a little easier. 🎉️' />
+            <Banner text='We sprinkle magic to ease your production deployment. 🎉️' />
             <Header />
             <Outlet />
             <Waves />

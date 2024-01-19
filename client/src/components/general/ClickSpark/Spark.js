@@ -52,10 +52,28 @@ class Spark extends HTMLElement{
 
     setupSpark(){
         let template = `
-            <svg width="30" height="30" viewBox="0 0 100 100" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="4">
+            <style>
+                :host{
+                    display: contents;
+                }
+                
+                .Click-Spark-SVG{
+                    pointer-events: none;
+                    position: absolute;
+                    rotate: -20deg;
+                    stroke: var(--click-spark-color, currentcolor);
+                }
+        
+                .Click-Spark-Line{
+                    stroke-dasharray: 30;
+                    stroke-dashoffset: 30;
+                    transform-origin: center;
+                }
+            </style>
+            <svg class='Click-Spark-SVG' width="30" height="30" viewBox="0 0 100 100" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="4">
                 ${Array.from(
                     { length: 8 },
-                    (_) => `<line x1="50" y1="30" x2="50" y2="4"/>`
+                    (_) => `<line class='Click-Spark-Line x1="50" y1="30" x2="50" y2="4"/>`
                 ).join('')}
             </svg>
         `;

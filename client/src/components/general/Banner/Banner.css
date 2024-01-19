@@ -11,3 +11,9 @@
     font-size: .8rem;
     font-family: Roboto;
 }
+
+@media screen and (max-width: 768px){
+    #Banner-Text{
+        font-size: .75rem;
+    }
+}
