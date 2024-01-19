@@ -3,7 +3,11 @@ import './Spark';
 import './ClickSpark.css';
 
 const ClickSparkWrapper = () => {
-    return <click-spark />
+    return (
+        <div className='Click-Spark-Wrapper'>
+            <click-spark />
+        </div>
+    );
 };
 
 export default ClickSparkWrapper;

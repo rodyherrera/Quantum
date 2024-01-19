@@ -52,24 +52,6 @@ class Spark extends HTMLElement{
 
     setupSpark(){
         let template = `
-            <style>
-                :host{
-                    display: contents;
-                }
-                
-                svg{
-                    pointer-events: none;
-                    position: absolute;
-                    rotate: -20deg;
-                    stroke: var(--click-spark-color, currentcolor);
-                }
-        
-                line{
-                    stroke-dasharray: 30;
-                    stroke-dashoffset: 30;
-                    transform-origin: center;
-                }
-            </style>
             <svg width="30" height="30" viewBox="0 0 100 100" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="4">
                 ${Array.from(
                     { length: 8 },
