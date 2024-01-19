@@ -18,10 +18,10 @@ const Button = ({ title, icon = null, to = null, variant = null, ...props }) => 
 
     return (
         <button 
-        {...props}
-        className={`Button ${variant ? ` ${variant}` : ''}`}
-        onClick={handleOnClick}
->
+            {...props}
+            className={`Button ${variant ? ` ${variant}` : ''} Hover-Target`}
+            onClick={handleOnClick}
+        >
             <span className='Button-Text'>{title}</span>
             {icon && <i className='Button-Icon'>{icon}</i>}
         </button>

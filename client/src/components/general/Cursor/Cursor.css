@@ -1,0 +1,16 @@
+#Cursor{
+    position: absolute;
+    height: 2rem;
+    z-index: 99999;
+    border-radius: 50%;
+    box-shadow: 0 0 4px 0px #c6c6c6;
+    border: 1px solid #c6c6c6;
+    width: 2rem;
+    pointer-events: none;
+    transition: width 0.3s ease, height 0.3s ease; 
+}
+
+#Cursor.Hover{
+    height: 5rem;
+    width: 5rem;
+}

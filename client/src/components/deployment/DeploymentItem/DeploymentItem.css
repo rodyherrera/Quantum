@@ -56,8 +56,3 @@
 .Repository-Deployment-More-Icon{
     cursor: not-allowed;
 }
-
-.Repository-Deployment-User-Image-Container,
-.Repository-Deployment-Delete-Icon{
-    cursor: pointer;
-}

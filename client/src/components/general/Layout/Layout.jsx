@@ -6,6 +6,7 @@ import Waves from '@components/general/Waves';
 import ClickSpark from '@components/general/ClickSpark';
 import Banner from '@components/general/Banner';
 import Header from '@components/general/Header';
+import Cursor from '@components/general/Cursor';
 import SquaredBackground from '@components/general/SquaredBackground';
 import './Layout.css';
 
@@ -28,14 +29,14 @@ const Layout = () => {
     }, [user, isLoading, isCacheLoading, githubIsLoading, isAuthenticated]);
 
     return (
-        <React.Fragment>
+        <Cursor>
             <ClickSpark />
             <SquaredBackground />
             <Banner text='We sprinkle magic to ease your production deployment. 🎉️' />
             <Header />
             <Outlet />
             <Waves />
-        </React.Fragment>
+        </Cursor>
     );
 };
 

@@ -31,7 +31,6 @@
     border: 1px solid #000000;
     transition: all .1s ease-in-out;
     text-align: center;
-    cursor: pointer;
 }
 
 #Circle-Content-Container:hover{
