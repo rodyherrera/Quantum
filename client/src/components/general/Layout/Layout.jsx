@@ -5,6 +5,7 @@ import { authenticateWithCachedToken } from '@services/authentication/utils';
 import Waves from '@components/general/Waves';
 import Banner from '@components/general/Banner';
 import Header from '@components/general/Header';
+import SquaredBackground from '@components/general/SquaredBackground';
 import './Layout.css';
 
 const Layout = () => {
@@ -27,6 +28,7 @@ const Layout = () => {
 
     return (
         <React.Fragment>
+            <SquaredBackground />
             <Banner text='We make your production deployment a little easier. 🎉️' />
             <Header />
             <Outlet />
