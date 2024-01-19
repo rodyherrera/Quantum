@@ -64,5 +64,5 @@
     gap: 2rem;
     flex-direction: column;
     z-index: 100;
-    background-color: rgba(255,255,255, .6);
+    background-color: rgba(245, 245, 245, .6);
 }
