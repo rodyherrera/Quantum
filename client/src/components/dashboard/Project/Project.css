@@ -13,8 +13,6 @@
     transition: .5s;
 }
 
-
-
 .Project-Description{
     width: calc(360px - 2rem);
     display: -webkit-box;
@@ -80,4 +78,15 @@
 
 .Project-Container:hover .Project-Title{
     text-decoration: underline;
+}
+
+@media screen and (max-width: 768px){
+    .Project-Container{
+        width: 100%;
+    }
+
+    .Project-Image{
+        height: 40px;
+        width: 40px;
+    }
 }
