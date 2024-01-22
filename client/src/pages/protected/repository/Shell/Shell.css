@@ -2,14 +2,18 @@
     display: flex;
     flex-direction: column;
     padding: 1rem;
-    justify-content: center;
     gap: 2rem;
     width: 800px;
+    height: 90vh;
     margin: 0 auto;
 }
 
 .xterm .xterm-viewport{
     border-radius: .5rem;
+}
+
+.xterm .xterm-screen{
+    height: 60vh !important;
 }
 
 #Repository-Shell-Title{
@@ -25,12 +29,6 @@
 #Repository-Shell-Subtitle{
     font-size: 1rem;
     line-height: 1.3rem;
-}
-
-#Repository-Shell-Body-Container{
-    height: 350px;
-    width: 700px;
-    overflow: scroll;
 }
 
 #Repository-Shell{

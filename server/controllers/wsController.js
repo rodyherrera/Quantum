@@ -31,7 +31,7 @@ const handleRepositoryShell = (socket) => {
     });
 
     shell.on('data', (data) => {
-        data = data.replace(/.*\$/, PTY.getPrompt());
+        data = data.replace(/.*#/g, PTY.getPrompt());
         PTY.appendLog(data);
         socket.emit('response', data);
     });
