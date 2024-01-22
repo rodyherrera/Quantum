@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import HeaderNavItem from '@components/general/HeaderNavItem';
-import HeaderLink from '@components/general/HeaderLink';
+import IconLink from '@components/general/IconLink';
 import HamburguerMenu from '@components/general/HamburguerMenu';
 import { logout } from '@services/authentication/actions';
 import { useSelector, useDispatch } from 'react-redux';
@@ -29,9 +29,9 @@ const Header = () => {
             </section>
             <section id='Header-Center-Container' className='Header-Child-Container'>
                 <article id='Header-Links-Container'>
-                    <HeaderLink title='Create Deployment' to='/repository/create/' />
-                    <HeaderLink title='Terms & Privacy' to='/' />
-                    <HeaderLink title='Service Status' to='/' />
+                    <IconLink title='Create Deployment' to='/repository/create/' />
+                    <IconLink title='Terms & Privacy' to='/terms-and-privacy/' />
+                    <IconLink title='Service Status' to='https://uptime.rodyherrera.com/' />
                 </article>
             </section>
             <section id='Header-Right-Container' className='Header-Child-Container'>
