@@ -30,7 +30,7 @@ const Header = () => {
             <section id='Header-Center-Container' className='Header-Child-Container'>
                 <article id='Header-Links-Container'>
                     <IconLink title='Create Deployment' to='/repository/create/' />
-                    <IconLink title='Terms & Privacy' to='/terms-and-privacy/' />
+                    <IconLink title='Privacy Policy' to='/legal/privacy-policy/' />
                     <IconLink title='Service Status' to='https://uptime.rodyherrera.com/' />
                 </article>
             </section>
