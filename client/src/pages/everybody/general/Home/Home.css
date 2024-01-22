@@ -2,6 +2,26 @@
     position: relative;
 }
 
+#Home-Presentation-Title-Container{
+    position: relative;
+}
+
+#Welcome-Container{
+    width: 300px;
+    height: 100px;
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    gap: .8rem;
+    top: 0.9rem;
+    left: 32rem;
+    font-family: monospace;
+}
+
+#Welcome-Navigation-Container{
+    font-size: .7rem;
+}
+
 #Home-Presentation-Container{
     height: 100%;
     display: flex;
@@ -23,6 +43,9 @@
     font-size: 6.5rem;
     font-weight: 600;
     letter-spacing: 0.13rem;
+    overflow-wrap: break-word; 
+    hyphens: auto; 
+    word-wrap: break-word
 }
 
 #Home-Presentation-Container-Subtitle{

@@ -39,7 +39,6 @@ const Cursor = ({ children }) => {
 
     useEffect(() => {
         document.addEventListener('mousemove', mouseMoveHandler);
-
         return () => {
             document.removeEventListener('mousemove', mouseMoveHandler)
         };

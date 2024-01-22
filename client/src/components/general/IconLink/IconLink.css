@@ -1,0 +1,9 @@
+.Icon-Link-Container{
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+}
+
+.Icon-Link-Container:hover .Icon-Link-Title{
+    text-decoration: underline;
+}
