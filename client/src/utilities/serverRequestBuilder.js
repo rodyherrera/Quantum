@@ -16,7 +16,7 @@ export default class ServerRequestBuilder{
                 const response = await callback(...(args || []));
                 resolve(response?.data || response);
             }catch(rejection){
-                console.log(rejection);
+                console.error('[Quantum Cloud]: Rejection -->', rejection);
                 reject(this.handleError(rejection));
             }
         });

@@ -139,7 +139,6 @@ class Github{
             events: ['push'],
             active: true
         });
-        console.log(response);
         const { id } = response.data;
         return id;
     };

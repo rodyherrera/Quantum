@@ -44,7 +44,6 @@ const EnvironmentVariables = () => {
             return acc;
         }, {});
         const updatedEnvironment = { ...environment, variables };
-        console.log(updatedEnvironment);
         dispatch(deploymentActions.updateDeployment(
             environment._id, { environment: updatedEnvironment }, navigate));
     };

@@ -30,6 +30,10 @@
     align-items: center;
 }
 
+.Repository-Deployment-Delete-Icon{
+    cursor: pointer;
+}
+
 .Repository-Deployment-Top-Container{
     display: flex;
     flex-direction: column;
