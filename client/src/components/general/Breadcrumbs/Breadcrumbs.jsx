@@ -6,10 +6,6 @@ import './Breadcrumbs.css';
 const Breadcrumbs = ({ items, ...props }) => {
     const navigate = useNavigate();
 
-    useEffect(() => {
-        console.log(items);
-    }, []);
-
     return (
         <div className='Breadcrumbs-Container' {...props}>
             <MUIBreadcrumbs separator='›'>

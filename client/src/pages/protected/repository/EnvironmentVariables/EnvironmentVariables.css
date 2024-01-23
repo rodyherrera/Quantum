@@ -52,6 +52,7 @@
 }
 
 #Environment-Variables-Create-New-Container{
+    cursor: pointer;
     border: 1px solid #000000;
     display: flex;
     justify-content: center;

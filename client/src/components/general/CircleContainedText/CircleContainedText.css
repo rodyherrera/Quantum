@@ -19,6 +19,7 @@
 #Circle-Content-Container{
     display: flex;
     flex-direction: column;
+    cursor: pointer;
     justify-content: center;
     animation: Circle-Runtime-Anim 5s infinite alternate;
     padding: 1rem;

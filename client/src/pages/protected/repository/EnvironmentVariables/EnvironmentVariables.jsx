@@ -81,7 +81,7 @@ const EnvironmentVariables = () => {
                             <Button title='Save Changes' variant='Contained' onClick={handleEnvironmentUpdate} />
                         </div>
                     </div>
-                    <div className='Hover-Target' id='Environment-Variables-Create-New-Container' onClick={handleCreateNew}>
+                    <div id='Environment-Variables-Create-New-Container' onClick={handleCreateNew}>
                         <h3 id='Environment-Variables-Create-New-Title'>Add new variable</h3>
                     </div>
                 </article>

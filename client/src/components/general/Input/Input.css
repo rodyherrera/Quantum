@@ -7,6 +7,7 @@
 .Input-End-Icon-Container{
     padding: .5rem;
     font-size: .95rem;
+    cursor: pointer;
     border-left: 1px solid #000000;
 }
 

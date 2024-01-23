@@ -34,11 +34,13 @@ const Dashboard = () => {
                     <p id='Dashboard-Header-Subtitle'>The instances of your applications stored on the server.</p>
                 </article>
                 <article id='Dashboard-Header-Actions-Container'>
-                    <Button 
-                        to='/repository/create/'
-                        title='Create new' 
-                        variant='Contained End-Icon' 
-                        icon={<HiPlus />} />
+                    {(!isLoading) && (
+                        <Button 
+                            to='/repository/create/'
+                            title='Create new' 
+                            variant='Contained End-Icon' 
+                            icon={<HiPlus />} />
+                    )}
                 </article>
             </section>
 

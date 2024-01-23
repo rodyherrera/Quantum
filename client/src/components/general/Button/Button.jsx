@@ -19,7 +19,7 @@ const Button = ({ title, icon = null, to = null, variant = null, ...props }) => 
     return (
         <button 
             {...props}
-            className={`Button ${variant ? ` ${variant}` : ''} Hover-Target`}
+            className={`Button ${variant ? ` ${variant}` : ''}`}
             onClick={handleOnClick}
         >
             <span className='Button-Text'>{title}</span>

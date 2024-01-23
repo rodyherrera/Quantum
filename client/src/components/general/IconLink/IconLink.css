@@ -2,6 +2,7 @@
     display: flex;
     align-items: center;
     gap: .5rem;
+    cursor: pointer;
 }
 
 .Icon-Link-Container:hover .Icon-Link-Title{
