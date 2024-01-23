@@ -2,20 +2,21 @@
     width: 700px;
     display: flex;
     justify-content: center;
-    gap: 2rem;
+    gap: 1.5rem;
     flex-direction: column;
     margin: 0 auto;
+    padding: 2rem 0;
+    height: unset;
 }
 
 #Repository-Deployments-Header-Title{
     font-size: 2.5rem;
     font-weight: 600;
-    margin-bottom: 1rem;
 }
 
 #Repository-Deployments-Body{
-    max-height: 350px;
-    min-height: 350px;
+    max-height: 320px;
+    min-height: 320px;
 }
 
 #Repository-Deployments-Body-List{
@@ -38,10 +39,12 @@
 
 #Repository-Deployment-Generated-From{
     display: flex;
+    font-size: .8rem;
     flex-wrap: wrap;
+    align-items: center;
     gap: .5rem;
     border: 1px dashed #000000;
-    padding: .5rem;
+    padding: .3rem 1rem;
 }
 
 #Repository-Deployment-Generated-From:hover{

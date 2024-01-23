@@ -3,6 +3,7 @@ import { getMyGithubRepositories, createRepository } from '@services/repository/
 import { useSelector, useDispatch } from 'react-redux';
 import { CircularProgress } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import Breadcrumbs from '@components/general/Breadcrumbs';
 import RepositoryBasicItem from '@components/repository/RepositoryBasicItem';
 import * as repositoriesSlice from '@services/repository/slice';
 import './CreateRepository.css';
@@ -33,6 +34,13 @@ const CreateRepository = () => {
     return (
         <main id='Create-Repository-Main'>
             <section id='Create-Repository-Header'>
+                <Breadcrumbs
+                    items={[
+                        { title: 'Dashboard', to: '/dashboard/' },
+                        { title: 'Repositories', to: '/dashboard/' },
+                        { title: 'Create Repository', to: '/respository/create/' }
+                    ]}
+                />
                 <article id='Create-Repository-Header-Title-Container'>
                     <h1 id='Create-Repository-Header-Title'>Let's start our teamwork...</h1>
                     <p id='Create-Repository-Header-Subtitle'>To deploy a new Project, import an existing Git Repository.</p>

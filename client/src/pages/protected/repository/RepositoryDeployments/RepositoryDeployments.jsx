@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { CircularProgress } from '@mui/material';
 import { VscGithubInverted } from 'react-icons/vsc';
 import DeploymentItem from '@components/deployment/DeploymentItem';
+import Breadcrumbs from '@components/general/Breadcrumbs';
 import Button from '@components/general/Button';
 import * as deploymentActions from '@services/deployment/actions';
 import './RepositoryDeployments.css';
@@ -21,6 +22,14 @@ const RepositoryDeployments = () => {
     return (
         <main id='Repository-Deployments-Main'>
             <section id='Repository-Deployments-Header'>
+                <Breadcrumbs 
+                    items={[
+                        { title: 'Dashboard', to: '/dashboard/' },
+                        { title: 'Repositories', to: '/dashboard/' },
+                        { title: repositoryName, to: '/dashboard/' },
+                        { title: 'Deployments', to: `/repository/${repositoryName}/deployments/` }
+                    ]}
+                />
                 <h1 id='Repository-Deployments-Header-Title'>Deployments</h1>
                 <p id='Repository-Deployments-Header-Subtitle'>
                     <span>Continuously generated from</span>
