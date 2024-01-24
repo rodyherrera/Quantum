@@ -52,7 +52,7 @@ class PTYHandler {
         const commands = [installCommand, buildCommand, startCommand];
         const shell = this.getOrCreate();
         shell.on('data', (data) => {
-            data = data.replace(/.*\$/, this.getPrompt());
+            data = data.replace(/.*#/g, this.getPrompt());
             this.appendLog(data);
         });
         for(const command of commands){
@@ -83,8 +83,6 @@ class PTYHandler {
         const workingDir = `${__dirname}/../storage/repositories/${repositoryId}`;
         const shell = pty.spawn('bash', ['-i'], {
             name: 'xterm-color',
-            cols: 80,
-            rows: 30,
             cwd: workingDir,
         });
         return shell;

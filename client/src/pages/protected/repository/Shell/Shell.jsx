@@ -1,41 +1,62 @@
-import React, { useState, useEffect } from 'react';
-import { Xterm } from 'xterm-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Terminal } from 'xterm';
+import { FitAddon } from 'xterm-addon-fit';
 import { io } from 'socket.io-client';
 import { getCurrentUserToken } from '@services/authentication/localStorageService';
 import { useParams } from 'react-router-dom';
 import { CircularProgress } from '@mui/material';
+import useWindowSize from '@hooks/useWindowSize';
+import 'xterm/css/xterm.css';
 import './Shell.css';
 
 const Shell = () => {
+    const terminalRef = useRef(null);
+    const fitAddonRef = useRef(null);
+    const { width } = useWindowSize();
     const { repositoryName } = useParams();
+    const [xterm, setXterm] = useState(null);
     const [socket, setSocket] = useState(null);
-    const [terminal, setTerminal] = useState(null);
-    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
-        if(!terminal) return;
-        const socket = io(import.meta.env.VITE_SERVER, { 
+        if(!fitAddonRef.current) return;
+        fitAddonRef.current.fit();
+    }, [width]);
+
+    useEffect(() => {
+        if(!xterm) return;
+        const authToken = getCurrentUserToken();
+        const newSocket = io(import.meta.env.VITE_SERVER, {
             transports: ['websocket'],
-            auth: { token: getCurrentUserToken() },
+            auth: { token: authToken },
             query: { repositoryName }
         });
-        setSocket(socket);
-        socket.on('history', (history) => {
-            terminal.write(history);
-        });
-        socket.on('response', (response) => {
-            if(terminal.buffer.active.type === 'normal'){
-                setIsLoading(false);
-            }
-            terminal.write(response);
-        });
+        setSocket(newSocket);
+    }, [xterm]);
+
+    useEffect(() => {
+        if(!socket || !xterm) return;
+        xterm.onData((data) => socket.emit('command', data));
+        socket.on('history', (history) => xterm.write(history));
+        socket.on('response', (response) => xterm.write(response));
+    }, [socket, xterm]);
+
+    useEffect(() => {
+        const term = new Terminal();
+        const fitAddon = new FitAddon();
+        term.loadAddon(fitAddon);
+        term.open(terminalRef.current);
+        fitAddonRef.current = fitAddon;
+        fitAddon.fit();
+        setXterm(term);
+
         return () => {
-            socket.close();
             setSocket(null);
-            setTerminal(null);            
-            setIsLoading(true);
+            setXterm(null);
+            fitAddonRef.current = null;
+            term.dispose();
+            fitAddon.dispose();
         };
-    }, [terminal, repositoryName]);
+    }, []);
 
     return (
         <main id='Repository-Shell-Main'>
@@ -48,17 +69,13 @@ const Shell = () => {
 
             <section id='Repository-Shell-Body-Container'>
                 <article id='Repository-Shell'>
-                    {(isLoading) && (
+                    {(!socket) && (
                         <aside id='Socket-Connection-Loading-Container'>
                             <CircularProgress size='2.5rem' />
                         </aside>
                     )}
 
-                    <Xterm
-                        onInit={(term) => setTerminal(term)}
-                        onDispose={() => setTerminal(null)}
-                        onData={(data) => socket.emit('command', data)}
-                    />
+                    <div ref={terminalRef} />
                 </article>
             </section>
         </main>

@@ -3,21 +3,23 @@
     flex-direction: column;
     padding: 1rem;
     gap: 2rem;
-    width: 800px;
-    height: 90vh;
+    width: 70%;
+    height: unset;
     margin: 0 auto;
-}
-
-.xterm .xterm-viewport{
-    border-radius: .5rem;
-}
-
-.xterm .xterm-screen{
-    height: 60vh !important;
 }
 
 #Repository-Shell-Title{
     font-size: 2.5rem;
+}
+
+#Repository-Shell-Body-Container{
+    width: 100%;
+    height: 100%;
+}
+
+#Repository-Shell{
+    width: 100%;
+    height: 100%;
 }
 
 #Repository-Shell-Title-Container{
@@ -31,10 +33,6 @@
     line-height: 1.3rem;
 }
 
-#Repository-Shell{
-    position: relative;
-}
-
 #Socket-Connection-Loading-Container{
     display: flex;
     justify-content: center;
@@ -44,4 +42,10 @@
     width: 100%;
     height: 100%;
     position: absolute;
+}
+
+@media screen and (max-width: 768px){
+    #Repository-Shell-Main{
+        width: 100%;
+    }
 }

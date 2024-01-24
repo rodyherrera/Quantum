@@ -24,7 +24,8 @@
     "react-router-dom": "^6.21.1",
     "socket.io-client": "^4.7.3",
     "three": "^0.160.0",
-    "xterm-react": "^1.0.0"
+    "xterm": "4.19.0",
+    "xterm-addon-fit": "0.5.0"
   },
   "devDependencies": {
     "@types/react": "^18.2.43",
