@@ -1,26 +1,22 @@
-import React, { useEffect, useState } from 'react';
+import React, { useRef } from 'react';
 import HeaderNavItem from '@components/general/HeaderNavItem';
 import IconLink from '@components/general/IconLink';
 import HamburguerMenu from '@components/general/HamburguerMenu';
 import { logout } from '@services/authentication/actions';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import * as coreSlice from '@services/core/slice';
 import './Header.css';
 
 const Header = () => {
-    const [isHamburguerMenuActive, setIsHamburguerMenuActive] = useState(false);
+    const headerRef = useRef(null);
     const { isAuthenticated } = useSelector(state => state.auth);
+    const { isMenuEnabled } = useSelector(state => state.core);
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
-    useEffect(() => {
-        return () => {
-            setIsHamburguerMenuActive(false);
-        };
-    }, []);
-
     return (
-        <header id='Header'>
+        <header id='Header' ref={headerRef}>
             <section id='Header-Left-Container' className='Header-Child-Container'>
                 <article id='Header-Brand-Container' onClick={() => navigate('/')}>
                     <i id='Header-Brand-Logo'></i>
@@ -49,8 +45,8 @@ const Header = () => {
                     )}
                     <HeaderNavItem id='Hamburguer-Menu-Container'>
                         <HamburguerMenu
-                            onClick={() => setIsHamburguerMenuActive(!isHamburguerMenuActive)}
-                            isactive={isHamburguerMenuActive.toString()} />
+                            onClick={() => dispatch(coreSlice.setIsMenuEnabled(!isMenuEnabled))}
+                            isactive={isMenuEnabled.toString()} />
                     </HeaderNavItem>
                 </article>
             </section>

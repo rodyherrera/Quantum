@@ -1,0 +1,29 @@
+#Menu-Container{
+    position: fixed;
+    bottom: 0;
+    height: calc(100% - 36px);
+    width: 100vw;
+    background-color: rgba(245, 245, 245);
+    z-index: 90;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+#Menu-Items-Container{
+    display: flex;
+    padding: 2rem;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 1rem
+}
+
+.Menu-Item-Title{
+    font-size: 8vw;
+}
+
+#Menu-Bottom-Container{
+    padding: 2rem;
+    display: flex;
+    gap: 1rem;
+}
