@@ -73,8 +73,29 @@
 }
 
 @media screen and (max-width: 768px){
+    #Home-Page-Main{
+        height: calc(100% - 155px);
+    }
+
+    #Welcome-Container{
+        height: auto;
+        width: auto;
+        left: 9rem;
+        top: 6rem;
+        gap: .2rem;
+    }
+
+    #Welcome-Title{
+        font-size: .6rem;
+    }
+
+    #Welcome-Navigation-Container{
+        font-size: .55rem;
+    }
+
     #Docs-Button{
-        display: none;
+        top: 1rem;
+        right: 1rem;
     }
 
     #Home-Presentation-Container-Title{
@@ -84,19 +105,23 @@
     }
 
     #Home-Presentation-Container{
-        height: 90%;
+        height: 100%;
         padding: 1rem;
     }
 
     #Home-Presentation-Container-Subtitle{
         display: flex;
+        margin-top: 2rem;
+        font-size: 1rem;
         flex-direction: column;
-        gap: 1rem;
+        gap: .8rem;
         align-items: flex-start;
     }
 
     #Home-Presentation-Container-Subtitle .Dashed-Container{
-        font-size: 1rem;
+        font-size: .9rem;
+        background-color: #000000;
+        color: #FFFFFF;
     }
 
     #Circle-Contained-Text-Wrapper{

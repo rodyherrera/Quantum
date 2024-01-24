@@ -20,11 +20,11 @@
 #Dashboard-Header-Title-Container{
     display: flex;
     flex-direction: column;
-    gap: .5rem;
 }
 
 #Dashboard-Header-Title{
     font-size: 3rem;
+    margin-bottom: .5rem;
     font-weight: 600;
 }
 

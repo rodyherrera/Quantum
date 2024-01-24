@@ -24,7 +24,7 @@ const HomePage = () => {
                     variant='Contained End-Icon' />
 
                 <article id='Home-Presentation-Container-Platform-Container'>
-                    <span>Everything you need, in one place.</span>
+                    <span id='Home-Short-Subtitle'>Everything you need, in one place.</span>
                     <div id='Home-Presentation-Title-Container'>
                         <h1 id='Home-Presentation-Container-Title'>Unlock your <br/>entrepreneurial spirit!</h1>
 

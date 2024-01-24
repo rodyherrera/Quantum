@@ -5,6 +5,7 @@ import { io } from 'socket.io-client';
 import { getCurrentUserToken } from '@services/authentication/localStorageService';
 import { useParams } from 'react-router-dom';
 import { CircularProgress } from '@mui/material';
+import Breadcrumbs from '@components/general/Breadcrumbs';
 import useWindowSize from '@hooks/useWindowSize';
 import 'xterm/css/xterm.css';
 import './Shell.css';
@@ -61,6 +62,14 @@ const Shell = () => {
     return (
         <main id='Repository-Shell-Main'>
             <section id='Repository-Shell-Header-Container'>
+                <Breadcrumbs
+                    items={[
+                        { title: 'Dashboard', to: '/dashboard/' },
+                        { title: 'Repositories', to: '/dashboard/' },
+                        { title: repositoryName, to: '/dashboard/' },
+                        { title: 'Shell', to: `/repository/${repositoryName}/shell/` }
+                    ]}
+                />
                 <article id='Repository-Shell-Title-Container'>
                     <h1 id='Repository-Shell-Title'>Advanced repository management</h1>
                     <p id='Repository-Shell-Subtitle'>Interact with the root of your repository through the command line. <br /> A connection with the server will be initiated to manage communication.</p>
@@ -69,7 +78,7 @@ const Shell = () => {
 
             <section id='Repository-Shell-Body-Container'>
                 <article id='Repository-Shell'>
-                    {(!socket) && (
+                    {(socket === null) && (
                         <aside id='Socket-Connection-Loading-Container'>
                             <CircularProgress size='2.5rem' />
                         </aside>

@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import Project from '@components/dashboard/Project';
 import Button from '@components/general/Button';
+import Breadcrumbs from '@components/general/Breadcrumbs';
 import { useSelector, useDispatch } from 'react-redux';
 import { getRepositories } from '@services/repository/actions';
 import { HiPlus } from 'react-icons/hi';
@@ -30,6 +31,12 @@ const Dashboard = () => {
 
             <section id='Dashboard-Header-Container'>
                 <article id='Dashboard-Header-Title-Container'>
+                    <Breadcrumbs 
+                        items={[
+                            { title: 'Home', to: '/' },
+                            { title: 'Dashboard', to: '/dashboard/' },
+                            { title: 'Repositories', to: '/dashboard/' }
+                        ]} />
                     <h1 id='Dashboard-Header-Title'>Dashboard</h1>
                     <p id='Dashboard-Header-Subtitle'>The instances of your applications stored on the server.</p>
                 </article>
