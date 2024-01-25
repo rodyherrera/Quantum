@@ -4,8 +4,8 @@ import './Banner.css';
 const Banner = ({ text }) => {
 
     return (
-        <div id='Banner-Container'>
-            <p id='Banner-Text' className='Secondary-Font'>{text}</p>
+        <div className='Banner-Container'>
+            <p className='Banner-Text Secondary-Font'>{text}</p>
         </div>
     );
 };

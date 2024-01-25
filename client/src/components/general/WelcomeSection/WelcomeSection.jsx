@@ -13,15 +13,15 @@ const WelcomeSection = ({ ...props }) => {
     ];
 
     return (
-        <aside id='Welcome-Container' {...props}>
-            <p id='Welcome-Title'>
+        <aside className='Welcome-Container' {...props}>
+            <p className='Welcome-Title'>
                 {(isAuthenticated) ? (
                     <span>Welcome back <b>@{user.username}</b>!</span>
                 ) : (
                     <span>You're not authenticated yet.</span>
                 )}
             </p>
-            <ul id='Welcome-Navigation-Container'>
+            <ul className='Welcome-Navigation-Container'>
                 {links.map(([ title, to ], index) => (
                     <IconLink
                         key={index}

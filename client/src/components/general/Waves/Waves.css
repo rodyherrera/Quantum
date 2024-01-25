@@ -1,8 +1,8 @@
-#Waves-Container{
+.Waves-Container{
     background-color: #000000;
     height: 245px !important;
 }
 
-#Waves-Container canvas{
+.Waves-Container canvas{
     height: 245px !important;
 }

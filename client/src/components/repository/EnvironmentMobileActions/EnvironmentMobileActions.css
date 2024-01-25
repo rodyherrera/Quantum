@@ -1,9 +1,9 @@
-#Mobile-Environment-Actions-Container{
+.Mobile-Environment-Actions-Container{
     display: none;
 }
 
 @media screen and (max-width: 768px){
-    #Mobile-Environment-Actions-Container{
+    .Mobile-Environment-Actions-Container{
         display: block;
         position: fixed;
         bottom: 0;

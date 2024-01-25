@@ -4,7 +4,7 @@ import './SquaredBackground.css';
 const SquaredBackground = ({ ...props }) => {
 
     return (
-        <aside id='Squared-Background-Container' {...props} />
+        <aside className='Squared-Background-Container' {...props} />
     );
 };
 

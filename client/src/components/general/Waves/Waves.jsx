@@ -52,7 +52,7 @@ const Plane = () => {
 const Waves = () => {
 
     return (
-        <Canvas camera={{ position: [0, 0, 1], fov: 110 }} id='Waves-Container'>
+        <Canvas camera={{ position: [0, 0, 1], fov: 110 }} className='Waves-Container'>
             <Plane />
         </Canvas>
     );

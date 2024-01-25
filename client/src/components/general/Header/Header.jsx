@@ -16,22 +16,22 @@ const Header = () => {
     const dispatch = useDispatch();
 
     return (
-        <header id='Header' ref={headerRef}>
-            <section id='Header-Left-Container' className='Header-Child-Container'>
-                <article id='Header-Brand-Container' onClick={() => navigate('/')}>
-                    <i id='Header-Brand-Logo'></i>
-                    <h1 id='Header-Brand-Title'>Quantum</h1>
+        <header className='Header' ref={headerRef}>
+            <section className='Header-Left-Container Header-Child-Container'>
+                <article className='Header-Brand-Container' onClick={() => navigate('/')}>
+                    <i className='Header-Brand-Logo'></i>
+                    <h1 className='Header-Brand-Title'>Quantum</h1>
                 </article>
             </section>
-            <section id='Header-Center-Container' className='Header-Child-Container'>
-                <article id='Header-Links-Container'>
+            <section className='Header-Center-Container Header-Child-Container'>
+                <article className='Header-Links-Container'>
                     <IconLink title='Create Deployment' to='/repository/create/' />
                     <IconLink title='Privacy Policy' to='/legal/privacy-policy/' />
                     <IconLink title='Service Status' to='https://uptime.rodyherrera.com/' />
                 </article>
             </section>
-            <section id='Header-Right-Container' className='Header-Child-Container'>
-                <article id='Header-Navigation-Container'>
+            <section className='Header-Right-Container Header-Child-Container'>
+                <article className='Header-Navigation-Container'>
                     {isAuthenticated ? (
                         <React.Fragment>
                             <HeaderNavItem title='Dashboard' to='/dashboard/' />
@@ -43,7 +43,7 @@ const Header = () => {
                             <HeaderNavItem title='Log In' to='/auth/sign-in/' />
                         </React.Fragment>
                     )}
-                    <HeaderNavItem id='Hamburguer-Menu-Container'>
+                    <HeaderNavItem className='Hamburguer-Menu-Container'>
                         <HamburguerMenu
                             onClick={() => dispatch(coreSlice.setIsMenuEnabled(!isMenuEnabled))}
                             isactive={isMenuEnabled.toString()} />

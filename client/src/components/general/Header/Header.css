@@ -1,12 +1,12 @@
-#Header-Navigation-Container,
-#Header-Brand-Container,
-#Header .Header-Child-Container,
-#Header{
+.Header-Navigation-Container,
+.Header-Brand-Container,
+.Header .Header-Child-Container,
+.Header{
     display: flex;
     align-items: center;
 }
 
-#Header{
+.Header{
     justify-content: space-between;
     height: 79px;
     border-bottom: 1px solid #000000;
@@ -15,22 +15,22 @@
     animation: border-width .5s ease;
 }
 
-#Hamburguer-Menu-Container{
+.Hamburguer-Menu-Container{
     display: none;
 }
 
-#Header-Brand-Container{
+.Header-Brand-Container{
     gap: .8rem;
     padding: 1.5rem 3rem;
     cursor: pointer;
     border-right: 1px solid #000000;
 }
 
-#Header-Brand-Container:hover{
+.Header-Brand-Container:hover{
     opacity: .6;
 }
 
-#Header-Brand-Logo{
+.Header-Brand-Logo{
     width: 30px;
     height: 30px;
     opacity: 1;
@@ -38,70 +38,70 @@
     background-color: #000000;
 }
 
-#Header-Links-Container{
+.Header-Links-Container{
     display: flex;
     gap: 2rem;
 }
 
-#Header-Center-Container{
+.Header-Center-Container{
     width: 50%;
 }
 
-#Header #Header-Left-Container{
+.Header .Header-Left-Container{
     justify-content: flex-start;
     width: auto;
     max-width: 50%;
 }
 
-#Header-Brand-Title{
+.Header-Brand-Title{
     font-size: 1.5rem;
     font-weight: 700;
     color: #000000;
 }
 
-#Header-Right-Container{
+.Header-Right-Container{
     justify-content: flex-end;
     width: auto;
     max-width: 50%;
 }
 
-#Header-Navigation-Container{
+.Header-Navigation-Container{
     gap: 1rem;
 }
 
 @media screen and (max-width: 768px){
-    #Header{
+    .Header{
         height: 50px;
     }
 
-    #Hamburguer-Menu-Container{
+    .Hamburguer-Menu-Container{
         display: flex;
     }
     
-    #Header-Brand-Title{
+    .Header-Brand-Title{
         font-size: 1.1rem;
     }
 
-    #Header-Navigation-Container{
+    .Header-Navigation-Container{
         gap: 0;
     }
 
-    #Header-Brand-Logo{
+    .Header-Brand-Logo{
         width: 25px;
         height: 25px;
     }
 
-    #Header-Right-Container{
+    .Header-Right-Container{
         max-width: unset;
     }
 
-    #Header-Brand-Container{
+    .Header-Brand-Container{
         border-right: unset;
         padding: 0 1rem;
         gap: .5rem;
     }
 
-    #Header-Center-Container{
+    .Header-Center-Container{
         display: none !important;
     }
 }

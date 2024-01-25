@@ -7,9 +7,9 @@ const HeaderNavItem = ({ title, to, children, ...props }) => {
 
     return (
         <div 
-            className='Header-Navigation-Item-Container' 
-            onClick={() => (to) && (navigate(to))}
             {...props}
+            className={'Header-Navigation-Item-Container ' + props?.className || ''}
+            onClick={() => (to) && (navigate(to))}
         >
             {(title) && (
                 <h3 className='Header-Navigation-Item-Title'>{title}</h3>

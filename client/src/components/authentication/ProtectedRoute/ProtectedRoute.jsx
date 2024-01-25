@@ -1,18 +1,3 @@
-/***
- * Copyright (C) Rodolfo Herrera Hernandez. All rights reserved.
- * Licensed under the MIT license. See LICENSE file in the project root
- * for full license information.
- *
- * =+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
- *
- * Source code for Sandrino Aguilar - Web platform, presence of 
- * a company dedicated to accounting services.
- * 
- * (www.sandrinoaguilar.com)
- *
- * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
- ****/
-
 import React from 'react';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { CircularProgress } from '@mui/material';
@@ -24,7 +9,7 @@ const ProtectedRoute = ({ mode, restrictTo = undefined }) => {
     const location = useLocation();
 
     return (isCachedAuthLoading) ? (
-        <main id='Authentication-Loading-Main'>
+        <main className='Authentication-Loading-Main'>
             <CircularProgress size={'2.5rem'} />
         </main>
     ) : restrictTo !== undefined ? (

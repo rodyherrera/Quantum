@@ -4,8 +4,8 @@ import './EnvironmentMobileActions.css';
 
 const EnvironmentMobileActions = ({ addNewVariableHandler }) => {
     return (
-        <aside id='Mobile-Environment-Actions-Container'>
-            <article id='Mobile-Environment-Actions'>
+        <aside className='Mobile-Environment-Actions-Container'>
+            <article className='Mobile-Environment-Actions'>
                 <Button title='Add new variable' onClick={addNewVariableHandler} />
                 <Button title='Save changes' variant='Contained' />
             </article>

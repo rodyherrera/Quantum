@@ -1,4 +1,4 @@
-#Squared-Background-Container{
+.Squared-Background-Container{
     position: absolute;
     right: 0;
     width: 60%;
@@ -11,7 +11,7 @@
     background-position: top right; 
 }
 
-#Squared-Background-Container::after{
+.Squared-Background-Container::after{
     content: '';
     position: absolute;
     top: 110px;
@@ -23,11 +23,11 @@
 }
 
 @media screen and (max-width: 768px){
-    #Squared-Background-Container{
+    .Squared-Background-Container{
         top: 80px;
     }
 
-    #Squared-Background-Container::after{
+    .Squared-Background-Container::after{
         top: 0;
     }
 }

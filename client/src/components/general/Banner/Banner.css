@@ -1,4 +1,4 @@
-#Banner-Container{
+.Banner-Container{
     display: flex;
     justify-content: center;
     align-items: center;
@@ -7,13 +7,13 @@
     background-color: #000000;
 }
 
-#Banner-Text{
+.Banner-Text{
     font-size: .8rem;
     font-family: Roboto;
 }
 
 @media screen and (max-width: 768px){
-    #Banner-Text{
+    .Banner-Text{
         font-size: .75rem;
     }
 }

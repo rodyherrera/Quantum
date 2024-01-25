@@ -1,4 +1,4 @@
-#Welcome-Container{
+.Welcome-Container{
     width: 300px;
     height: 100px;
     position: absolute;
@@ -10,12 +10,12 @@
     font-family: monospace;
 }
 
-#Welcome-Navigation-Container{
+.Welcome-Navigation-Container{
     font-size: .7rem;
 }
 
 @media screen and (max-width: 768px){
-    #Welcome-Container{
+    .Welcome-Container{
         height: auto;
         width: auto;
         left: 9rem;
@@ -23,11 +23,11 @@
         gap: .2rem;
     }
 
-    #Welcome-Title{
+    .Welcome-Title{
         font-size: .6rem;
     }
 
-    #Welcome-Navigation-Container{
+    .Welcome-Navigation-Container{
         font-size: .55rem;
     }
 }

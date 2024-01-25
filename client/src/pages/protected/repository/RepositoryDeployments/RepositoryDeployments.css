@@ -17,6 +17,7 @@
 #Repository-Deployments-Body{
     max-height: 320px;
     min-height: 320px;
+    overflow-y: scroll;
 }
 
 #Repository-Deployments-Body-List{
@@ -59,7 +60,7 @@
 #Repository-Deployments-Body-List-Empty-Container{
     position: absolute;
     width: 100%;
-    height: 100%;
+    height: 320px;
     display: flex;
     justify-content: center;
     align-items: center;
