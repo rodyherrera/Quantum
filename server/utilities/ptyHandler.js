@@ -56,6 +56,7 @@ class PTYHandler {
             this.appendLog(data);
         });
         for(const command of commands){
+            if(!command.length) continue;
             shell.write(command + '\r\n');
         }
     };

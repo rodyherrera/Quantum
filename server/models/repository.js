@@ -107,7 +107,7 @@ const handleUpdateCommands = async (context) => {
     const buildCommandLength = buildCommand.trim().length;
     const installCommandLength = installCommand.trim().length;
     const startCommandLength = startCommand.trim().length;
-    if(buildCommandLength && installCommandLength && startCommandLength){
+    if(buildCommandLength || installCommandLength || startCommandLength){
         const { user, name } = await Repository
             .findById(_id)
             .select('user name')

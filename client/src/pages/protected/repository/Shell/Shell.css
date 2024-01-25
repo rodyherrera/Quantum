@@ -8,6 +8,11 @@
     margin: 0 auto;
 }
 
+.xterm .xterm-viewport,
+.xterm-text-layer{
+    border-radius: 1rem !important;
+}
+
 #Repository-Shell-Title{
     font-size: 2.5rem;
 }
