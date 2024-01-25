@@ -6,22 +6,6 @@
     position: relative;
 }
 
-#Welcome-Container{
-    width: 300px;
-    height: 100px;
-    position: absolute;
-    display: flex;
-    flex-direction: column;
-    gap: .8rem;
-    top: 0.9rem;
-    left: 32rem;
-    font-family: monospace;
-}
-
-#Welcome-Navigation-Container{
-    font-size: .7rem;
-}
-
 #Home-Presentation-Container{
     height: 100%;
     display: flex;
@@ -75,22 +59,6 @@
 @media screen and (max-width: 768px){
     #Home-Page-Main{
         height: calc(100% - 155px);
-    }
-
-    #Welcome-Container{
-        height: auto;
-        width: auto;
-        left: 9rem;
-        top: 6rem;
-        gap: .2rem;
-    }
-
-    #Welcome-Title{
-        font-size: .6rem;
-    }
-
-    #Welcome-Navigation-Container{
-        font-size: .55rem;
     }
 
     #Docs-Button{

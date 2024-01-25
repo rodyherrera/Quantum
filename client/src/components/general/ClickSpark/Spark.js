@@ -59,6 +59,7 @@ class Spark extends HTMLElement{
                 
                 .Click-Spark-SVG{
                     pointer-events: none;
+                    z-index: 9999999;
                     position: absolute;
                     rotate: -20deg;
                     stroke: var(--click-spark-color, currentcolor);

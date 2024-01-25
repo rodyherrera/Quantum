@@ -21,17 +21,13 @@ const Layout = () => {
 
     useEffect(() => {
         const bodyEl = document.getElementById('QuantumCloud-Body');
-        if(!isMenuEnabled){
-            bodyEl.style.overflow = 'unset';
-            return;
-        }
-        bodyEl.style.overflow = 'hidden';
+        const overflowValue = isMenuEnabled ? 'hidden' : 'unset';
+        bodyEl.style.overflow = overflowValue;
     }, [isMenuEnabled]);
 
     useEffect(() => {
-        if(!isAuthenticated){
-            authenticateWithCachedToken(dispatch);
-        }
+        if(isAuthenticated) return;
+        authenticateWithCachedToken(dispatch);
     }, [dispatch, isAuthenticated]);
 
     useEffect(() => {
@@ -42,15 +38,18 @@ const Layout = () => {
 
     return (
         <React.Fragment>
-            {(isMenuEnabled && width <= 768) && (
-                <Menu />
-            )}
             <ClickSpark />
-            <SquaredBackground />
-            <Banner text='We sprinkle magic to ease your production deployment. 🎉️' />
-            <Header />
-            <Outlet />
-            <Waves />
+            {isMenuEnabled && width <= 768 ? (
+                <Menu />
+            ) : (
+                <React.Fragment>
+                    <Banner text='We sprinkle magic to ease your production deployment. 🎉️' />
+                    <Header />
+                    <Outlet />
+                    <Waves />
+                    <SquaredBackground />
+                </React.Fragment>
+            )}
         </React.Fragment>
     );
 };

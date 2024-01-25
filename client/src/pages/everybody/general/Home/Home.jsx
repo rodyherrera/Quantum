@@ -1,18 +1,17 @@
 import React from 'react';
-import Button from '@components/general/Button';
-import DashedContainer from '@components/general/DashedContainer';
-import CircleContainedText from '@components/general/CircleContainedText';
-import IconLink from '@components/general/IconLink';
-import { FaLongArrowAltRight } from 'react-icons/fa';
 import { HiOutlineArrowRight } from 'react-icons/hi';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import WelcomeSection from '@components/general/WelcomeSection';
+import Button from '@components/general/Button';
+import DashedContainer from '@components/general/DashedContainer';
+import CircleContainedText from '@components/general/CircleContainedText';
 import './Home.css';
 
 const HomePage = () => {
-    const { isAuthenticated, user } = useSelector(state => state.auth);
+    const { isAuthenticated } = useSelector(state => state.auth);
     const navigate = useNavigate();
-
+    
     return (
         <main id='Home-Page-Main'>
             <section id='Home-Presentation-Container'>
@@ -27,29 +26,7 @@ const HomePage = () => {
                     <span id='Home-Short-Subtitle'>Everything you need, in one place.</span>
                     <div id='Home-Presentation-Title-Container'>
                         <h1 id='Home-Presentation-Container-Title'>Unlock your <br/>entrepreneurial spirit!</h1>
-
-                        <aside id='Welcome-Container'>
-                            <p id='Welcome-Title'>
-                                {(isAuthenticated) ? (
-                                    <span>Welcome back <b>@{user.username}</b>!</span>
-                                ) : (
-                                    <span>You're not authenticated yet.</span>
-                                )}
-                            </p>
-                            <ul id='Welcome-Navigation-Container'>
-                                {[
-                                    ['Support Us', 'https://github.com/rodyherrera/Quantum/'],
-                                    ['Contribute', 'https://github.com/rodyherrera/Quantum/'],
-                                    ['Github', 'https://github.com/rodyherrera/Quantum/']
-                                ].map(([ title, to ], index) => (
-                                    <IconLink
-                                        key={index}
-                                        icon={<FaLongArrowAltRight />}
-                                        title={title}
-                                        to={to} />
-                                ))}
-                            </ul>
-                        </aside>
+                        <WelcomeSection />
                     </div>
                     <p id='Home-Presentation-Container-Subtitle'>
                         <span>Invest in applications, not operations.</span>
