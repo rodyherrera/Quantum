@@ -34,22 +34,40 @@ exports.repositoryActions = catchAsync(async (req, res) => {
     if(!action)
         throw new RuntimeError('Repository::Action::Required', 400);
     const pty = new PTYHandler(repository._id, repository);
+    const currentDeploymentId = repository.deployments[0];
+    const currentDeployment = await Deployment.findById(currentDeploymentId);
+    if(!currentDeployment)
+        throw new RuntimeError('Deployment::Not::Found', 404);
+    currentDeployment.status = 'pending';
+    await currentDeployment.save();
     switch(action){
         case 'restart':
             pty.removeFromRuntimeStoreAndKill();
             pty.startRepository();
+            currentDeployment.status = 'success';
             break;
         case 'stop':
             pty.removeFromRuntimeStoreAndKill();
+            currentDeployment.status = 'stopped';
             break;
         case 'start':
             pty.startRepository();
+            currentDeployment.status = 'success';
             break;
         default:
+            currentDeployment.status = 'failure';
+            currentDeployment.save();
             res.status(400).json({ status: 'error', message: 'Deployment::Invalid::Action' });
             return;
     }
-    res.status(200).json({ status: 'success' });
+    await currentDeployment.save();
+    res.status(200).json({ 
+        status: 'success', 
+        data: { 
+            status: currentDeployment.status, 
+            repository 
+        } 
+    });
 });
 
 exports.getRepositoryDeployments = catchAsync(async (req, res) => {

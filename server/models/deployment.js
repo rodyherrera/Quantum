@@ -28,7 +28,7 @@ const DeploymentSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ['pending', 'success', 'failure'],
+        enum: ['pending', 'success', 'stopped', 'failure'],
         default: 'pending'
     },
     url: {

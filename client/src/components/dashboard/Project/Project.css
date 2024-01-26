@@ -73,6 +73,19 @@
     border-color: #0f62fe;
 }
 
+.Project-Footer-Container{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.Project-Startup-Container{
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+}
+
 .Project-Title{
     font-size: 1rem;
 }

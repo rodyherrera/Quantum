@@ -1,10 +1,12 @@
 import * as deploymentService from '@services/deployment/service';
 import * as deploymentSlice from '@services/deployment/slice';
+import * as repositorySlice from '@services/repository/slice';
 
 const handleDispatch = async (dispatch, action, operation, setIsLoading = false) => {
     try{
         if(setIsLoading) await dispatch(deploymentSlice[operation](true));
         const response = await action();
+        // ?
         await dispatch(deploymentSlice.setDeployments(response.data));
     }catch(error){
         await dispatch(deploymentSlice.setError(error.message));
@@ -46,6 +48,9 @@ export const updateDeployment = (id, body, navigate) => async (dispatch) => {
 export const repositoryActions = (repositoryName, body) => async (dispatch) => {
     const query = { params: { repositoryName } };
     await handleDispatch(dispatch, async () => {
-        await deploymentService.repositoryActions({ query, body });
+        const response = await deploymentService.repositoryActions({ query, body });
+        const { status, repository } = response.data;
+        await dispatch(repositorySlice.updateDeploymentStatus({
+            _id: repository._id, status }));
     }, 'setIsOperationLoading', true);
 };

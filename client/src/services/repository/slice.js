@@ -20,6 +20,15 @@ const repositorySlice = createSlice({
         setRepositories: (state, action) => {
             state.repositories = action.payload;
         },
+        updateDeploymentStatus: (state, action) => {
+            const { _id, status } = action.payload;
+            state.repositories = state.repositories.map((repository) => {
+                if(repository._id === _id){
+                    repository.activeDeployment.status = status;
+                }
+                return repository;
+            });
+        },
         setIsOperationLoading: (state, action) => {
             state.isOperationLoading = action.payload;
         },
@@ -31,6 +40,7 @@ const repositorySlice = createSlice({
 
 export const {
     setError,
+    updateDeploymentStatus,
     setIsLoading,
     setRepositories,
     setIsOperationLoading

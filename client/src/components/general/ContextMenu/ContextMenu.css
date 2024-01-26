@@ -1,7 +1,8 @@
 .Context-Menu-Container{
     position: absolute;
     width: 150px;
-    max-height: 400px;
+    overflow-y: scroll;
+    max-height: 200px;
     z-index: 100;
     background-color: #F5F5F5;
     box-shadow: -2px 0px 14px 0px #cbcbcb;
@@ -13,21 +14,4 @@
 .Context-Menu-Options{
     display: flex;
     flex-direction: column;
-}
-
-.Context-Menu-Option{
-    padding: .8rem;
-    font-size: .8rem;
-}
-
-.Context-Menu-Option:not(:last-child){
-    border-bottom: 1px solid #9f9f9f;
-}
-
-.Context-Menu-Option:hover{
-    background-color: #f5f5f5;
-}
-
-.Context-Menu-Option:hover .Context-Menu-Option-Title{
-    text-decoration: underline;
 }

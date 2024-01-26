@@ -9,6 +9,29 @@
     cursor: pointer;
 }
 
+.Button .Button-Circular-Progress{
+    color: #000000 !important;
+}
+
+.Button.Contained .Button-Circular-Progress{
+    color: #FFFFFF !important;
+}
+
+.Button.Small .Button-Circular-Progress{
+    width: 12px !important;
+    height: 12px !important;
+    margin-right: .5rem;
+}
+
+.Button.Small{
+    padding: .3rem .5rem;
+}
+
+.Button.Small .Button-Text{
+    font-size: .6rem;
+    letter-spacing: 1.2px;
+}
+
 .Button .Button-Text{
     text-transform: uppercase;
     font-size: .875rem;

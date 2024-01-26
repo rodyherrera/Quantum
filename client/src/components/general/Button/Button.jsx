@@ -1,8 +1,16 @@
 import React from 'react';
+import { CircularProgress } from '@mui/material'
 import { useNavigate } from 'react-router-dom';
 import './Button.css';
 
-const Button = ({ title, icon = null, to = null, variant = null, ...props }) => {
+const Button = ({ 
+    title, 
+    icon = null, 
+    to = null, 
+    variant = null, 
+    isLoading = null,
+    ...props 
+}) => {
     const navigate = useNavigate();
 
     const handleOnClick = () => {
@@ -22,6 +30,9 @@ const Button = ({ title, icon = null, to = null, variant = null, ...props }) => 
             className={`Button ${variant ? ` ${variant}` : ''}`}
             onClick={handleOnClick}
         >
+            {isLoading && (
+                <CircularProgress className='Button-Circular-Progress' />
+            )}
             <span className='Button-Text'>{title}</span>
             {icon && <i className='Button-Icon'>{icon}</i>}
         </button>
