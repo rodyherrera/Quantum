@@ -76,7 +76,7 @@ const EnvironmentVariables = () => {
                 <article id='Environment-Variables-Actions-Container'>
                     <div id='Environment-Variables-Actions-Left-Container'>
                         <div id='Environment-Variables-Navigation-Container'>
-                            <Button title='Go Back' />
+                            <Button title='Go Back' onClick={() => navigate('/dashboard/')} />
                             <Button title='Save Changes' variant='Contained' onClick={handleEnvironmentUpdate} />
                         </div>
                     </div>

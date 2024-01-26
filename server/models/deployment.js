@@ -43,7 +43,18 @@ const DeploymentSchema = new mongoose.Schema({
 DeploymentSchema.plugin(TextSearch);
 DeploymentSchema.index({ environment: 'text', commit: 'text', url: 'text' });
 
-DeploymentSchema.post('findOneAndDelete', function() {
+DeploymentSchema.methods.getFormattedEnvironment = function(){
+    const formattedEnvironment = [];
+    this.environment.variables.forEach((value, key) => {
+        key = key.trim();
+        value = value.trim();
+        const formattedValue = `${key}=${value}`;
+        formattedEnvironment.push(formattedValue);
+    });
+    return formattedEnvironment.join(' && ');
+};
+
+DeploymentSchema.post('findOneAndDelete', function(){
     const { user, repository, _id } = this;
 
     const userUpdatePromise = this.model('User').updateOne({ _id: user }, { $pull: { deployments: _id } }).lean().exec();

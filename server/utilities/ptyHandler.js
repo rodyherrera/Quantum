@@ -1,5 +1,6 @@
 const pty = require('node-pty');
 const fs = require('fs');
+const Deployment = require('@models/deployment');
 
 class PTYHandler {
     constructor(repositoryId, repositoryDocument){
@@ -47,17 +48,21 @@ class PTYHandler {
         return fs.readFileSync(this.getLogAbsPath(this.repositoryId)).toString();
     };
 
-    startRepository(){
-        const { buildCommand, installCommand, startCommand } = this.repositoryDocument;
+    async startRepository(){
+        const { buildCommand, installCommand, startCommand, deployments } = this.repositoryDocument;
         const commands = [installCommand, buildCommand, startCommand];
         const shell = this.getOrCreate();
+        const currentDeploymentId = deployments[0];
+        const deployment = await Deployment.findById(currentDeploymentId).select('environment');
+        const formattedEnvironment = deployment.getFormattedEnvironment();
         shell.on('data', (data) => {
             data = data.replace(/.*#/g, this.getPrompt());
             this.appendLog(data);
         });
         for(const command of commands){
             if(!command.length) continue;
-            shell.write(command + '\r\n');
+            console.log('Command ->', command);
+            shell.write(`${formattedEnvironment} ${command}\r\n`);
         }
     };
 
