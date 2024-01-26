@@ -1,5 +1,8 @@
 const pty = require('node-pty');
 const fs = require('fs');
+const util = require('util');
+const stat = util.promisify(fs.stat);
+const truncate = util.promisify(fs.truncate);
 const Deployment = require('@models/deployment');
 
 class PTYHandler {
@@ -10,6 +13,59 @@ class PTYHandler {
         // created in each class instance and not being 
         // destroyed, maybe it should also be in this global pty variable.
         this.logStream = this.createLogStream();
+    };
+
+    async appendLog(log){
+        const logPath = this.getLogAbsPath(this.repositoryId);
+        await this.checkLogFileStatus(logPath);
+        
+        this.logStream.write(log);
+    };
+
+    // When a connection is made to the repository shell through the WebUI, a 
+    // stream is made with the file, so that it does not have to be constantly 
+    // opened and closed to write data. If a constant write is issued, the file 
+    // will increase in size, which will mean that when you want to obtain the 
+    // log it will take longer to send the packets. This function is responsible 
+    // for verifying the size of the file, if it is greater 
+    // than what is allowed, it will be emptied.
+    // 
+    // TODO: Maybe I should persist the log and send the last 
+    // TODO: "x" lines to the socket, allowing the user to delete the log manually?
+    async checkLogFileStatus(logPath){
+        try{
+            const stats = await stat(logPath);
+            const maxSize = process.env.LOG_PATH_MAX_SIZE * 1024;
+            if(stats.size > maxSize) await truncate(logPath, 0);
+        }catch(error){
+            console.error('[Quantum Cloud]: Error when trying to truncate file:', logPath, '\n' + error);
+        }
+    };
+
+    async startRepository(){
+        const { buildCommand, installCommand, startCommand, deployments } = this.repositoryDocument;
+        const commands = [installCommand, buildCommand, startCommand];
+        const shell = this.getOrCreate();
+        const currentDeploymentId = deployments[0];
+        const deployment = await Deployment.findById(currentDeploymentId).select('environment');
+        const formattedEnvironment = deployment.getFormattedEnvironment();
+        shell.on('data', (data) => {
+            data = data.replace(/.*#/g, this.getPrompt());
+            this.appendLog(data);
+        });
+        for(const command of commands){
+            if(!command.length) continue;
+            shell.write(`${formattedEnvironment} ${command}\r\n`);
+        }
+    };
+
+    static create(repositoryId){
+        const workingDir = `${__dirname}/../storage/repositories/${repositoryId}`;
+        const shell = pty.spawn('bash', ['-i'], {
+            name: 'xterm-color',
+            cwd: workingDir,
+        });
+        return shell;
     };
 
     getLogAbsPath(){
@@ -45,37 +101,12 @@ class PTYHandler {
     readLog(){
         if(!fs.existsSync(this.getLogAbsPath(this.repositoryId)))
             return '';
-        return fs.readFileSync(this.getLogAbsPath(this.repositoryId)).toString();
-    };
-
-    async startRepository(){
-        const { buildCommand, installCommand, startCommand, deployments } = this.repositoryDocument;
-        const commands = [installCommand, buildCommand, startCommand];
-        const shell = this.getOrCreate();
-        const currentDeploymentId = deployments[0];
-        const deployment = await Deployment.findById(currentDeploymentId).select('environment');
-        const formattedEnvironment = deployment.getFormattedEnvironment();
-        shell.on('data', (data) => {
-            data = data.replace(/.*#/g, this.getPrompt());
-            this.appendLog(data);
-        });
-        for(const command of commands){
-            if(!command.length) continue;
-            console.log('Command ->', command);
-            shell.write(`${formattedEnvironment} ${command}\r\n`);
-        }
+       return fs.readFileSync(this.getLogAbsPath(this.repositoryId)).toString();
     };
 
     getLog(){
-        let log = global.ptyLog?.[this.repositoryId];
-        if(!log) log = this.readLog(this.repositoryId);
+        const log = this.readLog(this.repositoryId);
         return log;
-    };
-
-    appendLog(log){
-        const currentLog = this.getLog(this.repositoryId);
-        this.logStream.write(log);
-        global.ptyLog[this.repositoryId] = currentLog + log;
     };
 
     getOrCreate(){
@@ -83,15 +114,6 @@ class PTYHandler {
             return global.ptyStore[this.repositoryId];
         global.ptyStore[this.repositoryId] = PTYHandler.create(this.repositoryId);
         return global.ptyStore[this.repositoryId];
-    };
-
-    static create(repositoryId){
-        const workingDir = `${__dirname}/../storage/repositories/${repositoryId}`;
-        const shell = pty.spawn('bash', ['-i'], {
-            name: 'xterm-color',
-            cwd: workingDir,
-        });
-        return shell;
     };
 };
 

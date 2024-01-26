@@ -17,6 +17,7 @@ const Shell = () => {
     const { repositoryName } = useParams();
     const [xterm, setXterm] = useState(null);
     const [socket, setSocket] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         if(!fitAddonRef.current) return;
@@ -37,7 +38,10 @@ const Shell = () => {
     useEffect(() => {
         if(!socket || !xterm) return;
         xterm.onData((data) => socket.emit('command', data));
-        socket.on('history', (history) => xterm.write(history));
+        socket.on('history', (history) => {
+            setIsLoading(false);
+            xterm.write(history)
+        });
         socket.on('response', (response) => xterm.write(response));
     }, [socket, xterm]);
 
@@ -53,6 +57,7 @@ const Shell = () => {
         return () => {
             setSocket(null);
             setXterm(null);
+            setIsLoading(true);
             fitAddonRef.current = null;
             term.dispose();
             fitAddon.dispose();
@@ -78,7 +83,7 @@ const Shell = () => {
 
             <section id='Repository-Shell-Body-Container'>
                 <article id='Repository-Shell'>
-                    {(socket === null) && (
+                    {(isLoading) && (
                         <aside id='Socket-Connection-Loading-Container'>
                             <CircularProgress size='2.5rem' />
                         </aside>
