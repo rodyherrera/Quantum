@@ -20,3 +20,8 @@ export const updateDeployment = DeploymentAPI.register({
     path: '/:id/',
     method: 'PATCH'
 });
+
+export const repositoryActions = DeploymentAPI.register({
+    path: '/repository/:repositoryName/actions/',
+    method: 'POST'
+});

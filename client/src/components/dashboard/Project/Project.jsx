@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import ContextMenu from '@components/general/ContextMenu';
 import * as repositoryActions from '@services/repository/actions';
+import * as deploymentActions from '@services/deployment/actions';
 import './Project.css';
 
 const Project = ({ repository, ...props }) => {
@@ -27,6 +28,9 @@ const Project = ({ repository, ...props }) => {
             <ContextMenu 
                 className='Project-More-Icon-Container' 
                 options={[
+                    { title: 'Start', onClick: () => dispatch(deploymentActions.repositoryActions(repository.name, { action: 'start' })) },
+                    { title: 'Restart', onClick: () => dispatch(deploymentActions.repositoryActions(repository.name, { action: 'restart' })) },
+                    { title: 'Stop', onClick: () => dispatch(deploymentActions.repositoryActions(repository.name, { action: 'stop' })) },
                     { title: 'Delete', onClick: () => dispatch(repositoryActions.deleteRepository(repository._id, repositories, navigate)) },
                     { title: 'Build & Dev Settings',  onClick: () => navigate(`/repository/${repository.name}/deployment/setup/`, { state: { repository } }) },
                     { title: 'Environment Variables',  onClick: () => navigate(`/repository/${repository.name}/deployment/environment-variables/`, { state: { repository } }) },

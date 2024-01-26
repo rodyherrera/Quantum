@@ -42,3 +42,10 @@ export const updateDeployment = (id, body, navigate) => async (dispatch) => {
         navigate('/dashboard/');
     }, 'setIsOperationLoading', true);
 };
+
+export const repositoryActions = (repositoryName, body) => async (dispatch) => {
+    const query = { params: { repositoryName } };
+    await handleDispatch(dispatch, async () => {
+        await deploymentService.repositoryActions({ query, body });
+    }, 'setIsOperationLoading', true);
+};

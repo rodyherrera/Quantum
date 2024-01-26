@@ -38,7 +38,6 @@ const handleRepositoryShell = (socket) => {
 
     shell.on('exit', () => {
         socket.disconnect();
-        PTY.clearRuntimePTYLog();
     });
 };
 

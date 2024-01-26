@@ -18,7 +18,6 @@ exports.loadRepositoriesPTYs = async () => {
     const repositories = await Repository.find().populate({ path: 'user', select: 'username' });
     console.log(`[Quantum Cloud]: Found ${repositories.length} repositories.`);
     for(const repository of repositories){
-        global.ptyStore[repository._id] = PTYHandler.create(repository._id);
         const repositoryShell = new PTYHandler(repository._id, repository);
         repositoryShell.startRepository();
     }

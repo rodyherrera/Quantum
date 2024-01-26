@@ -79,7 +79,6 @@ class PTYHandler {
     };
 
     clearRuntimePTYLog(){
-        delete global.ptyLog[this.repositoryId];
         this.logStream.end();
     };
 
