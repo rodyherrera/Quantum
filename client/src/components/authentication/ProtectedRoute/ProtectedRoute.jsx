@@ -10,7 +10,7 @@ const ProtectedRoute = ({ mode, restrictTo = undefined }) => {
 
     return (isCachedAuthLoading) ? (
         <main className='Authentication-Loading-Main'>
-            <CircularProgress size={'2.5rem'} />
+            <CircularProgress className='Circular-Progress' />
         </main>
     ) : restrictTo !== undefined ? (
         user && user.Role.toLowerCase().includes(restrictTo.toLowerCase()) ?

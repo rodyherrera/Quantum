@@ -46,7 +46,7 @@ const DataRenderer = ({
             <section className='Data-Renderer-Body-Container'>
                 {isLoading || isOperationLoading ? (
                     <article className='Data-Renderer-Loading-Container'>
-                        <CircularProgress size='2.5rem' />
+                        <CircularProgress className='Circular-Progress' />
                         {(isOperationLoading && operationLoadingMessage) && (
                             <p className='Data-Renderer-Operation-Loading-Message'>{operationLoadingMessage}</p>
                         )}

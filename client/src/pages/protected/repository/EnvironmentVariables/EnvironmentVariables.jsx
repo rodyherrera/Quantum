@@ -90,13 +90,13 @@ const EnvironmentVariables = () => {
             <section id='Environment-Variables-Body'>
                 {(isOperationLoading) && (
                     <div id='Environment-Variables-Operation-Loading-Container'>
-                        <CircularProgress size='2.5rem' />
+                        <CircularProgress className='Circular-Progress' />
                     </div>
                 )}
 
                 {(isEnvironmentLoading) ? (
                     <div id='Environment-Variables-Loader-Container'>
-                        <CircularProgress size='2.5rem' />
+                        <CircularProgress className='Circular-Progress' />
                     </div>
                 ) : (
                     (environment.variables.length === 0) ? (

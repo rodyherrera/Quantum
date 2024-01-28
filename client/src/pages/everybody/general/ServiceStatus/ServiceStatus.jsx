@@ -24,7 +24,7 @@ const ServiceStatus = () => {
             </section>
 
             {isServerHealthLoading ? (
-                <CircularProgress size='2.5rem' />
+                <CircularProgress className='Circular-Progress' />
             ) : (
                 <React.Fragment>
                 <section id='Service-Status-Body-Container'>

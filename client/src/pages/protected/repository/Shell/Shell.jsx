@@ -86,7 +86,7 @@ const Shell = () => {
                 <article id='Repository-Shell'>
                     {(isLoading) && (
                         <aside id='Socket-Connection-Loading-Container'>
-                            <CircularProgress size='2.5rem' />
+                            <CircularProgress className='Circular-Progress' />
                         </aside>
                     )}
 

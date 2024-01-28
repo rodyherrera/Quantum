@@ -20,7 +20,7 @@ const NeedAuthenticate = () => {
 
     return (isLoading) ? (
         <AnimatedMain id='Github-Need-Authenticate-Loading-Main'>
-            <CircularProgress size={'2.5rem'} />
+            <CircularProgress className='Circular-Progress' />
             <p>Connecting to your Github account...</p>
         </AnimatedMain>
     ) : (

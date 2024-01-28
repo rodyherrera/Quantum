@@ -51,6 +51,12 @@ i{
     font-size: 1.1rem;
 }
 
+.Circular-Progress{
+    color: #000000 !important;
+    width: 2.5rem !important;
+    height: 2.5rem !important;
+}
+
 main{
     height: calc(100% - 140px);
 }
