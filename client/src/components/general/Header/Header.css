@@ -40,7 +40,16 @@
 
 .Header-Links-Container{
     display: flex;
-    gap: 2rem;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.Header-Links-Left-Container,
+.Header-Links-Right-Container{
+    display: flex;
+    align-items: center;
+    gap: 1rem;
 }
 
 .Header-Center-Container{

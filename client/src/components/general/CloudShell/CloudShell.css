@@ -1,0 +1,83 @@
+.Cloud-Shell-Container{
+    width: 100%;
+    position: fixed;
+    border-top: 1px solid #000000;
+    bottom: 0;
+    background-color: #F5F5F5;
+    z-index: 200;
+}
+
+.Cloud-Shell-Container .xterm .xterm-viewport, .xterm-text-layer{
+    border-radius: 0 !important;
+}
+
+.Cloud-Shell-Body-Container,
+.Cloud-Shell-Body-Container > :first-child{
+    height: 100%;
+}
+
+.Cloud-Shell-Header-Container{
+    width: 100%;
+    display: flex;
+    padding: 1rem 2rem;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.Cloud-Shell-Header-Left-Container,
+.Cloud-Shell-Header-Center-Container,
+.Cloud-Shell-Header-Right-Container{
+    display: flex;
+    align-items: center;
+    width: 33.3%;
+}
+
+.Cloud-Shell-Header-Left-Container{
+    gap: .5rem;
+}
+
+.Cloud-Shell-Header-Center-Container{
+    justify-content: center;
+}
+
+.Cloud-Shell-Drag-Icon-Container{
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+.Cloud-Shell-Header-Right-Container{
+    gap: 1rem;
+    justify-content: flex-end;
+}
+
+.Cloud-Shell-Header-Right-Icon-Container{
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.Cloud-Shell-Header-Left-Title-Container{
+    display: flex;
+    flex-direction: column;
+    line-height: .8rem;
+}
+
+.Cloud-Shell-Header-Left-Icon-Container{
+    font-size: 1.7rem;
+}
+
+.Cloud-Shell-Header-Left-Title{
+    opacity: .6;
+    text-transform: uppercase;
+    font-size: .75rem;
+}
+
+.Cloud-Shell-Header-Left-Subtitle{
+    font-size: .8rem;
+}
+
+@media screen and (max-width: 768px){
+    .Cloud-Shell-Header-Container{
+        padding: 1rem;
+    }
+
+}

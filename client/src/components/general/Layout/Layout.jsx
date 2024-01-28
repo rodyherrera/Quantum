@@ -5,6 +5,7 @@ import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { authenticateWithCachedToken } from '@services/authentication/utils';
 import { resetErrorForAllSlices } from '@services/core/actions';
 
+import CloudShell from '@components/general/CloudShell';
 import Waves from '@components/general/Waves';
 import ClickSpark from '@components/general/ClickSpark';
 import Banner from '@components/general/Banner';
@@ -18,7 +19,7 @@ import './Layout.css';
 const Layout = () => {
     const { isAuthenticated, user, isLoading, isCacheLoading } = useSelector(state => state.auth);
     const { isLoading: githubIsLoading } = useSelector(state => state.github);
-    const { isMenuEnabled } = useSelector(state => state.core);
+    const { isMenuEnabled, isCloudConsoleEnabled } = useSelector(state => state.core);
     const { width } = useWindowSize();
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -48,6 +49,7 @@ const Layout = () => {
     return (
         <React.Fragment>
             <ClickSpark />
+            {isCloudConsoleEnabled && <CloudShell />}
             {isMenuEnabled && width <= 768 ? (
                 <Menu />
             ) : (

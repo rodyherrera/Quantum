@@ -5,13 +5,14 @@ import HamburguerMenu from '@components/general/HamburguerMenu';
 import { logout } from '@services/authentication/actions';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { setIsCloudConsoleEnabled } from '@services/core/slice';
 import * as coreSlice from '@services/core/slice';
 import './Header.css';
 
 const Header = () => {
     const headerRef = useRef(null);
     const { isAuthenticated } = useSelector(state => state.auth);
-    const { isMenuEnabled } = useSelector(state => state.core);
+    const { isMenuEnabled, isCloudConsoleEnabled } = useSelector(state => state.core);
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
@@ -25,9 +26,14 @@ const Header = () => {
             </section>
             <section className='Header-Center-Container Header-Child-Container'>
                 <article className='Header-Links-Container'>
-                    <IconLink title='Create Deployment' to='/repository/create/' />
-                    <IconLink title='Privacy Policy' to='/legal/privacy-policy/' />
-                    <IconLink title='Service Status' to='/service-status/' />
+                    <div className='Header-Links-Left-Container'>
+                        <IconLink title='Create Deployment' to='/repository/create/' />
+                        <IconLink title='Privacy Policy' to='/legal/privacy-policy/' />
+                        <IconLink title='Service Status' to='/service-status/' />
+                    </div>
+                    <div className='Header-Links-Right-Container'>
+                        <IconLink title='Cloud Console' onClick={() => dispatch(setIsCloudConsoleEnabled(!isCloudConsoleEnabled))} />
+                    </div>
                 </article>
             </section>
             <section className='Header-Right-Container Header-Child-Container'>

@@ -2,6 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const state = {
     isMenuEnabled: false,
+    isCloudConsoleEnabled: false,
     errors: [],
     isServerHealthLoading: true,
     serverHealth: null,
@@ -14,6 +15,9 @@ const coreSlice = createSlice({
     reducers: {
         setIsMenuEnabled: (state, action) => {
             state.isMenuEnabled = action.payload;
+        },
+        setIsCloudConsoleEnabled: (state, action) => {
+            state.isCloudConsoleEnabled = action.payload;
         },
         setError: (state, action) => {
             state.error = action.payload;
@@ -40,6 +44,7 @@ export const {
     setServerHealth,
     setIsServerHealthLoading,
     setError,
+    setIsCloudConsoleEnabled,
     addError,
     removeError
 } = coreSlice.actions;
