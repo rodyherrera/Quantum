@@ -28,7 +28,6 @@ const RepositoryDeployments = () => {
             emptyDataMessage='There is no deployment registered in the repository.'
             emptyDataBtn={{
                 title: 'Create Deployment',
-                variant: 'primary',
                 to: '/repository/create/'
             }}
             breadcrumbsItems={[
