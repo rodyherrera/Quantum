@@ -14,7 +14,6 @@ const coreSlice = createSlice({
         },
         addError: (state, action) => {
             const error = action.payload;
-            console.log('ERRROR ->', error);
             state.errors.push(error);
         },
         removeError: (state, action) => {

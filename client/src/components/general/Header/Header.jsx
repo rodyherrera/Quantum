@@ -35,7 +35,7 @@ const Header = () => {
                     {isAuthenticated ? (
                         <React.Fragment>
                             <HeaderNavItem title='Dashboard' to='/dashboard/' />
-                            <HeaderNavItem title='Sign Out' onClick={() => logout(dispatch)} />
+                            <HeaderNavItem title='Sign Out' onClick={() => dispatch(logout())} />
                         </React.Fragment>
                     ) : (
                         <React.Fragment>

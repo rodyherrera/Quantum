@@ -5,7 +5,7 @@ import { signUp } from '@services/authentication/actions';
 import './SignUp.css';
 
 const SignUp = () => {
-    const { isLoading } = useSelector(state => state.auth);
+    const { isLoading, error } = useSelector(state => state.auth);
     const dispatch = useDispatch();
 
     const handleFormSubmit = (e, formValues) => {
@@ -18,6 +18,7 @@ const SignUp = () => {
         headerSubtitle="Tell us a little more about yourself..."
         submitButtonTitle='Create account'
         handleFormSubmit={handleFormSubmit}
+        error={error}
         isLoading={isLoading}
         formInputs={[
             { 

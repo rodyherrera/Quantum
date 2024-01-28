@@ -4,12 +4,18 @@ import './HeaderNavItem.css';
 
 const HeaderNavItem = ({ title, to, children, ...props }) => {
     const navigate = useNavigate();
+    
+    const clickHandler = () => {
+        if(props?.onClick) props.onClick();
+        if(!to) return;
+        navigate(to);
+    };
 
     return (
         <div 
             {...props}
             className={'Header-Navigation-Item-Container ' + props?.className || ''}
-            onClick={() => (to) && (navigate(to))}
+            onClick={clickHandler}
         >
             {(title) && (
                 <h3 className='Header-Navigation-Item-Title'>{title}</h3>

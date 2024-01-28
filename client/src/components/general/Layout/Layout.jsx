@@ -1,8 +1,10 @@
 import React, { useEffect } from 'react';
-import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
+import { Outlet, useNavigate, useLocation } from 'react-router-dom';
+
 import { authenticateWithCachedToken } from '@services/authentication/utils';
 import { resetErrorForAllSlices } from '@services/core/actions';
+
 import Waves from '@components/general/Waves';
 import ClickSpark from '@components/general/ClickSpark';
 import Banner from '@components/general/Banner';
@@ -10,6 +12,7 @@ import Header from '@components/general/Header';
 import Menu from '@components/general/Menu';
 import SquaredBackground from '@components/general/SquaredBackground';
 import useWindowSize from '@hooks/useWindowSize';
+
 import './Layout.css';
 
 const Layout = () => {

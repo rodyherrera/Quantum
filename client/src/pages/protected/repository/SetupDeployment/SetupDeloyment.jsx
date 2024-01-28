@@ -6,7 +6,7 @@ import * as repositoryActions from '@services/repository/actions';
 import './SetupDeployment.css';
 
 const SetupDeployment = () => {
-    const { isOperationLoading } = useSelector(state => state.repository);
+    const { isOperationLoading, error } = useSelector(state => state.repository);
     const { state } = useLocation();
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -26,6 +26,7 @@ const SetupDeployment = () => {
         headerSubtitle='We need to know some information about your project.'
         submitButtonTitle='Continue'
         isLoading={isOperationLoading}
+        error={error}
         handleFormSubmit={handleFormSubmit}
         formInputs={[
             {
