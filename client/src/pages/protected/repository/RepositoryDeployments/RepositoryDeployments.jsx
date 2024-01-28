@@ -1,11 +1,8 @@
 import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { CircularProgress } from '@mui/material';
-import { VscGithubInverted } from 'react-icons/vsc';
 import DeploymentItem from '@components/deployment/DeploymentItem';
-import Breadcrumbs from '@components/general/Breadcrumbs';
-import Button from '@components/general/Button';
+import DataRenderer from '@components/general/DataRenderer';
 import * as deploymentActions from '@services/deployment/actions';
 import './RepositoryDeployments.css';
 
@@ -18,61 +15,38 @@ const RepositoryDeployments = () => {
     useEffect(() => {
         dispatch(deploymentActions.getRepositoryDeployments(repositoryName));
     }, []);
-    
-    return (
-        <main id='Repository-Deployments-Main'>
-            <section id='Repository-Deployments-Header'>
-                <Breadcrumbs 
-                    items={[
-                        { title: 'Dashboard', to: '/dashboard/' },
-                        { title: 'Repositories', to: '/dashboard/' },
-                        { title: repositoryName, to: '/dashboard/' },
-                        { title: 'Deployments', to: `/repository/${repositoryName}/deployments/` }
-                    ]}
-                />
-                <h1 id='Repository-Deployments-Header-Title'>Deployments</h1>
-                <p id='Repository-Deployments-Header-Subtitle'>
-                    <span>Continuously generated from</span>
-                    <span id='Repository-Deployment-Generated-From'>
-                        <i>
-                            <VscGithubInverted />
-                        </i> 
-                        <span>{user.github.username}/{repositoryName}</span>
-                    </span>
-                </p>
-            </section>
 
-            <section id='Repository-Deployments-Body'>
-                {(isLoading) ? (
-                    <div id='Repository-Deployments-Body-Loading-Container'>
-                        <CircularProgress id='Repository-Deployments-Body-Loading' size='2.5rem' />
-                    </div>
-                ) : (
-                    <article id='Repository-Deployments-Body-List'>
-                        {(isOperationLoading) && (
-                            <div id='Repository-Deployments-Operation-Loading-Container'>
-                                <CircularProgress id='Repository-Deployments-Operation-Loading' size='2.5rem' />
-                                <p>Processing, please wait a few seconds...</p>
-                            </div>
-                        
-                        )}
-                        {(deployments.length === 0) ? (
-                            <div id='Repository-Deployments-Body-List-Empty-Container'>
-                                <p id='Repository-Deployments-Body-List-Empty'>There is no deployment registered in the repository.</p>
-                                <Button title='Create Deployment' variant='primary' to='/repository/create/' />
-                            </div>
-                        ) : (
-                            deployments.map((deployment, index) => (
-                                <DeploymentItem 
-                                    key={index} 
-                                    deployment={deployment} 
-                                    repositoryName={repositoryName} />
-                            ))
-                        )}
-                    </article>
-                )}
-            </section>
-        </main>
+    return (
+        <DataRenderer
+            title='Deployments'
+            id='Repository-Deployments-Main'
+            description={`Continuously generated from ${user.github.username}/${repositoryName}`}
+            isLoading={isLoading}
+            isOperationLoading={isOperationLoading}
+            operationLoadingMessage='Processing, please wait a few seconds...'
+            data={deployments}
+            emptyDataMessage='There is no deployment registered in the repository.'
+            emptyDataBtn={{
+                title: 'Create Deployment',
+                variant: 'primary',
+                to: '/repository/create/'
+            }}
+            breadcrumbsItems={[
+                { title: 'Dashboard', to: '/dashboard/' },
+                { title: 'Repositories', to: '/dashboard/' },
+                { title: repositoryName, to: '/dashboard/' },
+                { title: 'Deployments', to: `/repository/${repositoryName}/deployments/` }
+            ]}
+        >
+            <div id='Repository-Deployments-Body-List'>
+                {deployments.map((deployment, index) => (
+                    <DeploymentItem 
+                        key={index} 
+                        deployment={deployment} 
+                        repositoryName={repositoryName} />
+                ))}
+            </div>
+        </DataRenderer>
     );
 };
 
