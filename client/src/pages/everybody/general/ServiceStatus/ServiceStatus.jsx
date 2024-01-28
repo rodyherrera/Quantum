@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getServerHealth } from '@services/core/actions';
 import { FaCheckCircle } from 'react-icons/fa';
 import Button from '@components/general/Button';
+import AnimatedMain from '@components/general/AnimatedMain';
 import './ServiceStatus.css';
 
 const ServiceStatus = () => {
@@ -15,7 +16,7 @@ const ServiceStatus = () => {
     }, []);
 
     return (
-        <main id='Service-Status-Main'>
+        <AnimatedMain id='Service-Status-Main'>
             <section id='Service-Status-Header-Container'>
                 <article id='Service-Status-Title-Container'>
                     <h1 id='Service-Status-Title'>System status</h1>
@@ -62,7 +63,7 @@ const ServiceStatus = () => {
                     </section>
                 </React.Fragment>
             )}
-        </main>
+        </AnimatedMain>
     );
 };
 

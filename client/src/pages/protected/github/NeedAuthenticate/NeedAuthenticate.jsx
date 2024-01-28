@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { authenticate } from '@services/github/actions';
 import { CircularProgress } from '@mui/material';
 import Button from '@components/general/Button';
+import AnimatedMain from '@components/general/AnimatedMain';
 import './NeedAuthenticate.css';
 
 const NeedAuthenticate = () => {
@@ -18,12 +19,12 @@ const NeedAuthenticate = () => {
     }, [user]);
 
     return (isLoading) ? (
-        <main id='Github-Need-Authenticate-Loading-Main'>
+        <AnimatedMain id='Github-Need-Authenticate-Loading-Main'>
             <CircularProgress size={'2.5rem'} />
             <p>Connecting to your Github account...</p>
-        </main>
+        </AnimatedMain>
     ) : (
-        <main id='Github-Need-Authenticate-Main'>
+        <AnimatedMain id='Github-Need-Authenticate-Main'>
             <section id='Github-Need-Authenticate-Body'>
                 <article id='Github-Need-Authenticate-Title-Container'>
                     <h1 id='Github-Need-Authenticate-Title'>Let's start something new together...</h1>
@@ -38,7 +39,7 @@ const NeedAuthenticate = () => {
                         icon={<BsArrowRight />} />
                 </article>
             </section>
-        </main>
+        </AnimatedMain>
     );
 };
 

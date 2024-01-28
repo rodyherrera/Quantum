@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import useQuery from '@hooks/useQuery';
+import AnimatedMain from '@components/general/AnimatedMain';
 import { useSelector, useDispatch } from 'react-redux';
 import { createAccount } from '@services/github/actions';
 import { CircularProgress } from '@mui/material';
@@ -29,10 +30,10 @@ const Authenticate = () => {
     }, []);
 
     return (
-        <main id='Github-Authenticate-Main'>
+        <AnimatedMain id='Github-Authenticate-Main'>
             <CircularProgress size={'2.5rem'} />
             <p>Connecting to your Github account...</p>
-        </main>
+        </AnimatedMain>
     );
 };
 

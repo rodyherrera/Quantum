@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { CircularProgress } from '@mui/material';
 import Breadcrumbs from '@components/general/Breadcrumbs';
 import EnvironmentVariable from '@components/repository/EnvironmentVariable';
+import AnimatedMain from '@components/general/AnimatedMain';
 import Button from '@components/general/Button';
 import EnvironmentMobileActions from '@components/repository/EnvironmentMobileActions';
 import * as deploymentSlice from '@services/deployment/slice';
@@ -56,7 +57,7 @@ const EnvironmentVariables = () => {
     };
 
     return (
-        <main id='Environment-Variables-Main'>
+        <AnimatedMain id='Environment-Variables-Main'>
             <section id='Environment-Variables-Left-Container'>
                 <article id='Environment-Variables-Left-Title-Container'>
                     <article id='Environment-Variables-Breadcrumbs-Container'>
@@ -121,7 +122,7 @@ const EnvironmentVariables = () => {
                 <EnvironmentMobileActions 
                     saveHandler={handleEnvironmentUpdate}
                     addNewVariableHandler={handleCreateNew} />}
-        </main>
+        </AnimatedMain>
     );
 };
 

@@ -11,8 +11,7 @@ const SetupDeployment = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
-    const handleFormSubmit = (e, formValues) => {
-        e.preventDefault();
+    const handleFormSubmit = (formValues) => {
         dispatch(repositoryActions.updateRepository(state.repository._id, formValues, navigate));
     };
 

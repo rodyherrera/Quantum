@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Input from '@components/general/Input';
 import Button from '@components/general/Button';
+import AnimatedMain from '@components/general/AnimatedMain'
 import { BsArrowRight } from 'react-icons/bs';
 import { CircularProgress } from '@mui/material';
 import './MinimalForm.css';
@@ -17,6 +18,12 @@ const MinimalForm = ({
     const [formValues, setFormValues] = useState(
         formInputs.map(input => ({ [input.name]: input?.value || '' })).reduce((acc, cur) => ({ ...acc, ...cur }), {}));
 
+    const keyPressHandler = (e) => {
+        if(e.key === 'Enter'){
+            handleFormSubmit(formValues);
+        }
+    };
+
     useEffect(() => {
         return () => {
             setFormValues(formInputs.map(input => ({ [input.name]: '' })));
@@ -24,7 +31,7 @@ const MinimalForm = ({
     }, []);
 
     return (
-        <form className='Minimal-Form-Container' onSubmit={(e) => handleFormSubmit(e, formValues)}>
+        <AnimatedMain className='Minimal-Form-Container'>
             <div className='Minimal-Form-Header-Container'>
                 <div className='Minimal-Form-Title-Container'>
                     <h1 className='Minimal-Form-Title'>{headerTitle}</h1>
@@ -44,6 +51,7 @@ const MinimalForm = ({
                         key={index}
                         type={input.type}
                         value={formValues[input.name]}
+                        onKeyPress={keyPressHandler}
                         onChange={(e) => setFormValues({ ...formValues, [input.name]: e.target.value })}
                         name={input.name}
                         helperText={input.helperText}
@@ -53,12 +61,12 @@ const MinimalForm = ({
 
             <div className='Minimal-Form-Footer-Container'>
                 <Button 
-                    type='submit'
+                    onClick={() => handleFormSubmit(formValues)}
                     title={submitButtonTitle} 
                     variant='Contained Black Extend' 
                     icon={isLoading ? <CircularProgress/> : <BsArrowRight />} />
             </div>
-        </form>
+        </AnimatedMain>
     );
 };
 

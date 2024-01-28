@@ -2,6 +2,7 @@ import React from 'react';
 import { CircularProgress } from '@mui/material';
 import Button from '@components/general/Button';
 import Breadcrumbs from '@components/general/Breadcrumbs';
+import AnimatedMain from '@components/general/AnimatedMain'
 import './DataRenderer.css';
 
 const DataRenderer = ({ 
@@ -21,7 +22,7 @@ const DataRenderer = ({
 }) => {
 
     return (
-        <main className='Data-Renderer-Main' {...props}>
+        <AnimatedMain className='Data-Renderer-Main' {...props}>
             <section className='Data-Renderer-Header-Container'>
                 <article className='Data-Renderer-Header-Left-Container'>
                     {breadcrumbItems !== null && <Breadcrumbs items={breadcrumbItems} />}
@@ -61,7 +62,7 @@ const DataRenderer = ({
                     )
                 )}
             </section>
-        </main>
+        </AnimatedMain>
     );
 };
 

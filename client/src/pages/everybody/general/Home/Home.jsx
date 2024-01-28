@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import WelcomeSection from '@components/general/WelcomeSection';
 import Button from '@components/general/Button';
+import AnimatedMain from '@components/general/AnimatedMain';
 import DashedContainer from '@components/general/DashedContainer';
 import CircleContainedText from '@components/general/CircleContainedText';
 import './Home.css';
@@ -13,7 +14,7 @@ const HomePage = () => {
     const navigate = useNavigate();
     
     return (
-        <main id='Home-Page-Main'>
+        <AnimatedMain id='Home-Page-Main'>
             <section id='Home-Presentation-Container'>
                 <Button 
                     to='https://github.com/rodyherrera/Quantum/'
@@ -48,7 +49,7 @@ const HomePage = () => {
                     onClick={() => navigate('/repository/create/')}
                     title='Deploy, Scale, Repeat.' />
             </aside>
-        </main>
+        </AnimatedMain>
     );
 };
 

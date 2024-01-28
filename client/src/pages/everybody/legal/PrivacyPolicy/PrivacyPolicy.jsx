@@ -1,5 +1,6 @@
 import React from 'react';
 import PolicyArticle from '@components/legal/PolicyArticle';
+import AnimatedMain from '@components/general/AnimatedMain';
 import './PrivacyPolicy.css';
 
 const PrivacyPolicy = () => {
@@ -51,7 +52,7 @@ const PrivacyPolicy = () => {
     ];
 
     return (
-        <main id='Privacy-Policy-Main'>
+        <AnimatedMain id='Privacy-Policy-Main'>
             <section id='Privacy-Policy-Header-Container'>
                 <article id='Privacy-Policy-Title-Container'>
                     <h1 id='Privacy-Policy-Title'>Privacy Policy</h1>
@@ -76,7 +77,7 @@ const PrivacyPolicy = () => {
                     </article>
                 ))}
             </section>
-        </main>
+        </AnimatedMain>
     );
 };
 

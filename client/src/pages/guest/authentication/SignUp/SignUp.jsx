@@ -8,8 +8,7 @@ const SignUp = () => {
     const { isLoading, error } = useSelector(state => state.auth);
     const dispatch = useDispatch();
 
-    const handleFormSubmit = (e, formValues) => {
-        e.preventDefault();
+    const handleFormSubmit = (formValues) => {
         dispatch(signUp(formValues));
     };
 

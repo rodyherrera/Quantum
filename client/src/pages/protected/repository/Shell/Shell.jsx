@@ -5,6 +5,7 @@ import { io } from 'socket.io-client';
 import { getCurrentUserToken } from '@services/authentication/localStorageService';
 import { useParams } from 'react-router-dom';
 import { CircularProgress } from '@mui/material';
+import AnimatedMain from '@components/general/AnimatedMain'
 import Breadcrumbs from '@components/general/Breadcrumbs';
 import useWindowSize from '@hooks/useWindowSize';
 import 'xterm/css/xterm.css';
@@ -65,7 +66,7 @@ const Shell = () => {
     }, []);
 
     return (
-        <main id='Repository-Shell-Main'>
+        <AnimatedMain id='Repository-Shell-Main'>
             <section id='Repository-Shell-Header-Container'>
                 <Breadcrumbs
                     items={[
@@ -92,7 +93,7 @@ const Shell = () => {
                     <div ref={terminalRef} />
                 </article>
             </section>
-        </main>
+        </AnimatedMain>
     );
 };
 
