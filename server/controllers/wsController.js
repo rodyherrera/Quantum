@@ -21,48 +21,32 @@ const tokenOwnership = async (socket, next) => {
     next();
 };
 
+const createShellHandler = (socket, shellInstance) => {
+    const PTY = shellInstance;
+    const shell = PTY.getOrCreate();
+    socket.emit('history', PTY.getLog());
+    socket.on('command', (command) => shell.write(command));
+    shell.on('data', (data) => {
+        if(PTY instanceof PTYHandler){
+            data = data.replace(/.*#/g, PTY.getPrompt());
+        } 
+        PTY.appendLog(data);
+        socket.emit('response', data);
+    });
+    shell.on('exit', () => socket.disconnect());
+};
+
 const repositoryShellHandler = (socket) => {
     const { repository, user } = socket;
     repository.user = user;
     const PTY = new PTYHandler(repository._id, repository);
-    const shell = PTY.getOrCreate();
-
-    socket.emit('history', PTY.getLog());
-
-    socket.on('command', (command) => {
-        shell.write(command);
-    });
-
-    shell.on('data', (data) => {
-        data = data.replace(/.*#/g, PTY.getPrompt());
-        PTY.appendLog(data);
-        socket.emit('response', data);
-    });
-
-    shell.on('exit', () => {
-        socket.disconnect();
-    });
+    createShellHandler(socket, PTY);
 };
 
 const cloudConsoleHandler = (socket) => {
     const { user } = socket;
     const PTY = new CloudConsoleHandler(user._id);
-    const shell = PTY.getOrCreate();
-
-    socket.emit('history', PTY.getLog());
-
-    socket.on('command', (command) => {
-        shell.write(command);
-    });
-
-    shell.on('data', (data) => {
-        PTY.appendLog(data);
-        socket.emit('response', data);
-    });
-
-    shell.on('exit', () => {
-        socket.disconnect();
-    });
+    createShellHandler(socket, PTY);
 };
 
 module.exports = (io) => {
@@ -70,8 +54,8 @@ module.exports = (io) => {
     io.on('connection', async (socket) => {
         const { action } = socket.handshake.query;
         if(action === 'Repository::Shell'){
-            await tokenOwnership(socket, (err) => {
-                if(err) socket.disconnect();
+            await tokenOwnership(socket, (error) => {
+                if(error) socket.disconnect();
                 else repositoryShellHandler(socket);
             });
         }else if(action === 'Cloud::Console'){
