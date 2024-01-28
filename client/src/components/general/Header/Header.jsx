@@ -27,7 +27,7 @@ const Header = () => {
                 <article className='Header-Links-Container'>
                     <IconLink title='Create Deployment' to='/repository/create/' />
                     <IconLink title='Privacy Policy' to='/legal/privacy-policy/' />
-                    <IconLink title='Service Status' to='https://uptime.rodyherrera.com/' />
+                    <IconLink title='Service Status' to='/service-status/' />
                 </article>
             </section>
             <section className='Header-Right-Container Header-Child-Container'>

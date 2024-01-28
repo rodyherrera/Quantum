@@ -2,7 +2,10 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const state = {
     isMenuEnabled: false,
-    errors: []
+    errors: [],
+    isServerHealthLoading: true,
+    serverHealth: null,
+    error: null
 };
 
 const coreSlice = createSlice({
@@ -11,6 +14,15 @@ const coreSlice = createSlice({
     reducers: {
         setIsMenuEnabled: (state, action) => {
             state.isMenuEnabled = action.payload;
+        },
+        setError: (state, action) => {
+            state.error = action.payload;
+        },
+        setIsServerHealthLoading: (state, action) => {
+            state.isServerHealthLoading = action.payload;
+        },
+        setServerHealth: (state, action) => {
+            state.serverHealth = action.payload;
         },
         addError: (state, action) => {
             const error = action.payload;
@@ -25,6 +37,9 @@ const coreSlice = createSlice({
 
 export const {
     setIsMenuEnabled,
+    setServerHealth,
+    setIsServerHealthLoading,
+    setError,
     addError,
     removeError
 } = coreSlice.actions;

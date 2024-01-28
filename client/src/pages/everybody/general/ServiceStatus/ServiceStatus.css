@@ -44,6 +44,10 @@
     font-size: .9rem;
 }
 
+.Service-Detailed-Status.Error{
+    color: hsl(358,66%,48%);
+}
+
 #Service-Status-Body-Container{
     display: flex;
     flex-direction: column;
