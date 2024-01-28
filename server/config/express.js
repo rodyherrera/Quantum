@@ -21,7 +21,8 @@ bootstrap.standardizedBindingToApp({
         'auth',
         'repository',
         'webhook',
-        'deployment'
+        'deployment',
+        'server'
     ],
     middlewares: [
         session({

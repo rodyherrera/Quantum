@@ -10,6 +10,7 @@ const Application = () => {
         <Routes location={location} key={location.pathname}>
             <Route element={<Layout />}>
                 <Route index element={<pages.everybody.general.Home />} />
+                <Route path='/service-status/' element={<pages.everybody.general.ServiceStatus />} />
                 <Route path='/legal/privacy-policy/' element={<pages.everybody.legal.PrivacyPolicy />} />
 
                 <Route element={<ProtectedRoute mode='guest' />}>

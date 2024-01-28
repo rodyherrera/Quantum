@@ -1,13 +1,9 @@
 export default class ServerRequestBuilder{
-    constructor({ setError }){
-        this.setError = setError;
-    };
-
-    handleError = (rejection) => {
-        if(this.setError){
-            this.setError(rejection?.response?.data);
+    handleRejection(error){
+        if(error?.response?.data?.message){
+            return error.response.data.message;
         }
-        return rejection?.response?.data;
+        return error.message;
     };
 
     register({ callback, args }){
@@ -16,8 +12,8 @@ export default class ServerRequestBuilder{
                 const response = await callback(...(args || []));
                 resolve(response?.data || response);
             }catch(rejection){
-                console.error('[Quantum Cloud]: Rejection -->', rejection);
-                reject(this.handleError(rejection));
+                const error = this.handleRejection(rejection);
+                reject(error);
             }
         });
     };

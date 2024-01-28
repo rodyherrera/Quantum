@@ -7,9 +7,25 @@
 
 .Minimal-Form-Title-Container,
 .Minimal-Form-Container,
-.Minimal-Form-Body-Container{
+.Minimal-Form-Body-Container,
+.Minimal-Form-Header-Container{
     display: flex;
     flex-direction: column;
+}
+
+.Minimal-Form-Header-Container{
+    gap: 1rem;
+}
+
+.Minimal-Form-Error-Container{
+    background-color: hsl(0,100%,96%);
+    padding: .5rem 1rem;
+    width: fit-content;
+}
+
+.Minimal-Form-Error{
+    font-size: .95rem;
+    color: hsl(358,66%,48%);
 }
 
 .Minimal-Form-Title{

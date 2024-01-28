@@ -5,11 +5,6 @@ import axios from 'axios';
 class StandardizedAPIRequestBuilder{
     constructor(endpoint){
         this.endpoint = endpoint;
-        this.setError = function(){};
-    };
-
-    bindErrorSetter = (setter) => {
-        this.setError = setter;
     };
 
     parsePath(path, params){
@@ -76,7 +71,7 @@ class StandardizedAPIRequestBuilder{
             if(['post', 'put', 'patch'].includes(buffer.method)){
                 buffer.args.push(body);
             }
-            return new ServerRequestBuilder({ setError: this.setError })
+            return new ServerRequestBuilder()
                 .register({ callback: axios[buffer.method], args: buffer.args });
         };
     };

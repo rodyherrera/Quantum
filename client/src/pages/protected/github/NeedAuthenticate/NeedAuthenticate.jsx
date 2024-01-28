@@ -34,7 +34,7 @@ const NeedAuthenticate = () => {
                     <Button 
                         onClick={() => authenticate(user._id)}
                         title='Proceed to Github' 
-                        variant='Form-Contained Black' 
+                        variant='Contained Black Extend' 
                         icon={<BsArrowRight />} />
                 </article>
             </section>

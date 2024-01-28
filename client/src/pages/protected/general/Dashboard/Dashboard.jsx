@@ -15,7 +15,11 @@ const Dashboard = () => {
 
     useEffect(() => {
         dispatch(getRepositories());
+        const intervalId = setInterval(() => {
+            dispatch(getRepositories(false));
+        }, 15000);
         return () => {
+            clearInterval(intervalId);
             dispatch(repositoriesSlice.setRepositories([]));
             dispatch(repositoriesSlice.setIsLoading(true));
         };

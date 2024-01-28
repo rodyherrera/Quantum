@@ -54,19 +54,13 @@
     opacity: .8;
 }
 
-.Button.Form-Contained{
+.Button.Extend{
     padding: .9rem 1.5rem;
     gap: 8rem;
-    background-color: #0f62fe;
-    color: #F5F5F5;
     outline: none;
 }
 
-.Button.Form-Contained .Button-Text{
-    text-transform: none;
-}
-
-.Button.Form-Contained.Black{
+.Button.Black{
     background-color: #181818;
     color: #F5F5F5;
 }

@@ -1,8 +1,9 @@
 import * as repositorySlice from '@services/repository/slice';
+import * as coreActions from '@services/core/actions';
 
 export const handleAction = async (dispatch, action, serviceFunction, body) => {
     try{
-        await dispatch(action(true));
+        if(action !== null) await dispatch(action(true));
         const response = await serviceFunction(body);
         if(Array.isArray(response?.data)){
             await dispatch(repositorySlice.setRepositories(response.data));
@@ -10,8 +11,8 @@ export const handleAction = async (dispatch, action, serviceFunction, body) => {
         }
         return response;
     }catch(error){
-        await dispatch(repositorySlice.setError(error.message));
+        dispatch(coreActions.globalErrorHandler(error, repositorySlice));
     }finally{
-        await dispatch(action(false));
+        if(action !== null) await dispatch(action(false));
     }
 };

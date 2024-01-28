@@ -8,6 +8,7 @@ import './MinimalForm.css';
 const MinimalForm = ({
     headerTitle,
     headerSubtitle,
+    error,
     formInputs,
     submitButtonTitle,
     handleFormSubmit,
@@ -29,6 +30,12 @@ const MinimalForm = ({
                     <h1 className='Minimal-Form-Title'>{headerTitle}</h1>
                     <p className='Minimal-Form-Subtitle'>{headerSubtitle}</p>
                 </div>
+
+                {error?.length >= 1 && (
+                    <div className='Minimal-Form-Error-Container'>
+                        <p className='Minimal-Form-Error'>{error}</p>
+                    </div>
+                )}
             </div>
 
             <div className='Minimal-Form-Body-Container'>
@@ -48,7 +55,7 @@ const MinimalForm = ({
                 <Button 
                     type='submit'
                     title={submitButtonTitle} 
-                    variant='Form-Contained' 
+                    variant='Contained Black Extend' 
                     icon={isLoading ? <CircularProgress/> : <BsArrowRight />} />
             </div>
         </form>

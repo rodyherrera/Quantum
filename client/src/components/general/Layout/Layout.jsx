@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react';
-import { Outlet, useNavigate } from 'react-router-dom';
+import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { authenticateWithCachedToken } from '@services/authentication/utils';
+import { resetErrorForAllSlices } from '@services/core/actions';
 import Waves from '@components/general/Waves';
 import ClickSpark from '@components/general/ClickSpark';
 import Banner from '@components/general/Banner';
@@ -18,12 +19,17 @@ const Layout = () => {
     const { width } = useWindowSize();
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const location = useLocation();
 
     useEffect(() => {
         const bodyEl = document.getElementById('QuantumCloud-Body');
         const overflowValue = isMenuEnabled ? 'hidden' : 'unset';
         bodyEl.style.overflow = overflowValue;
     }, [isMenuEnabled]);
+
+    useEffect(() => {
+        dispatch(resetErrorForAllSlices());
+    }, [location.pathname]);
 
     useEffect(() => {
         if(isAuthenticated) return;

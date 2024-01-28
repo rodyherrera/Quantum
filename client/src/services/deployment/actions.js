@@ -1,15 +1,15 @@
 import * as deploymentService from '@services/deployment/service';
 import * as deploymentSlice from '@services/deployment/slice';
 import * as repositorySlice from '@services/repository/slice';
+import * as coreActions from '@services/core/actions';
 
 const handleDispatch = async (dispatch, action, operation, setIsLoading = false) => {
     try{
         if(setIsLoading) await dispatch(deploymentSlice[operation](true));
         const response = await action();
-        // ?
         await dispatch(deploymentSlice.setDeployments(response.data));
     }catch(error){
-        await dispatch(deploymentSlice.setError(error.message));
+        dispatch(coreActions.globalErrorHandler(error, deploymentSlice));
     }finally{
         if(setIsLoading) await dispatch(deploymentSlice[operation](false));
     }

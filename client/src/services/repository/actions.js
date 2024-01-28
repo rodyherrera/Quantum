@@ -11,8 +11,9 @@ export const createRepository = (body, navigate) => async (dispatch) => {
     navigate(`/repository/${data.name}/deployment/setup/`, { state: { repository: data } })
 };
 
-export const getRepositories = () => async (dispatch) => {
-   await handleAction(dispatch, repositorySlice.setIsLoading, repositoryService.getRepositories, {});
+export const getRepositories = (setLoaderState = true) => async (dispatch) => {
+    const loaderState = setLoaderState ? repositorySlice.setIsLoading : null;
+    await handleAction(dispatch, loaderState, repositoryService.getRepositories, {});
 };
 
 export const updateRepository = (id, body, navigate) => async (dispatch) => {

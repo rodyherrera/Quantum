@@ -1,11 +1,11 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import MinimalForm from '@components/general/MinimalForm';
 import { signIn } from '@services/authentication/actions';
 import { useSelector, useDispatch } from 'react-redux';
 import './SignIn.css';
 
 const SignIn = () => {
-    const { isLoading } = useSelector(state => state.auth);
+    const { isLoading, error } = useSelector(state => state.auth);
     const dispatch = useDispatch();
 
     const handleFormSubmit = (e, formValues) => {
@@ -17,6 +17,7 @@ const SignIn = () => {
         headerTitle='Welcome back!'
         headerSubtitle='We are glad to see you again.'
         submitButtonTitle='Sign in'
+        error={error}
         handleFormSubmit={handleFormSubmit} 
         isLoading={isLoading}
         formInputs={[
