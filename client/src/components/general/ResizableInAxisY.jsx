@@ -12,26 +12,32 @@ const ResizableInAxisY = ({
     const [nodeHeight, setNodeHeight] = useState(initialHeight);
 
     const setOverflowToParentNodes = (overflow, overscrollBehavior) => {
-        const quantumROOT = document.getElementById('QuantumCloud-ROOT');
-        const bodyEl = document.getElementById('QuauntumCloud-Body');
-        const htmlEl = document.getElementById('QuantumCloud-HTML');
-        if(!quantumROOT || !bodyEl || !htmlEl) return;
-        quantumROOT.style.overflow = overflow;
-        bodyEl.style.overflow = overflow;
-        htmlEl.style.overflow = overflow;
-        htmlEl.style.overscrollBehavior = overscrollBehavior;
+        const setOverflow = (elementId) => {
+            const element = document.getElementById(elementId);
+            if(element){
+                element.style.overflow = overflow;
+                if(overscrollBehavior){
+                    element.style.overscrollBehavior = overscrollBehavior;
+                }
+            }
+        };
+        setOverflow('QuantumCloud-ROOT');
+        setOverflow('QuauntumCloud-Body');
+        setOverflow('QuantumCloud-HTML');
     };
 
     useEffect(() => {
-        if(!containerRef.current) return;
-        containerRef.current.style.height = nodeHeight + 'px';
-    }, [nodeHeight]);
+        if(containerRef.current){
+            containerRef.current.style.height = `${nodeHeight}px`;
+        }
+    }, [nodeHeight, containerRef]);
 
     useEffect(() => {
         const sanitizeHeightLimits = () => {
-            if(maxHeight?.current) maxHeight = maxHeight.current.clientHeight;
-            if(minHeight?.current) minHeight = minHeight.current.clientHeight;
-            return { maxHeight, minHeight };
+            const getMaxMinHeight = (ref) => (ref?.current ? ref.current.clientHeight : undefined);
+            const sanitizedMaxHeight = window.innerHeight - getMaxMinHeight(maxHeight);
+            const sanitizedMinHeight = getMaxMinHeight(minHeight);
+            return { maxHeight: sanitizedMaxHeight, minHeight: sanitizedMinHeight };
         };
 
         const handleTouchEnd = () => {
@@ -41,7 +47,7 @@ const ResizableInAxisY = ({
         };
 
         const handleTouchMove = (e) => {
-            const newNodeHeight = (window.innerHeight - e.touches[0].clientY);
+            const newNodeHeight = window.innerHeight - e.touches[0].clientY;
             const headerEl = document.querySelector('#QuantumCloud-ROOT .Header');
             const maxHeight = window.innerHeight - headerEl.clientHeight;
             const { minHeight } = sanitizeHeightLimits();
@@ -62,17 +68,18 @@ const ResizableInAxisY = ({
         };
 
         const handleMouseMove = (e) => {
-            const newNodeHeight = (window.innerHeight - e.clientY);
+            const newNodeHeight = window.innerHeight - e.clientY;
             const { maxHeight, minHeight } = sanitizeHeightLimits();
+            console.log('Max Height ->', maxHeight, '&& Min Height ->', minHeight);
+            console.log('New Node Height ->', newNodeHeight);
             if(
-                (maxHeight && newNodeHeight > maxHeight) ||
+                (maxHeight && newNodeHeight > maxHeight) || 
                 (minHeight && newNodeHeight < minHeight)
             ){
                 return;
-            }else{
-                callback();
-                setNodeHeight(newNodeHeight);
             }
+            callback();
+            setNodeHeight(newNodeHeight);
         };
 
         const handleOnMouseDown = () => {
@@ -80,10 +87,10 @@ const ResizableInAxisY = ({
             document.addEventListener('mousemove', handleMouseMove);
         };
 
-        if(!triggerNodeRef.current) return;
-        
-        triggerNodeRef.current.addEventListener('mousedown', handleOnMouseDown);
-        triggerNodeRef.current.addEventListener('touchstart', handleTouchStart);
+        if(triggerNodeRef.current){
+            triggerNodeRef.current.addEventListener('mousedown', handleOnMouseDown);
+            triggerNodeRef.current.addEventListener('touchstart', handleTouchStart); 
+        }
 
         return () => {
             setOverflowToParentNodes('scroll', 'auto');
@@ -92,7 +99,7 @@ const ResizableInAxisY = ({
             document.removeEventListener('touchend', handleTouchEnd);
             document.removeEventListener('touchmove', handleTouchMove);
         };
-    }, []);
+    }, [maxHeight, minHeight, triggerNodeRef, callback]);
 
     return children;
 };
