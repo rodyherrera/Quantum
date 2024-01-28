@@ -44,7 +44,7 @@ const CreateRepository = () => {
                 title: 'Go to Github',
                 to: 'https://github.com/'
             }}
-            breadcrumbsItems={[
+            breadcrumbItems={[
                 { title: 'Dashboard', to: '/dashboard/' },
                 { title: 'Repositories', to: '/dashboard/' },
                 { title: 'Create Repository', to: '/respository/create/' }

@@ -30,7 +30,7 @@ const RepositoryDeployments = () => {
                 title: 'Create Deployment',
                 to: '/repository/create/'
             }}
-            breadcrumbsItems={[
+            breadcrumbItems={[
                 { title: 'Dashboard', to: '/dashboard/' },
                 { title: 'Repositories', to: '/dashboard/' },
                 { title: repositoryName, to: '/dashboard/' },
