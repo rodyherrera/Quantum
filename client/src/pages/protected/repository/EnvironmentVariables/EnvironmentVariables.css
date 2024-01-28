@@ -120,12 +120,6 @@
 }
 
 @media screen and (max-width: 768px){
-    #Mobile-Environment-Actions{
-        display: flex;
-        padding: 1rem;
-        gap: .5rem;
-    }
-
     #Environment-Variables-Empty-Title{
         font-size: 1.5rem;
     }

@@ -3,6 +3,12 @@
 }
 
 @media screen and (max-width: 768px){
+    .Mobile-Environment-Actions{
+        display: flex;
+        padding: 1rem;
+        gap: .5rem;
+    }
+
     .Mobile-Environment-Actions-Container{
         display: block;
         position: fixed;

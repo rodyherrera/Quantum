@@ -118,7 +118,9 @@ const EnvironmentVariables = () => {
             </section>
         
             {!isEnvironmentLoading && 
-                <EnvironmentMobileActions addNewVariableHandler={handleCreateNew} />}
+                <EnvironmentMobileActions 
+                    saveHandler={handleEnvironmentUpdate}
+                    addNewVariableHandler={handleCreateNew} />}
         </main>
     );
 };
