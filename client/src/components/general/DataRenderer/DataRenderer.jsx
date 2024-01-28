@@ -8,6 +8,7 @@ const DataRenderer = ({
     children,
     title, 
     description, 
+    error = null,
     data = null,
     emptyDataMessage = null,
     emptyDataBtn = null,
@@ -28,6 +29,11 @@ const DataRenderer = ({
                         <h1 className='Data-Renderer-Header-Title'>{title}</h1>
                         <p className='Data-Renderer-Header-Subtitle'>{description}</p>
                     </div>
+                    {error && (
+                        <div className='Data-Renderer-Error-Container'>
+                            <p className='Data-Renderer-Error-Message'>{error}</p>
+                        </div>
+                    )}
                 </article>
                 {headerRightContainer !== null && (
                     <article className='Data-Renderer-Header-Right-Container'>

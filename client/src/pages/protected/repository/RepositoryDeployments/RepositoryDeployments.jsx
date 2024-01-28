@@ -9,7 +9,7 @@ import './RepositoryDeployments.css';
 const RepositoryDeployments = () => {
     const dispatch = useDispatch();
     const { repositoryName } = useParams();
-    const { deployments, isLoading, isOperationLoading } = useSelector(state => state.deployment);
+    const { deployments, isLoading, isOperationLoading, error } = useSelector(state => state.deployment);
     const { user } = useSelector(state => state.auth);
 
     useEffect(() => {
@@ -20,6 +20,7 @@ const RepositoryDeployments = () => {
         <DataRenderer
             title='Deployments'
             id='Repository-Deployments-Main'
+            error={error}
             description={`Continuously generated from ${user.github.username}/${repositoryName}`}
             isLoading={isLoading}
             isOperationLoading={isOperationLoading}

@@ -28,6 +28,17 @@
     gap: .5rem;
 }
 
+.Data-Renderer-Error-Container{
+    background-color: hsl(0,100%,96%);
+    padding: .5rem 1rem;
+    width: fit-content;
+}
+
+.Data-Renderer-Error-Message{
+    font-size: .95rem;
+    color: hsl(358,66%,48%);
+}
+
 .Data-Renderer-Header-Title{
     font-size: 3rem;
     font-weight: 600;
@@ -39,9 +50,9 @@
 }
 
 .Data-Renderer-Body-Container{
-    max-height: 75%;
+    max-height: 65%;
     position: relative;
-    min-height: 75%;
+    min-height: 65%;
     overflow-y: scroll;
     padding-right: .5rem;
 }

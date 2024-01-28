@@ -9,7 +9,7 @@ import * as repositoriesSlice from '@services/repository/slice';
 import './Dashboard.css';
 
 const Dashboard = () => {
-    const { repositories, isLoading } = useSelector(state => state.repository);
+    const { repositories, isLoading, error } = useSelector(state => state.repository);
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -27,6 +27,7 @@ const Dashboard = () => {
     return (
         <DataRenderer
             title='Dashboard'
+            error={error}
             description='The instances of your applications stored on the server.'
             isLoading={isLoading}
             data={repositories}

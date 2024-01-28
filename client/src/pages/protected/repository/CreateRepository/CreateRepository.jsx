@@ -8,7 +8,7 @@ import * as repositoriesSlice from '@services/repository/slice';
 import './CreateRepository.css';
 
 const CreateRepository = () => {
-    const { repositories, isLoading, isOperationLoading } = useSelector(state => state.repository);
+    const { repositories, isLoading, isOperationLoading, error } = useSelector(state => state.repository);
     const { user } = useSelector(state => state.auth);
 
     const dispatch = useDispatch();
@@ -34,6 +34,7 @@ const CreateRepository = () => {
         <DataRenderer
             title="Let's start our teamwork..."
             id='Create-Repository-Main'
+            error={error}
             description='To deploy a new Project, import an existing Git Repository.'
             isLoading={isLoading}
             isOperationLoading={isOperationLoading}
