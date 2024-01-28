@@ -3,7 +3,7 @@ const Repository = require('@models/repository');
 const HandlerFactory = require('@controllers/handlerFactory');
 const RuntimeError = require('@utilities/runtimeError');
 const Github = require('@utilities/github');
-const PTYHandler = require('@utilities/ptyHandler');
+const { PTYHandler } = require('@utilities/ptyHandler');
 const { catchAsync } = require('@utilities/runtime');
 
 const DeploymentFactory = new HandlerFactory({

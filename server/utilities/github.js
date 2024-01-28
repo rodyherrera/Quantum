@@ -1,7 +1,7 @@
 const { Octokit } = require('@octokit/rest');
+const { PTYHandler } = require('@utilities/ptyHandler');
 const simpleGit = require('simple-git');
 const Deployment = require('@models/deployment');
-const PTYHandler = require('@utilities/ptyHandler');
 const fs = require('fs');
 
 class Github{

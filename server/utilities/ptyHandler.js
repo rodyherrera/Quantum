@@ -1,22 +1,18 @@
-const pty = require('node-pty');
 const fs = require('fs');
 const util = require('util');
 const stat = util.promisify(fs.stat);
 const truncate = util.promisify(fs.truncate);
+const nodePty = require('node-pty');
 const Deployment = require('@models/deployment');
 
-class PTYHandler{
-    constructor(repositoryId, repositoryDocument){
-        this.repositoryId = repositoryId;
-        this.repositoryDocument = repositoryDocument;
-        // I think I'm managing this wrong, this stream is being 
-        // created in each class instance and not being 
-        // destroyed, maybe it should also be in this global pty variable.
+class BasePTYHandler{
+    constructor(entityId){
+        this.entityId = entityId;
         this.logStream = this.createLogStream();
     };
 
     async appendLog(log){
-        const logPath = this.getLogAbsPath(this.repositoryId);
+        const logPath = this.getLogAbsPath(this.entityId);
         await this.checkLogFileStatus(logPath);
         this.logStream.write(log);
     };
@@ -41,6 +37,67 @@ class PTYHandler{
         }
     };
 
+    static create(entityId = null){
+        let workingDir = '/';
+        if(fs.existsSync(`${__dirname}/../storage/repositories/${entityId}`)){
+            workingDir = `${__dirname}/../storage/repositories/${entityId}`;
+        }
+        const shell = nodePty.spawn('bash', ['-i'], {
+            name: 'xterm-color',
+            cwd: workingDir
+        });
+        return shell;
+    };
+
+    getLogAbsPath(){
+        return `${__dirname}/../storage/pty-log/${this.entityId}.log`;
+    };
+
+    createLogStream(){
+        if(!fs.existsSync(`${__dirname}/../storage/pty-log`))
+            fs.mkdirSync(`${__dirname}/../storage/pty-log`);
+        return fs.createWriteStream(this.getLogAbsPath(), { flags: 'a' });
+    };
+
+    clearRuntimePTYLog(){
+        this.logStream.end();
+    };
+
+    removeFromRuntimeStore(){
+        delete global.ptyStore[this.entityId];
+    };
+
+    removeFromRuntimeStoreAndKill(){
+        const shell = this.getOrCreate();
+        shell.kill();
+        this.removeFromRuntimeStore();
+    };
+
+    readLog(){
+        if(!fs.existsSync(this.getLogAbsPath(this.entityId)))
+            return '';
+       return fs.readFileSync(this.getLogAbsPath(this.entityId)).toString();
+    };
+
+    getLog(){
+        const log = this.readLog(this.entityId);
+        return log;
+    };
+
+    getOrCreate(){
+        if(global.ptyStore[this.entityId])
+            return global.ptyStore[this.entityId];
+        global.ptyStore[this.entityId] = PTYHandler.create(this.entityId);
+        return global.ptyStore[this.entityId];
+    };
+};
+
+class PTYHandler extends BasePTYHandler{
+    constructor(repositoryId, repositoryDocument){
+        super(repositoryId);
+        this.repositoryDocument = repositoryDocument;
+    };
+
     async startRepository(){
         const { buildCommand, installCommand, startCommand, deployments } = this.repositoryDocument;
         const commands = [installCommand, buildCommand, startCommand];
@@ -58,61 +115,19 @@ class PTYHandler{
         }
     };
 
-    static create(repositoryId){
-        const workingDir = `${__dirname}/../storage/repositories/${repositoryId}`;
-        const shell = pty.spawn('bash', ['-i'], {
-            name: 'xterm-color',
-            cwd: workingDir,
-        });
-        return shell;
-    };
-
-    getLogAbsPath(){
-        return `${__dirname}/../storage/pty-log/${this.repositoryId}.log`;
-    };
-
-    createLogStream(){
-        if(!fs.existsSync(`${__dirname}/../storage/pty-log`))
-            fs.mkdirSync(`${__dirname}/../storage/pty-log`);
-        return fs.createWriteStream(this.getLogAbsPath(), { flags: 'a' });
-    };
-
-    clearRuntimePTYLog(){
-        this.logStream.end();
-    };
-
-    removeFromRuntimeStore(){
-        delete global.ptyStore[this.repositoryId];
-    };
-
-    removeFromRuntimeStoreAndKill(){
-        const shell = this.getOrCreate();
-        shell.kill();
-        this.removeFromRuntimeStore();
-    };
-
     getPrompt(){
         const { name, user } = this.repositoryDocument;
         return `\x1b[1;92m${user.username}\x1b[0m@\x1b[1;94m${name}:~$\x1b[0m`;
     };
-    
-    readLog(){
-        if(!fs.existsSync(this.getLogAbsPath(this.repositoryId)))
-            return '';
-       return fs.readFileSync(this.getLogAbsPath(this.repositoryId)).toString();
-    };
+};
 
-    getLog(){
-        const log = this.readLog(this.repositoryId);
-        return log;
-    };
-
-    getOrCreate(){
-        if(global.ptyStore[this.repositoryId])
-            return global.ptyStore[this.repositoryId];
-        global.ptyStore[this.repositoryId] = PTYHandler.create(this.repositoryId);
-        return global.ptyStore[this.repositoryId];
+class CloudConsoleHandler extends BasePTYHandler{
+    constructor(userId){
+        super(userId);
     };
 };
 
-module.exports = PTYHandler;
+module.exports = {
+    PTYHandler,
+    CloudConsoleHandler
+};
