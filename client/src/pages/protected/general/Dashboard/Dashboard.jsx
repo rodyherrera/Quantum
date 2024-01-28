@@ -9,7 +9,7 @@ import * as repositoriesSlice from '@services/repository/slice';
 import './Dashboard.css';
 
 const Dashboard = () => {
-    const { repositories, isLoading, error } = useSelector(state => state.repository);
+    const { repositories, isLoading, isOperationLoading, error } = useSelector(state => state.repository);
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -30,6 +30,7 @@ const Dashboard = () => {
             error={error}
             description='The instances of your applications stored on the server.'
             isLoading={isLoading}
+            isOperationLoading={isOperationLoading}
             data={repositories}
             emptyDataMessage="You still don't have projects with us."
             emptyDataBtn={{
