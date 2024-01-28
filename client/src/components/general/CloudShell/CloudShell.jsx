@@ -1,12 +1,14 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Terminal } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
 import { BsTerminal } from 'react-icons/bs';
 import { PiDotsSixBold } from 'react-icons/pi';
+import { getCurrentUserToken } from '@services/authentication/localStorageService';
 import { VscGithubAlt } from 'react-icons/vsc';
 import { BiBookAlt } from 'react-icons/bi';
 import { AiOutlineClose } from 'react-icons/ai';
 import { useDispatch } from 'react-redux';
+import { io } from 'socket.io-client';
 import { setIsCloudConsoleEnabled } from '@services/core/slice';
 import useWindowSize from '@hooks/useWindowSize';
 import ResizableInAxisY from '@components/general/ResizableInAxisY';
@@ -21,11 +23,35 @@ const CloudShell = () => {
     const headerRef = useRef(null);
     const dispatch = useDispatch();
     const { width } = useWindowSize();
+    const [xterm, setXterm] = useState(null);
+    const [socket, setSocket] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         if(!fitAddonRef.current) return;
         fitAddonRef.current.fit();
     }, [width]);
+
+    useEffect(() => {
+        if(!xterm) return;
+        const authToken = getCurrentUserToken();
+        const newSocket = io(import.meta.env.VITE_SERVER, {
+            transports: ['websocket'],
+            auth: { token: authToken },
+            query: { action: 'Cloud::Console' }
+        });
+        setSocket(newSocket);
+    }, [xterm]);
+
+    useEffect(() => {
+        if(!socket || !xterm) return;
+        xterm.onData((data) => socket.emit('command', data));
+        socket.on('history', (history) => {
+            setIsLoading(false);
+            xterm.write(history);
+        }); 
+        socket.on('response', (response) => xterm.write(response));
+    }, [socket, xterm]);
 
     useEffect(() => {
         const term = new Terminal();
@@ -34,9 +60,13 @@ const CloudShell = () => {
         term.open(terminalRef.current);
         fitAddonRef.current = fitAddon;
         fitAddon.fit();
+        setXterm(term);
         const headerEl = document.querySelector('#QuantumCloud-ROOT > .Header');
         headerRef.current = headerEl;
         return () => {
+            setSocket(null);
+            setXterm(null);
+            setIsLoading(true);
             fitAddonRef.current = null;
             term.dispose();
             fitAddon.dispose();

@@ -5,7 +5,7 @@ const stat = util.promisify(fs.stat);
 const truncate = util.promisify(fs.truncate);
 const Deployment = require('@models/deployment');
 
-class PTYHandler {
+class PTYHandler{
     constructor(repositoryId, repositoryDocument){
         this.repositoryId = repositoryId;
         this.repositoryDocument = repositoryDocument;
@@ -18,7 +18,6 @@ class PTYHandler {
     async appendLog(log){
         const logPath = this.getLogAbsPath(this.repositoryId);
         await this.checkLogFileStatus(logPath);
-        
         this.logStream.write(log);
     };
 

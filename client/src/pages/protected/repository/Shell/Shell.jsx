@@ -31,7 +31,7 @@ const Shell = () => {
         const newSocket = io(import.meta.env.VITE_SERVER, {
             transports: ['websocket'],
             auth: { token: authToken },
-            query: { repositoryName }
+            query: { repositoryName, action: 'Repository::Shell' }
         });
         setSocket(newSocket);
     }, [xterm]);
