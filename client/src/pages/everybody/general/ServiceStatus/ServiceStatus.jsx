@@ -22,16 +22,20 @@ const ServiceStatus = () => {
                 </article>
             </section>
 
-            <section id='Service-Status-Body-Container'>
-                {isServerHealthLoading ? (
-                    <CircularProgress size='2.5rem' />
-                ) : (
-                    <React.Fragment>
-                        <article id='Service-Status-Container'>
+            {isServerHealthLoading ? (
+                <CircularProgress size='2.5rem' />
+            ) : (
+                <React.Fragment>
+                <section id='Service-Status-Body-Container'>
+                        <article id='Service-Status-Container' className={serverHealth.serverStatus === 'Server::Health::Overloaded' ? 'Error' : ''}>
                             <i id='Service-Status-Icon'>
                                 <FaCheckCircle />
                             </i>
-                            <h3 id='Service-Status'>All Systems Operational</h3>
+                            
+                            <h3 id='Service-Status'>
+                            {serverHealth.serverStatus === 'Server::Health::Overloaded' 
+                                ? 'Partially Degraded Service' : 'All Systems Operational'}
+                            </h3>
                         </article>
 
                         <article id='Service-Detailed-Status-Container'>
@@ -51,13 +55,13 @@ const ServiceStatus = () => {
                                 <p className='Service-Detailed-Status'>The average processor usage considering all available threads is below 80%. The processor is not overloaded and is working optimally.</p>
                             )}
                         </article>
-                    </React.Fragment>
-                )}
-            </section>
+                    </section>
 
-            <section id='Service-Status-Footer-Container'>
-                <Button title='Check again' onClick={() => dispatch(getServerHealth())} />
-            </section>
+                    <section id='Service-Status-Footer-Container'>
+                        <Button title='Check again' onClick={() => dispatch(getServerHealth())} />
+                    </section>
+                </React.Fragment>
+            )}
         </main>
     );
 };

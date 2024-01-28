@@ -23,6 +23,10 @@
     padding: 1rem 1rem;
 }
 
+#Service-Status-Container.Error{
+    background-color: #c71313;
+}
+
 #Service-Status-Icon{
     font-size: 1.5rem;
 }

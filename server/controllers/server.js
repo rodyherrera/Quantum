@@ -40,8 +40,6 @@ exports.health = catchAsync(async (req, res) => {
 
         const ramUsage = (1 - os.freemem() / os.totalmem()) * 100;
 
-        console.log(percentageCPU);
-    
         const serverStatus = (percentageCPU > 80 || ramUsage > 80) 
             ? 'Server::Health::Overloaded' 
             : 'Server::Health::Healthy';
