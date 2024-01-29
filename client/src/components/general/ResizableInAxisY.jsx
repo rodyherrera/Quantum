@@ -23,7 +23,6 @@ const ResizableInAxisY = ({
         };
         setOverflow('QuantumCloud-ROOT');
         setOverflow('QuauntumCloud-Body');
-        setOverflow('QuantumCloud-HTML');
     };
 
     useEffect(() => {

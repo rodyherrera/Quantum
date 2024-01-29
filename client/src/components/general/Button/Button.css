@@ -60,6 +60,11 @@
     outline: none;
 }
 
+.Button.Extended-Sides{
+    padding-right: 1rem;
+    padding-left: 1rem;
+}
+
 .Button.Black{
     background-color: #181818;
     color: #F5F5F5;
