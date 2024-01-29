@@ -4,23 +4,28 @@ import { MdOutlineSpaceDashboard } from 'react-icons/md';
 import { BsBook, BsTerminal } from 'react-icons/bs';
 import { CiServer } from 'react-icons/ci';
 import { RxReader } from 'react-icons/rx';
-import { FaLongArrowAltRight } from 'react-icons/fa';
+import { setIsCloudConsoleEnabled, setIsMenuEnabled } from '@services/core/slice';
 import { GoProjectSymlink } from 'react-icons/go';
-import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { setIsMenuEnabled } from '@services/core/slice';
+import MenuItem from '@components/general/MenuItem';
 import Button from '@components/general/Button';
 import Header from '@components/general/Header';
 import Banner from '@components/general/Banner';
 import './Menu.css';
 
 const Menu = () => {
-    const navigate = useNavigate();
     const dispatch = useDispatch();
+    const menuItems = [
+        ['Home', <BiHomeAlt2 />, '/'],
+        ['Deployments', <MdOutlineSpaceDashboard />, '/dashboard/'],
+        ['Create Deployment', <GoProjectSymlink />, '/repository/create/'],
+        ['Service Status', <CiServer />, '/service-status/'],
+        ['Privacy Policy', <RxReader />, '/legal/privacy-policy/'],
+        ['Documentation', <BsBook />, 'https://github.com/rodyherrera/Quantum/']
+    ];
 
-    const clickHandler = (link) => {
-        if(link.startsWith('http')) window.open(link, '_blank')
-        else navigate(link);
+    const cloudConsoleEnableHandler = () => {
+        dispatch(setIsCloudConsoleEnabled(true));
         dispatch(setIsMenuEnabled(false));
     };
 
@@ -32,37 +37,19 @@ const Menu = () => {
 
                 <div className='Menu-Header-Actions-Container'>
                     <Button
+                        to='https://github.com/rodyherrera/Quantum/'
                         variant='Contained Black Small Extended-Sides'
                         title='Github Repository' />
                     <Button
+                        to='https://ko-fi.com/codewithrodi/'
                         variant='Small Extended-Sides'
                         title='Donate' />
                 </div>
             </article>
 
             <ul className='Menu-Items-Container'>
-                {[
-                    ['Home', <BiHomeAlt2 />, '/'],
-                    ['Deployments', <MdOutlineSpaceDashboard />, '/dashboard/'],
-                    ['Create Deployment', <GoProjectSymlink />, '/repository/create/'],
-                    ['Service Status', <CiServer />, '/service-status/'],
-                    ['Privacy Policy', <RxReader />, '/legal/privacy-policy/'],
-                    ['Documentation', <BsBook />, 'https://github.com/rodyherrera/Quantum/']
-                ].map(([ title, icon, to ], index) => (
-                    <li className='Menu-Item-Container' key={index} onClick={() => clickHandler(to)}>
-                        <div className='Menu-Item-Left-Container'>
-                            <i className='Menu-Item-Icon-Container'>
-                                {icon}
-                            </i>
-                            <h3 className='Menu-Item-Title'>{title}</h3>
-                        </div>
-
-                        <div className='Menu-Item-Right-Container'>
-                            <i className='Menu-Item-Arrow-Icon-Container'>
-                                <FaLongArrowAltRight />
-                            </i>
-                        </div>
-                    </li>
+                {menuItems.map(([ title, icon, to ], index) => (
+                    <MenuItem key={index} title={title} icon={icon} to={to} />
                 ))}
             </ul>
             
@@ -71,6 +58,7 @@ const Menu = () => {
                 <Button 
                     title='Terminal' 
                     icon={<BsTerminal />} 
+                    onClick={cloudConsoleEnableHandler}
                     variant='Start-Icon Small Extended-Sides Contained' />
             </article>
         </aside>

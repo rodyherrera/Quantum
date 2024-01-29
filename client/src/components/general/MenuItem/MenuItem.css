@@ -1,0 +1,16 @@
+.Menu-Item-Container:hover{
+    outline: 1px solid #000000;
+}
+
+.Menu-Item-Container{
+    display: flex;
+    padding: 1rem;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.Menu-Item-Title{
+    font-size: 1rem;
+    color: #202020;
+    cursor: pointer;
+}
