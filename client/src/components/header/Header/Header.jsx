@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
-import HeaderNavItem from '@components/general/HeaderNavItem';
+import HeaderNavItem from '@components/header/HeaderNavItem';
 import IconLink from '@components/general/IconLink';
-import HamburguerMenu from '@components/general/HamburguerMenu';
+import HamburguerMenu from '@components/menu/HamburguerMenu';
 import { logout } from '@services/authentication/actions';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';

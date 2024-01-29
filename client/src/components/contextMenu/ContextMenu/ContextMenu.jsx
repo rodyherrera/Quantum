@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import ContextMenuOption from '@components/general/ContextMenuOption';
+import ContextMenuOption from '@components/contextMenu/ContextMenuOption';
 import './ContextMenu.css';
 
 const ContextMenu = ({ options, children, ...props }) => {

@@ -7,9 +7,9 @@ import { RxReader } from 'react-icons/rx';
 import { setIsCloudConsoleEnabled, setIsMenuEnabled } from '@services/core/slice';
 import { GoProjectSymlink } from 'react-icons/go';
 import { useDispatch } from 'react-redux';
-import MenuItem from '@components/general/MenuItem';
+import MenuItem from '@components/menu/MenuItem';
 import Button from '@components/general/Button';
-import Header from '@components/general/Header';
+import Header from '@components/header/Header';
 import Banner from '@components/general/Banner';
 import './Menu.css';
 

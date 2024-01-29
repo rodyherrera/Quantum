@@ -9,8 +9,8 @@ import CloudShell from '@components/general/CloudShell';
 import Waves from '@components/general/Waves';
 import ClickSpark from '@components/general/ClickSpark';
 import Banner from '@components/general/Banner';
-import Header from '@components/general/Header';
-import Menu from '@components/general/Menu';
+import Header from '@components/header/Header';
+import Menu from '@components/menu/Menu';
 import SquaredBackground from '@components/general/SquaredBackground';
 import useWindowSize from '@hooks/useWindowSize';
 
