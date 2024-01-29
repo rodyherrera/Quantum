@@ -70,8 +70,6 @@ const ResizableInAxisY = ({
         const handleMouseMove = (e) => {
             const newNodeHeight = window.innerHeight - e.clientY;
             const { maxHeight, minHeight } = sanitizeHeightLimits();
-            console.log('Max Height ->', maxHeight, '&& Min Height ->', minHeight);
-            console.log('New Node Height ->', newNodeHeight);
             if(
                 (maxHeight && newNodeHeight > maxHeight) || 
                 (minHeight && newNodeHeight < minHeight)

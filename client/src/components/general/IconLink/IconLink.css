@@ -8,3 +8,7 @@
 .Icon-Link-Container:hover .Icon-Link-Title{
     text-decoration: underline;
 }
+
+.Icon-Link-Title{
+    font-size: 1rem;
+}

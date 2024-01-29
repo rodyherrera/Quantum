@@ -4,6 +4,7 @@
     font-size: 1.1rem;
     cursor: pointer;
     align-items: center;
+    width: max-content;
     padding: 1.7rem 3rem;
 }
 
