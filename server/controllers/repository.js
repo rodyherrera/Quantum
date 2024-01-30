@@ -65,10 +65,14 @@ exports.getMyRepositories = catchAsync(async (req, res) => {
     res.status(200).json({ status: 'success', data: repositoriesWithInfo });
 });
 
-exports.storageExplorer = catchAsync(async (req, res) => {
+const getRequestedPath = (req) => {
     const route = req.params.route || '';
     const basePath = path.join(__dirname, '../storage/repositories', req.params.id);
-    const requestedPath = path.join(basePath, route);
+    return path.join(basePath, route);
+};
+
+exports.storageExplorer = catchAsync(async (req, res) => {
+    const requestedPath = getRequestedPath(req);
     const files = fs.readdirSync(requestedPath);
     const fileDetails = [];
     for(const file of files){
@@ -80,10 +84,19 @@ exports.storageExplorer = catchAsync(async (req, res) => {
     res.status(200).json({ status: 'success', data: fileDetails });
 });
 
+exports.updateRepositoryFile = catchAsync(async (req, res, next) => {
+    const requestedPath = getRequestedPath(req);
+    if(!fs.existsSync(requestedPath))
+        return next(new RuntimeError('Repository::File::Not::Exists', 404));
+    const { content } = req.body;
+    if(!content)
+        return next(new RuntimeError('Repository::File::Update::Content::Required', 400));
+    fs.writeFileSync(requestedPath, content, 'utf-8');
+    res.status(200).json({ status: 'success' });
+});
+
 exports.readRepositoryFile = catchAsync(async (req, res) => {
-    const route = req.params.route || '';
-    const basePath = path.join(__dirname, '../storage/repositories', req.params.id);
-    const requestedPath = path.join(basePath, route);
+    const requestedPath = getRequestedPath(req);
     const fileName = path.basename(requestedPath);
     const fileContent = fs.readFileSync(requestedPath, 'utf-8');
     res.status(200).json({
@@ -93,17 +106,4 @@ exports.readRepositoryFile = catchAsync(async (req, res) => {
             content: fileContent
         }
     });
-});
-
-exports.updateRepositoryFile = catchAsync(async (req, res, next) => {
-    const route = req.params.route || '';
-    const basePath = path.join(__dirname, '../storage/repositories', req.params.id);
-    const requestedPath = path.join(basePath, route);
-    if(!fs.existsSync(requestedPath))
-        return next(new RuntimeError('Repository::File::Not::Exists', 404));
-    const { content } = req.body;
-    if(!content)
-        return next(new RuntimeError('Repository::File::Update::Content::Required', 400));
-    fs.writeFileSync(requestedPath, content, 'utf-8');
-    res.status(200).json({ status: 'success' });
 });
