@@ -27,6 +27,10 @@ router.get('/storage/:id/read/:route?',
     repositoryMiddleware.verifyRepositoryAccess, 
     repositoryController.readRepositoryFile);
 
+router.post('/storage/:id/overwrite/:route?',
+    repositoryMiddleware.verifyRepositoryAccess,
+    repositoryController.updateRepositoryFile);
+
 router.route('/:id', repositoryMiddleware.verifyRepositoryAccess)
     .get(repositoryController.getRepository)
     .patch(repositoryController.updateRepository)

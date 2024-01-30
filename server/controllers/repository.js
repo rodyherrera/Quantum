@@ -5,6 +5,7 @@ const Repository = require('@models/repository');
 const HandlerFactory = require('@controllers/handlerFactory');
 const Deployment = require('@models/deployment');
 const Github = require('@utilities/github');
+const RuntimeError = require('@utilities/runtimeError');
 const { catchAsync } = require('@utilities/runtime');
 
 const RepositoryFactory = new HandlerFactory({
@@ -92,4 +93,17 @@ exports.readRepositoryFile = catchAsync(async (req, res) => {
             content: fileContent
         }
     });
+});
+
+exports.updateRepositoryFile = catchAsync(async (req, res, next) => {
+    const route = req.params.route || '';
+    const basePath = path.join(__dirname, '../storage/repositories', req.params.id);
+    const requestedPath = path.join(basePath, route);
+    if(!fs.existsSync(requestedPath))
+        return next(new RuntimeError('Repository::File::Not::Exists', 404));
+    const { content } = req.body;
+    if(!content)
+        return next(new RuntimeError('Repository::File::Update::Content::Required', 400));
+    fs.writeFileSync(requestedPath, content, 'utf-8');
+    res.status(200).json({ status: 'success' });
 });

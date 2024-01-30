@@ -2,10 +2,11 @@ import React, { useEffect } from 'react';
 import { CiFileOn } from 'react-icons/ci';
 import { GoFileDirectory } from 'react-icons/go';
 import { useSearchParams } from 'react-router-dom';
-import { storageExplorer, readRepositoryFile } from '@services/repository/actions';
+import { storageExplorer, readRepositoryFile, updateRepositoryFile } from '@services/repository/actions';
 import { setSelectedRepositoryFile } from '@services/repository/slice';
 import { CircularProgress } from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux';
+import Button from '@components/general/Button';
 import CodeEditor from '@uiw/react-textarea-code-editor';
 import './FileExplorer.css';
 
@@ -25,6 +26,13 @@ const FileExplorer = () => {
             return dispatch(storageExplorer('65b72c5347c55ca7be279fb2', path));
         }
         dispatch(readRepositoryFile('65b72c5347c55ca7be279fb2', path));
+    };
+
+    const overwriteFileHandler = () => {
+        const { content } = selectedRepositoryFile;
+        const path = searchParams.get('path');
+        dispatch(updateRepositoryFile('65b72c5347c55ca7be279fb2', path, content));
+        goBackHandler();
     };
 
     const repositoryClickHandler = ({ name, isDirectory }) => {
@@ -54,8 +62,19 @@ const FileExplorer = () => {
     ) : (
         <div className='File-Explorer-Body-Container'>
             {searchParams.get('path') !== '/' && (
-                <div className='File-Explorer-Go-Back-Container' onClick={goBackHandler}>
-                    <span className='File-Explorer-Go-Back-Text'>...</span>
+                <div className='File-Explorer-Actions-Container'>
+                    <div className='File-Explorer-Go-Back-Container' onClick={goBackHandler}>
+                        <span className='File-Explorer-Go-Back-Text'>...</span>
+                    </div>
+                    {selectedRepositoryFile && (
+                        <div className='File-Explorer-Header-Right-Container'>
+                            <Button 
+                                onClick={overwriteFileHandler}
+                                title='Save Changes & Exit'
+                                variant='Small Contained Extended-Sides'
+                            />
+                        </div>
+                    )}
                 </div>
             )}
             {selectedRepositoryFile !== null ? (

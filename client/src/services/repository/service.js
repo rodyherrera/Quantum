@@ -35,3 +35,8 @@ export const readRepositoryFile = RepositoryAPI.register({
     path: '/storage/:id/read/:route/',
     method: 'GET'
 });
+
+export const updateRepositoryFile = RepositoryAPI.register({
+    path: '/storage/:id/overwrite/:route/',
+    method: 'POST'
+});

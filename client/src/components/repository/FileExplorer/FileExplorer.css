@@ -45,6 +45,10 @@
     font-size: .8rem;
 }
 
+.File-Explorer-Go-Back-Container{
+    cursor: pointer;
+}
+
 .File-Explorer-Body-Container .linenumber{
     border-right: 1px solid #000000;
 }
@@ -54,10 +58,13 @@
     overflow-y: scroll;
 }
 
-.File-Explorer-Go-Back-Container{
-    cursor: pointer;
+.File-Explorer-Actions-Container{
     padding: .5rem 1rem;
     border-bottom: 1px solid #000000;
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .File-Explorer-File-Container{

@@ -50,3 +50,18 @@ export const readRepositoryFile = (id, route) => async (dispatch) => {
         dispatch(repositorySlice.setIsOperationLoading(false));
     }
 };
+
+export const updateRepositoryFile = (id, route, content) => async (dispatch) => {
+    try{
+        dispatch(repositorySlice.setIsOperationLoading(true));
+        const body = {
+            query: { params: { id, route } },
+            body: { content }
+        };
+        await repositoryService.updateRepositoryFile(body);
+    }catch(error){
+        dispatch(coreActions.globalErrorHandler(error, repositorySlice));
+    }finally{
+        dispatch(repositorySlice.setIsOperationLoading(false));
+    }
+};
