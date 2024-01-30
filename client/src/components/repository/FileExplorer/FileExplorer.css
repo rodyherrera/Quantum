@@ -1,4 +1,3 @@
-
 .File-Explorer-Container{
     width: 600px;
     border: 1px solid #000000;
@@ -93,4 +92,14 @@
 
 .File-Explorer-File-Container:hover .File-Explorer-File-Name{
     text-decoration: underline;
+}
+
+@media screen and (max-width: 768px){
+    .File-Explorer-Code-Block-Container{
+        font-size: .6rem;
+    }
+
+    .File-Explorer-Container{
+        width: 100%;
+    }
 }
