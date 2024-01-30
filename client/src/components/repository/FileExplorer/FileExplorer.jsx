@@ -1,12 +1,12 @@
 import React, { useEffect } from 'react';
 import { CiFileOn } from 'react-icons/ci';
-import { CodeBlock, dracula } from 'react-code-blocks';
 import { GoFileDirectory } from 'react-icons/go';
 import { useSearchParams } from 'react-router-dom';
 import { storageExplorer, readRepositoryFile } from '@services/repository/actions';
 import { setSelectedRepositoryFile } from '@services/repository/slice';
 import { CircularProgress } from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux';
+import CodeEditor from '@uiw/react-textarea-code-editor';
 import './FileExplorer.css';
 
 const FileExplorer = () => {
@@ -60,8 +60,11 @@ const FileExplorer = () => {
             )}
             {selectedRepositoryFile !== null ? (
                 <div className='File-Explorer-Code-Block-Container'>
-                    <CodeBlock
-                        theme={dracula}
+                    <CodeEditor
+                        value={selectedRepositoryFile.content}
+                        onChange={(e) => dispatch(setSelectedRepositoryFile({ name: selectedRepositoryFile.name, content: e.target.value }))}
+                        padding={16}
+                        style={{ backgroundColor: '#161616' }}
                         showLineNumbers={false}
                         language={getFileExtension(selectedRepositoryFile.name)}
                         text={selectedRepositoryFile.content}

@@ -21,22 +21,13 @@
 
 .File-Explorer-Code-Block-Container{
     font-family: monospace;
-    height: 100%;
+    background-color: #161616;
+    height: calc(100% - 2.3rem);
+    overflow-y: scroll;
 }
 
 .File-Explorer-Body-Container:has(.File-Explorer-Code-Block-Container){
     overflow-y: unset;
-}
-
-.File-Explorer-Code-Block-Container > span:first-child{
-    border-radius: 0 !important;
-    height: 100%;
-}
-
-.File-Explorer-Code-Block-Container code{
-    white-space: pre-wrap !important;
-    word-wrap: break-word !important;
-    width: 100%;
 }
 
 .File-Explorer-Loading-Container{
@@ -95,7 +86,7 @@
 }
 
 @media screen and (max-width: 768px){
-    .File-Explorer-Code-Block-Container{
+    .File-Explorer-Code-Block-Container code{
         font-size: .6rem;
     }
 
