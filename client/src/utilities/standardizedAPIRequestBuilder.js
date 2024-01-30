@@ -14,7 +14,7 @@ class StandardizedAPIRequestBuilder{
                 const key = part.slice(1);
                 const value = params[key];
                 delete params[key];
-                return value;
+                return encodeURIComponent(value);
             };
             return part;
         }).join('/');

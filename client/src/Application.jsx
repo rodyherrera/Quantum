@@ -23,6 +23,7 @@ const Application = () => {
                     <Route path='/github/need-authenticate/' element={<pages.protected.github.NeedAuthenticate />} />
 
                     <Route path='/repository/create/' element={<pages.protected.repository.CreateRepository />} />
+                    <Route path='/repository/:repositoryName/storage/' element={<pages.protected.repository.Storage />} />
                     <Route path='/repository/:repositoryName/deployments/' element={<pages.protected.repository.RepositoryDeployments />} />
                     <Route path='/repository/:repositoryName/deployment/setup/' element={<pages.protected.repository.SetupDeployment />} />
                     <Route path='/repository/:repositoryName/deployment/environment-variables/' element={<pages.protected.repository.EnvironmentVariables />} />

@@ -25,3 +25,8 @@ export const getRepositories = RepositoryAPI.register({
     path: '/me/',
     method: 'GET'
 });
+
+export const storageExplorer = RepositoryAPI.register({
+    path: '/storage/:id/explore/:route/',
+    method: 'GET'
+});

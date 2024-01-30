@@ -4,7 +4,8 @@ const state = {
     error: null,
     isLoading: true,
     isOperationLoading: false,
-    repositories: []
+    repositories: [],
+    repositoryFiles: []
 };
 
 const repositorySlice = createSlice({
@@ -13,6 +14,9 @@ const repositorySlice = createSlice({
     reducers: {
         setIsLoading: (state, action) => {
             state.isLoading = action.payload;
+        },
+        setRepositoryFiles: (state, action) => {
+            state.repositoryFiles = action.payload;
         },
         isOperationLoading: (state, action) => {
             state.isOperationLoading = action.payload;
@@ -40,6 +44,7 @@ const repositorySlice = createSlice({
 
 export const {
     setError,
+    setRepositoryFiles,
     updateDeploymentStatus,
     setIsLoading,
     setRepositories,

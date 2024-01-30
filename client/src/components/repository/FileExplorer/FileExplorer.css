@@ -1,0 +1,72 @@
+
+.File-Explorer-Container{
+    width: 600px;
+    border: 1px solid #000000;
+    border-radius: .25rem;
+}
+
+.File-Explorer-Header-Container{
+    display: flex;
+    padding: 1rem;
+    border-bottom: 1px solid #000000;
+    justify-content: space-between;
+    width: 100%;
+    align-items: center;
+}
+
+.File-Explorer-Header-Right-Container{
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+}
+
+.File-Explorer-Loading-Container{
+    width: 100%;
+    height: 300px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.File-Explorer-Header-Title,
+.File-Explorer-Repository-Id,
+.File-Explorer-Created-At{
+    font-weight: 400;
+    font-size: .8rem;
+}
+
+.File-Explorer-Body-Container{
+    height: 300px;
+    overflow-y: scroll;
+}
+
+.File-Explorer-Go-Back-Container{
+    cursor: pointer;
+    padding: .5rem 1rem;
+    border-bottom: 1px solid #000000;
+}
+
+.File-Explorer-File-Container{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    padding: .8rem 1rem;
+    cursor: pointer;
+}
+
+.File-Explorer-File-Container{
+    border-bottom: 1px solid #000000;
+}
+
+.File-Explorer-File-Name{
+    font-size: .8rem;
+}
+
+.File-Explorer-File-Icon-Container{
+    font-size: .9rem;
+}
+
+.File-Explorer-File-Container:hover .File-Explorer-File-Name{
+    text-decoration: underline;
+}

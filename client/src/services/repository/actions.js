@@ -27,3 +27,12 @@ export const deleteRepository = (id, repositories, navigate) => async (dispatch)
     await dispatch(repositorySlice.setRepositories(updatedRepositories));
     navigate('/dashboard');
 };
+
+export const storageExplorer = (id, route) => async (dispatch) => {
+    await handleAction(
+        dispatch, 
+        repositorySlice.setIsOperationLoading, 
+        repositoryService.storageExplorer, 
+        { query: { params: { id, route } } },
+        repositorySlice.setRepositoryFiles);
+};

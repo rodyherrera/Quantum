@@ -1,4 +1,6 @@
 const axios = require('axios');
+const fs = require('fs');
+const path = require('path');
 const Repository = require('@models/repository');
 const HandlerFactory = require('@controllers/handlerFactory');
 const Deployment = require('@models/deployment');
@@ -60,4 +62,27 @@ exports.getMyRepositories = catchAsync(async (req, res) => {
         return { ...repository, ...repositoryInfo };
     }));
     res.status(200).json({ status: 'success', data: repositoriesWithInfo });
+});
+
+exports.storageExplorer = catchAsync(async (req, res) => {
+    const route = req.params.route || '';
+    const basePath = path.join(__dirname, '../storage/repositories', req.params.id);
+    const requestedPath = path.join(basePath, route);
+    const files = fs.readdirSync(requestedPath);
+    const fileDetails = [];
+    for(const file of files){
+        const filePath = path.join(requestedPath, file);
+        const stat = fs.statSync(filePath);
+        const isDirectory = stat.isDirectory();
+        fileDetails.push({ name: file, isDirectory });
+    }
+    res.status(200).json({ status: 'success', data: fileDetails });
+});
+
+exports.readRepositoryFile = catchAsync(async (req, res) => {
+    const route = req.params.route || '';
+    const basePath = path.join(__dirname, '../storage/repositories', req.params.id);
+    const requestedPath = path.join(basePath, route);
+    const fileContent = fs.readFileSync(requestedPath, 'utf-8');
+    res.json({ status: 'success', data: fileContent })
 });
