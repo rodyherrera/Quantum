@@ -83,6 +83,13 @@ exports.readRepositoryFile = catchAsync(async (req, res) => {
     const route = req.params.route || '';
     const basePath = path.join(__dirname, '../storage/repositories', req.params.id);
     const requestedPath = path.join(basePath, route);
+    const fileName = path.basename(requestedPath);
     const fileContent = fs.readFileSync(requestedPath, 'utf-8');
-    res.json({ status: 'success', data: fileContent })
+    res.status(200).json({
+        status: 'success',
+        data: {
+            name: fileName,
+            content: fileContent
+        }
+    });
 });

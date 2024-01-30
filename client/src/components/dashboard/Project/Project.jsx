@@ -53,8 +53,9 @@ const Project = ({ repository, ...props }) => {
                     { title: 'Delete', onClick: () => dispatch(repositoryActions.deleteRepository(repository._id, repositories, navigate)) },
                     { title: 'Build & Dev Settings',  onClick: () => navigate(`/repository/${repository.name}/deployment/setup/`, { state: { repository } }) },
                     { title: 'Environment Variables',  onClick: () => navigate(`/repository/${repository.name}/deployment/environment-variables/`, { state: { repository } }) },
-                    { title: 'Deployments', onClick: () => navigate(`/repository/${repository.name}/deployments/`) },
-                    { title: 'Shell', onClick: () => navigate(`/repository/${repository.name}/shell/`) }
+                    { title: 'File Explorer', onClick: () => navigate(`/repository/${repository.name}/storage/`) },
+                    { title: 'Shell', onClick: () => navigate(`/repository/${repository.name}/shell/`) },
+                    { title: 'Deployments', onClick: () => navigate(`/repository/${repository.name}/deployments/`) }
                 ]}
             >
                 <i>

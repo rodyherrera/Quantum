@@ -30,3 +30,8 @@ export const storageExplorer = RepositoryAPI.register({
     path: '/storage/:id/explore/:route/',
     method: 'GET'
 });
+
+export const readRepositoryFile = RepositoryAPI.register({
+    path: '/storage/:id/read/:route/',
+    method: 'GET'
+});

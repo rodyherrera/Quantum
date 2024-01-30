@@ -20,6 +20,26 @@
     gap: .5rem;
 }
 
+.File-Explorer-Code-Block-Container{
+    font-family: monospace;
+    height: 100%;
+}
+
+.File-Explorer-Body-Container:has(.File-Explorer-Code-Block-Container){
+    overflow-y: unset;
+}
+
+.File-Explorer-Code-Block-Container > span:first-child{
+    border-radius: 0 !important;
+    height: 100%;
+}
+
+.File-Explorer-Code-Block-Container code{
+    white-space: pre-wrap !important;
+    word-wrap: break-word !important;
+    width: 100%;
+}
+
 .File-Explorer-Loading-Container{
     width: 100%;
     height: 300px;
@@ -33,6 +53,10 @@
 .File-Explorer-Created-At{
     font-weight: 400;
     font-size: .8rem;
+}
+
+.File-Explorer-Body-Container .linenumber{
+    border-right: 1px solid #000000;
 }
 
 .File-Explorer-Body-Container{

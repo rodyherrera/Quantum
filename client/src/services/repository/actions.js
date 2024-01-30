@@ -1,5 +1,6 @@
 import * as repositoryService from '@services/repository/service';
 import * as repositorySlice from '@services/repository/slice';
+import * as coreActions from '@services/core/actions';
 import { handleAction } from '@services/repository/utils';
 
 export const getMyGithubRepositories = () => async (dispatch) => {
@@ -35,4 +36,17 @@ export const storageExplorer = (id, route) => async (dispatch) => {
         repositoryService.storageExplorer, 
         { query: { params: { id, route } } },
         repositorySlice.setRepositoryFiles);
+};
+
+export const readRepositoryFile = (id, route) => async (dispatch) => {
+    try{
+        dispatch(repositorySlice.setIsOperationLoading(true));
+        const body = { query: { params: { id, route } } };
+        const response = await repositoryService.readRepositoryFile(body);
+        dispatch(repositorySlice.setSelectedRepositoryFile(response.data));
+    }catch(error){
+        dispatch(coreActions.globalErrorHandler(error, repositorySlice));
+    }finally{
+        dispatch(repositorySlice.setIsOperationLoading(false));
+    }
 };

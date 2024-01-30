@@ -5,7 +5,8 @@ const state = {
     isLoading: true,
     isOperationLoading: false,
     repositories: [],
-    repositoryFiles: []
+    repositoryFiles: [],
+    selectedRepositoryFile: null,
 };
 
 const repositorySlice = createSlice({
@@ -17,6 +18,9 @@ const repositorySlice = createSlice({
         },
         setRepositoryFiles: (state, action) => {
             state.repositoryFiles = action.payload;
+        },
+        setSelectedRepositoryFile: (state, action) => {
+            state.selectedRepositoryFile = action.payload;
         },
         isOperationLoading: (state, action) => {
             state.isOperationLoading = action.payload;
@@ -44,6 +48,7 @@ const repositorySlice = createSlice({
 
 export const {
     setError,
+    setSelectedRepositoryFile,
     setRepositoryFiles,
     updateDeploymentStatus,
     setIsLoading,
