@@ -27,32 +27,12 @@ const CloudShell = () => {
     const [xterm, setXterm] = useState(null);
     const [socket, setSocket] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
-
-    useEffect(() => {
-        if(!fitAddonRef.current) return;
-        fitAddonRef.current.fit();
-    }, [width]);
-
-    useEffect(() => {
-        if(!xterm) return;
-        const authToken = getCurrentUserToken();
-        const newSocket = io(import.meta.env.VITE_SERVER, {
-            transports: ['websocket'],
-            auth: { token: authToken },
-            query: { action: 'Cloud::Console' }
-        });
-        setSocket(newSocket);
-    }, [xterm]);
-
-    useEffect(() => {
-        if(!socket || !xterm) return;
-        xterm.onData((data) => socket.emit('command', data));
-        socket.on('history', (history) => {
-            setIsLoading(false);
-            xterm.write(history);
-        }); 
-        socket.on('response', (response) => xterm.write(response));
-    }, [socket, xterm]);
+    
+    const headerIcons = [
+        [VscGithubAlt, () => window.open('https://github.com/rodyherrera/Quantum/')],
+        [BiBookAlt, () => window.open('https://github.com/rodyherrera/Quantum/')],
+        [AiOutlineClose, () => dispatch(setIsCloudConsoleEnabled(false))]
+    ];
 
     useEffect(() => {
         const term = new Terminal();
@@ -74,6 +54,33 @@ const CloudShell = () => {
         };
     }, []);
 
+    useEffect(() => {
+        if(!xterm) return;
+        const authToken = getCurrentUserToken();
+        const newSocket = io(import.meta.env.VITE_SERVER, {
+            transports: ['websocket'],
+            auth: { token: authToken },
+            query: { action: 'Cloud::Console' }
+        });
+        setSocket(newSocket);
+    }, [xterm]);
+
+    useEffect(() => {
+        if(!socket || !xterm) return;
+        xterm.onData((data) => socket.emit('command', data));
+        socket.on('history', (history) => {
+            setIsLoading(false);
+            xterm.write(history);
+        });
+        socket.on('response', (response) => xterm.write(response));
+    }, [socket, xterm]);
+
+    useEffect(() => {
+        if(fitAddonRef.current){
+            fitAddonRef.current.fit();
+        }
+    }, [width]);
+
     return (
         <ResizableInAxisY
             containerRef={cloudShellContainerRef}
@@ -82,8 +89,9 @@ const CloudShell = () => {
             maxHeight={headerRef}
             minHeight={cloudShellHeaderRef}
             callback={() => {
-                if(!terminalRef.current) return;
-                fitAddonRef.current.fit();
+                if(terminalRef.current){
+                    fitAddonRef.current.fit();
+                }
             }}
         >
             <aside className='Cloud-Shell-Container' ref={cloudShellContainerRef}>
@@ -97,7 +105,7 @@ const CloudShell = () => {
                             <p className='Cloud-Shell-Header-Left-Subtitle'>Quantum Cloud Console</p>
                         </div>
                     </div>
-                    
+
                     <div className='Cloud-Shell-Header-Center-Container'>
                         <i className='Cloud-Shell-Drag-Icon-Container' ref={dragIconContainerRef}>
                             <PiDotsSixBold />
@@ -105,16 +113,8 @@ const CloudShell = () => {
                     </div>
 
                     <div className='Cloud-Shell-Header-Right-Container'>
-                        {[
-                            [VscGithubAlt, () => {}],
-                            [BiBookAlt, () => {}],
-                            [AiOutlineClose, () => dispatch(setIsCloudConsoleEnabled(false))]
-                        ].map(([ Icon, onClick ], index) => (
-                            <i 
-                                key={index} 
-                                className='Cloud-Shell-Header-Right-Icon-Container' 
-                                onClick={onClick}
-                            >
+                        {headerIcons.map(([ Icon, onClick ], index) => (
+                            <i key={index} className='Cloud-Shell-Header-Right-Icon-Container' onClick={onClick}>
                                 <Icon />
                             </i>
                         ))}
@@ -122,12 +122,12 @@ const CloudShell = () => {
                 </article>
 
                 <article className='Cloud-Shell-Body-Container'>
-                    {(true) && (
+                    {isLoading && (
                         <div className='Cloud-Shell-Loading-Container'>
                             <CircularProgress className='Circular-Progress' />
                         </div>
                     )}
-                    
+
                     <div ref={terminalRef} />
                 </article>
             </aside>
