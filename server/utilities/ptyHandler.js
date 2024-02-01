@@ -14,7 +14,7 @@ class BasePTYHandler{
     async appendLog(log){
         const logPath = this.getLogAbsPath(this.entityId);
         await this.checkLogFileStatus(logPath);
-        this.logStream.write(log);
+        this.logStream.write(log + '\n');
     };
 
     // When a connection is made to the repository shell through the WebUI, a 
