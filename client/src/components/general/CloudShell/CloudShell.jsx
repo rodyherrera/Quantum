@@ -7,6 +7,7 @@ import { getCurrentUserToken } from '@services/authentication/localStorageServic
 import { VscGithubAlt } from 'react-icons/vsc';
 import { BiBookAlt } from 'react-icons/bi';
 import { AiOutlineClose } from 'react-icons/ai';
+import { CircularProgress } from '@mui/material';
 import { useDispatch } from 'react-redux';
 import { io } from 'socket.io-client';
 import { setIsCloudConsoleEnabled } from '@services/core/slice';
@@ -121,6 +122,12 @@ const CloudShell = () => {
                 </article>
 
                 <article className='Cloud-Shell-Body-Container'>
+                    {(true) && (
+                        <div className='Cloud-Shell-Loading-Container'>
+                            <CircularProgress className='Circular-Progress' />
+                        </div>
+                    )}
+                    
                     <div ref={terminalRef} />
                 </article>
             </aside>
