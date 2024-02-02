@@ -70,7 +70,6 @@ RepositorySchema.post('findOneAndDelete', async function(deletedDoc){
         .select('githubDeploymentId');
 
     await Deployment.deleteMany({ repository: deletedDoc._id });
-    console.log('Deployments deleted from DB');
 
     const ptyHandler = new PTYHandler(deletedDoc._id, deletedDoc);
     ptyHandler.clearRuntimePTYLog();

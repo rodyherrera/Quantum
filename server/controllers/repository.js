@@ -88,10 +88,10 @@ exports.storageExplorer = catchAsync(async (req, res) => {
 exports.updateRepositoryFile = catchAsync(async (req, res, next) => {
     const requestedPath = getRequestedPath(req);
     if(!fs.existsSync(requestedPath))
-        return next(new RuntimeError('Repository::File::Not::Exists', 404));
+        return next(new RuntimeError('RepositoryFileNotExists', 404));
     const { content } = req.body;
     if(!content)
-        return next(new RuntimeError('Repository::File::Update::Content::Required', 400));
+        return next(new RuntimeError('RepositoryFileUpdateContentRequired', 400));
     fs.writeFileSync(requestedPath, content, 'utf-8');
     res.status(200).json({ status: 'success' });
 });

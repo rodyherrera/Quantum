@@ -23,7 +23,7 @@ module.exports = class HandlerFactory{
         const databaseRecord = await this.model.findOneAndUpdate(checkIfSlugOrId(req.params.id),
             queryFilter, { new: true, runValidators: true });
         if(!databaseRecord)
-            return next(new RuntimeError('Core::updateOne::RecordNotFound', 404));
+            return next(new RuntimeError('Core::UpdateOne::RecordNotFound', 404));
         res.status(200).json({
             status: 'success',
             data: databaseRecord
@@ -78,7 +78,7 @@ module.exports = class HandlerFactory{
             databaseRecord = databaseRecord.populate(populate);
         databaseRecord = await databaseRecord;
         if(!databaseRecord)
-            return next(new RuntimeError('Core::getOne::RecordNotFound', 404));
+            return next(new RuntimeError('Core::GetOne::RecordNotFound', 404));
         res.status(200).json({
             status: 'success',
             data: databaseRecord

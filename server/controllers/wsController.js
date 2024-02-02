@@ -15,7 +15,7 @@ const tokenOwnership = async (socket, next) => {
     const { repositoryAlias } = socket.handshake.query;
     if(!repositoryAlias) return next(new RuntimeError('Repository::Name::Required'));
     const repository = await Repository.findOne({ name: repositoryAlias, user: socket.user._id });
-    if(!repository) return next(new RuntimeError('Repository::NotFound'));
+    if(!repository) return next(new RuntimeError('Repository::Not::Found'));
     socket.repository = repository;
     next();
 };

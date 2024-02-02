@@ -6,8 +6,8 @@ const TextSearch = require('mongoose-partial-search');
 const UserSchema = new mongoose.Schema({
     username: {
         type: String,
-        minlength: [8, 'User::Username::Minlength'],
-        maxlength: [16, 'User::Username::Maxlength'],
+        minlength: [8, 'User::Username::MinLength'],
+        maxlength: [16, 'User::Username::MaxLength'],
         required: [true, 'User::Username::Required'],
         unique: true,
         lowercase: true,
@@ -27,8 +27,8 @@ const UserSchema = new mongoose.Schema({
     },
     fullname: {
         type: String,
-        minlength: [8, 'User::Fullname::Minlength'],
-        maxlength: [32, 'User::Fullname::Maxlength'],
+        minlength: [8, 'User::Fullname::MinLength'],
+        maxlength: [32, 'User::Fullname::MaxLength'],
         required: [true, 'User::Fullname::Required'],
         trim: true
     },
@@ -43,8 +43,8 @@ const UserSchema = new mongoose.Schema({
     password: {
         type: String,
         required: [true, 'User::Password::Required'],
-        minlength: [8, 'User::Password::Minlength'],
-        maxlength: [16, 'User::Password::Maxlength'],
+        minlength: [8, 'User::Password::MinLength'],
+        maxlength: [16, 'User::Password::MaxLength'],
         select: false
     },
     passwordConfirm: {

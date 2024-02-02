@@ -4,6 +4,7 @@ import * as githubSlice from '@services/github/slice';
 import * as repositorySlice from '@services/repository/slice';
 import * as coreService from '@services/core/service';
 import * as coreSlice from '@services/core/slice';
+import errorCodeHandler from '@services/core/errorCodeHandler';
 import { addError } from '@services/core/slice';
 
 export const globalErrorHandler = (message, slice = null) => (dispatch) => {
@@ -13,7 +14,8 @@ export const globalErrorHandler = (message, slice = null) => (dispatch) => {
     };
     dispatch(addError(error));
     if(slice === null) return;
-    dispatch(slice.setError(message));
+    const readableError = errorCodeHandler(message);
+    dispatch(slice.setError(readableError));
 };
 
 export const resetErrorForAllSlices = () => (dispatch) => {

@@ -71,7 +71,7 @@ class APIFeatures{
         this.buffer.totalPages = Math.ceil(recordsCount / limit);
         if(this.requestQueryString.page){
             if(skip >= recordsCount && recordsCount.length >= 1)
-                throw new RuntimeError('Salumatix::Core::PageOutOfRange', 404);
+                throw new RuntimeError('Core::PageOutOfRange', 404);
         }
         return this;
     };
