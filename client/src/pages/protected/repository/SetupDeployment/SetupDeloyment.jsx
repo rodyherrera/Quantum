@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import MinimalForm from '@components/general/MinimalForm';
 import * as repositoryActions from '@services/repository/actions';
@@ -27,6 +27,13 @@ const SetupDeployment = () => {
         error={error}
         handleFormSubmit={handleFormSubmit}
         formInputs={[
+            {
+                type: 'text',
+                name: 'alias',
+                value: selectedRepository?.alias,
+                helperText: 'Enter an alias to identify your repository within the platform. This must be unique in your account, that is, you must not have two or more repositories with the same alias.',
+                placeholder: 'For example: "My Blog Application [Frontend]"'
+            },
             {
                 type: 'text',
                 name: 'buildCommand',

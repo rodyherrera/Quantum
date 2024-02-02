@@ -57,11 +57,11 @@ const Project = ({ repository, ...props }) => {
                 className='Project-More-Icon-Container' 
                 options={[
                     { title: 'Delete', onClick: () => dispatch(repositoryActions.deleteRepository(repository._id, repositories, navigate)) },
-                    { title: 'Build & Dev Settings',  onClick: () => handleRepositorySelection(`/repository/${repository.name}/deployment/setup/`) },
-                    { title: 'Environment Variables',  onClick: () => navigate(`/repository/${repository.name}/deployment/environment-variables/`) },
-                    { title: 'File Explorer',  onClick: () => handleRepositorySelection(`/repository/${repository.name}/storage/`) },
-                    { title: 'Shell', onClick: () => handleRepositorySelection(`/repository/${repository.name}/shell/`) },
-                    { title: 'Deployments', onClick: () => handleRepositorySelection(`/repository/${repository.name}/deployments/`) }
+                    { title: 'Build & Dev Settings',  onClick: () => handleRepositorySelection(`/repository/${repository.alias}/deployment/setup/`) },
+                    { title: 'Environment Variables',  onClick: () => navigate(`/repository/${repository.alias}/deployment/environment-variables/`) },
+                    { title: 'File Explorer',  onClick: () => handleRepositorySelection(`/repository/${repository.alias}/storage/`) },
+                    { title: 'Shell', onClick: () => handleRepositorySelection(`/repository/${repository.alias}/shell/`) },
+                    { title: 'Deployments', onClick: () => handleRepositorySelection(`/repository/${repository.alias}/deployments/`) }
                 ]}
             >
                 <i>
@@ -74,7 +74,7 @@ const Project = ({ repository, ...props }) => {
                     <img className='Project-Image' src='https://assets.vercel.com/image/upload/front/favicon/vercel/180x180.png' alt='Project' />
                 </div>
                 <div className='Project-Title-Container'>
-                    <h3 className='Project-Title'>{repository.name}</h3>
+                    <h3 className='Project-Title'>{repository.alias}</h3>
                     <p className='Project-URL'>{repository.website || 'Website not defined.'}</p>
                 </div>
             </div>

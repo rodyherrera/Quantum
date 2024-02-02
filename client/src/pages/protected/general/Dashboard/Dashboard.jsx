@@ -9,8 +9,8 @@ import * as repositoriesSlice from '@services/repository/slice';
 import './Dashboard.css';
 
 const Dashboard = () => {
-    const { repositories, isLoading, isOperationLoading, error } = useSelector(state => state.repository);
     const dispatch = useDispatch();
+    const { repositories, isLoading, isOperationLoading, error } = useSelector(state => state.repository);
 
     useEffect(() => {
         dispatch(getRepositories());

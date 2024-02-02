@@ -4,8 +4,15 @@ const Github = require('@utilities/github');
 const Deployment = require('@models/deployment');
 const User = require('@models/user');
 const { PTYHandler } = require('@utilities/ptyHandler');
+const { v4 } = require('uuid');
 
 const RepositorySchema = new mongoose.Schema({
+    alias: {
+        type: String,
+        maxlength: [32, 'Repository::Alias::MaxLength'],
+        minlength: [4, 'Repository::Alias::MinLength'],
+        unique: true
+    },
     name: {
         type: String,
         required: [true, 'Repository::Name::Required']
@@ -49,8 +56,8 @@ const RepositorySchema = new mongoose.Schema({
 });
 
 RepositorySchema.plugin(TextSearch);
-RepositorySchema.index({ name: 1, user: 1 }, { unique: true });
-RepositorySchema.index({ name: 'text' });
+RepositorySchema.index({ alias: 1, user: 1 }, { unique: true });
+RepositorySchema.index({ name: 'text', alias: 'text' });
 
 RepositorySchema.post('findOneAndDelete', async function(deletedDoc){
     const repositoryUser = await User
@@ -84,6 +91,9 @@ RepositorySchema.pre('findOneAndUpdate', async function(next){
 
 RepositorySchema.pre('save', async function(next){
     try{
+        if(!this.alias) this.alias = this.name;
+        const repositoryByAlias = await this.model('Repository').findOne({ alias: this.alias, user: this.user });
+        if(repositoryByAlias) this.alias = this.alias + '-' + v4().slice(0, 4);
         const repositoryUser = await this.model('User')
             .findById(this.user)
             .populate('github');

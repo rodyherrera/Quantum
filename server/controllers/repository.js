@@ -14,6 +14,7 @@ const RepositoryFactory = new HandlerFactory({
         'name',
         'url',
         'user',
+        'alias',
         'deployments',
         'buildCommand',
         'installCommand',

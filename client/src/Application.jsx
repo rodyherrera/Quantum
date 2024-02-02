@@ -23,11 +23,11 @@ const Application = () => {
                     <Route path='/github/need-authenticate/' element={<pages.protected.github.NeedAuthenticate />} />
 
                     <Route path='/repository/create/' element={<pages.protected.repository.CreateRepository />} />
-                    <Route path='/repository/:repositoryName/storage/' element={<pages.protected.repository.Storage />} />
-                    <Route path='/repository/:repositoryName/deployments/' element={<pages.protected.repository.RepositoryDeployments />} />
-                    <Route path='/repository/:repositoryName/deployment/setup/' element={<pages.protected.repository.SetupDeployment />} />
-                    <Route path='/repository/:repositoryName/deployment/environment-variables/' element={<pages.protected.repository.EnvironmentVariables />} />
-                    <Route path='/repository/:repositoryName/shell/' element={<pages.protected.repository.Shell />} />
+                    <Route path='/repository/:repositoryAlias/storage/' element={<pages.protected.repository.Storage />} />
+                    <Route path='/repository/:repositoryAlias/deployments/' element={<pages.protected.repository.RepositoryDeployments />} />
+                    <Route path='/repository/:repositoryAlias/deployment/setup/' element={<pages.protected.repository.SetupDeployment />} />
+                    <Route path='/repository/:repositoryAlias/deployment/environment-variables/' element={<pages.protected.repository.EnvironmentVariables />} />
+                    <Route path='/repository/:repositoryAlias/shell/' element={<pages.protected.repository.Shell />} />
 
                     <Route path='/dashboard/' element={<pages.protected.general.Dashboard />} />
                 </Route>

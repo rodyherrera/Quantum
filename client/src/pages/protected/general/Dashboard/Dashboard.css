@@ -3,3 +3,9 @@
     flex-wrap: wrap;
     gap: 2rem;
 }
+
+@media screen and (max-width: 768px){
+    #Dashboard-Projects-Container{
+        padding-bottom: 0;
+    }
+}
