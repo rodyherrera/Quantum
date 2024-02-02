@@ -9,7 +9,8 @@ export const getMyGithubRepositories = () => async (dispatch) => {
 
 export const createRepository = (body, navigate) => async (dispatch) => {
     const { data } = await handleAction(dispatch, repositorySlice.setIsOperationLoading, repositoryService.createRepository, { body });
-    navigate(`/repository/${data.name}/deployment/setup/`, { state: { repository: data } })
+    dispatch(repositorySlice.setSelectedRepository(data));
+    navigate(`/repository/${data.name}/deployment/setup/`);
 };
 
 export const getRepositories = (setLoaderState = true) => async (dispatch) => {

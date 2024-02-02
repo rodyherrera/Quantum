@@ -102,17 +102,19 @@ RepositorySchema.pre('save', async function(next){
 });
 
 const handleUpdateCommands = async (context) => {
-    const { buildCommand, installCommand, startCommand } = context._update;
+    const { buildCommand, installCommand, startCommand, rootDirectory } = context._update;
     const { _id } = context._conditions;
+    const rootDirectoryLength = rootDirectory.length;
     const buildCommandLength = buildCommand.length;
     const installCommandLength = installCommand.length;
     const startCommandLength = startCommand.length;
-    if(buildCommandLength || installCommandLength || startCommandLength){
+    if(buildCommandLength || installCommandLength || startCommandLength || rootDirectoryLength){
         const { user, name, deployments } = await Repository
             .findById(_id)
             .select('user name deployments')
             .populate({ path: 'user', select: 'username' });
-        const document = { user, name, deployments, buildCommand, installCommand, startCommand };
+        const document = { user, name, deployments, buildCommand, 
+            installCommand, startCommand, rootDirectory };
         const ptyHandler = new PTYHandler(_id, document);
         ptyHandler.startRepository();
     }

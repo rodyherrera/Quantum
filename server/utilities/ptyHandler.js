@@ -6,8 +6,9 @@ const nodePty = require('node-pty');
 const Deployment = require('@models/deployment');
 
 class BasePTYHandler{
-    constructor(entityId){
+    constructor(entityId, rootDirectory = null){
         this.entityId = entityId;
+        this.rootDirectory = rootDirectory;
         this.logStream = this.createLogStream();
     };
 
@@ -93,14 +94,14 @@ class BasePTYHandler{
     getOrCreate(){
         if(global.ptyStore[this.entityId])
             return global.ptyStore[this.entityId];
-        global.ptyStore[this.entityId] = PTYHandler.create(this.entityId);
+        global.ptyStore[this.entityId] = PTYHandler.create(this.entityId, this.rootDirectory);
         return global.ptyStore[this.entityId];
     };
 };
 
 class PTYHandler extends BasePTYHandler{
     constructor(repositoryId, repositoryDocument){
-        super(repositoryId);
+        super(repositoryId, repositoryDocument.rootDirectory);
         this.repositoryDocument = repositoryDocument;
     };
 
