@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { CircularProgress } from '@mui/material';
 import Breadcrumbs from '@components/general/Breadcrumbs';
@@ -12,22 +12,22 @@ import * as deploymentActions from '@services/deployment/actions';
 import './EnvironmentVariables.css';
 
 const EnvironmentVariables = () => {
-    const { state } = useLocation();
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const { repositoryName } = useParams();
+    const { selectedRepository } = useSelector((state) => state.repository);
     const { 
         isEnvironmentLoading, 
         isOperationLoading, 
-        environment } = useSelector(state => state.deployment);
+        environment } = useSelector((state) => state.deployment);
 
     useEffect(() => {
         initializeEnvironment();
     }, []);
 
     const initializeEnvironment = () => {
-        if(!state?.repository) return navigate('/dashboard/');
-        dispatch(deploymentActions.getActiveDeploymentEnvironment(state.repository.name));
+        if(!selectedRepository) return navigate('/dashboard/');
+        dispatch(deploymentActions.getActiveDeploymentEnvironment(selectedRepository.name));
     };
 
     const handleEnvironmentUpdate = () => {

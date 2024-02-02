@@ -6,6 +6,7 @@ const state = {
     isOperationLoading: false,
     repositories: [],
     repositoryFiles: [],
+    selectedRepository: null,
     selectedRepositoryFile: null,
 };
 
@@ -15,6 +16,9 @@ const repositorySlice = createSlice({
     reducers: {
         setIsLoading: (state, action) => {
             state.isLoading = action.payload;
+        },
+        setSelectedRepository: (state, action) => {
+            state.selectedRepository = action.payload;
         },
         setRepositoryFiles: (state, action) => {
             state.repositoryFiles = action.payload;
@@ -53,6 +57,7 @@ export const {
     updateDeploymentStatus,
     setIsLoading,
     setRepositories,
+    setSelectedRepository,
     setIsOperationLoading
 } = repositorySlice.actions;
 

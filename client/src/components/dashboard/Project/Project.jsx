@@ -5,6 +5,7 @@ import { IoIosGitBranch } from 'react-icons/io';
 import { formatDate } from '@utilities/runtime';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+import { setSelectedRepository } from '@services/repository/slice';
 import Button from '@components/general/Button';
 import ContextMenu from '@components/contextMenu/ContextMenu';
 import * as repositoryActions from '@services/repository/actions';
@@ -25,6 +26,11 @@ const Project = ({ repository, ...props }) => {
 
     const checkStartupActionLoading = (action) => {
         return isOperationLoading && (perfomedAction === action);
+    };
+
+    const handleRepositorySelection = (path) => {
+        dispatch(setSelectedRepository(repository));
+        navigate(path);
     };
 
     useEffect(() => {
@@ -51,11 +57,11 @@ const Project = ({ repository, ...props }) => {
                 className='Project-More-Icon-Container' 
                 options={[
                     { title: 'Delete', onClick: () => dispatch(repositoryActions.deleteRepository(repository._id, repositories, navigate)) },
-                    { title: 'Build & Dev Settings',  onClick: () => navigate(`/repository/${repository.name}/deployment/setup/`, { state: { repository } }) },
-                    { title: 'Environment Variables',  onClick: () => navigate(`/repository/${repository.name}/deployment/environment-variables/`, { state: { repository } }) },
-                    { title: 'File Explorer', onClick: () => navigate(`/repository/${repository.name}/storage/`) },
-                    { title: 'Shell', onClick: () => navigate(`/repository/${repository.name}/shell/`) },
-                    { title: 'Deployments', onClick: () => navigate(`/repository/${repository.name}/deployments/`) }
+                    { title: 'Build & Dev Settings',  onClick: () => handleRepositorySelection(`/repository/${repository.name}/deployment/setup/`) },
+                    { title: 'Environment Variables',  onClick: () => navigate(`/repository/${repository.name}/deployment/environment-variables/`) },
+                    { title: 'File Explorer',  onClick: () => handleRepositorySelection(`/repository/${repository.name}/storage/`) },
+                    { title: 'Shell', onClick: () => handleRepositorySelection(`/repository/${repository.name}/shell/`) },
+                    { title: 'Deployments', onClick: () => handleRepositorySelection(`/repository/${repository.name}/deployments/`) }
                 ]}
             >
                 <i>

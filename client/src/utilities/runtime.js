@@ -1,15 +1,24 @@
 export const formatDate = (date) => {
-    const dateNow = new Date();
-    const dateThen = new Date(date);
-    const difference = dateNow - dateThen;
-    const hours = Math.floor(difference / 1000 / 60 / 60);
-    const days = Math.floor(hours / 24);
-    if(hours < 24){
-        if(hours === 1)
-            return `${hours} hour ago`;
-        else if(hours === 0)
-            return 'just now';
-        return `${hours} hours ago`;
-    }
-    return `${days} days ago`;
+    const currentDate = new Date();
+    const timestamp = new Date(date);
+    const seconds = Math.floor((currentDate - timestamp) / 1000);
+    let interval = Math.floor(seconds / 31536000);
+    if(interval > 1)
+        return `${interval} years ago`;
+    interval = Math.floor(seconds / 2592000);
+    if(interval > 1)
+        return `${interval} months ago`;
+    interval = Math.floor(seconds / 604800);
+    if(interval > 1)
+        return `${interval} weeks ago`;
+    interval = Math.floor(seconds / 86400);
+    if(interval > 1)
+      return `${interval} days ago`;
+    interval = Math.floor(seconds / 3600);
+    if(interval > 1)
+        return `${interval} hours ago`;
+    interval = Math.floor(seconds / 60);
+    if(interval > 1)
+         return `${interval} minutes ago`;
+    return `${Math.floor(seconds)} seconds ago`;
 };

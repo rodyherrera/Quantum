@@ -1,6 +1,7 @@
-import React from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import { formatDate } from '@utilities/runtime';
 import FileExplorer from '@components/repository/FileExplorer';
 import AnimatedMain from '@components/general/AnimatedMain';
 import './Storage.css';
@@ -8,8 +9,15 @@ import './Storage.css';
 const Storage = () => {
     const { repositoryName } = useParams();
     const { user } = useSelector((state) => state.auth);
+    const { selectedRepository } = useSelector((state) => state.repository);
+    const navigate = useNavigate();
 
-    return (
+    useEffect(() => {
+        if(!selectedRepository) 
+            return navigate('/dashboard/');
+    }, []);
+
+    return selectedRepository && (
         <AnimatedMain id='Repository-Storage-Main'>
             <div className='File-Explorer-Container'>
                 <div className='File-Explorer-Header-Container'>
@@ -18,12 +26,12 @@ const Storage = () => {
                     </div>
 
                     <div className='File-Explorer-Header-Right-Container'>
-                        <p className='File-Explorer-Repository-Id'>62da9b1a31d13c</p>
-                        <p className='File-Explorer-Created-At'>2 weeks ago</p>
+                        <p className='File-Explorer-Repository-Id'>{selectedRepository._id}</p>
+                        <p className='File-Explorer-Created-At'>{formatDate(selectedRepository.createdAt)}</p>
                     </div>
                 </div>
 
-                <FileExplorer />
+                <FileExplorer repositoryId={selectedRepository._id} />
             </div>
         </AnimatedMain>
     );

@@ -10,7 +10,7 @@ import Button from '@components/general/Button';
 import CodeEditor from '@uiw/react-textarea-code-editor';
 import './FileExplorer.css';
 
-const FileExplorer = () => {
+const FileExplorer = ({ repositoryId }) => {
     const [searchParams, setSearchParams] = useSearchParams();
     const dispatch = useDispatch();
 
@@ -23,15 +23,15 @@ const FileExplorer = () => {
     const loadPath = (path, isDirectory = true) => {
         setSearchParams({ path });
         if(isDirectory){
-            return dispatch(storageExplorer('65b72c5347c55ca7be279fb2', path));
+            return dispatch(storageExplorer(repositoryId, path));
         }
-        dispatch(readRepositoryFile('65b72c5347c55ca7be279fb2', path));
+        dispatch(readRepositoryFile(repositoryId, path));
     };
 
     const overwriteFileHandler = () => {
         const { content } = selectedRepositoryFile;
         const path = searchParams.get('path');
-        dispatch(updateRepositoryFile('65b72c5347c55ca7be279fb2', path, content));
+        dispatch(updateRepositoryFile(repositoryId, path, content));
         goBackHandler();
     };
 
