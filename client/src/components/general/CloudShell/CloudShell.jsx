@@ -63,6 +63,9 @@ const CloudShell = () => {
             query: { action: 'Cloud::Console' }
         });
         setSocket(newSocket);
+        return () => {
+            newSocket.disconnect();
+        };
     }, [xterm]);
 
     useEffect(() => {
@@ -89,9 +92,7 @@ const CloudShell = () => {
             maxHeight={headerRef}
             minHeight={cloudShellHeaderRef}
             callback={() => {
-                if(terminalRef.current){
-                    fitAddonRef.current.fit();
-                }
+                fitAddonRef.current.fit();
             }}
         >
             <aside className='Cloud-Shell-Container' ref={cloudShellContainerRef}>

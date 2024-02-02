@@ -11,11 +11,10 @@ class BasePTYHandler{
         this.logStream = this.createLogStream();
     };
 
-    // IF EXISTS CLEAR IT !!!!
     async appendLog(log){
         const logPath = this.getLogAbsPath(this.entityId);
         await this.checkLogFileStatus(logPath);
-        this.logStream.write(log + '\n');
+        this.logStream.write(log);
     };
 
     // When a connection is made to the repository shell through the WebUI, a 
@@ -55,9 +54,15 @@ class BasePTYHandler{
     };
 
     createLogStream(){
+        if(global.logStreamStore[this.entityId]){
+            global.logStreamStore[this.entityId].end();
+            delete global.logStreamStore[this.entityId];
+        }
         if(!fs.existsSync(`${__dirname}/../storage/pty-log`))
             fs.mkdirSync(`${__dirname}/../storage/pty-log`);
-        return fs.createWriteStream(this.getLogAbsPath(), { flags: 'a' });
+        const stream = fs.createWriteStream(this.getLogAbsPath(), { flags: 'a' });
+        global.logStreamStore[this.entityId] = stream;
+        return stream;
     };
 
     clearRuntimePTYLog(){

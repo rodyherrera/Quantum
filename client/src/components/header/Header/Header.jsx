@@ -32,7 +32,9 @@ const Header = () => {
                         <IconLink title='Service Status' to='/service-status/' />
                     </div>
                     <div className='Header-Links-Right-Container'>
-                        <IconLink title='Cloud Console' onClick={() => dispatch(setIsCloudConsoleEnabled(!isCloudConsoleEnabled))} />
+                        {(isAuthenticated) && (
+                            <IconLink title='Cloud Console' onClick={() => dispatch(setIsCloudConsoleEnabled(!isCloudConsoleEnabled))} />
+                        )}
                     </div>
                 </article>
             </section>

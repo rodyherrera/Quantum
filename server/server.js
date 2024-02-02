@@ -2,6 +2,7 @@ const dotenv = require('dotenv');
 const moduleAlias = require('module-alias');
 
 global.ptyStore = {};
+global.logStreamStore = {};
 
 dotenv.config({ path: './.env' });
 

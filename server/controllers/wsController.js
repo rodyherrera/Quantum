@@ -32,7 +32,9 @@ const createShellHandler = (socket, shellInstance) => {
         PTY.appendLog(data);
         socket.emit('response', data);
     });
-    shell.on('exit', () => socket.disconnect());
+    socket.on('disconnect', () => {
+        PTY.clearRuntimePTYLog();
+    });
 };
 
 const repositoryShellHandler = (socket) => {

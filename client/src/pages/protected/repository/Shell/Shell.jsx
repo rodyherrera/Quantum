@@ -34,6 +34,9 @@ const Shell = () => {
             query: { repositoryName, action: 'Repository::Shell' }
         });
         setSocket(newSocket);
+        return () => {
+            newSocket.disconnect();
+        };
     }, [xterm]);
 
     useEffect(() => {
