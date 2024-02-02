@@ -54,7 +54,7 @@ class Github{
         return commits[0];
     };
 
-    async createNewDeployment(){
+    async createNewDeployment(githubDeploymentId){
         const pty = new PTYHandler(this.repository._id, this.repository);
         pty.removeFromRuntimeStoreAndKill();
         const environmentVariables = await this.readEnvironmentVariables();
@@ -71,6 +71,7 @@ class Github{
         const latestCommit = await this.getLatestCommit();
         const newDeployment = new Deployment({
             user: this.user._id,
+            githubDeploymentId,
             repository: this.repository._id,
             environment: {
                 variables: environmentVariables
@@ -182,12 +183,12 @@ class Github{
     async deployRepository(){
         await this.cloneRepository();
         global.ptyStore[this.repository._id] = PTYHandler.create(this.repository._id);
-        const newDeployment = await this.createNewDeployment();
-        const deploymentId = await this.createGithubDeployment();
-        newDeployment.url = `https://github.com/${this.user.github.username}/${this.repository.name}/deployments/${deploymentId}`;
+        const githubDeploymentId = await this.createGithubDeployment();
+        const newDeployment = await this.createNewDeployment(githubDeploymentId);
+        newDeployment.url = `https://github.com/${this.user.github.username}/${this.repository.name}/deployments/${githubDeploymentId}`;
         newDeployment.status = 'success';
         await newDeployment.save();
-        await this.updateDeploymentStatus(deploymentId, 'success');
+        await this.updateDeploymentStatus(githubDeploymentId, 'success');
         return newDeployment;
     };
 };

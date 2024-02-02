@@ -7,6 +7,10 @@ const DeploymentSchema = new mongoose.Schema({
         ref: 'User',
         required: [true, 'Deployment::User::Required'],
     },
+    githubDeploymentId: {
+        type: String,
+        required: [true, 'Deployment::GithubDeploymentId::Required']
+    },
     repository: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Repository',

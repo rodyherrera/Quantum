@@ -65,7 +65,12 @@ RepositorySchema.post('findOneAndDelete', async function(deletedDoc){
             $pull: { repositories: deletedDoc._id } 
         })
         .populate('github');
+    const deployments = await Deployment
+        .find({ repository: deletedDoc._id })
+        .select('githubDeploymentId');
+
     await Deployment.deleteMany({ repository: deletedDoc._id });
+    console.log('Deployments deleted from DB');
 
     const ptyHandler = new PTYHandler(deletedDoc._id, deletedDoc);
     ptyHandler.clearRuntimePTYLog();
@@ -78,6 +83,10 @@ RepositorySchema.post('findOneAndDelete', async function(deletedDoc){
     
     const github = new Github(repositoryUser, deletedDoc);
     await github.deleteWebhook();
+    for(const deployment of deployments){
+        const { githubDeploymentId } = deployment;
+        await github.deleteRepositoryDeployment(githubDeploymentId);
+    }
 });
 
 RepositorySchema.pre('findOneAndUpdate', async function(next){

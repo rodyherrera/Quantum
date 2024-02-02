@@ -12,9 +12,9 @@ const userAuthentication = async (socket, next) => {
 };
 
 const tokenOwnership = async (socket, next) => {
-    const { repositoryName } = socket.handshake.query;
-    if(!repositoryName) return next(new RuntimeError('Repository::Name::Required'));
-    const repository = await Repository.findOne({ name: repositoryName, user: socket.user._id });
+    const { repositoryAlias } = socket.handshake.query;
+    if(!repositoryAlias) return next(new RuntimeError('Repository::Name::Required'));
+    const repository = await Repository.findOne({ name: repositoryAlias, user: socket.user._id });
     if(!repository) return next(new RuntimeError('Repository::NotFound'));
     socket.repository = repository;
     next();

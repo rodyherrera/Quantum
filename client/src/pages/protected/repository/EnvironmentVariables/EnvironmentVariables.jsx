@@ -14,7 +14,7 @@ import './EnvironmentVariables.css';
 const EnvironmentVariables = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const { repositoryName } = useParams();
+    const { repositoryAlias } = useParams();
     const { selectedRepository } = useSelector((state) => state.repository);
     const { 
         isEnvironmentLoading, 
@@ -65,8 +65,8 @@ const EnvironmentVariables = () => {
                             items={[
                                 { title: 'Home', to: '/' },
                                 { title: 'Dashboard', to: '/dashboard/' },
-                                { title: repositoryName, to: '/dashboard/' },
-                                { title: 'Environment Variables', to: `/repository/${repositoryName}/deployment/environment-variables/` }
+                                { title: repositoryAlias, to: '/dashboard/' },
+                                { title: 'Environment Variables', to: `/repository/${repositoryAlias}/deployment/environment-variables/` }
                             ]} />
                     </article>
 

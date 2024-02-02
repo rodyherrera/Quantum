@@ -8,12 +8,12 @@ import './RepositoryDeployments.css';
 
 const RepositoryDeployments = () => {
     const dispatch = useDispatch();
-    const { repositoryName } = useParams();
+    const { repositoryAlias } = useParams();
     const { deployments, isLoading, isOperationLoading, error } = useSelector(state => state.deployment);
     const { user } = useSelector(state => state.auth);
 
     useEffect(() => {
-        dispatch(deploymentActions.getRepositoryDeployments(repositoryName));
+        dispatch(deploymentActions.getRepositoryDeployments(repositoryAlias));
     }, []);
 
     return (
@@ -21,7 +21,7 @@ const RepositoryDeployments = () => {
             title='Deployments'
             id='Repository-Deployments-Main'
             error={error}
-            description={`Continuously generated from ${user.github.username}/${repositoryName}`}
+            description={`Continuously generated from ${user.github.username}/${repositoryAlias}`}
             isLoading={isLoading}
             isOperationLoading={isOperationLoading}
             operationLoadingMessage='Processing, please wait a few seconds...'
@@ -34,8 +34,8 @@ const RepositoryDeployments = () => {
             breadcrumbItems={[
                 { title: 'Dashboard', to: '/dashboard/' },
                 { title: 'Repositories', to: '/dashboard/' },
-                { title: repositoryName, to: '/dashboard/' },
-                { title: 'Deployments', to: `/repository/${repositoryName}/deployments/` }
+                { title: repositoryAlias, to: '/dashboard/' },
+                { title: 'Deployments', to: `/repository/${repositoryAlias}/deployments/` }
             ]}
         >
             <div id='Repository-Deployments-Body-List'>
@@ -43,7 +43,7 @@ const RepositoryDeployments = () => {
                     <DeploymentItem 
                         key={index} 
                         deployment={deployment} 
-                        repositoryName={repositoryName} />
+                        repositoryAlias={repositoryAlias} />
                 ))}
             </div>
         </DataRenderer>

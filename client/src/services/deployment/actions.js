@@ -15,20 +15,20 @@ const handleDispatch = async (dispatch, action, operation, setIsLoading = false)
     }
 };
 
-export const getRepositoryDeployments = (repositoryName) => async (dispatch) => {
-    const query = { params: { repositoryName } };
+export const getRepositoryDeployments = (repositoryAlias) => async (dispatch) => {
+    const query = { params: { repositoryAlias } };
     const action = () => deploymentService.getRepositoryDeployments({ query });
     await handleDispatch(dispatch, action, 'setIsLoading', true);
 };
 
-export const deleteRepositoryDeployment = (repositoryName, deploymentId) => async (dispatch) => {
-    const query = { params: { repositoryName, deploymentId } };
+export const deleteRepositoryDeployment = (repositoryAlias, deploymentId) => async (dispatch) => {
+    const query = { params: { repositoryAlias, deploymentId } };
     const action = () => deploymentService.deleteRepositoryDeployment({ query });
     await handleDispatch(dispatch, action, 'setIsOperationLoading', true);
 };
 
-export const getActiveDeploymentEnvironment = (repositoryName) => async (dispatch) => {
-    const query = { params: { repositoryName } };
+export const getActiveDeploymentEnvironment = (repositoryAlias) => async (dispatch) => {
+    const query = { params: { repositoryAlias } };
 
     await handleDispatch(dispatch, async () => {
         const response = await deploymentService.getActiveDeploymentEnvironment({ query });
@@ -45,8 +45,8 @@ export const updateDeployment = (id, body, navigate) => async (dispatch) => {
     }, 'setIsOperationLoading', true);
 };
 
-export const repositoryActions = (repositoryName, body) => async (dispatch) => {
-    const query = { params: { repositoryName } };
+export const repositoryActions = (repositoryAlias, body) => async (dispatch) => {
+    const query = { params: { repositoryAlias } };
     await handleDispatch(dispatch, async () => {
         const response = await deploymentService.repositoryActions({ query, body });
         const { status, repository } = response.data;

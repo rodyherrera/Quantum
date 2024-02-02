@@ -15,7 +15,7 @@ const Shell = () => {
     const terminalRef = useRef(null);
     const fitAddonRef = useRef(null);
     const { width } = useWindowSize();
-    const { repositoryName } = useParams();
+    const { repositoryAlias } = useParams();
     const [xterm, setXterm] = useState(null);
     const [socket, setSocket] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
@@ -31,7 +31,7 @@ const Shell = () => {
         const newSocket = io(import.meta.env.VITE_SERVER, {
             transports: ['websocket'],
             auth: { token: authToken },
-            query: { repositoryName, action: 'Repository::Shell' }
+            query: { repositoryAlias, action: 'Repository::Shell' }
         });
         setSocket(newSocket);
         return () => {
@@ -75,8 +75,8 @@ const Shell = () => {
                     items={[
                         { title: 'Dashboard', to: '/dashboard/' },
                         { title: 'Repositories', to: '/dashboard/' },
-                        { title: repositoryName, to: '/dashboard/' },
-                        { title: 'Shell', to: `/repository/${repositoryName}/shell/` }
+                        { title: repositoryAlias, to: '/dashboard/' },
+                        { title: 'Shell', to: `/repository/${repositoryAlias}/shell/` }
                     ]}
                 />
                 <article id='Repository-Shell-Title-Container'>

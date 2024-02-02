@@ -7,7 +7,7 @@ import AnimatedMain from '@components/general/AnimatedMain';
 import './Storage.css';
 
 const Storage = () => {
-    const { repositoryName } = useParams();
+    const { repositoryAlias } = useParams();
     const { user } = useSelector((state) => state.auth);
     const { selectedRepository } = useSelector((state) => state.repository);
     const navigate = useNavigate();
@@ -22,7 +22,7 @@ const Storage = () => {
             <div className='File-Explorer-Container'>
                 <div className='File-Explorer-Header-Container'>
                     <div className='File-Explorer-Header-Left-Container'>
-                        <h3 className='File-Explorer-Header-Title'>{user.username}@{repositoryName}</h3>
+                        <h3 className='File-Explorer-Header-Title'>{user.username}@{repositoryAlias}</h3>
                     </div>
 
                     <div className='File-Explorer-Header-Right-Container'>

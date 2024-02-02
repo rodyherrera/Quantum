@@ -26,8 +26,8 @@ exports.deleteDeployment = DeploymentFactory.deleteOne();
 
 exports.repositoryActions = catchAsync(async (req, res) => {
     const { user } = req;
-    const { repositoryName } = req.params;
-    const repository = await Repository.findOne({ user: user._id, name: repositoryName });
+    const { repositoryAlias } = req.params;
+    const repository = await Repository.findOne({ user: user._id, name: repositoryAlias });
     if(!repository)
         throw new RuntimeError('Repository::Not::Found', 404);
     const { action } = req.body;
@@ -72,8 +72,8 @@ exports.repositoryActions = catchAsync(async (req, res) => {
 
 exports.getRepositoryDeployments = catchAsync(async (req, res) => {
     const { user } = req;
-    const { repositoryName } = req.params;
-    const github = new Github(user, { name: repositoryName });
+    const { repositoryAlias } = req.params;
+    const github = new Github(user, { name: repositoryAlias });
     const deployments = await github.getRepositoryDeployments();
     if(!deployments)
         throw new RuntimeError('Deployment::Not::Found', 404);
@@ -82,8 +82,8 @@ exports.getRepositoryDeployments = catchAsync(async (req, res) => {
 
 exports.deleteGithubDeployment = catchAsync(async (req, res) => {
     const { user } = req;
-    const { repositoryName, deploymentId } = req.params;
-    const github = new Github(user, { name: repositoryName });
+    const { repositoryAlias, deploymentId } = req.params;
+    const github = new Github(user, { name: repositoryAlias });
     await github.deleteRepositoryDeployment(deploymentId);
     const deployments = await github.getRepositoryDeployments();
     if(!deployments)
@@ -93,9 +93,9 @@ exports.deleteGithubDeployment = catchAsync(async (req, res) => {
 
 exports.getActiveDeploymentEnvironment = catchAsync(async (req, res) => {
     const { user } = req;
-    const { repositoryName } = req.params;
+    const { repositoryAlias } = req.params;
     const repository = await Repository
-        .findOne({ name: repositoryName, user: user._id })
+        .findOne({ name: repositoryAlias, user: user._id })
         .select('deployments')
         .populate('deployments');
     if(!repository)

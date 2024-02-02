@@ -2,17 +2,17 @@ import StandardizedAPIRequestBuilder from '@utilities/standardizedAPIRequestBuil
 export const DeploymentAPI = new StandardizedAPIRequestBuilder('/deployment');
 
 export const getRepositoryDeployments = DeploymentAPI.register({
-    path: '/repository/:repositoryName/',
+    path: '/repository/:repositoryAlias/',
     method: 'GET'
 });
 
 export const deleteRepositoryDeployment = DeploymentAPI.register({
-    path: '/repository/:repositoryName/:deploymentId',
+    path: '/repository/:repositoryAlias/:deploymentId',
     method: 'DELETE'
 });
 
 export const getActiveDeploymentEnvironment = DeploymentAPI.register({
-    path: '/repository/:repositoryName/environment/',
+    path: '/repository/:repositoryAlias/environment/',
     method: 'GET'
 });
 
@@ -22,6 +22,6 @@ export const updateDeployment = DeploymentAPI.register({
 });
 
 export const repositoryActions = DeploymentAPI.register({
-    path: '/repository/:repositoryName/actions/',
+    path: '/repository/:repositoryAlias/actions/',
     method: 'POST'
 });
