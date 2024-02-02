@@ -11,6 +11,7 @@ class BasePTYHandler{
         this.logStream = this.createLogStream();
     };
 
+    // IF EXISTS CLEAR IT !!!!
     async appendLog(log){
         const logPath = this.getLogAbsPath(this.entityId);
         await this.checkLogFileStatus(logPath);
