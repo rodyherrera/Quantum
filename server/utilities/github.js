@@ -30,9 +30,13 @@ class Github{
         const environmentVariables = {};
         for(const envFile of envFiles){
             const file = await simpleGit(`./storage/repositories/${this.repository._id}`).raw(['show', 'HEAD:' + envFile]);
-            file.split('\n').forEach(line => {
-                if(line.includes('='))
-                    environmentVariables[line.split('=')[0]] = line.split('=')[1];
+            const lines = file.split('\n');
+            lines.forEach(line => {
+                if(line.trim() === '' || line.trim().startsWith('#')){
+                    return;
+                }
+                const [key, value] = line.split('=');
+                environmentVariables[key.trim()] = value.trim();
             });
         };
         return environmentVariables;
