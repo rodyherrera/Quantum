@@ -5,7 +5,9 @@ const githubMiddleware = require('@middlewares/github');
 const authMiddleware = require('@middlewares/authentication');
 
 router.get('/authenticate/', githubMiddleware.authenticate);
-router.get('/callback/', githubMiddleware.authenticateCallback, githubController.authCallback);
+router.get('/callback/', 
+    githubMiddleware.authenticateCallback, 
+    githubController.authCallback);
 
 router.use(authMiddleware.protect);
 router.post('/', githubController.createAccount);
