@@ -11,10 +11,12 @@ const userAuthentication = async (socket, next) => {
     next();
 };
 
+// VERIFY ENV FOR MULTIPLE REPOS
+
 const tokenOwnership = async (socket, next) => {
     const { repositoryAlias } = socket.handshake.query;
     if(!repositoryAlias) return next(new RuntimeError('Repository::Name::Required'));
-    const repository = await Repository.findOne({ name: repositoryAlias, user: socket.user._id });
+    const repository = await Repository.findOne({ alias: repositoryAlias, user: socket.user._id });
     if(!repository) return next(new RuntimeError('Repository::Not::Found'));
     socket.repository = repository;
     next();
@@ -54,9 +56,12 @@ module.exports = (io) => {
     io.use(userAuthentication);
     io.on('connection', async (socket) => {
         const { action } = socket.handshake.query;
+        console.log('ACTION', action);
         if(action === 'Repository::Shell'){
             await tokenOwnership(socket, (error) => {
-                if(error) socket.disconnect();
+                if(error){
+                    console.log('[Quantum Cloud]: Critical Error (@controllers/wsController)', error);
+                }
                 else repositoryShellHandler(socket);
             });
         }else if(action === 'Cloud::Console'){

@@ -38,10 +38,9 @@ class BasePTYHandler{
         }
     };
 
-    static create(entityId = null){
-        let workingDir = '/';
+    static create(entityId = null, workingDir = '/'){
         if(fs.existsSync(`${__dirname}/../storage/repositories/${entityId}`)){
-            workingDir = `${__dirname}/../storage/repositories/${entityId}`;
+            workingDir = `${__dirname}/../storage/repositories/${entityId}${workingDir}`;
         }
         const shell = nodePty.spawn('bash', ['-i'], {
             name: 'xterm-color',
