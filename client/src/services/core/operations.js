@@ -6,6 +6,7 @@ import * as coreService from '@services/core/service';
 import * as coreSlice from '@services/core/slice';
 import errorCodeHandler from '@services/core/errorCodeHandler';
 import { addError } from '@services/core/slice';
+import OperationHandler from '@utilities/operationHandler';
 
 export const globalErrorHandler = (message, slice = null) => (dispatch) => {
     const error = {
@@ -27,13 +28,10 @@ export const resetErrorForAllSlices = () => (dispatch) => {
 };
 
 export const getServerHealth = () => async (dispatch) => {
-    try{
-        dispatch(coreSlice.setIsServerHealthLoading(true));
-        const response = await coreService.getServerHealth({});
-        dispatch(coreSlice.setServerHealth(response.data));
-    }catch(error){
-        dispatch(globalErrorHandler(error, coreSlice));
-    }finally{
-        dispatch(coreSlice.setIsServerHealthLoading(false));
-    }
+    const operation = new OperationHandler(coreSlice, dispatch);
+    operation.use({
+        api: coreService.getServerHealth,
+        responseState: coreSlice.setServerHealth,
+        loaderState: coreSlice.setIsServerHealthLoading
+    });
 };

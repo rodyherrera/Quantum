@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { CircularProgress } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
-import { getServerHealth } from '@services/core/actions';
+import { getServerHealth } from '@services/core/operations';
 import { FaCheckCircle } from 'react-icons/fa';
 import Button from '@components/general/Button';
 import AnimatedMain from '@components/general/AnimatedMain';

@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 
 import { authenticateWithCachedToken } from '@services/authentication/utils';
-import { resetErrorForAllSlices } from '@services/core/actions';
+import { resetErrorForAllSlices } from '@services/core/operations';
 
 import CloudShell from '@components/general/CloudShell';
 import Waves from '@components/general/Waves';

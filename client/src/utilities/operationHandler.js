@@ -1,4 +1,4 @@
-import { globalErrorHandler } from '@services/core/actions';
+import { globalErrorHandler } from '@services/core/operations';
 
 class OperationHandler{
     constructor(slice, dispatch){
