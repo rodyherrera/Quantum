@@ -17,25 +17,11 @@ const RepositorySchema = new mongoose.Schema({
         type: String,
         required: [true, 'Repository::Name::Required']
     },
-    webhookId: {
-        type: String
-    },
-    buildCommand: {
-        type: String,
-        default: '',
-    },
-    installCommand: {
-        type: String,
-        default: '',
-    },
-    startCommand: {
-        type: String,
-        default: '',
-    },
-    rootDirectory: {
-        type: String,
-        default: '/',
-    },
+    webhookId: String,
+    buildCommand: { type: String, default: '' },
+    installCommand: { type: String, default: '' },
+    startCommand: { type: String, default: '' },
+    rootDirectory: { type: String, default: '/' },
     user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
@@ -49,42 +35,121 @@ const RepositorySchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Deployment',
     }],
-    createdAt: {
-        type: Date,
-        default: Date.now,
-    },
+    createdAt: { type: Date, default: Date.now, },
 });
 
 RepositorySchema.plugin(TextSearch);
 RepositorySchema.index({ alias: 1, user: 1 }, { unique: true });
 RepositorySchema.index({ name: 'text', alias: 'text' });
 
-RepositorySchema.post('findOneAndDelete', async function(deletedDoc){
-    const repositoryUser = await User
-        .findByIdAndUpdate(deletedDoc.user, { 
-            $pull: { repositories: deletedDoc._id } 
-        })
+const removeRepositoryReference = async (userId, repositoryId) => {
+    return await User
+        .findByIdAndUpdate(userId, { $pull: { repositories: repositoryId } })
         .populate('github');
+};
+
+const getAndDeleteDeployments = async (repositoryId) => {
     const deployments = await Deployment
-        .find({ repository: deletedDoc._id })
+        .find({ repository: repositoryId })
         .select('githubDeploymentId');
+    await Deployment.deleteMany({ repository: repositoryId });
+    return deployments;
+};
 
-    await Deployment.deleteMany({ repository: deletedDoc._id });
-
-    const ptyHandler = new PTYHandler(deletedDoc._id, deletedDoc);
-    ptyHandler.clearRuntimePTYLog();
-    ptyHandler.removeFromRuntimeStoreAndKill();
-
+const performCleanupTasks = async (deletedDoc, repositoryUser, deployments) => {
+    // Use PTYHandler for cleanup
+    const pty = new PTYHandler(deletedDoc._id, deletedDoc);
+    pty.clearRuntimePTYLog();
+    pty.removeFromRuntimeStoreAndKill();
+    // Use Github utility for cleanup
     await Github.deleteLogAndDirectory(
         `${__dirname}/../storage/pty-log/${deletedDoc._id}.log`,
         `${__dirname}/../storage/repositories/${deletedDoc._id}/`
     );
-    
     const github = new Github(repositoryUser, deletedDoc);
+    // Delete webhook and repository deployments
     await github.deleteWebhook();
     for(const deployment of deployments){
         const { githubDeploymentId } = deployment;
         await github.deleteRepositoryDeployment(githubDeploymentId);
+    }
+};
+
+const deleteRepositoryHandler = async (deletedDoc) => {
+    // Remove repository reference from user's repositories array
+    const repositoryUser = await removeRepositoryReference(deletedDoc.user, deletedDoc._id);
+    // Retrieve and delete deployments associated with the repository
+    const deployments = await getAndDeleteDeployments(deletedDoc._id);
+    // Perfom cleanup task using PTYhandler and Github utility
+    await performCleanupTasks(deletedDoc, repositoryUser, deployments);
+};
+
+const handleUpdateCommands = async (context) => {
+    const { buildCommand, installCommand, startCommand, rootDirectory } = context._update;
+    const { _id } = context._conditions;
+    if(
+        rootDirectory.length || buildCommand.length ||
+        installCommand.length || startCommand.length
+    ){
+        const { user, name, deployments } = await Repository
+            .findById(_id)
+            .select('user name deployments')
+            .populate({ path: 'user', select: 'username' });
+        const document = { user, name, deployments, buildCommand, 
+            installCommand, startCommand, rootDirectory };
+        const ptyHandler = new PTYHandler(_id, document);
+        ptyHandler.startRepository();
+    }
+};
+
+RepositorySchema.methods.updateAliasIfNeeded = async function(){
+    const existingRepository = await this
+        .model('Repository')
+        .findOne({ alias: this.alias, user: this.user });
+    if(existingRepository){
+        this.alias = this.alias + '-' + v4().slice(0, 4);
+    }    
+};
+
+RepositorySchema.methods.getUserWithGithubData = async function(){
+    const data = await this
+        .model('User')
+        .findById(this.user)
+        .populate('github');
+    return data;
+};
+
+RepositorySchema.methods.updateUserAndRepository = async function(deployment){
+    const updateUser = {
+        $push: { repositories: this._id, deployments: deployment._id }
+    };
+    await this.model('User').findByIdAndUpdate(this.user, updateUser);
+    this.deployments.push(deployment._id);
+};
+
+RepositorySchema.pre('save', async function(next){
+    try{
+        if(!this.alias){
+            this.alias = this.name;
+        }
+        await this.updateAliasIfNeeded();
+        const repositoryUser = await this.getUserWithGithubData();
+        const github = new Github(repositoryUser, this);
+        const deployment = await github.deployRepository();
+        const webhookEndpoint = `${process.env.DOMAIN}/api/v1/webhook/${this._id}/`;
+        this.webhookId = await github.createWebhook(webhookEndpoint, process.env.SECRET_KEY);
+        await this.updateUserAndRepository(deployment);
+        next();
+    }catch(error){
+        return next(error);
+    }
+});
+
+RepositorySchema.post('findOneAndDelete', async function(deletedDoc){
+    try{
+        await deleteRepositoryHandler(deletedDoc);
+    }catch(error){
+        console.log('[Quantum Cloud]: Critical Error (@models/repository):', error);
     }
 });
 
@@ -96,47 +161,6 @@ RepositorySchema.pre('findOneAndUpdate', async function(next){
         next(error);
     }
 });
-
-RepositorySchema.pre('save', async function(next){
-    try{
-        if(!this.alias) this.alias = this.name;
-        const repositoryByAlias = await this.model('Repository').findOne({ alias: this.alias, user: this.user });
-        if(repositoryByAlias) this.alias = this.alias + '-' + v4().slice(0, 4);
-        const repositoryUser = await this.model('User')
-            .findById(this.user)
-            .populate('github');
-        const github = new Github(repositoryUser, this);
-        const deployment = await github.deployRepository();
-        const webhookEndpoint = `${process.env.DOMAIN}/api/v1/webhook/${this._id}/`;
-        this.webhookId = await github.createWebhook(webhookEndpoint, process.env.SECRET_KEY)
-        this.deployments.push(deployment._id);
-        await this.model('User').findByIdAndUpdate(this.user, { 
-            $push: { repositories: this._id, deployments: deployment._id } 
-        });
-        next();
-    }catch(error){
-        return next(error);
-    }
-});
-
-const handleUpdateCommands = async (context) => {
-    const { buildCommand, installCommand, startCommand, rootDirectory } = context._update;
-    const { _id } = context._conditions;
-    const rootDirectoryLength = rootDirectory.length;
-    const buildCommandLength = buildCommand.length;
-    const installCommandLength = installCommand.length;
-    const startCommandLength = startCommand.length;
-    if(buildCommandLength || installCommandLength || startCommandLength || rootDirectoryLength){
-        const { user, name, deployments } = await Repository
-            .findById(_id)
-            .select('user name deployments')
-            .populate({ path: 'user', select: 'username' });
-        const document = { user, name, deployments, buildCommand, 
-            installCommand, startCommand, rootDirectory };
-        const ptyHandler = new PTYHandler(_id, document);
-        ptyHandler.startRepository();
-    }
-};
 
 const Repository = mongoose.model('Repository', RepositorySchema);
 

@@ -5,7 +5,7 @@ const DeploymentSchema = new mongoose.Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
-        required: [true, 'Deployment::User::Required'],
+        required: [true, 'Deployment::User::Required']
     },
     githubDeploymentId: {
         type: String,
@@ -14,57 +14,47 @@ const DeploymentSchema = new mongoose.Schema({
     repository: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Repository',
-        required: [true, 'Deployment::Repository::Required'],
+        required: [true, 'Deployment::Repository::Required']
     },
     environment: {
         variables: {
             type: Map,
-            of: String,
-        },
+            of: String
+        }
     },
     commit: {
         message: String,
         author: {
             name: String,
-            email: String,
+            email: String
         },
-        date: Date,
+        date: Date
     },
     status: {
         type: String,
         enum: ['pending', 'success', 'stopped', 'failure'],
         default: 'pending'
     },
-    url: {
-        type: String
-    },
-    createdAt: {
-        type: Date,
-        default: Date.now
-    }
+    url: { type: String },
+    createdAt: { type: Date, default: Date.now }
 });
 
 DeploymentSchema.plugin(TextSearch);
 DeploymentSchema.index({ environment: 'text', commit: 'text', url: 'text' });
 
 DeploymentSchema.methods.getFormattedEnvironment = function(){
-    const formattedEnvironment = [];
-    this.environment.variables.forEach((value, key) => {
-        key = key.trim();
-        value = value.trim();
-        const formattedValue = `${key}=${value}`;
-        formattedEnvironment.push(formattedValue);
-    });
+    const formattedEnvironment = Array.from(
+        this.environment.variables, ([key, value]) => `${key.trim()}=${value.trim()}`);
     return formattedEnvironment.join(' && ');
 };
 
-DeploymentSchema.post('findOneAndDelete', function(){
+DeploymentSchema.post('findOneAndDelete', async function(){
     const { user, repository, _id } = this;
 
     const userUpdatePromise = this.model('User').updateOne({ _id: user }, { $pull: { deployments: _id } }).lean().exec();
     const repoUpdatePromise = this.model('Repository').updateOne({ _id: repository }, { $pull: { deployments: _id } }).lean().exec();
 
-    return Promise.all([userUpdatePromise, repoUpdatePromise]);
+    await Promise.all([userUpdatePromise, repoUpdatePromise]);
 });
 
 const Deployment = mongoose.model('Deployment', DeploymentSchema);
