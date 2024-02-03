@@ -20,7 +20,7 @@ router.delete('/repository/:repositoryAlias/:deploymentId',
     deploymentController.deleteGithubDeployment);
 
 router.post('/repository/:repositoryAlias/actions/', 
-    deploymentController.repositoryActions);
+    deploymentController.repositoryOperations);
 
 router.route('/:id', deploymentMiddleware.verifyDeploymentAccess)
     .get(deploymentController.getDeployment)

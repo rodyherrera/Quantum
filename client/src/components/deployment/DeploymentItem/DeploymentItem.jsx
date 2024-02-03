@@ -4,7 +4,7 @@ import { IoIosMore } from 'react-icons/io';
 import { RiDeleteBin7Line } from 'react-icons/ri';
 import { useDispatch } from 'react-redux';
 import { formatDate } from '@utilities/runtime';
-import * as deploymentActions from '@services/deployment/actions';
+import * as deploymentOperations from '@services/deployment/operations';
 import './DeploymentItem.css';
 
 const DeploymentItem = ({ deployment, repositoryAlias }) => {
@@ -33,7 +33,7 @@ const DeploymentItem = ({ deployment, repositoryAlias }) => {
                 </i>
                 <i 
                     className='Repository-Deployment-Delete-Icon'
-                    onClick={() => dispatch(deploymentActions.deleteRepositoryDeployment(repositoryAlias, deployment.id))}
+                    onClick={() => dispatch(deploymentOperations.deleteRepositoryDeployment(repositoryAlias, deployment.id))}
                 >
                     <RiDeleteBin7Line />
                 </i>

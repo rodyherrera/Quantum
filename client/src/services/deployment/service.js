@@ -21,7 +21,7 @@ export const updateDeployment = DeploymentAPI.register({
     method: 'PATCH'
 });
 
-export const repositoryActions = DeploymentAPI.register({
+export const repositoryOperations = DeploymentAPI.register({
     path: '/repository/:repositoryAlias/actions/',
     method: 'POST'
 });

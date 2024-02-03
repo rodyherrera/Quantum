@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import DeploymentItem from '@components/deployment/DeploymentItem';
 import DataRenderer from '@components/general/DataRenderer';
-import * as deploymentActions from '@services/deployment/actions';
+import * as deploymentOperations from '@services/deployment/operations';
 import './RepositoryDeployments.css';
 
 const RepositoryDeployments = () => {
@@ -13,7 +13,7 @@ const RepositoryDeployments = () => {
     const { user } = useSelector(state => state.auth);
 
     useEffect(() => {
-        dispatch(deploymentActions.getRepositoryDeployments(repositoryAlias));
+        dispatch(deploymentOperations.getRepositoryDeployments(repositoryAlias));
     }, []);
 
     return (

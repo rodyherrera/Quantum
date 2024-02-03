@@ -24,7 +24,7 @@ exports.createDeployment = DeploymentFactory.createOne();
 exports.updateDeployment = DeploymentFactory.updateOne();
 exports.deleteDeployment = DeploymentFactory.deleteOne();
 
-exports.repositoryActions = catchAsync(async (req, res) => {
+exports.repositoryOperations = catchAsync(async (req, res) => {
     const { user } = req;
     const { repositoryAlias } = req.params;
     const repository = await Repository.findOne({ user: user._id, name: repositoryAlias });

@@ -8,7 +8,7 @@ import AnimatedMain from '@components/general/AnimatedMain';
 import Button from '@components/general/Button';
 import EnvironmentMobileActions from '@components/repository/EnvironmentMobileActions';
 import * as deploymentSlice from '@services/deployment/slice';
-import * as deploymentActions from '@services/deployment/actions';
+import * as deploymentOperations from '@services/deployment/operations';
 import './EnvironmentVariables.css';
 
 const EnvironmentVariables = () => {
@@ -27,7 +27,7 @@ const EnvironmentVariables = () => {
 
     const initializeEnvironment = () => {
         if(!selectedRepository) return navigate('/dashboard/');
-        dispatch(deploymentActions.getActiveDeploymentEnvironment(selectedRepository.alias));
+        dispatch(deploymentOperations.getActiveDeploymentEnvironment(selectedRepository.alias));
     };
 
     const handleEnvironmentUpdate = () => {
@@ -45,7 +45,7 @@ const EnvironmentVariables = () => {
             return acc;
         }, {});
         const updatedEnvironment = { ...environment, variables };
-        dispatch(deploymentActions.updateDeployment(
+        dispatch(deploymentOperations.updateDeployment(
             environment._id, { environment: updatedEnvironment }, navigate));
     };
 

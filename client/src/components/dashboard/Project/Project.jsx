@@ -8,8 +8,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setSelectedRepository } from '@services/repository/slice';
 import Button from '@components/general/Button';
 import ContextMenu from '@components/contextMenu/ContextMenu';
-import * as repositoryActions from '@services/repository/operations';
-import * as deploymentActions from '@services/deployment/actions';
+import * as repositoryOperations from '@services/repository/operations';
+import * as deploymentOperations from '@services/deployment/operations';
 import './Project.css';
 
 const Project = ({ repository, ...props }) => {
@@ -20,7 +20,7 @@ const Project = ({ repository, ...props }) => {
     const [perfomedAction, setPerfomedAction] = useState('');
 
     const startupActionHandler = (action) => {
-        dispatch(deploymentActions.repositoryActions(repository.name, { action }));
+        dispatch(deploymentOperations.repositoryOperations(repository.name, { action }));
         setPerfomedAction(action);
     };
 
@@ -56,7 +56,7 @@ const Project = ({ repository, ...props }) => {
             <ContextMenu 
                 className='Project-More-Icon-Container' 
                 options={[
-                    { title: 'Delete', onClick: () => dispatch(repositoryActions.deleteRepository(repository._id, repositories, navigate)) },
+                    { title: 'Delete', onClick: () => dispatch(repositoryOperations.deleteRepository(repository._id, repositories, navigate)) },
                     { title: 'Build & Dev Settings',  onClick: () => handleRepositorySelection(`/repository/${repository.alias}/deployment/setup/`) },
                     { title: 'Environment Variables',  onClick: () => handleRepositorySelection(`/repository/${repository.alias}/deployment/environment-variables/`) },
                     { title: 'File Explorer',  onClick: () => handleRepositorySelection(`/repository/${repository.alias}/storage/`) },
