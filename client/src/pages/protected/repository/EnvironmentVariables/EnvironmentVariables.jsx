@@ -27,7 +27,7 @@ const EnvironmentVariables = () => {
 
     const initializeEnvironment = () => {
         if(!selectedRepository) return navigate('/dashboard/');
-        dispatch(deploymentActions.getActiveDeploymentEnvironment(selectedRepository.name));
+        dispatch(deploymentActions.getActiveDeploymentEnvironment(selectedRepository.alias));
     };
 
     const handleEnvironmentUpdate = () => {

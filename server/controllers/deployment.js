@@ -95,7 +95,7 @@ exports.getActiveDeploymentEnvironment = catchAsync(async (req, res) => {
     const { user } = req;
     const { repositoryAlias } = req.params;
     const repository = await Repository
-        .findOne({ name: repositoryAlias, user: user._id })
+        .findOne({ alias: repositoryAlias, user: user._id })
         .select('deployments')
         .populate('deployments');
     if(!repository)
