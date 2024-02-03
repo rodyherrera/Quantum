@@ -11,8 +11,6 @@ const userAuthentication = async (socket, next) => {
     next();
 };
 
-// VERIFY ENV FOR MULTIPLE REPOS
-
 const tokenOwnership = async (socket, next) => {
     const { repositoryAlias } = socket.handshake.query;
     if(!repositoryAlias) return next(new RuntimeError('Repository::Name::Required'));
@@ -56,7 +54,6 @@ module.exports = (io) => {
     io.use(userAuthentication);
     io.on('connection', async (socket) => {
         const { action } = socket.handshake.query;
-        console.log('ACTION', action);
         if(action === 'Repository::Shell'){
             await tokenOwnership(socket, (error) => {
                 if(error){

@@ -6,7 +6,7 @@ const nodePty = require('node-pty');
 const Deployment = require('@models/deployment');
 
 class BasePTYHandler{
-    constructor(entityId, rootDirectory = null){
+    constructor(entityId, rootDirectory = '/'){
         this.entityId = entityId;
         this.rootDirectory = rootDirectory;
         this.logStream = this.createLogStream();
@@ -38,7 +38,7 @@ class BasePTYHandler{
         }
     };
 
-    static create(entityId = null, workingDir = '/'){
+    static create(entityId = null, workingDir){
         if(fs.existsSync(`${__dirname}/../storage/repositories/${entityId}`)){
             workingDir = `${__dirname}/../storage/repositories/${entityId}${workingDir}`;
         }
