@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { CiFileOn } from 'react-icons/ci';
 import { GoFileDirectory } from 'react-icons/go';
 import { useSearchParams } from 'react-router-dom';
-import { storageExplorer, readRepositoryFile, updateRepositoryFile } from '@services/repository/actions';
+import { storageExplorer, readRepositoryFile, updateRepositoryFile } from '@services/repository/operations';
 import { setSelectedRepositoryFile } from '@services/repository/slice';
 import { CircularProgress } from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux';

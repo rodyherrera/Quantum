@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setSelectedRepository } from '@services/repository/slice';
 import Button from '@components/general/Button';
 import ContextMenu from '@components/contextMenu/ContextMenu';
-import * as repositoryActions from '@services/repository/actions';
+import * as repositoryActions from '@services/repository/operations';
 import * as deploymentActions from '@services/deployment/actions';
 import './Project.css';
 

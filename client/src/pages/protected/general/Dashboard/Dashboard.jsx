@@ -3,7 +3,7 @@ import Project from '@components/dashboard/Project';
 import Button from '@components/general/Button';
 import DataRenderer from '@components/general/DataRenderer';
 import { useSelector, useDispatch } from 'react-redux';
-import { getRepositories } from '@services/repository/actions';
+import { getRepositories } from '@services/repository/operations';
 import { HiPlus } from 'react-icons/hi';
 import * as repositoriesSlice from '@services/repository/slice';
 import './Dashboard.css';

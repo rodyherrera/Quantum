@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { getMyGithubRepositories, createRepository } from '@services/repository/actions';
+import { getMyGithubRepositories, createRepository } from '@services/repository/operations';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import DataRenderer from '@components/general/DataRenderer';

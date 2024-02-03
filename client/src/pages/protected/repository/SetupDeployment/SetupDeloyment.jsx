@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import MinimalForm from '@components/general/MinimalForm';
-import * as repositoryActions from '@services/repository/actions';
+import * as repositoryActions from '@services/repository/operations';
 import './SetupDeployment.css';
 
 const SetupDeployment = () => {
