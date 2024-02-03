@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { BsArrowRight } from 'react-icons/bs';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { authenticate } from '@services/github/actions';
+import { authenticate } from '@services/github/operations';
 import { CircularProgress } from '@mui/material';
 import Button from '@components/general/Button';
 import AnimatedMain from '@components/general/AnimatedMain';

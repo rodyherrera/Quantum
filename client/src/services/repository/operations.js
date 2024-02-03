@@ -3,7 +3,7 @@ import * as repositorySlice from '@services/repository/slice';
 import OperationHandler from '@utilities/operationHandler';
 
 export const createRepository = (body, navigate) => async (dispatch) => {
-    const operation = new OperationHandler(slice, dispatch);
+    const operation = new OperationHandler(repositorySlice, dispatch);
 
     operation.on('response', (data) => {
         navigate(`/repository/${data.alias}/deployment/setup/`);

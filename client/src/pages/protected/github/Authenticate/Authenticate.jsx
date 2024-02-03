@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import useQuery from '@hooks/useQuery';
 import AnimatedMain from '@components/general/AnimatedMain';
 import { useSelector, useDispatch } from 'react-redux';
-import { createAccount } from '@services/github/actions';
+import { createAccount } from '@services/github/operations';
 import { CircularProgress } from '@mui/material';
 import './Authenticate.css';
 

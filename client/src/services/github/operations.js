@@ -1,7 +1,7 @@
 import * as githubService from '@services/github/service';
 import * as githubSlice from '@services/github/slice';
 import * as authSlice from '@services/authentication/slice';
-import * as coreActions from '@services/core/actions';
+import OperationHandler from '@utilities/operationHandler';
 
 export const authenticate = async (userId) => {
     const Endpoint = `${import.meta.env.VITE_SERVER + import.meta.env.VITE_API_SUFFIX}/github/authenticate?userId=${userId}`;
@@ -9,13 +9,11 @@ export const authenticate = async (userId) => {
 };
 
 export const createAccount = (body) => async (dispatch) => {
-    try{
-        await dispatch(githubSlice.setIsLoading(true));
-        const response = await githubService.createAccount({ body });
-        await dispatch(authSlice.setGithubAccount(response.data));
-    }catch(error){
-        dispatch(coreActions.globalErrorHandler(error, githubSlice));
-    }finally{
-        await dispatch(githubSlice.setIsLoading(false));
-    }
+    const operation = new OperationHandler(githubSlice, dispatch);
+    operation.use({
+        api: githubService.createAccount,
+        loaderState: githubSlice.setIsLoading,
+        responseState: authSlice.setGithubAccount,
+        query: { body }
+    });
 };
