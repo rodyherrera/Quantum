@@ -4,8 +4,6 @@ const simpleGit = require('simple-git');
 const Deployment = require('@models/deployment');
 const fs = require('fs');
 
-// SERVER / CLIENT
-
 class Github{
     constructor(user, repository){
         this.user = user;

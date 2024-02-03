@@ -21,11 +21,15 @@
     background-color: hsl(0,100%,96%);
     padding: .5rem 1rem;
     width: fit-content;
+    display: flex;
+    gap: .5rem;
+    align-items: flex-start;
 }
 
-.Minimal-Form-Error{
+.Minimal-Form-Error,
+.Minimal-Form-Error-Icon-Container{
     font-size: .95rem;
-    color: hsl(358,66%,48%);
+    color: #000000;
 }
 
 .Minimal-Form-Title{

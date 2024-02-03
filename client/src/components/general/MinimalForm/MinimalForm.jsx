@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Input from '@components/general/Input';
 import Button from '@components/general/Button';
 import AnimatedMain from '@components/general/AnimatedMain'
+import { BiErrorCircle } from 'react-icons/bi';
 import { BsArrowRight } from 'react-icons/bs';
 import { CircularProgress } from '@mui/material';
 import './MinimalForm.css';
@@ -40,6 +41,9 @@ const MinimalForm = ({
 
                 {error?.length >= 1 && (
                     <div className='Minimal-Form-Error-Container'>
+                        <i className='Minimal-Form-Error-Icon-Container'>
+                            <BiErrorCircle />
+                        </i>
                         <p className='Minimal-Form-Error'>{error}</p>
                     </div>
                 )}
