@@ -1,7 +1,7 @@
 import React from 'react';
 import MinimalForm from '@components/general/MinimalForm';
 import { useSelector, useDispatch } from 'react-redux';
-import { signUp } from '@services/authentication/actions';
+import { signUp } from '@services/authentication/operations';
 import './SignUp.css';
 
 const SignUp = () => {

@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import MinimalForm from '@components/general/MinimalForm';
-import { signIn } from '@services/authentication/actions';
+import { signIn } from '@services/authentication/operations';
 import { useSelector, useDispatch } from 'react-redux';
 import './SignIn.css';
 

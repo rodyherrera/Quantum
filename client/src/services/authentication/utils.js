@@ -3,20 +3,6 @@ import * as authSlice from '@services/authentication/slice';
 import * as authLocalStorageService from '@services/authentication/localStorageService';
 import * as coreOperations from '@services/core/operations';
 
-export const handleAuthentication = async (dispatch, body, authFunction) => {
-    try{
-        await dispatch(authSlice.setIsLoading(true));
-        const response = await authFunction({ body });
-        authLocalStorageService.setCurrentUserToken(response.data.token);
-        await dispatch(authSlice.setUser(response.data.user));
-        await dispatch(authSlice.setIsAuthenticated(true));
-    }catch(error){
-        dispatch(coreOperations.globalErrorHandler(error, authSlice));
-    }finally{
-        await dispatch(authSlice.setIsLoading(false));
-    }
-};
-
 export const authenticateWithCachedToken = async (dispatch) => {
     try{
         await dispatch(authSlice.setIsCachedAuthLoading(true));

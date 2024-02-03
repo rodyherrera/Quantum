@@ -2,7 +2,7 @@ import React, { useRef } from 'react';
 import HeaderNavItem from '@components/header/HeaderNavItem';
 import IconLink from '@components/general/IconLink';
 import HamburguerMenu from '@components/menu/HamburguerMenu';
-import { logout } from '@services/authentication/actions';
+import { logout } from '@services/authentication/operations';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { setIsCloudConsoleEnabled } from '@services/core/slice';
