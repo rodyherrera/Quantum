@@ -21,6 +21,7 @@
     background-color: hsl(0,100%,96%);
     padding: .5rem 1rem;
     width: fit-content;
+    max-width: 700px;
     display: flex;
     gap: .5rem;
     align-items: flex-start;
@@ -61,6 +62,10 @@
 @media screen and (max-width: 768px){
     .Minimal-Form-Container{
         padding: 1rem;
+    }
+
+    .Minimal-Form-Error-Container{
+        max-width: unset;
     }
 
     .Minimal-Form-Body-Container{
