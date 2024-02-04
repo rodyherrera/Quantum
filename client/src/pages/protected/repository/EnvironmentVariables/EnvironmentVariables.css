@@ -59,6 +59,7 @@
     text-align: center;
     align-items: center;
     width: 40%;
+    border-radius: 4rem;
     padding: 1rem;
     height: 100%;
 }

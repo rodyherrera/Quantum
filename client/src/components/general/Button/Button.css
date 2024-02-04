@@ -7,6 +7,15 @@
     color: #000000;
     background-color: transparent;
     cursor: pointer;
+    border-radius: 1rem;
+}
+
+.Button.Big-Border-Radius{
+    border-radius: 5rem;
+}
+
+.Button.Small-Border-Radius{
+    border-radius: .2rem;
 }
 
 .Button .Button-Circular-Progress{

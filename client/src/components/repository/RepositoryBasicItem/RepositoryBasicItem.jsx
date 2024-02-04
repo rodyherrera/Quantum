@@ -1,6 +1,7 @@
 import React from 'react';
 import { HiArrowNarrowRight } from 'react-icons/hi';
 import { CiLock, CiUnlock } from 'react-icons/ci';
+import { formatDate } from '@utilities/runtime';
 import './RepositoryBasicItem.css';
 
 const RepositoryBasicItem = ({ repository, onClick }) => {
@@ -22,7 +23,7 @@ const RepositoryBasicItem = ({ repository, onClick }) => {
                     {repository.private ? <CiLock /> : <CiUnlock />}
                 </i>
                 <h1 className='Repository-Item-Title'>{repository.name}</h1>
-                <p className='Repository-Creation-Date'>· {formatCreationDate(repository.created_at)}</p>
+                <p className='Repository-Creation-Date'>· {formatDate(repository.created_at)}</p>
             </article>
             <article className='Repository-Item-Actions'>
                 <i className='Repository-Item-Import-Icon'>

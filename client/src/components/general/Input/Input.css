@@ -2,6 +2,7 @@
     outline: 1px solid #272727;
     display: flex;
     justify-content: space-between;
+    border-radius: .25rem;
 }
 
 .Input-End-Icon-Container{

@@ -2,6 +2,7 @@ const fs = require('fs');
 const util = require('util');
 const stat = util.promisify(fs.stat);
 const truncate = util.promisify(fs.truncate);
+const path = require('path');
 const nodePty = require('node-pty');
 const Deployment = require('@models/deployment');
 
@@ -58,8 +59,14 @@ class BasePTYHandler{
             global.logStreamStore[this.entityId].end();
             delete global.logStreamStore[this.entityId];
         }
-        if(!fs.existsSync(`${__dirname}/../storage/pty-log`))
-            fs.mkdirSync(`${__dirname}/../storage/pty-log`);
+        const logDir = path.join(__dirname, '..', 'storage', 'pty-log');
+        if(!fs.existsSync(logDir)){
+            try{
+                fs.mkdirSync(logDir, { recursive: true });
+            }catch(error){
+                console.error('[Quantum Cloud]: Critical Error (@utilities/ptyHandler:createLogStream)', error);
+            }
+        }
         const stream = fs.createWriteStream(this.getLogAbsPath(), { flags: 'a' });
         global.logStreamStore[this.entityId] = stream;
         return stream;

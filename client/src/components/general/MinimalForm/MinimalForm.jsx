@@ -67,7 +67,7 @@ const MinimalForm = ({
                 <Button 
                     onClick={() => handleFormSubmit(formValues)}
                     title={submitButtonTitle} 
-                    variant='Contained Black Extend' 
+                    variant='Contained Black Extend Small-Border-Radius' 
                     icon={isLoading ? <CircularProgress/> : <BsArrowRight />} />
             </div>
         </AnimatedMain>

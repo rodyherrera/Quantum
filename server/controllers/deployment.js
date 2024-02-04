@@ -24,15 +24,7 @@ exports.createDeployment = DeploymentFactory.createOne();
 exports.updateDeployment = DeploymentFactory.updateOne();
 exports.deleteDeployment = DeploymentFactory.deleteOne();
 
-exports.repositoryOperations = catchAsync(async (req, res) => {
-    const { user } = req;
-    const { repositoryAlias } = req.params;
-    const repository = await Repository.findOne({ user: user._id, alias: repositoryAlias });
-    if(!repository)
-        throw new RuntimeError('Repository::Not::Found', 404);
-    const { action } = req.body;
-    if(!action)
-        throw new RuntimeError('Repository::Action::Required', 400);
+const repositoryOperationHandler = async (repository, action) => {
     const pty = new PTYHandler(repository._id, repository);
     const currentDeploymentId = repository.deployments[0];
     const currentDeployment = await Deployment.findById(currentDeploymentId);
@@ -57,11 +49,27 @@ exports.repositoryOperations = catchAsync(async (req, res) => {
         default:
             currentDeployment.status = 'failure';
             currentDeployment.save();
-            res.status(400).json({ status: 'error', message: 'Deployment::Invalid::Action' });
+            res.status(400).json({ 
+                status: 'error', 
+                message: 'Deployment::Invalid::Action' 
+            });
             return;
     }
     await currentDeployment.save();
-    res.status(200).json({ 
+};
+
+exports.repositoryOperations = catchAsync(async (req, res) => {
+    const { user } = req;
+    const { repositoryAlias } = req.params;
+    const repository = await Repository
+        .findOne({ user: user._id, alias: repositoryAlias });
+    if(!repository)
+        throw new RuntimeError('Repository::Not::Found', 404);
+    const { action } = req.body;
+    if(!action)
+        throw new RuntimeError('Repository::Action::Required', 400);
+    await repositoryOperationHandler(repository, action);
+    res.status(200).json({
         status: 'success', 
         data: { 
             status: currentDeployment.status, 

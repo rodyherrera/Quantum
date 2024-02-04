@@ -6,6 +6,7 @@
     border: 1px solid #000000;
     align-items: center;
     padding: 1rem;
+    border-radius: .25rem;
 }
 
 .Repository-Deployment-Created-At-Container{
