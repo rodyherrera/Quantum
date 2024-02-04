@@ -1,7 +1,9 @@
 const { Octokit } = require('@octokit/rest');
 const { PTYHandler } = require('@utilities/ptyHandler');
+const { promisify } = require('util');
 const simpleGit = require('simple-git');
 const Deployment = require('@models/deployment');
+const exec = promisify(require('child_process').exec);
 const fs = require('fs');
 
 class Github{
@@ -20,9 +22,21 @@ class Github{
         }
     };
     
-    async cloneRepository(){
-        await simpleGit().clone(this.repository.url, `./storage/repositories/${this.repository._id}`);
-    };
+    async cloneRepository() {
+        const destinationPath = `./storage/repositories/${this.repository._id}`;
+        try {
+            const repositoryInfo = await this.octokit.repos.get({ 
+                owner: this.user.github.username, 
+                repo: this.repository.name 
+            });
+            const cloneEndpoint = repositoryInfo.data.private
+                ? repositoryInfo.data.clone_url.replace('https://', `https://${this.user.github.accessToken}@`)
+                : repositoryInfo.data.clone_url;
+            await exec(`git clone ${cloneEndpoint} ${destinationPath}`);
+        } catch (error) {
+            console.error('[Quantum Cloud]: CRITICAL ERROR -> Cloning failed:', error.message);
+        }
+    }
 
     async readEnvironmentVariables(){
         let envFiles = await simpleGit(`./storage/repositories/${this.repository._id}`).raw(['ls-tree', 'HEAD', '-r', '--name-only']);

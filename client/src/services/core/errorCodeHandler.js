@@ -59,6 +59,7 @@ const ERROR_CODES = {
 const DEFAULT_ERROR_MESSAGE = 'An unknown error has occurred, please try again or later.';
 
 const errorCodeHandler = (errorCode) => {
+    console.error('[Quantum Client]: Error ->', errorCode);
     const readableError = ERROR_CODES?.[errorCode] || DEFAULT_ERROR_MESSAGE;
     return readableError;
 };
