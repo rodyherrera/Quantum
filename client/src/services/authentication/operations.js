@@ -3,7 +3,7 @@ import * as authSlice from '@services/authentication/slice';
 import * as authLocalStorageService from '@services/authentication/localStorageService';
 import OperationHandler from '@utilities/operationHandler';
 
-const handleAuthResponse = (data) => {
+const handleAuthResponse = (data, dispatch) => {
     authLocalStorageService.setCurrentUserToken(data.token);
     dispatch(authSlice.setUser(data.user));
     dispatch(authSlice.setIsAuthenticated(true));
@@ -11,18 +11,17 @@ const handleAuthResponse = (data) => {
 
 export const signUp = (body) => async (dispatch) => {
     const operation = new OperationHandler(authSlice, dispatch);
-    operation.on('response', handleAuthResponse);
+    operation.on('response', (data) => handleAuthResponse(data, dispatch));
     operation.use({
         api: authService.signUp,
         loaderState: authSlice.setIsLoading,
         query: { body }
     });
-    await handleAuthentication(dispatch, body, authService.signUp);
 };
 
 export const signIn = (body) => async (dispatch) => {
     const operation = new OperationHandler(authSlice, dispatch);
-    operation.on('response', handleAuthResponse);
+    operation.on('response', (data) => handleAuthResponse(data, dispatch));
     operation.use({
         api: authService.signIn,
         loaderState: authSlice.setIsLoading,
