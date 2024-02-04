@@ -69,6 +69,14 @@ const performCleanupTasks = async (deletedDoc, repositoryUser, deployments) => {
     const github = new Github(repositoryUser, deletedDoc);
     // Delete webhook and repository deployments
     await github.deleteWebhook();
+    // The current deployment should be at index 0, and it 
+    // cannot be deleted until it has changed its status to 
+    // inactive. Well, Github prevents deleting an active deployment.
+    const { githubDeploymentId: currentDeploymentId } = deployments[0];
+    await github.updateDeploymentStatus(currentDeploymentId, 'inactive');
+    // Now, that the current deployment is in an inactive 
+    // state, it is possible to delete it, along with all the 
+    // deployments that existed for the repository within our platform.
     for(const deployment of deployments){
         const { githubDeploymentId } = deployment;
         await github.deleteRepositoryDeployment(githubDeploymentId);
