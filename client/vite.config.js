@@ -16,6 +16,7 @@ export default defineConfig({
          '@utilities': '/src/utilities/',
          '@services': '/src/services/',
          '@hooks': '/src/hooks/',
+         '@images': '/src/assets/images/'
       }
    },
 });

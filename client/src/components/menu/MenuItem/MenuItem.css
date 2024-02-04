@@ -1,5 +1,6 @@
 .Menu-Item-Container:hover{
     outline: 1px solid #000000;
+    border-radius: 5rem;
 }
 
 .Menu-Item-Container{
