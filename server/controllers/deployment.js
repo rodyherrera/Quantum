@@ -27,7 +27,7 @@ exports.deleteDeployment = DeploymentFactory.deleteOne();
 exports.repositoryOperations = catchAsync(async (req, res) => {
     const { user } = req;
     const { repositoryAlias } = req.params;
-    const repository = await Repository.findOne({ user: user._id, name: repositoryAlias });
+    const repository = await Repository.findOne({ user: user._id, alias: repositoryAlias });
     if(!repository)
         throw new RuntimeError('Repository::Not::Found', 404);
     const { action } = req.body;

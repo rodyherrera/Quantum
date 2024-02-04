@@ -48,16 +48,18 @@ export const updateDeployment = (id, body, navigate) => async (dispatch) => {
     });
 };
 
-export const repositoryOperations = (repositoryAlias, body) => async (dispatch) => {
+export const repositoryActions = (repositoryAlias, loaderState, body) => async (dispatch) => {
+    loaderState(true);
     const operation = new OperationHandler(deploymentSlice, dispatch);
 
     operation.on('response', ({ status, repository }) => {
         dispatch(repositorySlice.updateDeploymentStatus({ _id: repository._id, status }));
     });
 
+    operation.on('finally', () => loaderState(false));
+
     operation.use({
         api: deploymentService.repositoryOperations,
-        loaderState: deploymentSlice.setIsOperationLoading,
         query: { body, query: { params: { repositoryAlias } } }
     });
 };

@@ -13,6 +13,10 @@
     transition: .5s;
 }
 
+.Project-Github-Branch-Icon-Container{
+    font-size: 1rem;
+}
+
 .Project-Description{
     width: calc(360px - 2rem);
     display: -webkit-box;
@@ -25,7 +29,7 @@
 .Project-Update-Message{
     display: flex;
     flex-wrap: wrap;
-    gap: .5rem;
+    gap: .3rem;
     align-items: center;
     opacity: .8;
     font-size: .72rem;

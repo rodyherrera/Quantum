@@ -6,26 +6,26 @@ import { formatDate } from '@utilities/runtime';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { setSelectedRepository } from '@services/repository/slice';
+import { repositoryActions } from '@services/deployment/operations';
 import Button from '@components/general/Button';
 import ContextMenu from '@components/contextMenu/ContextMenu';
 import * as repositoryOperations from '@services/repository/operations';
-import * as deploymentOperations from '@services/deployment/operations';
 import './Project.css';
 
 const Project = ({ repository, ...props }) => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const { repositories } = useSelector(state => state.repository);
-    const { isOperationLoading } = useSelector(state => state.deployment);
     const [perfomedAction, setPerfomedAction] = useState('');
+    const [getIsLoading, setIsLoading] = useState(false);
 
-    const startupActionHandler = (action) => {
-        dispatch(deploymentOperations.repositoryOperations(repository.name, { action }));
+    const startupActionHandler = async (action) => {
+        dispatch(repositoryActions(repository.alias, setIsLoading, { action }));
         setPerfomedAction(action);
     };
 
     const checkStartupActionLoading = (action) => {
-        return isOperationLoading && (perfomedAction === action);
+        return getIsLoading && (perfomedAction === action);
     };
 
     const handleRepositorySelection = (path) => {
@@ -36,6 +36,7 @@ const Project = ({ repository, ...props }) => {
     useEffect(() => {
         return () => {
             setPerfomedAction('');
+            setIsLoading(false);
         };
     }, []);
 
@@ -91,7 +92,7 @@ const Project = ({ repository, ...props }) => {
                         <FaGithub />
                     </i>
                     <span>{formatDate(repository.latestCommit)} on</span>
-                    <i className='Project-Github-Icon-Container'>
+                    <i className='Project-Github-Branch-Icon-Container'>
                         <IoIosGitBranch />
                     </i>
                     <span>{repository.branch}</span>
