@@ -1,4 +1,3 @@
-import { handleAuthentication } from '@services/authentication/utils';
 import * as authService from '@services/authentication/service';
 import * as authSlice from '@services/authentication/slice';
 import * as authLocalStorageService from '@services/authentication/localStorageService';
