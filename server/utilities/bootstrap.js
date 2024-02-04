@@ -15,7 +15,12 @@ exports.standardizedBindingToApp = ({ app, routes, suffix, middlewares, settings
 exports.loadRepositoriesPTYs = async () => {
     console.log('[Quantum Cloud]: Loading repositories PTYs... (This may take a while).');
     console.log('[Quantum Cloud]: This is a one time process, after this, the repositories PTYs will be loaded on demand.');
-    const repositories = await Repository.find().populate({ path: 'user', select: 'username' });
+    const repositories = await Repository.find()
+        .populate({ 
+            path: 'user', 
+            select: 'username',
+            populate: { path: 'github', select: 'accessToken username' }
+        });
     console.log(`[Quantum Cloud]: Found ${repositories.length} repositories.`);
     for(const repository of repositories){
         const repositoryShell = new PTYHandler(repository._id, repository);

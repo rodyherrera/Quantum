@@ -106,7 +106,6 @@ class Github{
             owner: this.user.github.username,
             repo: this.repository.name,
             deployment_id: deploymentId,
-            // state -> ['success', 'failure', 'error', 'inactive', 'in_progress']
             state
         });
     };
@@ -198,9 +197,9 @@ class Github{
         const githubDeploymentId = await this.createGithubDeployment();
         const newDeployment = await this.createNewDeployment(githubDeploymentId);
         newDeployment.url = `https://github.com/${this.user.github.username}/${this.repository.name}/deployments/${githubDeploymentId}`;
-        newDeployment.status = 'success';
+        newDeployment.status = 'pending';
         await newDeployment.save();
-        await this.updateDeploymentStatus(githubDeploymentId, 'success');
+        await this.updateDeploymentStatus(githubDeploymentId, 'in_progress');
         return newDeployment;
     };
 };

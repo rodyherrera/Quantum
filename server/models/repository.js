@@ -102,7 +102,10 @@ const handleUpdateCommands = async (context) => {
         const { user, name, deployments } = await Repository
             .findById(_id)
             .select('user name deployments')
-            .populate({ path: 'user', select: 'username' });
+            .populate({ 
+                path: 'user', select: 'username',
+                populate: { path: 'github', select: 'accessToken username' }
+            });
         const document = { user, name, deployments, buildCommand, 
             installCommand, startCommand, rootDirectory };
         const ptyHandler = new PTYHandler(_id, document);

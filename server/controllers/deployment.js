@@ -25,29 +25,41 @@ exports.updateDeployment = DeploymentFactory.updateOne();
 exports.deleteDeployment = DeploymentFactory.deleteOne();
 
 const repositoryOperationHandler = async (repository, action) => {
+    await repository.populate({
+        path: 'user',
+        select: 'username',
+        populate: { path: 'github', select: 'accessToken username' }
+    });
     const pty = new PTYHandler(repository._id, repository);
+    const github = new Github(repository.user, repository);
     const currentDeploymentId = repository.deployments[0];
     const currentDeployment = await Deployment.findById(currentDeploymentId);
+    const { githubDeploymentId } = currentDeployment;
     if(!currentDeployment)
         throw new RuntimeError('Deployment::Not::Found', 404);
-    currentDeployment.status = 'pending';
+    currentDeployment.status = 'queued';
+    github.updateDeploymentStatus(githubDeploymentId, 'queued');
     await currentDeployment.save();
     switch(action){
         case 'restart':
             pty.removeFromRuntimeStoreAndKill();
             pty.startRepository();
             currentDeployment.status = 'success';
+            // TODO: Can be refactored using mongoose middlewares
+            github.updateDeploymentStatus(githubDeploymentId, 'success');
             break;
         case 'stop':
             pty.removeFromRuntimeStoreAndKill();
             currentDeployment.status = 'stopped';
+            github.updateDeploymentStatus(githubDeploymentId, 'inactive');
             break;
         case 'start':
             pty.startRepository();
             currentDeployment.status = 'success';
+            github.updateDeploymentStatus(githubDeploymentId, 'success');
             break;
         default:
-            currentDeployment.status = 'failure';
+            currentDeployment.status = 'success';
             currentDeployment.save();
             res.status(400).json({ 
                 status: 'error', 
