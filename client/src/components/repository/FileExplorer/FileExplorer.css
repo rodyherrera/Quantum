@@ -97,6 +97,16 @@
         font-size: .6rem;
     }
 
+    .File-Explorer-Header-Container{
+        padding: .5rem 1rem;
+    }
+
+    .File-Explorer-Header-Right-Container{
+        flex-direction: column-reverse;
+        align-items: flex-end;
+        gap: 0;
+    }
+
     .File-Explorer-Container{
         width: 100%;
     }
