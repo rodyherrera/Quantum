@@ -34,7 +34,6 @@ const Project = ({ repository, ...props }) => {
     };
 
     useEffect(() => {
-        console.log(repository);
         return () => {
             setPerfomedAction('');
             setIsLoading(false);

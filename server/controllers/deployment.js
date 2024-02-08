@@ -68,6 +68,7 @@ const repositoryOperationHandler = async (repository, action) => {
             return;
     }
     await currentDeployment.save();
+    return currentDeployment;
 };
 
 exports.repositoryOperations = catchAsync(async (req, res) => {
@@ -80,7 +81,7 @@ exports.repositoryOperations = catchAsync(async (req, res) => {
     const { action } = req.body;
     if(!action)
         throw new RuntimeError('Repository::Action::Required', 400);
-    await repositoryOperationHandler(repository, action);
+    const currentDeployment = await repositoryOperationHandler(repository, action);
     res.status(200).json({
         status: 'success', 
         data: { 
