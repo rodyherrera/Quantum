@@ -34,6 +34,7 @@ const Project = ({ repository, ...props }) => {
     };
 
     useEffect(() => {
+        console.log(repository);
         return () => {
             setPerfomedAction('');
             setIsLoading(false);
@@ -79,7 +80,7 @@ const Project = ({ repository, ...props }) => {
 
             <div className='Project-Header-Container'>
                 <div className='Project-Image-Container'>
-                    <img className='Project-Image' src='https://assets.vercel.com/image/upload/front/favicon/vercel/180x180.png' alt='Project' />
+                    <div className='Project-Image' />
                 </div>
                 <div className='Project-Title-Container'>
                     <h3 className='Project-Title'>{repository.alias}</h3>
