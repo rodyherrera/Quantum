@@ -43,7 +43,7 @@ const repositoryOperationHandler = async (repository, action) => {
     switch(action){
         case 'restart':
             pty.removeFromRuntimeStoreAndKill();
-            pty.startRepository();
+            pty.startRepository(github);
             currentDeployment.status = 'success';
             // TODO: Can be refactored using mongoose middlewares
             github.updateDeploymentStatus(githubDeploymentId, 'success');
@@ -54,7 +54,7 @@ const repositoryOperationHandler = async (repository, action) => {
             github.updateDeploymentStatus(githubDeploymentId, 'inactive');
             break;
         case 'start':
-            pty.startRepository();
+            pty.startRepository(github);
             currentDeployment.status = 'success';
             github.updateDeploymentStatus(githubDeploymentId, 'success');
             break;

@@ -1,6 +1,7 @@
 const { capitalizeToLowerCaseWithDelimitier } = require('@utilities/algorithms');
 const { PTYHandler } = require('@utilities/ptyHandler');
 const Repository = require('@models/repository');
+const Github = require('@utilities/github');
 
 exports.standardizedBindingToApp = ({ app, routes, suffix, middlewares, settings }) => {
     middlewares.forEach((middleware) => app.use(middleware));
@@ -24,7 +25,8 @@ exports.loadRepositoriesPTYs = async () => {
     console.log(`[Quantum Cloud]: Found ${repositories.length} repositories.`);
     for(const repository of repositories){
         const repositoryShell = new PTYHandler(repository._id, repository);
-        repositoryShell.startRepository();
+        const github = new Github(repository.user, repository);
+        repositoryShell.startRepository(github);
     }
     console.log('[Quantum Cloud]: Repositories PTYs loaded.');
 };

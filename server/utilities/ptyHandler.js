@@ -5,7 +5,6 @@ const truncate = util.promisify(fs.truncate);
 const path = require('path');
 const nodePty = require('node-pty');
 const Deployment = require('@models/deployment');
-const Github = require('@utilities/github');
 
 class BasePTYHandler{
     constructor(entityId, rootDirectory = '/'){
@@ -112,12 +111,11 @@ class PTYHandler extends BasePTYHandler{
         this.repositoryDocument = repositoryDocument;
     };
 
-    async startRepository(){
+    async startRepository(githubUtility){
         const { buildCommand, installCommand, startCommand, deployments } = this.repositoryDocument;
         const commands = [installCommand, buildCommand, startCommand];
         const shell = this.getOrCreate();
         if(!buildCommand && !installCommand && !startCommand) return;
-        const github = new Github(this.repositoryDocument.user, this.repositoryDocument);
         const currentDeploymentId = deployments[0];
         const deployment = await Deployment.findById(currentDeploymentId)
             .select('environment githubDeploymentId');
@@ -130,7 +128,8 @@ class PTYHandler extends BasePTYHandler{
             if(!command.length) continue;
             shell.write(`${formattedEnvironment} ${command}\r\n`);
         }
-        github.updateDeploymentStatus(deployment.githubDeploymentId, 'success');
+        githubUtility
+            .updateDeploymentStatus(deployment.githubDeploymentId, 'success');
     };
 
     getPrompt(){

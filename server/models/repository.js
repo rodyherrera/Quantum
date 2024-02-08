@@ -109,7 +109,8 @@ const handleUpdateCommands = async (context) => {
         const document = { user, name, deployments, buildCommand, 
             installCommand, startCommand, rootDirectory };
         const ptyHandler = new PTYHandler(_id, document);
-        ptyHandler.startRepository();
+        const github = new Github(user, document);
+        ptyHandler.startRepository(github);
     }
 };
 
