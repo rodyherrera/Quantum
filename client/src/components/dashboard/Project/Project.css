@@ -55,15 +55,15 @@
 */
 
 .Project-Actions-Deployment-Status[data-status='success']{
-    background-color: #26e820;
+    background-color: #1a55c2;
 }
 
 .Project-Actions-Deployment-Status[data-status='pending']{
-    background-color: #d9f633;
+    background-color: #FF8800;
 }
 
 .Project-Actions-Deployment-Status[data-status='stopped']{
-    background-color: #f64b4b;
+    background-color: #CC0000;
 }
 
 .Project-Actions-Deployment-Status[data-status='failure']{
@@ -71,7 +71,7 @@
 }
 
 .Project-Actions-Deployment-Status[data-status='queued']{
-    background-color: #1a55c2;
+    background-color: #198754;
 }
 
 .Project-More-Icon-Container{
