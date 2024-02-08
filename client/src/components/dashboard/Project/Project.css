@@ -35,11 +35,49 @@
     font-size: .72rem;
 }
 
+.Project-Actions-Deployment-Status{
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+}
+
+/*
+    .Project-Actions-Deployment-Status[data-status='...'];
+    where data-status can be: 'pending', 'success', 'stopped', 'failure', 'queued'.
+*/
+
+.Project-Actions-Deployment-Status[data-status='success']{
+    background-color: #26e820;
+}
+
+.Project-Actions-Deployment-Status[data-status='pending']{
+    background-color: #d9f633;
+}
+
+.Project-Actions-Deployment-Status[data-status='stopped']{
+    background-color: #f64b4b;
+}
+
+.Project-Actions-Deployment-Status[data-status='failure']{
+    background-color: #f2884a;
+}
+
+.Project-Actions-Deployment-Status[data-status='queued']{
+    background-color: #1a55c2;
+}
+
 .Project-More-Icon-Container{
     cursor: pointer;
+}
+
+.Project-Actions-Container{
     position: absolute;
     top: 1rem;
+    align-items: center;
     right: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
 }
 
 .Project-Header-Container{

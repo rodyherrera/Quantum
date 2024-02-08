@@ -55,21 +55,28 @@ const Project = ({ repository, ...props }) => {
                 props?.onClick?.();
             }}
         >
-            <ContextMenu 
-                className='Project-More-Icon-Container' 
-                options={[
-                    { title: 'Delete', onClick: () => dispatch(repositoryOperations.deleteRepository(repository._id, repositories, navigate)) },
-                    { title: 'Build & Dev Settings',  onClick: () => handleRepositorySelection(`/repository/${repository.alias}/deployment/setup/`) },
-                    { title: 'Environment Variables',  onClick: () => handleRepositorySelection(`/repository/${repository.alias}/deployment/environment-variables/`) },
-                    { title: 'File Explorer',  onClick: () => handleRepositorySelection(`/repository/${repository.alias}/storage/`) },
-                    { title: 'Shell', onClick: () => handleRepositorySelection(`/repository/${repository.alias}/shell/`) },
-                    { title: 'Deployments', onClick: () => handleRepositorySelection(`/repository/${repository.alias}/deployments/`) }
-                ]}
-            >
-                <i>
-                    <IoIosMore />
-                </i>
-            </ContextMenu>
+            <div className='Project-Actions-Container'>
+                <ContextMenu 
+                    className='Project-More-Icon-Container' 
+                    options={[
+                        { title: 'Delete', onClick: () => dispatch(repositoryOperations.deleteRepository(repository._id, repositories, navigate)) },
+                        { title: 'Build & Dev Settings',  onClick: () => handleRepositorySelection(`/repository/${repository.alias}/deployment/setup/`) },
+                        { title: 'Environment Variables',  onClick: () => handleRepositorySelection(`/repository/${repository.alias}/deployment/environment-variables/`) },
+                        { title: 'File Explorer',  onClick: () => handleRepositorySelection(`/repository/${repository.alias}/storage/`) },
+                        { title: 'Shell', onClick: () => handleRepositorySelection(`/repository/${repository.alias}/shell/`) },
+                        { title: 'Deployments', onClick: () => handleRepositorySelection(`/repository/${repository.alias}/deployments/`) }
+                    ]}
+                >
+                    <i>
+                        <IoIosMore />
+                    </i>
+                </ContextMenu>
+
+                <div 
+                    data-status={repository.activeDeployment.status}
+                    className='Project-Actions-Deployment-Status'
+                />
+            </div>
 
             <div className='Project-Header-Container'>
                 <div className='Project-Image-Container'>
