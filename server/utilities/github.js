@@ -107,7 +107,7 @@ class Github{
             repo: this.repository.name,
             deployment_id: deploymentId,
             state
-        });
+        });   
     };
 
     async createGithubDeployment(){

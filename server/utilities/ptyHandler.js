@@ -118,7 +118,7 @@ class PTYHandler extends BasePTYHandler{
         if(!buildCommand && !installCommand && !startCommand) return;
         const currentDeploymentId = deployments[0];
         const deployment = await Deployment.findById(currentDeploymentId)
-            .select('environment githubDeploymentId');
+            .select('environment githubDeploymentId status');
         const formattedEnvironment = deployment.getFormattedEnvironment();
         shell.on('data', (data) => {
             data = data.replace(/.*#/g, this.getPrompt());
@@ -130,6 +130,8 @@ class PTYHandler extends BasePTYHandler{
         }
         githubUtility
             .updateDeploymentStatus(deployment.githubDeploymentId, 'success');
+        deployment.status = 'success';
+        deployment.save();
     };
 
     getPrompt(){

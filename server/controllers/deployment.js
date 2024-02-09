@@ -44,18 +44,17 @@ const repositoryOperationHandler = async (repository, action) => {
         case 'restart':
             pty.removeFromRuntimeStoreAndKill();
             pty.startRepository(github);
-            currentDeployment.status = 'success';
             // TODO: Can be refactored using mongoose middlewares
             github.updateDeploymentStatus(githubDeploymentId, 'success');
             break;
         case 'stop':
             pty.removeFromRuntimeStoreAndKill();
             currentDeployment.status = 'stopped';
+            await currentDeployment.save();
             github.updateDeploymentStatus(githubDeploymentId, 'inactive');
             break;
         case 'start':
             pty.startRepository(github);
-            currentDeployment.status = 'success';
             github.updateDeploymentStatus(githubDeploymentId, 'success');
             break;
         default:
@@ -67,7 +66,6 @@ const repositoryOperationHandler = async (repository, action) => {
             });
             return;
     }
-    await currentDeployment.save();
     return currentDeployment;
 };
 

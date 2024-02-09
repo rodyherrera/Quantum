@@ -141,9 +141,8 @@ RepositorySchema.methods.updateUserAndRepository = async function(deployment){
 
 RepositorySchema.pre('save', async function(next){
     try{
-        if(!this.alias){
-            this.alias = this.name;
-        }
+        if(!this.alias) this.alias = this.name;
+        if(!this.isNew) return next();
         await this.updateAliasIfNeeded();
         const repositoryUser = await this.getUserWithGithubData();
         const github = new Github(repositoryUser, this);
