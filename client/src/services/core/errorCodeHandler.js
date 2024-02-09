@@ -54,6 +54,13 @@ const ERROR_CODES = {
     'Github::GithubId::Required': 'GitHub ID is required. Please provide the GitHub ID.',
     'Github::AccessToken::Required': 'GitHub access token is required. Please provide a valid access token.',
     'Github::Username::Required': 'GitHub username is required. Please provide the GitHub username.',
+
+    'Database::Cast::Error': 'Error encountered while converting data types in the database. This may occur when attempting to save data with an incompatible type.',
+    'Database::Validation::Error': 'Validation error detected in the database. This typically happens when data fails to meet certain criteria or constraints specified in the database schema.',
+    'Database::Duplicated::Fields': 'Duplicate fields found in the database. This error indicates an attempt to insert or update data that would result in duplicate entries for unique fields.',
+
+    'JWT::Error': 'Error encountered while processing the JSON Web Token (JWT) for authentication. This could be due to various issues such as invalid token format or signature.',
+    'JWT::Expired': 'The JSON Web Token (JWT) used for authentication has expired. Authentication tokens have a limited lifespan for security reasons, and this error indicates that the token is no longer valid due to expiration.'
 };
 
 const DEFAULT_ERROR_MESSAGE = 'An unknown error has occurred, please try again or later.';
