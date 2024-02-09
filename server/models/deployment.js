@@ -44,8 +44,8 @@ DeploymentSchema.index({ environment: 'text', commit: 'text', url: 'text' });
 
 DeploymentSchema.methods.getFormattedEnvironment = function(){
     const formattedEnvironment = Array.from(
-        this.environment.variables, ([key, value]) => `${key.trim()}=${value.trim()}`);
-    return formattedEnvironment.join(' && ');
+        this.environment.variables, ([key, value]) => `${key.trim()}="${value.trim()}"`);
+    return formattedEnvironment.join(' ');
 };
 
 DeploymentSchema.post('findOneAndDelete', async function(){
