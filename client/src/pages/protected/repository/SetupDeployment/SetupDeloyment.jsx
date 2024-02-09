@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+import { updateRepository } from '@services/repository/operations';
 import MinimalForm from '@components/general/MinimalForm';
-import * as repositoryOperations from '@services/repository/operations';
 import './SetupDeployment.css';
 
 const SetupDeployment = () => {
@@ -11,7 +11,7 @@ const SetupDeployment = () => {
     const dispatch = useDispatch();
 
     const handleFormSubmit = (formValues) => {
-        dispatch(repositoryOperations.updateRepository(selectedRepository._id, formValues, navigate));
+        dispatch(updateRepository(selectedRepository._id, formValues, navigate));
     };
 
     useEffect(() => {
