@@ -1,19 +1,7 @@
-const dotenv = require('dotenv');
-const moduleAlias = require('module-alias');
+require('./aliases');
 
 global.ptyStore = {};
 global.logStreamStore = {};
-
-dotenv.config({ path: './.env' });
-
-moduleAlias.addAliases({
-    '@utilities': `${__dirname}/utilities/`,
-    '@routes': `${__dirname}/routes/`,
-    '@models': `${__dirname}/models/`,
-    '@middlewares': `${__dirname}/middlewares/`,
-    '@config': `${__dirname}/config/`,
-    '@controllers': `${__dirname}/controllers/`
-});
 
 const { httpServer } = require('@config/express');
 const mongoConnector = require('@utilities/mongoConnector');

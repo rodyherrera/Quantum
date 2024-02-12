@@ -1,7 +1,7 @@
 {
   "scripts": {
     "start": "node server.js",
-    "manager": "node manager.js"
+    "cli": "node cli/manager.js"
   },
   "dependencies": {
     "@octokit/rest": "^20.0.2",
