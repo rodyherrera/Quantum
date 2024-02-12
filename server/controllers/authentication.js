@@ -43,8 +43,11 @@ exports.signIn = catchAsync(async (req, res, next) => {
     createAndSendToken(res, 200, requestedUser);
 });
 
-exports.signUp = catchAsync(async (req, res) => {
+exports.signUp = catchAsync(async (req, res, next) => {
     const { username, fullname, email, password, passwordConfirm } = req.body;
+    if(process.env.REGISTRATION_DISABLED === 'true'){
+        return next(new Error('Authentication::Disabled'));
+    }
     const newUser = await User.create({ username, fullname, email, password, passwordConfirm });
     createAndSendToken(res, 201, newUser);
 });

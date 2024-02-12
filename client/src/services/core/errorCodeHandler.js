@@ -12,6 +12,7 @@ const ERROR_CODES = {
     'Authentication::PasswordChanged': 'Password has been changed successfully.',
     'Authentication::Unauthorized': 'Unauthorized access. Please log in with the proper credentials.',
     'Authentication::Required': 'Authentication is required to perform this action. Please log in and try again.',
+    'Authentication::Disabled': 'Authentication is disabled by the system administrator.',
 
     'User::Username::MinLength': 'Username must be at least 8 characters long.',
     'User::Username::MaxLength': 'Username must not exceed 16 characters.',
