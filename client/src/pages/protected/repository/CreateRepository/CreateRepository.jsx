@@ -4,11 +4,10 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import DataRenderer from '@components/general/DataRenderer';
 import RepositoryBasicItem from '@components/repository/RepositoryBasicItem';
-import * as repositoriesSlice from '@services/repository/slice';
 import './CreateRepository.css';
 
 const CreateRepository = () => {
-    const { repositories, isLoading, isOperationLoading, error } = useSelector(state => state.repository);
+    const { githubRepositories, isLoading, isOperationLoading, error } = useSelector(state => state.repository);
     const { user } = useSelector(state => state.auth);
 
     const dispatch = useDispatch();
@@ -16,9 +15,6 @@ const CreateRepository = () => {
     
     useEffect(() => {
         dispatch(getMyGithubRepositories());
-        return () => {
-            dispatch(repositoriesSlice.setRepositories([]));
-        };
     }, []);
 
     const handleClick = async (repository) => {
@@ -39,7 +35,7 @@ const CreateRepository = () => {
             isLoading={isLoading}
             isOperationLoading={isOperationLoading}
             operationLoadingMessage="We're cloning and adjusting parameters in your repository..."
-            data={repositories}
+            data={githubRepositories}
             emptyDataMessage='There are no repositories in your Github account.'
             emptyDataBtn={{
                 title: 'Go to Github',
@@ -52,7 +48,7 @@ const CreateRepository = () => {
             ]}
         >
             <article id='Github-Account-Repository-List-Container'>
-                {repositories.map((repository, index) => (
+                {githubRepositories.map((repository, index) => (
                     <RepositoryBasicItem 
                         key={index} 
                         onClick={() => handleClick(repository)}

@@ -87,5 +87,6 @@
     .Data-Renderer-Body-Container{
         min-height: 250px;
         overflow-y: unset;
+        padding-right: 0;
     }
 }

@@ -31,7 +31,7 @@ export const getMyGithubRepositories = () => async (dispatch) => {
     operation.use({
         api: repositoryService.getMyGithubRepositories,
         loaderState: repositorySlice.setIsLoading,
-        responseState: repositorySlice.setRepositories
+        responseState: repositorySlice.setGithubRepositories
     });
 };
 

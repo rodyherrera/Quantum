@@ -7,8 +7,8 @@ import './WelcomeSection.css';
 const WelcomeSection = ({ ...props }) => {
     const { isAuthenticated, user } = useSelector(state => state.auth);
     const links = [
-        ['Support Us', 'https://github.com/rodyherrera/Quantum/'],
-        ['Contribute', 'https://github.com/rodyherrera/Quantum/'],
+        ['Support Us', 'https://ko-fi.com/codewithrodi'],
+        ['Contribute', 'https://ko-fi.com/codewithrodi'],
         ['Github', 'https://github.com/rodyherrera/Quantum/']
     ];
 

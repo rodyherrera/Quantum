@@ -6,6 +6,7 @@ const state = {
     isOperationLoading: false,
     repositories: [],
     repositoryFiles: [],
+    githubRepositories: [],
     selectedRepository: null,
     selectedRepositoryFile: null,
 };
@@ -19,6 +20,9 @@ const repositorySlice = createSlice({
         },
         setSelectedRepository: (state, action) => {
             state.selectedRepository = action.payload;
+        },
+        setGithubRepositories: (state, action) => {
+            state.githubRepositories = action.payload;
         },
         setRepositoryFiles: (state, action) => {
             state.repositoryFiles = action.payload;
@@ -56,6 +60,7 @@ export const {
     setRepositoryFiles,
     updateDeploymentStatus,
     setIsLoading,
+    setGithubRepositories,
     setRepositories,
     setSelectedRepository,
     setIsOperationLoading
