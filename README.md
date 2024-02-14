@@ -12,7 +12,116 @@ If you wish to make local changes—meaning alterations that don't necessitate a
 While Quantum offers a panel for configuring commands such as installing dependencies (e.g., "npm install"), building source code (e.g., "npm run build"), or starting your software (e.g., "npm run start"), it also provides a separate panel specifically for managing environment variables. It's worth noting that this isn't a manual process where you input variables and their values one by one. When the repository is cloned, Quantum automatically maps the environment variables, allowing you to assign their respective values later on. You have the flexibility to create, delete, and modify environment variables associated with the deployment of your repository as needed.
 
 ### Installation
+You may prefer the all-in-one command, to run in your terminal, clone the repository and install dependencies.
 ```bash
 git clone https://github.com/rodyherrera/Quantum/ && cd Quantum && cd server && npm install --force && cd ../client &&  npm install --force
 ```
 
+#### Installation Guide
+1. **Clone the Quantum Repository:**
+    ```bash
+    git clone https://github.com/rodyherrera/Quantum/
+    ```
+    This command clones the Quantum repository from GitHub to your local machine.
+2. **Navigate to the Quantum Directory:**
+    ```bash
+    cd Quantum
+    ```
+    Move into the cloned repository directory.
+3. **Install Server Dependencies:**
+    ```bash
+    cd server
+    npm install --force
+    ```
+    This command installs the necessary dependencies for the server component of Quantum.
+4. **Install Client Dependencies:**
+    ```bash
+    cd ../client
+    npm install --force
+    ```
+    Navigate to the client directory within the Quantum repository and install the frontend dependencies.
+    
+### Post-Installation Configuration
+After cloning the repository and installing the dependencies for the client and server application, you will need to modify some environment variables.
+
+Inside the "server" folder, there is the source code of the application that provides the platform API. You will find inside a file called ".env.example", which contains the environment variables that you must establish in the file. ".env" from the same directory:
+```env
+# NODE_ENV: Defines the server execution environment. 
+NODE_ENV = development
+
+# DOMAIN: Specifies the base domain of the server. This is the 
+# main access point for the application.
+DOMAIN = www.backend-domain.com
+
+# SECRET_KEY: Secret key used for encrypting 
+# sensitive data. It's crucial for ensuring application security.
+SECRET_KEY = 
+
+# REGISTRATION_DISABLED: The value of the variable will indicate 
+# whether third parties can create accounts within the platform, that 
+# is, through the client application (webui) or through the API 
+# provided by the server. By default this option is "true" indicating 
+# that accounts cannot be created, so the system administrator creates 
+# their account as "admin" from the CLI provided.
+REGISTRATION_DISABLED = true
+
+# CLIENT_HOST: Specifies the host of the application's 
+# client. It's the access point for the user interface.
+CLIENT_HOST = www.frontend-domain.com
+
+# SERVER_PORT: The port on which the server 
+# is listening for incoming requests.
+SERVER_PORT = 8000
+
+# SERVER_HOSTNAME: The hostname of the 
+# server where the application is running.
+SERVER_HOSTNAME = 0.0.0.0
+
+# SESSION_SECRET: Secret key used for signing 
+# and verifying the authenticity of user sessions.
+SESSION_SECRET = 
+
+# GITHUB_CLIENT_ID: Unique identifier 
+# provided by GitHub for OAuth integration.
+GITHUB_CLIENT_ID = 
+
+# GITHUB_CLIENT_SECRET: Secret key provided by 
+# GitHub for OAuth integration.
+GITHUB_CLIENT_SECRET = 
+
+# JWT_EXPIRATION_DAYS: Specifies the validity duration 
+# of JWT tokens issued for user authentication.
+JWT_EXPIRATION_DAYS = 7d
+
+# CORS_ORIGIN: Defines allowed origins for 
+# cross-origin resource sharing (CORS) requests. In 
+# this case, it allows from any origin.
+CORS_ORIGIN = *
+
+# PRODUCTION_DATABASE: Specifies the production 
+# database the application will connect to.
+PRODUCTION_DATABASE = quantumcloud@production
+
+# DEVELOPMENT_DATABASE: Specifies the development 
+# database the application will connect to.
+DEVELOPMENT_DATABASE = quantumcloud@development
+
+# LOG_PATH_MAX_SIZE: The maximum size of the log 
+# file before rotation occurs. (KYLOBYTES)
+LOG_PATH_MAX_SIZE = 250
+
+# MONGO_URI: MongoDB connection URI 
+# used by the application.
+MONGO_URI = mongodb://user:password@hostname:port
+```
+In the same way, within the "client" directory, you will find the same ".env.example" and ".env" files, obviously with different variables, which you must also set.
+```bash
+# VITE_SERVER: Address where the 
+# Quantum backend is deployed.
+VITE_SERVER = http://0.0.0.0:8000
+
+# VITE_API_SUFFIX: Suffix to make API 
+# calls, you should not change /api/v1.
+VITE_API_SUFFIX = /api/v1
+```
+After establishing the environment variables for both the client and server applications, you will have what you need to deploy.
