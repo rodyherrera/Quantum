@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Input from '@components/general/Input';
 import Button from '@components/general/Button';
+import Breadcrumbs from '@components/general/Breadcrumbs';
 import AnimatedMain from '@components/general/AnimatedMain'
 import { BiErrorCircle } from 'react-icons/bi';
 import { BsArrowRight } from 'react-icons/bs';
@@ -14,6 +15,7 @@ const MinimalForm = ({
     formInputs,
     submitButtonTitle,
     handleFormSubmit,
+    breadcrumbsItems = null,
     isLoading = false
 }) => {
     const [formValues, setFormValues] = useState(
@@ -34,6 +36,10 @@ const MinimalForm = ({
     return (
         <AnimatedMain className='Minimal-Form-Container'>
             <div className='Minimal-Form-Header-Container'>
+                {breadcrumbsItems && (
+                    <Breadcrumbs items={breadcrumbsItems} />
+                )}
+
                 <div className='Minimal-Form-Title-Container'>
                     <h1 className='Minimal-Form-Title'>{headerTitle}</h1>
                     <p className='Minimal-Form-Subtitle'>{headerSubtitle}</p>

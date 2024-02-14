@@ -26,6 +26,13 @@ const SetupDeployment = () => {
         isLoading={isOperationLoading}
         error={error}
         handleFormSubmit={handleFormSubmit}
+        breadcrumbsItems={[
+            { title: 'Home', to: '/' },
+            { title: 'Dashboard', to: '/dashboard/' },
+            { title: 'Repositories', to: '/dashboard/' },
+            { title: selectedRepository.name, to: '/dashboard/' },
+            { title: 'Build & Dev Settings', to: `/repository/${selectedRepository.name}/deployment/setup/` }
+        ]}
         formInputs={[
             {
                 type: 'text',
