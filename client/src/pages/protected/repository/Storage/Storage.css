@@ -1,6 +1,25 @@
 #Repository-Storage-Main{
     display: flex;
     justify-content: center;
-    align-items: center;
+    flex-direction: column;
+    max-width: 1000px;
+    height: auto;
+    gap: 1rem;
+    margin: 0 auto;
     padding: 1rem;
+}
+
+#Repository-Storage-Header-Title-Container{
+    display: flex;
+    flex-direction: column;
+    gap: .3rem;
+}
+
+#Repository-Storage-Header-Title{
+    font-size: 2rem;
+}
+
+#Repository-Storage-Header-Description{
+    font-size: 1rem;
+    width: 80%;
 }
