@@ -12,7 +12,7 @@ After creating an account on our platform, you'll be prompted to log in using yo
 
 Quantum also offers a 'Cloud Shell' feature, ensuring every user on the platform has access to their own dedicated environment. Think of it as a client-server connection, enabling you to execute commands directly on your Virtual Private Server (VPS) or any other hosting environment where Quantum is deployed.
 
-![Quantum Home Page](/screenshots/CloudConsole.png)
+![Quantum Cloud Console](/screenshots/CloudConsole.png)
 
 Similarly, every repository you have deployed on the platform comes with its own command line interface. This allows you to monitor the execution output of your service (referred to as logs) or execute specific commands as needed.
 
@@ -24,7 +24,7 @@ If you wish to make local changes—meaning alterations that don't necessitate a
 
 While Quantum offers a panel for configuring commands such as installing dependencies (e.g., "npm install"), building source code (e.g., "npm run build"), or starting your software (e.g., "npm run start"), it also provides a separate panel specifically for managing environment variables. It's worth noting that this isn't a manual process where you input variables and their values one by one. When the repository is cloned, Quantum automatically maps the environment variables, allowing you to assign their respective values later on. You have the flexibility to create, delete, and modify environment variables associated with the deployment of your repository as needed.
 
-![Repository File Explorer](/screenshots/RepositoryEnvironVariables.png)
+![Repository Environment Variables](/screenshots/RepositoryEnvironVariables.png)
 
 
 # Table of Contents
@@ -272,6 +272,8 @@ npm run cli
 ```
 
 When deploying Quantum, you must use this CLI, since user registration for security reasons is disabled, therefore both through the API and through the web-UI you will not be able to create a new account, therefore you must After creating the account through the CLI, just run it.
+
+![Quantum CLI](/screenshots/QuantumCLI.png)
 
 ### Inside the future
 As mentioned in the previous section, the platform default in the .env file located in "server/" establishes that the registration of new user accounts is disabled, this is because each user will be able to execute commands through the "Cloud Shell" or through the CLI provided by each repository deployed directly on the server where Quantum is hosted. This means that, if you use the platform in production, having user registration enabled will be synonymous with "hello, create an account and destroy my server".
