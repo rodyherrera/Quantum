@@ -11,6 +11,15 @@ If you wish to make local changes—meaning alterations that don't necessitate a
 
 While Quantum offers a panel for configuring commands such as installing dependencies (e.g., "npm install"), building source code (e.g., "npm run build"), or starting your software (e.g., "npm run start"), it also provides a separate panel specifically for managing environment variables. It's worth noting that this isn't a manual process where you input variables and their values one by one. When the repository is cloned, Quantum automatically maps the environment variables, allowing you to assign their respective values later on. You have the flexibility to create, delete, and modify environment variables associated with the deployment of your repository as needed.
 
+### Features
+- **Github Integration:** Securely connect your GitHub account to Quantum for repository access and management of deployments.
+- **Cloud Shell:** Access a dedicated environment for executing commands directly on your Virtual Private Server (VPS) or hosting environment where Quantum is deployed.
+- **Repository Command Line Interface (CLI):** Each deployed repository comes with its own CLI for monitoring execution output (logs) and executing specific commands.
+- **File Explorer:** Make local changes within your repository without requiring a GitHub commit or application redeployment. Changes are overwritten upon subsequent commits.
+- **Command Panel:** Configure commands such as dependency installation, source code building, and software startup within a dedicated panel.
+- **Environment Variable Management:** Manage environment variables associated with your deployment, with automatic mapping of variables upon repository cloning. Create, delete, and modify variables as needed.
+- **Continuous deployment:** When a commit is made to the repository within Github, it is automatically redeployed to Quantum.
+
 ### Project Requirements
 To run this project, Node.js 21 or higher is required. It is recommended to use nvm (Node Version Manager) to manage Node.js versions on your system. Below are the steps to install Node.js 21 using nvm:
 1. **Installing NVM:**
@@ -178,3 +187,4 @@ npm install --global serve
 serve -s -l PORT dist/
 ```
 Replace "PORT" with the command where you want to deploy your application ;).
+
