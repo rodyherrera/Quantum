@@ -150,6 +150,20 @@ VITE_API_SUFFIX = /api/v1
 ```
 After establishing the environment variables for both the client and server applications, you will have what you need to deploy.
 
+## Obtaining GitHub Client Secret and Client ID
+To integrate your application with GitHub's API, you'll need to obtain a Client Secret and Client ID. Follow these detailed steps to acquire them:
+
+1. **Sign in to your GitHub account:** Go to [GitHub](https://github.com/) and sign in with your user credentials.
+2. **Access your account settings:** Click on your profile avatar in the top right corner and select "Settings" from the dropdown menu.
+3. **Navigate to the "Developer settings" section:** In the left sidebar, click on "Developer settings."
+4. **Create a new OAuth application:** Select "OAuth Apps" and click on the "New OAuth App" button.
+5. **Provide application information:** Please enter your app name, your home page URL, and return authorization URL. Please note that the "Home Page URL" must be the address where the server is hosted and cannot be local, that is, it must be accessible to third parties, for example: "http://82.208.22.71:5001 " or "quantum-server.mydomain.com". Likewise, the "Return Authorization URL" must contain the address where the server is hosted followed by the path of the API responsible for returning authorization from Github, for example: "http://82.208.22.71: 5002/api/v1/github/callback/" or "https://quantum-server.mydomain.com/api/v1/github/callback/".
+6. **Register the application:** Click on the "Register application" button.
+7. **Copy the application credentials:** Once registered, GitHub will generate a Client ID and Client Secret. Copy these values and securely store them.
+8. **Utilize the credentials in your application:** Use the Client ID and Client Secret in your application's configuration to authenticate requests to GitHub's API.
+
+It is important that you do this step, otherwise NO ONE will simply be able to use your application, including you.
+
 ### Deploying Quantum
 Once dependencies are installed, you'll be prepared to deploy Quantum on your server. To accomplish this, initiate the server application first, followed by the client application.
 
@@ -188,3 +202,23 @@ serve -s -l PORT dist/
 ```
 Replace "PORT" with the command where you want to deploy your application ;).
 
+### The Quantum CLI 
+Through the CLI, you can create a user account as an administrator, reestablish the database among other options provided by the platform for management purposes.
+
+In order to access the CLI, you must go to the "server" directory, and there execute the "npm run cli" command, followed by this, the program will start and you must choose the option you want to use in the administrator.
+
+```bash
+# Entering the "server" directory.
+cd server/
+# Initializing the CLI
+npm run cli
+```
+
+When deploying Quantum, you must use this CLI, since user registration for security reasons is disabled, therefore both through the API and through the web-UI you will not be able to create a new account, therefore you must After creating the account through the CLI, just run it.
+
+### Inside the future
+As mentioned in the previous section, the platform default in the .env file located in "server/" establishes that the registration of new user accounts is disabled, this is because each user will be able to execute commands through the "Cloud Shell" or through the CLI provided by each repository deployed directly on the server where Quantum is hosted. This means that, if you use the platform in production, having user registration enabled will be synonymous with "hello, create an account and destroy my server".
+
+To solve this problem, and allow multiple users to have their account on Quantum without compromising the integrity of the server, a Docker instance will be associated with each user who registers on the platform. In this way, when the user through the web-ui will have the "Cloud Shell", he will execute commands directly in his Docker instance and not in the host server, in the same way it will apply to the CLI of the deployed repositories, these will be cloned and deployed within the user's Docker instance, the commands that the user executes as well as those executed when deploying the repository will be executed within the Docker instance and not within the host server.
+
+For now, you can use this in production with user registration disabled. You can create users through the CLI ;). In any case, you should not activate this option unless you want to start a hosting company.
