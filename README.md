@@ -1,4 +1,9 @@
 # Quantum - Open source continuous deployment platform.
+<div>
+<a href="https://ko-fi.com/codewithrodi"> <img align="left" src="https://cdn.ko-fi.com/cdn/kofi3.png?v=3" height="33"   width="130" alt="Support Quantum!" /></a>
+</div>
+<br /> <br />
+
 We assist you in hosting your applications, servers, and services on your own centralized hardware infrastructure, all conveniently located in one place. Our platform was conceived as an open-source alternative to renowned platforms like Vercel, Netlify, and Heroku. 
 
 After creating an account on our platform, you'll be prompted to log in using your GitHub credentials. This step allows you to securely store your access token for cloning repositories, creating webhooks, and managing deployments – including creation, updating, and deletion. Once your GitHub account is connected, you'll gain full access to all the platform's features.
@@ -11,46 +16,6 @@ If you wish to make local changes—meaning alterations that don't necessitate a
 
 While Quantum offers a panel for configuring commands such as installing dependencies (e.g., "npm install"), building source code (e.g., "npm run build"), or starting your software (e.g., "npm run start"), it also provides a separate panel specifically for managing environment variables. It's worth noting that this isn't a manual process where you input variables and their values one by one. When the repository is cloned, Quantum automatically maps the environment variables, allowing you to assign their respective values later on. You have the flexibility to create, delete, and modify environment variables associated with the deployment of your repository as needed.
 
-# Table of Contents
-1. **[Introduction](#quantum---open-source-continuous-deployment-platform)**
-   - [Overview of Quantum](#quantum---open-source-continuous-deployment-platform)
-   - [Table of Contents](#table-of-contents)
-2. **[Features](#features)**
-   - [Github Integration](#github-integration)
-   - [Cloud Shell](#cloud-shell)
-   - [Repository Command Line Interface (CLI)](#repository-command-line-interface-cli)
-   - [File Explorer](#file-explorer)
-   - [Command Panel](#command-panel)
-   - [Environment Variable Management](#environment-variable-management)
-   - [Continuous Deployment](#continuous-deployment)
-   - [Service Status](#service-status)
-3. **[Project Requirements](#project-requirements)**
-   - [Node.js 21 Installation](#nodejs-21-installation)
-     - [Installing NVM](#installing-nvm)
-     - [Installing Node.js 21.0.0](#installing-nodejs-2100)
-4. **[Installation](#installation)**
-   - [All-in-one Installation Command](#all-in-one-installation-command)
-   - [Installation Guide](#installation-guide)
-     - [Clone the Quantum Repository](#clone-the-quantum-repository)
-     - [Navigate to the Quantum Directory](#navigate-to-the-quantum-directory)
-     - [Install Server Dependencies](#install-server-dependencies)
-     - [Install Client Dependencies](#install-client-dependencies)
-5. **[Post-Installation Configuration](#post-installation-configuration)**
-   - [Setting Environment Variables](#setting-environment-variables)
-     - [Server Environment Variables](#server-environment-variables)
-     - [Client Environment Variables](#client-environment-variables)
-   - [Obtaining GitHub Client Secret and Client ID](#obtaining-github-client-secret-and-client-id)
-6. **[Deploying Quantum](#deploying-quantum)**
-   - [Starting the Backend Server](#starting-the-backend-server)
-   - [Starting the Client Application](#starting-the-client-application)
-   - [Building the Client Application](#building-the-client-application)
-7. **[The Quantum CLI](#the-quantum-cli)**
-   - [Accessing the CLI](#accessing-the-cli)
-   - [CLI Usage and Options](#cli-usage-and-options)
-8. **[Inside the Future](#inside-the-future)**
-   - [Explanation of Future Developments](#explanation-of-future-developments)
-   - [Docker Integration for Multi-User Support](#docker-integration-for-multi-user-support)
-
 ### Features
 - **Github Integration:** Securely connect your GitHub account to Quantum for repository access and management of deployments.
 - **Cloud Shell:** Access a dedicated environment for executing commands directly on your Virtual Private Server (VPS) or hosting environment where Quantum is deployed.
@@ -59,7 +24,6 @@ While Quantum offers a panel for configuring commands such as installing depende
 - **Command Panel:** Configure commands such as dependency installation, source code building, and software startup within a dedicated panel.
 - **Environment Variable Management:** Manage environment variables associated with your deployment, with automatic mapping of variables upon repository cloning. Create, delete, and modify variables as needed.
 - **Continuous deployment:** When a commit is made to the repository within Github, it is automatically redeployed to Quantum.
-- **Service Status:** You can check the status of the server through the web-ui. It will determine if the server is working in optimal conditions or if it is overloaded.
 
 ### Project Requirements
 To run this project, Node.js 21 or higher is required. It is recommended to use nvm (Node Version Manager) to manage Node.js versions on your system. Below are the steps to install Node.js 21 using nvm:
