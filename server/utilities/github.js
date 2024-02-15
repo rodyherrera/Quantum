@@ -50,7 +50,7 @@ class Github{
                     return;
                 }
                 const [key, value] = line.split('=');
-                environmentVariables[key.trim()] = value.trim();
+                environmentVariables[key.trim()] = value?.trim() || '';
             });
         };
         return environmentVariables;
@@ -162,6 +162,10 @@ class Github{
     };
 
     async deleteWebhook(){
+        // Some repositories will not have a webhook, and this is because if 
+        // the repository is archived (Read-Only) it will not allow 
+        // updates, therefore no hooks.
+        if(!this.repository.webhookId) return;
         try{
             const response = await this.octokit.repos.deleteWebhook({
                 owner: this.user.github.username,

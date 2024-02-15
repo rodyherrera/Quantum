@@ -53,7 +53,6 @@ export const repositoryActions = (repositoryAlias, loaderState, body) => async (
     const operation = new OperationHandler(deploymentSlice, dispatch);
 
     operation.on('response', ({ status, repository }) => {
-        console.log(status, repository);
         dispatch(repositorySlice.updateDeploymentStatus({ _id: repository._id, status }));
     });
 

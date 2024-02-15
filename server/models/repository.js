@@ -148,7 +148,12 @@ RepositorySchema.pre('save', async function(next){
         const github = new Github(repositoryUser, this);
         const deployment = await github.deployRepository();
         const webhookEndpoint = `${process.env.DOMAIN}/api/v1/webhook/${this._id}/`;
-        this.webhookId = await github.createWebhook(webhookEndpoint, process.env.SECRET_KEY);
+        try{
+            this.webhookId = await github.createWebhook(webhookEndpoint, process.env.SECRET_KEY);
+        }catch(err){
+            if(err?.response?.data?.message !== 'Repository was archived so is read-only.')
+                throw err;
+        }
         await this.updateUserAndRepository(deployment);
         next();
     }catch(error){

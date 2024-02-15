@@ -41,9 +41,9 @@ While Quantum offers a panel for configuring commands such as installing depende
    - [Continuous Deployment](#continuous-deployment)
    - [Service Status](#service-status)
 3. **[Project Requirements](#project-requirements)**
-   - [Node.js 21 Installation](#nodejs-21-installation)
+   - [Node.js 20.11.1 Installation](#nodejs-21-installation)
      - [Installing NVM](#installing-nvm)
-     - [Installing Node.js 21.0.0](#installing-nodejs-2100)
+     - [Installing Node.js 20.11.1](#installing-nodejs-20111)
 4. **[Installation](#installation)**
    - [All-in-one Installation Command](#all-in-one-installation-command)
    - [Installation Guide](#installation-guide)
@@ -88,9 +88,9 @@ To run this project, Node.js 21 or higher is required. It is recommended to use 
     wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
     ```
 2. **Close and reopen the terminal:** It is important to close and reopen the terminal after installing nvm for the changes to take effect.
-3. **Installing Node.js 21.0.0:** 
+3. **Installing Node.js 20.11.1:** 
     ```bash
-    nvm install 21.0.0
+    nvm install 20.11.0
     ```
 ### Installation
 You may prefer the all-in-one command, to run in your terminal, clone the repository and install dependencies.
