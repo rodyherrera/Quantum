@@ -90,8 +90,13 @@ To run this project, Node.js 21 or higher is required. It is recommended to use 
 2. **Close and reopen the terminal:** It is important to close and reopen the terminal after installing nvm for the changes to take effect.
 3. **Installing Node.js 20.11.1:** 
     ```bash
-    nvm install 20.11.0
+    nvm install 20.11.1
     ```
+4. **Set the default version:** Then, you can set the newly installed version as the default using the following command:
+    ```bash
+    nvm alias default 20.11.1
+    ```
+
 ### Installation
 You may prefer the all-in-one command, to run in your terminal, clone the repository and install dependencies.
 ```bash
