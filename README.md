@@ -11,6 +11,21 @@ If you wish to make local changes—meaning alterations that don't necessitate a
 
 While Quantum offers a panel for configuring commands such as installing dependencies (e.g., "npm install"), building source code (e.g., "npm run build"), or starting your software (e.g., "npm run start"), it also provides a separate panel specifically for managing environment variables. It's worth noting that this isn't a manual process where you input variables and their values one by one. When the repository is cloned, Quantum automatically maps the environment variables, allowing you to assign their respective values later on. You have the flexibility to create, delete, and modify environment variables associated with the deployment of your repository as needed.
 
+### Project Requirements
+To run this project, Node.js 21 or higher is required. It is recommended to use nvm (Node Version Manager) to manage Node.js versions on your system. Below are the steps to install Node.js 21 using nvm:
+1. **Installing NVM:**
+    ```bash
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+    ```
+    Or, if you prefer to use wget:
+    ```bash
+    wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
+    ```
+2. **Close and reopen the terminal:** It is important to close and reopen the terminal after installing nvm for the changes to take effect.
+3. **Installing Node.js 21.0.0:** 
+    ```bash
+    nvm install 21.0.0
+    ```
 ### Installation
 You may prefer the all-in-one command, to run in your terminal, clone the repository and install dependencies.
 ```bash
