@@ -125,3 +125,41 @@ VITE_SERVER = http://0.0.0.0:8000
 VITE_API_SUFFIX = /api/v1
 ```
 After establishing the environment variables for both the client and server applications, you will have what you need to deploy.
+
+### Deploying Quantum
+Once dependencies are installed, you'll be prepared to deploy Quantum on your server. To accomplish this, initiate the server application first, followed by the client application.
+
+At this juncture in the documentation, it is assumed that both applications are already configured (environment variables).
+
+```bash
+# Navigate to the server directory.
+cd server
+# Start the backend server
+npm run start
+```
+
+Now, with the server already running, we must deploy the client application.
+
+```bash
+# Navigate to the client directory.
+cd client
+# Start the client application
+npm run dev
+```
+
+### Building the client application
+In the preceding section, we deployed the client application alongside the server. However, the frontend application is currently running in development mode, initiated with "npm run dev." Should we aim to run this application in a production environment, we'll need to build it using Vite.
+```bash
+# Navigate to the client directory.
+cd client
+# Build the client application
+npm run build
+```
+After running the "npm run build" command, a new directory named "dist" will be created. This directory houses the essential static files required for deploying your application in a production environment. I personally recommend using "serve," an npm package that facilitates deploying a static server within a specified directory—in this case, the generated "dist" directory.
+```bash
+# Install "serve" in case you don't have it.
+npm install --global serve
+# Deploy the server over "dist/"
+serve -s -l PORT dist/
+```
+Replace "PORT" with the command where you want to deploy your application ;).
