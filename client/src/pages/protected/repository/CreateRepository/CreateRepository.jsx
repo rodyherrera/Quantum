@@ -42,6 +42,7 @@ const CreateRepository = () => {
                 to: 'https://github.com/'
             }}
             breadcrumbItems={[
+                { title: 'Home', to: '/' },
                 { title: 'Dashboard', to: '/dashboard/' },
                 { title: 'Repositories', to: '/dashboard/' },
                 { title: 'Create Repository', to: '/respository/create/' }

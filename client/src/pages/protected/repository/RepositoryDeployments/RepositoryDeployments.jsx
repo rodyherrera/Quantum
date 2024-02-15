@@ -32,6 +32,7 @@ const RepositoryDeployments = () => {
                 to: '/repository/create/'
             }}
             breadcrumbItems={[
+                { title: 'Home', to: '/' },
                 { title: 'Dashboard', to: '/dashboard/' },
                 { title: 'Repositories', to: '/dashboard/' },
                 { title: repositoryAlias, to: '/dashboard/' },

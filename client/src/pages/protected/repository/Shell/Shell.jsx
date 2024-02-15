@@ -73,6 +73,7 @@ const Shell = () => {
             <section id='Repository-Shell-Header-Container'>
                 <Breadcrumbs
                     items={[
+                        { title: 'Home', to: '/' },
                         { title: 'Dashboard', to: '/dashboard/' },
                         { title: 'Repositories', to: '/dashboard/' },
                         { title: repositoryAlias, to: '/dashboard/' },
