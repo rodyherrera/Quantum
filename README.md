@@ -137,6 +137,8 @@ NODE_ENV = development
 
 # DOMAIN: Specifies the base domain of the server. This is the 
 # main access point for the application.
+# IMPORTANT: THIS SHOULD MATCH THE: "Authorization callback URL" 
+# WHEN YOU REGISTER YOUR APP.
 DOMAIN = www.backend-domain.com
 
 # SECRET_KEY: Secret key used for encrypting 
