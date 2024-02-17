@@ -58,10 +58,13 @@ const repositoryShellHandler = (socket) => {
     createShellHandler(socket, PTY);
 };
 
-const cloudConsoleHandler = (socket) => {
+const cloudConsoleHandler = async (socket) => {
     const { user } = socket;
-    const PTY = new CloudConsoleHandler(user._id);
-    createShellHandler(socket, PTY);
+    const container = global.userContainers[user._id];
+    socket.emit('history', await container.getLog());
+    socket.on('command', async (command) => {
+        container.executeCommandWithWS(socket, command);
+    });
 };
 
 module.exports = (io) => {

@@ -91,7 +91,7 @@ UserSchema.plugin(TextSearch);
 UserSchema.index({ username: 'text', fullname: 'text', email: 'text' });
 
 UserSchema.methods.deleteAssociatedData = async function(){
-    await fs.promises.rm(`${__dirname}/../storage/pty-log/${this._id}.log`);
+    await fs.promises.rm(`${__dirname}/../storage/containers/${this._id}/logs/${this._id}.log`);
     await this.model('Github').findOneAndRemove({ user: this._id });
     await this.model('Deployment').deleteMany({ user: this._id });
 };

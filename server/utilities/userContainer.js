@@ -1,5 +1,9 @@
 const Docker = require('dockerode');
-const fs = require('fs').promises;
+const path = require('path');
+const fs = require('fs');
+const util = require('util');
+const stat = util.promisify(fs.stat);
+const truncate = util.promisify(fs.truncate);
 
 class UserContainer{
     constructor(user){
@@ -7,6 +11,15 @@ class UserContainer{
         this.user = user;
         this.dockerName = this.user._id.toString().replace(/[^a-zA-Z0-9_.-]/g, '_');
         this.instance = null;
+        this.logDir =  path.join(__dirname, '..', 'storage', 'containers', this.user._id.toString(), 'logs');
+        this.logFile = `${this.logDir}/${this.user._id}.log`;
+        this.logStream = this.createLogStream();
+    };
+
+    async getLog(){
+        if(!fs.existsSync(this.logFile)) return '';
+        const content = await fs.promises.readFile(this.logFile);
+        return content.toString();
     };
 
     async start(){
@@ -37,6 +50,16 @@ class UserContainer{
         }
     };
 
+    async checkLogFileStatus(){
+        try{
+            const stats = await stat(this.logFile);
+            const maxSize = process.env.LOG_PATH_MAX_SIZE * 1024;
+            if(stats.size > maxSize) await truncate(this.logFile, 0);
+        }catch(error){
+            this.criticalErrorHandler('checkLogFileStatus', error);
+        }
+    };
+
     async pullImage(imageName){
         console.log(`[Quantum Cloud]: Pulling "${imageName}"...`);
         await new Promise((resolve, reject) => {
@@ -52,6 +75,29 @@ class UserContainer{
             });
         });
         console.log(`[Quantum Cloud]: Image "${imageName}" downloaded.`);
+    };
+
+    async appendLog(data){
+        await this.checkLogFileStatus();
+        const stream = await this.logStream;
+        stream.write(data);
+    };
+
+    async createLogStream(){
+        if(global.logStreamStore[this.user._id]){
+            global.logStreamStore[this.user._id].end();
+            delete global.logStreamStore[this.user._id];
+        }
+        if(!fs.existsSync(this.logDir)){
+            try{
+                await fs.promises.mkdir(this.logDir);
+            }catch(error){
+                this.criticalErrorHandler('createLogStream', error);
+            }
+        }
+        const stream = fs.createWriteStream(this.logFile);
+        global.logStreamStore[this.user._id] = stream;
+        return stream;
     };
 
     async getExistingContainer(){
@@ -90,14 +136,29 @@ class UserContainer{
 
     async ensureDirectoryExists(directoryPath){
         try{
-            await fs.access(directoryPath);
+            await fs.promises.access(directoryPath);
         }catch(error){
             if(error.code === 'ENOENT'){
-                await fs.mkdir(directoryPath, { recursive: true });
+                await fs.promises.mkdir(directoryPath, { recursive: true });
             }else{
                 throw error;
             }
         }
+    };
+
+    async executeCommandWithWS(socket, command){
+        const exec = await this.instance.exec({
+            Cmd: ['/bin/ash', '-c', command],
+            AttachStdout: true,
+            AttachStderr: true
+        });
+        const stream = await exec.start({ hijack: true, stdin: true });
+        stream.on('data', (chunk) => {
+            const lines = chunk.toString('utf8').split('\n');
+            lines.forEach((line) => {
+                socket.emit('response', line + '\r\n');
+            });
+        });
     };
 
     async executeCommand(command){
@@ -105,7 +166,7 @@ class UserContainer{
             const exec = await this.instance.exec({
                 Cmd: ['/bin/ash', '-c', command],
                 AttachStdout: true,
-                AttachStderr: true
+                AttachStderr: true,
             });
             const stream = await exec.start();
             return await this.collectStreamOutput(stream);
@@ -117,7 +178,11 @@ class UserContainer{
     async collectStreamOutput(stream){
         return new Promise((resolve, reject) => {
             let output = '';
-            stream.on('data', (data) => output += data.toString());
+            stream.on('data', (data) => {
+                data = data.toString('utf8');
+                output += data;
+                this.appendLog(data);
+            });
             stream.on('end', () => resolve(output));
             stream.on('error', (error) => reject(error));
         });
@@ -125,7 +190,6 @@ class UserContainer{
 
     async installPackages(){
         try{
-            // Install the required packages
             await this.executeCommand('apk update');
             await this.executeCommand('apk add --no-cache git docker nodejs npm python3');
         }catch(error){

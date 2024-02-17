@@ -70,12 +70,26 @@ const CloudShell = () => {
 
     useEffect(() => {
         if(!socket || !xterm) return;
-        xterm.onData((data) => socket.emit('command', data));
+        let commandBuffer = '';
+        xterm.onKey(({ key, domEvent }) => {
+            if(domEvent.keyCode === 13){
+                socket.emit('command', commandBuffer);
+                commandBuffer = '';
+                xterm.write('\r\n');
+            }else{
+                commandBuffer += key;
+                xterm.write(key);
+            }
+        });
+
         socket.on('history', (history) => {
             setIsLoading(false);
             xterm.write(history);
         });
-        socket.on('response', (response) => xterm.write(response));
+        socket.on('response', (response) => {
+            console.log(response);
+            xterm.write(response)
+        });
     }, [socket, xterm]);
 
     useEffect(() => {
