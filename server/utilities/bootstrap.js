@@ -15,7 +15,9 @@
 const { capitalizeToLowerCaseWithDelimitier } = require('@utilities/algorithms');
 const { PTYHandler } = require('@utilities/ptyHandler');
 const Repository = require('@models/repository');
+const User = require('@models/user');
 const Github = require('@utilities/github');
+const UserContainer = require('@utilities/userContainer');
 
 exports.standardizedBindingToApp = ({ app, routes, suffix, middlewares, settings }) => {
     middlewares.forEach((middleware) => app.use(middleware));
@@ -25,6 +27,17 @@ exports.standardizedBindingToApp = ({ app, routes, suffix, middlewares, settings
         app.use(path, router);
     });
     settings.deactivated.forEach((deactivated) => app.disabled(deactivated));
+};
+
+exports.loadUserContainers = async () => {
+    console.log('[Quantum Cloud]: Loading users docker containers...');
+    const users = await User.find().select('_id');
+    console.log(`[Quantum Cloud]: Found ${users.length} users.`);
+    for(const user of users){
+        const container = new UserContainer(user);
+        await container.createContainer();
+    }
+    console.log('[Quantum Cloud]: User containers loaded.');
 };
 
 exports.loadRepositoriesPTYs = async () => {

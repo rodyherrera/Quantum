@@ -16,6 +16,7 @@ require('./aliases');
 
 global.ptyStore = {};
 global.logStreamStore = {};
+global.userContainers = {};
 
 const { httpServer } = require('@config/express');
 const mongoConnector = require('@utilities/mongoConnector');
@@ -28,6 +29,7 @@ const SERVER_HOST = process.env.SERVER_HOSTNAME || '0.0.0.0';
 
 httpServer.listen(SERVER_PORT, SERVER_HOST, async () => {
     await mongoConnector();
+    await bootstrap.loadUserContainers();
     await bootstrap.loadRepositoriesPTYs();
     console.log(`[Quantum Cloud]: Server running at http://${SERVER_HOST}:${SERVER_PORT}/.`);
 });
