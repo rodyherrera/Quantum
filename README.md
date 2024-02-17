@@ -100,13 +100,13 @@ To run this project, Node.js 21 or higher is required. It is recommended to use 
 ### Installation
 You may prefer the all-in-one command, to run in your terminal, clone the repository and install dependencies.
 ```bash
-git clone https://github.com/rodyherrera/Quantum/ && cd Quantum && cd server && npm install --force && cd ../client &&  npm install --force
+git clone -b 1.0.0 https://github.com/rodyherrera/Quantum && cd Quantum && cd server && npm install --force && cd ../client &&  npm install --force
 ```
 
 #### Installation Guide
 1. **Clone the Quantum Repository:**
     ```bash
-    git clone https://github.com/rodyherrera/Quantum/
+    git clone -b 1.0.0 https://github.com/rodyherrera/Quantum
     ```
     This command clones the Quantum repository from GitHub to your local machine.
 2. **Navigate to the Quantum Directory:**
