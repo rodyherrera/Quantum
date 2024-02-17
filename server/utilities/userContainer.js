@@ -131,11 +131,12 @@ class UserContainer{
         }
     };
 
-    async executeCommand(command){
+    async executeCommand(command, workDir = '/'){
         try{
             const exec = await this.instance.exec({
                 Cmd: ['/bin/ash', '-c', command],
                 AttachStdout: true,
+                WorkingDir: workDir,
                 AttachStderr: true,
                 Tty: true
             });
