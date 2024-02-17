@@ -60,6 +60,7 @@ const repositoryShellHandler = (socket) => {
 
 const cloudConsoleHandler = async (socket) => {
     const { user } = socket;
+    // GET OR CREATE FUNCTION HERE!
     const container = global.userContainers[user._id];
     await container.executeInteractiveShell(socket);
 };
