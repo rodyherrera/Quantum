@@ -37,7 +37,7 @@ class Github{
     };
     
     async cloneRepository() {
-        const destinationPath = `./storage/repositories/${this.repository._id}`;
+        const destinationPath = `./storage/containers/${this.user._id}/github-repos/${this.repository._id}`;
         try {
             const repositoryInfo = await this.octokit.repos.get({ 
                 owner: this.user.github.username, 
@@ -53,11 +53,11 @@ class Github{
     }
 
     async readEnvironmentVariables(){
-        let envFiles = await simpleGit(`./storage/repositories/${this.repository._id}`).raw(['ls-tree', 'HEAD', '-r', '--name-only']);
+        let envFiles = await simpleGit(`./storage/containers/${this.user._id}/github-repos/${this.repository._id}`).raw(['ls-tree', 'HEAD', '-r', '--name-only']);
         envFiles = envFiles.split('\n').filter(file => file.includes('.env'));
         const environmentVariables = {};
         for(const envFile of envFiles){
-            const file = await simpleGit(`./storage/repositories/${this.repository._id}`).raw(['show', 'HEAD:' + envFile]);
+            const file = await simpleGit(`./storage/containers/${this.user._id}/github-repos/${this.repository._id}`).raw(['show', 'HEAD:' + envFile]);
             const lines = file.split('\n');
             lines.forEach(line => {
                 if(line.trim() === '' || line.trim().startsWith('#')){

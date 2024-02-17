@@ -36,8 +36,6 @@ exports.loadUserContainers = async () => {
     for(const user of users){
         const container = new UserContainer(user);
         await container.start();
-        const output = await container.executeCommand('ls');
-        console.log(output)
     }
     console.log('[Quantum Cloud]: User containers loaded.');
 };

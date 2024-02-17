@@ -78,7 +78,7 @@ const performCleanupTasks = async (deletedDoc, repositoryUser, deployments) => {
     // Use Github utility for cleanup
     await Github.deleteLogAndDirectory(
         `${__dirname}/../storage/pty-log/${deletedDoc._id}.log`,
-        `${__dirname}/../storage/repositories/${deletedDoc._id}/`
+        `${__dirname}/../storage/containers/${repositoryUser._id}/github-repos/${deletedDoc._id}/`
     );
     const github = new Github(repositoryUser, deletedDoc);
     // Delete webhook and repository deployments

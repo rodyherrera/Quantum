@@ -82,7 +82,7 @@ exports.getMyRepositories = catchAsync(async (req, res) => {
 
 const getRequestedPath = (req) => {
     const route = req.params.route || '';
-    const basePath = path.join(__dirname, '../storage/repositories', req.params.id);
+    const basePath = path.join(__dirname, `../storage/containers/${req.user._id}/github-repos/`, req.params.id);
     return path.join(basePath, route);
 };
 

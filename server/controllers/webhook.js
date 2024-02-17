@@ -40,7 +40,7 @@ exports.webhook = async (req, res) => {
         const github = new Github(repositoryUser, requestedRepository);
         await Github.deleteLogAndDirectory(
             `${__dirname}/../storage/pty-log/${requestedRepository._id}.log`,
-            `${__dirname}/../storage/repositories/${requestedRepository._id}/`
+            `${__dirname}/../storage/containers/${repositoryUser._id}/github-repos/${requestedRepository._id}/`
         );
         const deployment = await github.deployRepository();
         await User.updateOne({ _id: repositoryUser._id }, {
