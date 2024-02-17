@@ -146,13 +146,22 @@ class UserContainer{
         }
     };
 
-    async executeCommandWithWS(socket, command){
+    async executeInteractiveShell(socket, workingDir = '/app'){
+        const command = `export PS1='\\n\\[\\033[01;32m\\]\\u@\\h\\[\\033[00m\\]:\\[\\033[01;34m\\]\\w\\[\\033[00m\\]\\n\\$ ' && /bin/ash`;
+
         const exec = await this.instance.exec({
             Cmd: ['/bin/ash', '-c', command],
             AttachStdout: true,
-            AttachStderr: true
+            AttachStderr: true,
+            AttachStdin: true,
+            WorkingDir: workingDir,
+            Tty: true
         });
         const stream = await exec.start({ hijack: true, stdin: true });
+        socket.emit('history', await this.getLog());
+        socket.on('command', (command) => {
+            stream.write(command + '\n');
+        });
         stream.on('data', (chunk) => {
             const lines = chunk.toString('utf8').split('\n');
             lines.forEach((line) => {
@@ -161,12 +170,20 @@ class UserContainer{
         });
     };
 
+    static cleanOutput = (data) => {
+        return data.toString('utf8')
+            .replace(/[^ -~\n\r]+/g, '')
+            .replace(/\x1B\[[0-9;]*[JKmsu]/g, '')
+            .replace(/\u001b\[.*?m/g, '');
+    };
+
     async executeCommand(command){
         try{
             const exec = await this.instance.exec({
                 Cmd: ['/bin/ash', '-c', command],
                 AttachStdout: true,
                 AttachStderr: true,
+                Tty: true
             });
             const stream = await exec.start();
             return await this.collectStreamOutput(stream);
@@ -179,7 +196,7 @@ class UserContainer{
         return new Promise((resolve, reject) => {
             let output = '';
             stream.on('data', (data) => {
-                data = data.toString('utf8');
+                data = UserContainer.cleanOutput(data);
                 output += data;
                 this.appendLog(data);
             });

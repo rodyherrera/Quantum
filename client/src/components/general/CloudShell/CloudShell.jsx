@@ -76,6 +76,9 @@ const CloudShell = () => {
                 socket.emit('command', commandBuffer);
                 commandBuffer = '';
                 xterm.write('\r\n');
+            }else if(domEvent.keyCode === 8){
+                commandBuffer = commandBuffer.slice(0, -1);
+                xterm.write('\b \b');
             }else{
                 commandBuffer += key;
                 xterm.write(key);
