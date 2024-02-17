@@ -19,7 +19,8 @@ class UserContainer{
 
     getUserDockerName(){
         const userId = this.user._id.toString();
-        return userId.replace(/[^a-zA-Z0-9_.-]/g, '_');
+        const formattedUserId = userId.replace(/[^a-zA-Z0-9_.-]/g, '_');
+        return process.env.DOCKERS_CONTAINER_ALIASES + '-' + formattedUserId;
     };
 
     getLogDirectory(){
