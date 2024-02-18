@@ -125,7 +125,7 @@ class UserContainer{
     async installPackages(){
         try{
             await this.executeCommand('apk update');
-            await this.executeCommand('apk add --no-cache git docker nodejs python3');
+            await this.executeCommand('apk add --no-cache git docker nodejs npm python3');
         }catch(error){
             this.criticalErrorHandler('installPackages', error);
         }

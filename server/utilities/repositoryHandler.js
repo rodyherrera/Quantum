@@ -6,6 +6,29 @@ class RepositoryHandler{
         this.user = user;
     };
 
+    async getOrCreateShell(){
+        try{
+            if(global.userContainers[this.user._id]?.[this.repository._id]){
+                return global.userContainers[this.user._id][this.repository._id];
+            }
+            const container = global.userContainers[this.user._id];
+            const exec = await container.instance.exec({
+                Cmd: ['/bin/ash'],
+                AttachStdout: true,
+                AttachStderr: true,
+                AttachStdin: true,
+                WorkingDir: `/app/github-repos/${this.repository._id}${this.repository.rootDirectory}`,
+                Tty: true
+            });
+            const stream = await exec.start({ hijack: true, stdin: true });
+            global.userContainers[this.user._id][this.repository._id] = stream;
+            return stream;
+        }catch(error){
+            console.log('[Quantum Cloud] CRITICAL ERROR (at @utilities/repositoryHandler - createShell):', error);
+            throw error;
+        }
+    };
+
     async start(githubUtility){
         const {
             buildCommand,
@@ -19,13 +42,11 @@ class RepositoryHandler{
             .findById(currentDeploymentId)
             .select('environment githubDeploymentId status');
         const formattedEnvironment = deployment.getFormattedEnvironment();
-        const workingDir = `app/github-repos/${this.repository._id}`;
-        // GET OR CREATE!!!
-        const container = global.userContainers[this.user._id];
+        const repositoryShell = await this.getOrCreateShell();
         for(const command of commands){
             if(!command.length) continue;
-            const formattedComamnd = `${formattedEnvironment} ${command}\r\n`
-            const out = await container.executeCommand(formattedComamnd, workingDir);
+            const formattedComamnd = `${formattedEnvironment} ${command}\r\n`;
+            repositoryShell.write(formattedComamnd);
         }
         const { githubDeploymentId } = deployment;
         githubUtility.updateDeploymentStatus(githubDeploymentId, 'success');

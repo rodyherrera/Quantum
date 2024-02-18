@@ -14,7 +14,6 @@
 
 require('./aliases');
 
-global.ptyStore = {};
 global.logStreamStore = {};
 global.userContainers = {};
 
