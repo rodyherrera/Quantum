@@ -15,6 +15,7 @@
 const { Octokit } = require('@octokit/rest');
 const { promisify } = require('util');
 const simpleGit = require('simple-git');
+const RepositoryHandler = require('@utilities/repositoryHandler');
 const Deployment = require('@models/deployment');
 const exec = promisify(require('child_process').exec);
 const fs = require('fs');
@@ -80,8 +81,8 @@ class Github{
     };
 
     async createNewDeployment(githubDeploymentId){
-        // const pty = new PTYHandler(this.repository._id, this.repository);
-        // pty.removeFromRuntimeStoreAndKill();
+        const repositoryHandler = new RepositoryHandler(this.repository, this.repository.user);
+        repositoryHandler.removeFromRuntime();
         const environmentVariables = await this.readEnvironmentVariables();
         const currentDeployment = this.repository.deployments.pop();
         if(currentDeployment){

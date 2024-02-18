@@ -71,10 +71,9 @@ const getAndDeleteDeployments = async (repositoryId) => {
 };
 
 const performCleanupTasks = async (deletedDoc, repositoryUser, deployments) => {
-    // Use PTYHandler for cleanup
-    // const pty = new PTYHandler(deletedDoc._id, deletedDoc);
-    // pty.clearRuntimePTYLog();
-    // pty.removeFromRuntimeStoreAndKill();
+    const repositoryHandler = new RepositoryHandler(deletedDoc, repositoryUser);
+    repositoryHandler.logStream.end();
+    repositoryHandler.removeFromRuntime();
     // Use Github utility for cleanup
     await Github.deleteLogAndDirectory(
         `${__dirname}/../storage/containers/${repositoryUser._id}/logs/${deletedDoc._id}.log`,

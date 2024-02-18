@@ -1,12 +1,46 @@
-const Deployment = require('@models/deployment');
+/***
+ * Copyright (C) Rodolfo Herrera Hernandez. All rights reserved.
+ * Licensed under the MIT license. See LICENSE file in the project root
+ * for full license information.
+ *
+ * =+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
+ *
+ * For related information - https://github.com/rodyherrera/Quantum/
+ *
+ * All your applications, just in one place. 
+ *
+ * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+****/
 
-class RepositoryHandler{
+const Deployment = require('@models/deployment');
+const ContainerLoggable = require('@utilities/containerLoggable');
+const path = require('path');
+
+class RepositoryHandler extends ContainerLoggable{
     constructor(repository, user){
+        const logDir = path.join(__dirname, '..', 'storage', 'containers', user._id.toString(), repository._id.toString(), 'logs');
+        super(logDir, user._id);
         this.repository = repository;
         this.user = user;
         this.workingDir = `/app/github-repos/${repository._id}${repository.rootDirectory}`;
+        this.exec = null;
+        this.stream = null;
     };
 
+    async stopAndRemoveShell(){
+        try{
+            const userContainers = global.userContainers[this.user._id];
+            if(userContainers && userContainers[this.repository._id]){
+                const shellStream = userContainers[this.repository._id];
+                shellStream.write('\x03')
+                await shellStream.end();
+                delete userContainers[this.repository._id];
+            }
+        } catch(error){
+            this.criticalErrorHandler('stopAndRemoveShell', error);
+        }
+    };
+    
     async getOrCreateShell(){
         try{
             const userContainers = global.userContainers[this.user._id];
@@ -30,6 +64,11 @@ class RepositoryHandler{
         }
     };
 
+    async removeFromRuntime(){
+        this.stopAndRemoveShell();
+        delete global.userContainers[this.user._id][this.repository._id];
+    };
+
     async executeInteractiveShell(socket){
         const repositoryShell = await this.getOrCreateShell();
         this.setupSocketEvents(socket, repositoryShell);
@@ -42,16 +81,20 @@ class RepositoryHandler{
     };
 
     async start(githubUtility){
-        const commands = this.getValidCommands();
-        if(commands.length === 0) return;
-        const deployment = await this.getCurrentDeployment();
-        const formattedEnvironment = deployment.getFormattedEnvironment();
-        const repositoryShell = await this.getOrCreateShell();
-        this.executeCommands(commands, formattedEnvironment, repositoryShell);
-        const { githubDeploymentId } = deployment;
-        githubUtility.updateDeploymentStatus(githubDeploymentId, 'success');
-        deployment.status = 'success';
-        await deployment.save();
+        try{
+            const commands = this.getValidCommands();
+            if(commands.length === 0) return;
+            const deployment = await this.getCurrentDeployment();
+            const formattedEnvironment = deployment.getFormattedEnvironment();
+            const repositoryShell = await this.getOrCreateShell();
+            this.executeCommands(commands, formattedEnvironment, repositoryShell);
+            const { githubDeploymentId } = deployment;
+            githubUtility.updateDeploymentStatus(githubDeploymentId, 'success');
+            deployment.status = 'success';
+            await deployment.save();
+        }catch(error){
+            console.log(error);
+        }
     };
 
     getValidCommands(){

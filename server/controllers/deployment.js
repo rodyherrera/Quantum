@@ -44,8 +44,7 @@ const repositoryOperationHandler = async (repository, action) => {
         select: 'username',
         populate: { path: 'github', select: 'accessToken username' }
     });
-    // !!!!
-    const pty = new PTYHandler(repository._id, repository);
+    const repositoryHandler = new RepositoryHandler(repository, repository.user);
     const github = new Github(repository.user, repository);
     const currentDeploymentId = repository.deployments[0];
     const currentDeployment = await Deployment.findById(currentDeploymentId);
@@ -57,19 +56,19 @@ const repositoryOperationHandler = async (repository, action) => {
     await currentDeployment.save();
     switch(action){
         case 'restart':
-            pty.removeFromRuntimeStoreAndKill();
-            pty.startRepository(github);
+            repositoryHandler.removeFromRuntime();
+            repositoryHandler.start(github);
             // TODO: Can be refactored using mongoose middlewares
             github.updateDeploymentStatus(githubDeploymentId, 'success');
             break;
         case 'stop':
-            pty.removeFromRuntimeStoreAndKill();
+            repositoryHandler.removeFromRuntime();
             currentDeployment.status = 'stopped';
             await currentDeployment.save();
             github.updateDeploymentStatus(githubDeploymentId, 'inactive');
             break;
         case 'start':
-            pty.startRepository(github);
+            repositoryHandler.start(github);
             github.updateDeploymentStatus(githubDeploymentId, 'success');
             break;
         default:
