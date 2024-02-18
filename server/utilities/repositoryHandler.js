@@ -29,6 +29,13 @@ class RepositoryHandler{
         }
     };
 
+    async executeInteractiveShell(socket){
+        const repositoryShell = await this.getOrCreateShell();
+        socket.emit('history', '...');
+        socket.on('command', (command) => repositoryShell.write(command + '\n'));
+        repositoryShell.on('data', (chunk) => socket.emit('response', chunk.toString('utf8')));
+    };
+
     async start(githubUtility){
         const {
             buildCommand,

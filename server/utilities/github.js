@@ -13,7 +13,6 @@
 ****/
 
 const { Octokit } = require('@octokit/rest');
-const { PTYHandler } = require('@utilities/ptyHandler');
 const { promisify } = require('util');
 const simpleGit = require('simple-git');
 const Deployment = require('@models/deployment');
@@ -81,8 +80,8 @@ class Github{
     };
 
     async createNewDeployment(githubDeploymentId){
-        const pty = new PTYHandler(this.repository._id, this.repository);
-        pty.removeFromRuntimeStoreAndKill();
+        // const pty = new PTYHandler(this.repository._id, this.repository);
+        // pty.removeFromRuntimeStoreAndKill();
         const environmentVariables = await this.readEnvironmentVariables();
         const currentDeployment = this.repository.deployments.pop();
         if(currentDeployment){
@@ -211,7 +210,6 @@ class Github{
 
     async deployRepository(){
         await this.cloneRepository();
-        global.ptyStore[this.repository._id] = PTYHandler.create(this.repository._id);
         const githubDeploymentId = await this.createGithubDeployment();
         const newDeployment = await this.createNewDeployment(githubDeploymentId);
         newDeployment.url = `https://github.com/${this.user.github.username}/${this.repository.name}/deployments/${githubDeploymentId}`;

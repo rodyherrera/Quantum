@@ -13,9 +13,9 @@
 ****/
 
 const { getUserByToken } = require('@middlewares/authentication');
-const { PTYHandler, CloudConsoleHandler } = require('@utilities/ptyHandler');
 const RuntimeError = require('@utilities/runtimeError');
 const Repository = require('@models/repository');
+const RepositoryHandler = require('@utilities/repositoryHandler');
 
 const userAuthentication = async (socket, next) => {
     const { token } = socket.handshake.auth;
@@ -34,28 +34,10 @@ const tokenOwnership = async (socket, next) => {
     next();
 };
 
-const createShellHandler = (socket, shellInstance) => {
-    const PTY = shellInstance;
-    const shell = PTY.getOrCreate();
-    socket.emit('history', PTY.getLog());
-    socket.on('command', (command) => shell.write(command));
-    shell.on('data', (data) => {
-        if(PTY instanceof PTYHandler){
-            data = data.replace(/.*#/g, PTY.getPrompt());
-        } 
-        PTY.appendLog(data);
-        socket.emit('response', data);
-    });
-    socket.on('disconnect', () => {
-        PTY.clearRuntimePTYLog();
-    });
-};
-
-const repositoryShellHandler = (socket) => {
+const repositoryShellHandler = async (socket) => {
     const { repository, user } = socket;
-    repository.user = user;
-    const PTY = new PTYHandler(repository._id, repository);
-    createShellHandler(socket, PTY);
+    const repositoryHandler = new RepositoryHandler(repository, user);
+    await repositoryHandler.executeInteractiveShell(socket);
 };
 
 const cloudConsoleHandler = async (socket) => {

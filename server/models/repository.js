@@ -17,7 +17,7 @@ const TextSearch = require('mongoose-partial-search');
 const Github = require('@utilities/github');
 const Deployment = require('@models/deployment');
 const User = require('@models/user');
-const { PTYHandler } = require('@utilities/ptyHandler');
+const RepositoryHandler = require('@utilities/repositoryHandler');
 const { v4 } = require('uuid');
 
 const RepositorySchema = new mongoose.Schema({
@@ -72,9 +72,9 @@ const getAndDeleteDeployments = async (repositoryId) => {
 
 const performCleanupTasks = async (deletedDoc, repositoryUser, deployments) => {
     // Use PTYHandler for cleanup
-    const pty = new PTYHandler(deletedDoc._id, deletedDoc);
-    pty.clearRuntimePTYLog();
-    pty.removeFromRuntimeStoreAndKill();
+    // const pty = new PTYHandler(deletedDoc._id, deletedDoc);
+    // pty.clearRuntimePTYLog();
+    // pty.removeFromRuntimeStoreAndKill();
     // Use Github utility for cleanup
     await Github.deleteLogAndDirectory(
         `${__dirname}/../storage/containers/${repositoryUser._id}/logs/${deletedDoc._id}.log`,
@@ -122,9 +122,9 @@ const handleUpdateCommands = async (context) => {
             });
         const document = { user, name, deployments, buildCommand, 
             installCommand, startCommand, rootDirectory };
-        const ptyHandler = new PTYHandler(_id, document);
+        const repository = new RepositoryHandler(document, user);
         const github = new Github(user, document);
-        ptyHandler.startRepository(github);
+        repository.start(github);
     }
 };
 
@@ -171,6 +171,7 @@ RepositorySchema.pre('save', async function(next){
         await this.updateUserAndRepository(deployment);
         next();
     }catch(error){
+        console.log(error);
         return next(error);
     }
 });

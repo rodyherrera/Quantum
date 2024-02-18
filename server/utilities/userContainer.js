@@ -106,7 +106,10 @@ class UserContainer{
             OpenStdin: true,
             StdinOnce: true,
             Cmd: ['/bin/ash'],
-            HostConfig: { Binds: [`${storagePath}:/app:rw`] }
+            HostConfig: { 
+                Binds: [`${storagePath}:/app:rw`],
+                PublishAllPorts: true
+            }
         });
     };
 
@@ -183,10 +186,8 @@ class UserContainer{
             if(global.logStreamStore[_id]){
                 global.logStreamStore[_id].end();
                 delete global.logStreamStore[_id];
-            }
-            if(!existsSync(this.logDir)){
-                await fs.mkdir(this.logDir);
-            }
+            } 
+            await this.ensureDirectoryExists(this.logDir);
             const stream = createWriteStream(this.logFile);
             global.logStreamStore[_id] = stream;
             return stream;

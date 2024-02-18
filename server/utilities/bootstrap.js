@@ -13,7 +13,6 @@
 ****/
 
 const { capitalizeToLowerCaseWithDelimitier } = require('@utilities/algorithms');
-const { PTYHandler } = require('@utilities/ptyHandler');
 const Repository = require('@models/repository');
 const User = require('@models/user');
 const Github = require('@utilities/github');

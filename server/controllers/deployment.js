@@ -17,7 +17,7 @@ const Repository = require('@models/repository');
 const HandlerFactory = require('@controllers/handlerFactory');
 const RuntimeError = require('@utilities/runtimeError');
 const Github = require('@utilities/github');
-const { PTYHandler } = require('@utilities/ptyHandler');
+const RepositoryHandler = require('@utilities/repositoryHandler');
 const { catchAsync } = require('@utilities/runtime');
 
 const DeploymentFactory = new HandlerFactory({
@@ -44,6 +44,7 @@ const repositoryOperationHandler = async (repository, action) => {
         select: 'username',
         populate: { path: 'github', select: 'accessToken username' }
     });
+    // !!!!
     const pty = new PTYHandler(repository._id, repository);
     const github = new Github(repository.user, repository);
     const currentDeploymentId = repository.deployments[0];
