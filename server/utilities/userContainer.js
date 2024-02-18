@@ -18,8 +18,7 @@ const path = require('path');
 
 class UserContainer extends ContainerLoggable{
     constructor(user){
-        const logDir = path.join(__dirname, '..', 'storage', 'containers', user._id.toString(), 'logs');
-        super(logDir, user._id);
+        super(user._id, user._id);
         this.docker = new Docker();
         this.user = user;
         this.dockerName = this.getUserDockerName();

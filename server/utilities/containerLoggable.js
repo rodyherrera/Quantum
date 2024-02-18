@@ -20,10 +20,10 @@ const truncate = util.promisify(fs.truncate);
 const { createWriteStream, existsSync, exists } = require('fs');
 
 class ContainerLoggable{
-    constructor(logDir, userId){
-        this.logDir = logDir;
+    constructor(logName, userId){
+        this.logDir = path.join(__dirname, '..', 'storage', 'containers', userId.toString(), 'logs');
         this.userId = userId;
-        this.logFile = path.join(this.logDir, `${userId}.log`);
+        this.logFile = path.join(this.logDir, `${logName}.log`);
         this.logStream = this.createLogStream();
     };
 

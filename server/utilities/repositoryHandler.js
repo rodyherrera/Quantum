@@ -18,8 +18,7 @@ const path = require('path');
 
 class RepositoryHandler extends ContainerLoggable{
     constructor(repository, user){
-        const logDir = path.join(__dirname, '..', 'storage', 'containers', user._id.toString(), repository._id.toString(), 'logs');
-        super(logDir, user._id);
+        super(repository._id, user._id);
         this.repository = repository;
         this.user = user;
         this.workingDir = `/app/github-repos/${repository._id}${repository.rootDirectory}`;

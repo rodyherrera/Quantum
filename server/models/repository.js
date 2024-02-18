@@ -120,7 +120,7 @@ const handleUpdateCommands = async (context) => {
                 populate: { path: 'github', select: 'accessToken username' }
             });
         const document = { user, name, deployments, buildCommand, 
-            installCommand, startCommand, rootDirectory };
+            installCommand, startCommand, rootDirectory, _id };
         const repository = new RepositoryHandler(document, user);
         const github = new Github(user, document);
         repository.start(github);
@@ -170,7 +170,6 @@ RepositorySchema.pre('save', async function(next){
         await this.updateUserAndRepository(deployment);
         next();
     }catch(error){
-        console.log(error);
         return next(error);
     }
 });
