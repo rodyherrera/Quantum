@@ -108,7 +108,8 @@ class UserContainer{
             Cmd: ['/bin/ash'],
             HostConfig: { 
                 Binds: [`${storagePath}:/app:rw`],
-                PublishAllPorts: true
+                // In future version, isolate the network.
+                NetworkMode: 'host'
             }
         });
     };
