@@ -14,7 +14,6 @@
 
 const Deployment = require('@models/deployment');
 const ContainerLoggable = require('@utilities/containerLoggable');
-const path = require('path');
 
 class RepositoryHandler extends ContainerLoggable{
     constructor(repository, user){
@@ -46,8 +45,7 @@ class RepositoryHandler extends ContainerLoggable{
             if(userContainers?.[this.repository._id]){
                 return userContainers[this.repository._id];
             }
-            const { instance } = userContainers;
-            const exec = await instance.exec({
+            const exec = await userContainers.instance.exec({
                 Cmd: ['/bin/ash'],
                 AttachStdout: true,
                 AttachStderr: true,
@@ -69,12 +67,24 @@ class RepositoryHandler extends ContainerLoggable{
     };
 
     async executeInteractiveShell(socket){
+        // If the instance has not been created, it means 
+        // that a request from the client to this part of 
+        // the code has been detected and the server is still 
+        // starting, so we will call the function again waiting 
+        // for "instance" to now be available. 
+        if(!global.userContainers[this.user._id]?.instance){
+            // Do this better in future versions.
+            setTimeout(() => {
+                this.executeInteractiveShell(socket);
+            }, 500);
+            return;
+        }
         const repositoryShell = await this.getOrCreateShell();
         this.setupSocketEvents(socket, repositoryShell);
     };
 
     setupSocketEvents(socket, repositoryShell){
-        socket.emit('history', '...');
+        socket.emit('history', this.getLog());
         socket.on('command', (command) => repositoryShell.write(command + '\n'));
         repositoryShell.on('data', (chunk) => socket.emit('response', chunk.toString('utf8')));
     };

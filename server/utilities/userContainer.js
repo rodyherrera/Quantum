@@ -14,7 +14,6 @@
 
 const Docker = require('dockerode');
 const ContainerLoggable = require('@utilities/containerLoggable');
-const path = require('path');
 
 class UserContainer extends ContainerLoggable{
     constructor(user){
