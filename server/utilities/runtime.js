@@ -12,6 +12,18 @@
  * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 ****/
 
+exports.cleanHostEnvironment = async () => {
+    console.log('[Quantum Cloud]: Cleaning up the host environment, shutting down user containers...');
+    const { userContainers } = global;
+    const totalContainers = Object.keys(userContainers).length;
+    console.log(`[Quantum Cloud]: ${totalContainers} active docker instances were detected in the runtime.`)
+    for(const userId in userContainers){
+        const container = userContainers[userId];
+        await container.instance.stop();
+    }
+    console.log('[Quantum Cloud]: Containers shut down successfully, safely shutting down the server...')
+};
+
 exports.filterObject = (object, ...fields) => {
     const filteredObject = {};
     Object.keys(object).forEach((key) =>

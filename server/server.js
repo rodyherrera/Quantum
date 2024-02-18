@@ -18,6 +18,7 @@ global.logStreamStore = {};
 global.userContainers = {};
 
 const { httpServer } = require('@config/express');
+const { cleanHostEnvironment } = require('@utilities/runtime');
 const mongoConnector = require('@utilities/mongoConnector');
 const bootstrap = require('@utilities/bootstrap');
 
@@ -25,6 +26,12 @@ require('@config/ws');
 
 const SERVER_PORT = process.env.SERVER_PORT || 8000;
 const SERVER_HOST = process.env.SERVER_HOSTNAME || '0.0.0.0';
+
+process.on('SIGINT', async () => {
+    console.log('[Quantum Cloud]: SIGINT signal received, shutting down...');
+    await cleanHostEnvironment();
+    process.exit(0);
+});
 
 httpServer.listen(SERVER_PORT, SERVER_HOST, async () => {
     await mongoConnector();
