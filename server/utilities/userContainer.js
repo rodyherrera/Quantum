@@ -36,6 +36,8 @@ class UserContainer extends ContainerLoggable{
         try{
             const existingContainer = await this.getExistingContainer();
             this.instance = existingContainer;
+            const containerInfo = await existingContainer.inspect();
+            if(containerInfo.State.Running) await existingContainer.restart();
             global.userContainers[this.user._id] = this;
             await this.installPackages();
         }catch(error){
