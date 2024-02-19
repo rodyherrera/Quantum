@@ -20,3 +20,9 @@
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); 
     grid-template-rows: repeat(3, minmax(100px, 1fr));
 }
+
+@media screen and (max-width: 768px){
+    .Related-Items-Container{
+        grid-template-columns: repeat(2, minmax(48%, 1fr));
+    }
+}
