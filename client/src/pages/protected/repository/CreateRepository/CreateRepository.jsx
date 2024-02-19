@@ -18,6 +18,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import DataRenderer from '@components/general/DataRenderer';
 import RepositoryBasicItem from '@components/repository/RepositoryBasicItem';
+import RelatedRepositorySections from '@components/repository/RelatedRepositorySections';
 import './CreateRepository.css';
 
 const CreateRepository = () => {
@@ -51,6 +52,7 @@ const CreateRepository = () => {
             operationLoadingMessage="We're cloning and adjusting parameters in your repository..."
             data={githubRepositories}
             emptyDataMessage='There are no repositories in your Github account.'
+            RightContainerComponent={RelatedRepositorySections}
             emptyDataBtn={{
                 title: 'Go to Github',
                 to: 'https://github.com/'

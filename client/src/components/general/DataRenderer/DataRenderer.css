@@ -12,10 +12,7 @@
  * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 ****/
 
-.Data-Renderer-Main{
-    padding: 2rem;
-    margin: 0 auto;
-    max-width: 1200px;
+.Data-Renderer-Main .Binary-View-Left-Container{
     display: flex;
     flex-direction: column;
     justify-content: center;
