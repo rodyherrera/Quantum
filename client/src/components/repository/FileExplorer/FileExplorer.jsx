@@ -67,6 +67,9 @@ const FileExplorer = ({ repositoryId }) => {
     useEffect(() => {
         const path = searchParams.get('path') || '/';
         loadPath(path);
+        return () => {
+            dispatch(setSelectedRepositoryFile(null));
+        };
     }, []);
 
     return isOperationLoading ? (
