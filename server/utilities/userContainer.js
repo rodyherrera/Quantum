@@ -15,10 +15,11 @@
 const Docker = require('dockerode');
 const ContainerLoggable = require('@utilities/containerLoggable');
 
+const docker = new Docker();
+
 class UserContainer extends ContainerLoggable{
     constructor(user){
         super(user._id, user._id);
-        this.docker = new Docker();
         this.user = user;
         this.dockerName = this.getUserDockerName();
         this.instance = null;
@@ -48,16 +49,16 @@ class UserContainer extends ContainerLoggable{
     };
 
     async getExistingContainer(){
-        const existingContainer = this.docker.getContainer(this.dockerName);
+        const existingContainer = docker.getContainer(this.dockerName);
         const { State } = await existingContainer.inspect();
         if(!State.Running) await existingContainer.start();
         return existingContainer;
     };
 
     async createContainer(imageName, storagePath){
-        return this.docker.createContainer({
+        return docker.createContainer({
             Image: imageName,
-            name: this.dockerName,
+            name: dockerName,
             Tty: true,
             OpenStdin: true,
             StdinOnce: true,
@@ -109,7 +110,7 @@ class UserContainer extends ContainerLoggable{
     };
 
     async checkIfImageExists(imageName){
-        const image = this.docker.getImage(imageName);
+        const image = docker.getImage(imageName);
         try{
             await image.inspect();
             return true;
@@ -125,11 +126,11 @@ class UserContainer extends ContainerLoggable{
         console.log(`[Quantum Cloud]: Pulling "${imageName}"...`);
         try{
             await new Promise((resolve, reject) => {
-                this.docker.pull(imageName, (error, stream) => {
+                docker.pull(imageName, (error, stream) => {
                     if(error){
                         reject(error);
                     }else{
-                        this.docker.modem.followProgress(stream, (fprogressError) => {
+                        docker.modem.followProgress(stream, (fprogressError) => {
                             if(fprogressError) reject(fprogressError);
                             else resolve();
                         });

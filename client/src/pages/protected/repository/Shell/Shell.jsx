@@ -42,14 +42,18 @@ const Shell = () => {
     useEffect(() => {
         if(!socket || !xterm) return;
         let commandBuffer = '';
+
         xterm.onKey(({ key, domEvent }) => {
             if(domEvent.keyCode === 13){
                 socket.emit('command', commandBuffer);
                 commandBuffer = '';
                 xterm.write('\r\n');
-            }else if(domEvent.keyCode === 8){
+            }else if (domEvent.keyCode === 8){
+                if(!commandBuffer.length) return;
                 commandBuffer = commandBuffer.slice(0, -1);
                 xterm.write('\b \b');
+            }else if (domEvent.key === 'ArrowUp' || domEvent.key === 'ArrowDown' || domEvent.key === 'ArrowLeft' || domEvent.key === 'ArrowRight'){
+                // Not yet implemented.
             }else{
                 commandBuffer += key;
                 xterm.write(key);
