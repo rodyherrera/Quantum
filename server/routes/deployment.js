@@ -21,7 +21,7 @@ const deploymentMiddleware = require('@middlewares/deployment');
 
 router.use(authMiddleware.protect);
 
-router.get('/repository/:repositoryAlias/', 
+router.get('/repository/:repositoryName/', 
     githubMiddleware.populateGithubAccount, 
     deploymentController.getRepositoryDeployments);
 
@@ -29,7 +29,7 @@ router.get('/repository/:repositoryAlias/environment/',
     githubMiddleware.populateGithubAccount, 
     deploymentController.getActiveDeploymentEnvironment);
 
-router.delete('/repository/:repositoryAlias/:deploymentId', 
+router.delete('/repository/:repositoryName/:deploymentId', 
     githubMiddleware.populateGithubAccount, 
     deploymentController.deleteGithubDeployment);
 

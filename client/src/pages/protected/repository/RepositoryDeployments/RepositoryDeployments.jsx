@@ -23,11 +23,12 @@ import './RepositoryDeployments.css';
 const RepositoryDeployments = () => {
     const dispatch = useDispatch();
     const { repositoryAlias } = useParams();
+    const { selectedRepository } = useSelector(state => state.repository);
     const { deployments, isLoading, isOperationLoading, error } = useSelector(state => state.deployment);
     const { user } = useSelector(state => state.auth);
 
     useEffect(() => {
-        dispatch(deploymentOperations.getRepositoryDeployments(repositoryAlias));
+        dispatch(deploymentOperations.getRepositoryDeployments(selectedRepository.name));
     }, []);
 
     return (
@@ -35,7 +36,7 @@ const RepositoryDeployments = () => {
             title='Deployments'
             id='Repository-Deployments-Main'
             error={error}
-            description={`Continuously generated from ${user.github.username}/${repositoryAlias}`}
+            description={`Continuously generated from ${user.github.username}/${selectedRepository.name}`}
             isLoading={isLoading}
             isOperationLoading={isOperationLoading}
             operationLoadingMessage='Processing, please wait a few seconds...'
@@ -58,7 +59,7 @@ const RepositoryDeployments = () => {
                     <DeploymentItem 
                         key={index} 
                         deployment={deployment} 
-                        repositoryAlias={repositoryAlias} />
+                        repository={selectedRepository} />
                 ))}
             </div>
         </DataRenderer>

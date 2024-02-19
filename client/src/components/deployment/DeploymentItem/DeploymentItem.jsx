@@ -21,7 +21,7 @@ import { formatDate } from '@utilities/runtime';
 import * as deploymentOperations from '@services/deployment/operations';
 import './DeploymentItem.css';
 
-const DeploymentItem = ({ deployment, repositoryAlias }) => {
+const DeploymentItem = ({ deployment, repository }) => {
     const dispatch = useDispatch();
 
     return (
@@ -47,7 +47,7 @@ const DeploymentItem = ({ deployment, repositoryAlias }) => {
                 </i>
                 <i 
                     className='Repository-Deployment-Delete-Icon'
-                    onClick={() => dispatch(deploymentOperations.deleteRepositoryDeployment(repositoryAlias, deployment.id))}
+                    onClick={() => dispatch(deploymentOperations.deleteRepositoryDeployment(repository.name, deployment.id))}
                 >
                     <RiDeleteBin7Line />
                 </i>

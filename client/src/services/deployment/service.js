@@ -16,12 +16,12 @@ import StandardizedAPIRequestBuilder from '@utilities/standardizedAPIRequestBuil
 export const DeploymentAPI = new StandardizedAPIRequestBuilder('/deployment');
 
 export const getRepositoryDeployments = DeploymentAPI.register({
-    path: '/repository/:repositoryAlias/',
+    path: '/repository/:repositoryName/',
     method: 'GET'
 });
 
 export const deleteRepositoryDeployment = DeploymentAPI.register({
-    path: '/repository/:repositoryAlias/:deploymentId',
+    path: '/repository/:repositoryName/:deploymentId',
     method: 'DELETE'
 });
 

@@ -17,23 +17,23 @@ import * as deploymentSlice from '@services/deployment/slice';
 import * as repositorySlice from '@services/repository/slice';
 import OperationHandler from '@utilities/operationHandler';
 
-export const getRepositoryDeployments = (repositoryAlias) => async (dispatch) => {
+export const getRepositoryDeployments = (repositoryName) => async (dispatch) => {
     const operation = new OperationHandler(deploymentSlice, dispatch);
     operation.use({
         api: deploymentService.getRepositoryDeployments,
         loaderState: deploymentSlice.setIsLoading,
         responseState: deploymentSlice.setDeployments,
-        query: { query: { params: { repositoryAlias } } }
+        query: { query: { params: { repositoryName } } }
     });
 };
 
-export const deleteRepositoryDeployment = (repositoryAlias, deploymentId) => async (dispatch) => {
+export const deleteRepositoryDeployment = (repositoryName, deploymentId) => async (dispatch) => {
     const operation = new OperationHandler(deploymentSlice, dispatch);
     operation.use({
         api: deploymentService.deleteRepositoryDeployment,
         loaderState: deploymentSlice.setIsOperationLoading,
         responseState: deploymentSlice.setDeployments,
-        query: { query: { params: { repositoryAlias, deploymentId } } }
+        query: { query: { params: { repositoryName, deploymentId } } }
     });
 };
 
