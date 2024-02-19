@@ -103,9 +103,10 @@ const MinimalForm = ({
             <div className='Minimal-Form-Right-Container'>
                 {relatedItems && (
                     <div className='Minimal-Form-Related-Container'>
-                        {relatedItems.map(({ title, icon, description }, index) => (
+                        {relatedItems.map(({ title, icon, description, to }, index) => (
                             <MinimalFormRelatedItem 
                                 title={title} 
+                                to={to}
                                 description={description}
                                 Icon={icon} 
                                 key={index} />

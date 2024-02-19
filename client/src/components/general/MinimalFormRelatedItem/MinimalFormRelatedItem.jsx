@@ -1,10 +1,12 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { IoIosArrowRoundForward } from 'react-icons/io';
+import { useNavigate } from 'react-router-dom';
 import './MinimalFormRelatedItem.css';
 
-const MinimalFormRelatedItem = ({ Icon, description, title }) => {
+const MinimalFormRelatedItem = ({ Icon, description, title, to }) => {
     const itemRef = useRef(null);
     const [isHover, setIsHover] = useState(false);
+    const navigate = useNavigate();
 
     useEffect(() => {
         if(!itemRef.current) return;
@@ -16,14 +18,10 @@ const MinimalFormRelatedItem = ({ Icon, description, title }) => {
         };
         itemRef.current.addEventListener('mouseenter', mouseEnterHandler);
         itemRef.current.addEventListener('mouseleave', mouseLeaveHandler);
-        return () => {
-            itemRef.current.removeEventListener('mouseenter', mouseEnterHandler);
-            itemRef.current.removeEventListener('mouseleave', mouseLeaveHandler);
-        };
     }, [itemRef]);
 
     return (
-        <div className='Minimal-Form-Related-Item' ref={itemRef}>
+        <div className='Minimal-Form-Related-Item' ref={itemRef} onClick={() => navigate(to)}>
             <div className='Minimal-Form-Related-Item-Header-Container'>
                 <i className='Minimal-Form-Related-Item-Header-Icon-Container'>
                     <Icon />

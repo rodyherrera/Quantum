@@ -33,6 +33,7 @@ const SetupDeployment = () => {
     };
 
     useEffect(() => {
+        console.log(selectedRepository);
         if(!selectedRepository)
             return navigate('/dashboard/');
     }, []);
@@ -55,22 +56,26 @@ const SetupDeployment = () => {
             { 
                 title: 'File Explorer', 
                 description: 'Explore and manage your files and folders directly from the browser.',
-                icon: CiServer 
+                icon: CiServer,
+                to: `/repository/${encodeURIComponent(selectedRepository.alias)}/storage/`
             },
             { 
                 title: 'Repository CLI', 
                 icon: GoTerminal,
-                description: 'Access and manage your GitHub repositories using a command line interface (CLI).'
+                description: 'Access and manage your GitHub repositories using a command line interface (CLI).',
+                to: `/repository/${encodeURIComponent(selectedRepository.alias)}/shell/`
             },
             { 
                 title: 'Environment Variables', 
                 icon: MdDataObject,
-                description: "Manage your application's environment variables, such as API keys and environment-specific settings."
+                description: "Manage your application's environment variables, such as API keys and environment-specific settings.",
+                to: `/repository/${encodeURIComponent(selectedRepository.alias)}/deployment/environment-variables/`
             },
             { 
                 title: 'Deployments', 
                 icon: IoIosGitBranch,
-                description: 'Get a list of all the deployments that currently exist in your repository.'
+                description: 'Get a list of all the deployments that currently exist in your repository.',
+                to: `/repository/${encodeURIComponent(selectedRepository.alias)}/deployments/`
             }
         ]}
         formInputs={[
