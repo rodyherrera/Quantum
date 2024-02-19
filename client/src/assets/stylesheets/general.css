@@ -97,3 +97,18 @@ main{
         font-size: 1.4vw;
     }
 }
+
+@media screen and (max-width: 768px){
+    .Binary-View-Container{
+        flex-direction: column;
+    }
+
+    .Binary-View-Left-Container,
+    .Binary-View-Right-Container{
+        width: 100%;
+    }
+
+    .Binary-View-Right-Container{
+        padding: 1rem 0;
+    }
+}
