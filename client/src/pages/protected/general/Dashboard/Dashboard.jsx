@@ -42,6 +42,7 @@ const Dashboard = () => {
         <DataRenderer
             title='Dashboard'
             error={error}
+            id='Dashboard-Main'
             description='The instances of your applications stored on the server.'
             isLoading={isLoading}
             isOperationLoading={isOperationLoading}

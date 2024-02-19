@@ -18,6 +18,17 @@
     gap: 2rem;
 }
 
+/*
+    TODO: Hack for <DataRenderer />. Implement this better in future versions.
+*/
+#Dashboard-Main .Binary-View-Left-Container{
+    width: 100%;
+}
+
+#Dashboard-Main .Binary-View-Right-Container{
+    display: none;
+}
+
 @media screen and (max-width: 768px){
     #Dashboard-Projects-Container{
         padding-bottom: 0;

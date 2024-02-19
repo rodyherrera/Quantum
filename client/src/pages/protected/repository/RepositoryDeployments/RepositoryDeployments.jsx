@@ -17,6 +17,7 @@ import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import DeploymentItem from '@components/deployment/DeploymentItem';
 import DataRenderer from '@components/general/DataRenderer';
+import RelatedRepositorySections from '@components/repository/RelatedRepositorySections';
 import * as deploymentOperations from '@services/deployment/operations';
 import './RepositoryDeployments.css';
 
@@ -41,6 +42,7 @@ const RepositoryDeployments = () => {
             isOperationLoading={isOperationLoading}
             operationLoadingMessage='Processing, please wait a few seconds...'
             data={deployments}
+            RightContainerComponent={RelatedRepositorySections}
             emptyDataMessage='There is no deployment registered in the repository.'
             emptyDataBtn={{
                 title: 'Create Deployment',
