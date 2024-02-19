@@ -85,8 +85,16 @@ class RepositoryHandler extends ContainerLoggable{
 
     setupSocketEvents(socket, repositoryShell){
         socket.emit('history', this.getLog());
-        socket.on('command', (command) => repositoryShell.write(command + '\n'));
-        repositoryShell.on('data', (chunk) => socket.emit('response', chunk.toString('utf8')));
+        socket.on('command', (command) => {
+            command = command + '\n';
+            repositoryShell.write(command);
+            this.appendLog(command);
+        });
+        repositoryShell.on('data', (chunk) => {
+            chunk = chunk.toString('utf8');
+            this.appendLog(chunk);
+            socket.emit('response', chunk);
+        });
     };
 
     async start(githubUtility){
@@ -119,6 +127,11 @@ class RepositoryHandler extends ContainerLoggable{
     };
 
     executeCommands(commands, formattedEnvironment, repositoryShell){
+        // Is this ok?
+        repositoryShell.on('data', (chunk) => {
+            chunk = chunk.toString('utf8');
+            this.appendLog(chunk);
+        });
         for(const command of commands){
             const formattedCommand = `${formattedEnvironment} ${command}\r\n`;
             repositoryShell.write(formattedCommand);

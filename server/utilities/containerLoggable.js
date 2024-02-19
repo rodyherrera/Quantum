@@ -24,7 +24,11 @@ class ContainerLoggable{
         this.logDir = path.join(__dirname, '..', 'storage', 'containers', userId.toString(), 'logs');
         this.userId = userId;
         this.logFile = path.join(this.logDir, `${logName}.log`);
-        this.logStream = this.createLogStream();
+        this.init();
+    };
+
+    async init(){
+        this.logStream = await this.createLogStream();
     };
 
     async createLogStream(){
@@ -43,9 +47,8 @@ class ContainerLoggable{
     };
 
     async appendLog(data){
-        await this.checkLogFileStatus();
-        const stream = await this.logStream;
-        stream.write(data);
+        //await this.checkLogFileStatus();
+        this.logStream.write(data);
     };
 
     async checkLogFileStatus(){
