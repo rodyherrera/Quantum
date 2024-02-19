@@ -27,7 +27,7 @@ const app = express();
 const httpServer = http.createServer(app);
 const io = socketIO(httpServer, { cors: { origin: process.env.CORS_ORIGIN } });
 
-bootstrap.standardizedBindingToApp({
+bootstrap.configureApp({
     app,
     suffix: '/api/v1/',
     routes: [
