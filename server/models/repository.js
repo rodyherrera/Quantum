@@ -72,7 +72,7 @@ const getAndDeleteDeployments = async (repositoryId) => {
 
 const performCleanupTasks = async (deletedDoc, repositoryUser, deployments) => {
     const repositoryHandler = new RepositoryHandler(deletedDoc, repositoryUser);
-    repositoryHandler.logStream.end();
+    // repositoryHandler.logStream.end();
     repositoryHandler.removeFromRuntime();
     // Use Github utility for cleanup
     await Github.deleteLogAndDirectory(
