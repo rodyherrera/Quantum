@@ -35,7 +35,6 @@ const parseError = (err) => {
 
 const errorHandler = (err, req, res, next) => {
     err.statusCode = err.statusCode || 500;
-    console.log(err);
     err.message = err.message || 'Server Error';
     const [ message, statusCode ] = parseError(err);
     res.status(statusCode).send({

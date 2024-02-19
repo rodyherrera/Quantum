@@ -5,6 +5,7 @@ import { IoIosGitBranch } from 'react-icons/io';
 import { GoTerminal } from 'react-icons/go';
 import { GrDeploy } from 'react-icons/gr';
 import { MdDataObject } from 'react-icons/md';
+import { SiGithubactions } from 'react-icons/si';
 import { useSelector } from 'react-redux';
 
 const RelatedRepositorySections = () => {
@@ -40,6 +41,12 @@ const RelatedRepositorySections = () => {
             icon: IoIosGitBranch,
             description: 'Get a list of all the deployments that currently exist in your repository.',
             to: `/repository/${encodeURIComponent(selectedRepository.alias)}/deployments/`
+        },
+        {
+            title: 'New Repository',
+            icon: SiGithubactions,
+            description: 'Deploy and configure a new repository within Quantum.',
+            to: `/repository/create`
         }
     ];
     

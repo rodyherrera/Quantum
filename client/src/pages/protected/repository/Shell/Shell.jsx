@@ -22,6 +22,7 @@ import { CircularProgress } from '@mui/material';
 import AnimatedMain from '@components/general/AnimatedMain'
 import Breadcrumbs from '@components/general/Breadcrumbs';
 import useWindowSize from '@hooks/useWindowSize';
+import RelatedRepositorySections from '@components/repository/RelatedRepositorySections';
 import 'xterm/css/xterm.css';
 import './Shell.css';
 
@@ -79,7 +80,6 @@ const Shell = () => {
             xterm.write(history);
         });
         socket.on('response', (response) => {
-            console.log(response);
             xterm.write(response)
         });
     }, [socket, xterm]);
@@ -104,33 +104,39 @@ const Shell = () => {
     }, []);
 
     return (
-        <AnimatedMain id='Repository-Shell-Main'>
-            <section id='Repository-Shell-Header-Container'>
-                <Breadcrumbs
-                    items={[
-                        { title: 'Home', to: '/' },
-                        { title: 'Dashboard', to: '/dashboard/' },
-                        { title: 'Repositories', to: '/dashboard/' },
-                        { title: repositoryAlias, to: '/dashboard/' },
-                        { title: 'Shell', to: `/repository/${repositoryAlias}/shell/` }
-                    ]}
-                />
-                <article id='Repository-Shell-Title-Container'>
-                    <h1 id='Repository-Shell-Title'>Advanced repository management</h1>
-                    <p id='Repository-Shell-Subtitle'>Interact with the root of your repository through the command line. <br /> A connection with the server will be initiated to manage communication.</p>
+        <AnimatedMain id='Repository-Shell-Main' className='Binary-View-Container'>
+            <section className='Binary-View-Left-Container'>
+                <article id='Repository-Shell-Header-Container'>
+                    <Breadcrumbs
+                        items={[
+                            { title: 'Home', to: '/' },
+                            { title: 'Dashboard', to: '/dashboard/' },
+                            { title: 'Repositories', to: '/dashboard/' },
+                            { title: repositoryAlias, to: '/dashboard/' },
+                            { title: 'Shell', to: `/repository/${repositoryAlias}/shell/` }
+                        ]}
+                    />
+                    <div id='Repository-Shell-Title-Container'>
+                        <h1 id='Repository-Shell-Title'>Advanced repository management</h1>
+                        <p id='Repository-Shell-Subtitle'>Interact with the root of your repository through the command line. <br /> A connection with the server will be initiated to manage communication.</p>
+                    </div>
+                </article>
+
+                <article id='Repository-Shell-Body-Container'>
+                    <div id='Repository-Shell'>
+                        {(isLoading) && (
+                            <aside id='Socket-Connection-Loading-Container'>
+                                <CircularProgress className='Circular-Progress' />
+                            </aside>
+                        )}
+
+                        <div ref={terminalRef} />
+                    </div>
                 </article>
             </section>
 
-            <section id='Repository-Shell-Body-Container'>
-                <article id='Repository-Shell'>
-                    {(isLoading) && (
-                        <aside id='Socket-Connection-Loading-Container'>
-                            <CircularProgress className='Circular-Progress' />
-                        </aside>
-                    )}
-
-                    <div ref={terminalRef} />
-                </article>
+            <section className='Binary-View-Right-Container'>
+                <RelatedRepositorySections />
             </section>
         </AnimatedMain>
     );

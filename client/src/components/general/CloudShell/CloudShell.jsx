@@ -108,7 +108,6 @@ const CloudShell = () => {
             xterm.write(history);
         });
         socket.on('response', (response) => {
-            console.log(response);
             xterm.write(response)
         });
     }, [socket, xterm]);

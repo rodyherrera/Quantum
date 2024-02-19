@@ -13,13 +13,13 @@
 ****/
 
 #Repository-Shell-Main{
+    height: unset;
+}
+
+#Repository-Shell-Main .Binary-View-Left-Container{
     display: flex;
     flex-direction: column;
-    padding: 1rem;
     gap: 1rem;
-    width: 70%;
-    height: unset;
-    margin: 0 auto;
 }
 
 .xterm .xterm-viewport,

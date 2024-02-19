@@ -30,7 +30,6 @@ const SetupDeployment = () => {
     };
 
     useEffect(() => {
-        console.log(selectedRepository);
         if(!selectedRepository)
             return navigate('/dashboard/');
     }, []);
