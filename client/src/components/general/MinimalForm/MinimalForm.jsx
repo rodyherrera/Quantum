@@ -16,7 +16,6 @@ import React, { useState, useEffect } from 'react';
 import Input from '@components/general/Input';
 import Button from '@components/general/Button';
 import Breadcrumbs from '@components/general/Breadcrumbs';
-import MinimalFormRelatedItem from '@components/general/MinimalFormRelatedItem';
 import AnimatedMain from '@components/general/AnimatedMain'
 import { BiErrorCircle } from 'react-icons/bi';
 import { BsArrowRight } from 'react-icons/bs';
@@ -30,7 +29,7 @@ const MinimalForm = ({
     formInputs,
     submitButtonTitle,
     handleFormSubmit,
-    relatedItems = null,
+    RightContainerComponent = null,
     breadcrumbsItems = null,
     isLoading = false
 }) => {
@@ -101,18 +100,7 @@ const MinimalForm = ({
             </div>
 
             <div className='Minimal-Form-Right-Container'>
-                {relatedItems && (
-                    <div className='Minimal-Form-Related-Container'>
-                        {relatedItems.map(({ title, icon, description, to }, index) => (
-                            <MinimalFormRelatedItem 
-                                title={title} 
-                                to={to}
-                                description={description}
-                                Icon={icon} 
-                                key={index} />
-                        ))}
-                    </div>
-                )}
+                {RightContainerComponent && <RightContainerComponent />}
             </div>
         </AnimatedMain>
     );

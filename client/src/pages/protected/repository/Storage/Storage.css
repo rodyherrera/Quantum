@@ -12,15 +12,11 @@
  * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 ****/
 
-#Repository-Storage-Main{
+#Repository-Storage-Main .Binary-View-Left-Container{
     display: flex;
     justify-content: center;
     flex-direction: column;
-    max-width: 1000px;
-    height: auto;
     gap: 1rem;
-    margin: 0 auto;
-    padding: 1rem;
 }
 
 #Repository-Storage-Header-Title-Container{

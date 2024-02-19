@@ -1,0 +1,8 @@
+.Related-Items-Container{
+    overflow-y: scroll;
+    padding: 1px;
+    display: grid;
+    grid-gap: 2px;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); 
+    grid-template-rows: repeat(3, minmax(100px, 1fr));
+}

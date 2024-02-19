@@ -75,6 +75,23 @@ main{
     height: calc(100% - 140px);
 }
 
+.Binary-View-Container{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 2rem;
+    margin: 1rem 0;
+}
+
+.Binary-View-Left-Container{
+    width: 60%;
+}
+
+.Binary-View-Right-Container{
+    width: 40%;
+    padding: 2rem;
+}
+
 @media screen and (min-width: 768px) and (max-width: 1366px){
     i{
         font-size: 1.4vw;

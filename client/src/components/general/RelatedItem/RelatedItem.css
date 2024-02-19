@@ -1,4 +1,4 @@
-.Minimal-Form-Related-Item{
+.Related-Item-Container{
     padding: .5rem 1rem;
     outline: 1px solid #e0e0e0;
     backdrop-filter: blur(2px);
@@ -10,32 +10,32 @@
     justify-content: space-between;
 }
 
-.Minimal-Form-Related-Item:hover{
+.Related-Item-Container:hover{
     outline-color: #0f62fe;
 }
 
-.Minimal-Form-Related-Item-Footer-Left-Description{
+.Related-Item-Footer-Left-Description{
     font-size: .8rem;
 }
 
-.Minimal-Form-Related-Item-Header-Icon-Container{
+.Related-Item-Header-Icon-Container{
     font-size: 1.7rem;
 }
 
-.Minimal-Form-Related-Item-Header-Container{
+.Related-Item-Header-Container{
     width: 100%;
     display: flex;
     justify-content: space-between;
 }
 
-.Minimal-Form-Related-Item-Footer-Container{
+.Related-Item-Footer-Container{
     display: flex;
     width: 100%;
     justify-content: space-between;
     align-items: center;
 }
 
-@keyframes Minimal-Form-Item-Fade{
+@keyframes Related-Item-Fade{
     from{
         opacity: 0;
     }
@@ -44,9 +44,9 @@
     }
 }
 
-.Minimal-Form-Related-Item-Footer-Left-Title,
-.Minimal-Form-Related-Item-Footer-Left-Description{
-    animation: Minimal-Form-Item-Fade .1s ease-in-out;
+.Related-Item-Footer-Left-Title,
+.Related-Item-Footer-Left-Description{
+    animation: Related-Item-Fade .1s ease-in-out;
     overflow: hidden;
     display: -webkit-box;
     -webkit-line-clamp: 3;
@@ -54,11 +54,11 @@
     -webkit-box-orient: vertical;
 }
 
-.Minimal-Form-Related-Item-Footer-Left-Title{
+.Related-Item-Footer-Left-Title{
     font-size: .95rem;
     font-weight: 400;
 }
 
-.Minimal-Form-Related-Item-Footer-Right-Icon-Container{
+.Related-Item-Footer-Right-Icon-Container{
     font-size: 1.6rem;
 }
