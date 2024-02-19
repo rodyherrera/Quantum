@@ -24,7 +24,7 @@
     justify-content: space-between;
     height: 79px;
     border-bottom: 1px solid #000000;
-    background-color: #f5f5f5;
+    backdrop-filter: blur(4px);
     width: 100%;
 }
 
