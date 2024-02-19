@@ -14,13 +14,20 @@
 
 .Minimal-Form-Container{
     padding: 1rem 2rem;
-    gap: 2rem;
     height: calc(100% - 139px);
+    display: flex;
+    justify-content: space-between;
+}
+
+.Minimal-Form-Left-Container{
+    gap: 2rem;
     justify-content: center;
+    height: 100%;
+    width: 60%;
 }
 
 .Minimal-Form-Title-Container,
-.Minimal-Form-Container,
+.Minimal-Form-Left-Container,
 .Minimal-Form-Body-Container,
 .Minimal-Form-Header-Container{
     display: flex;
@@ -59,8 +66,22 @@
     color: #272727;
 }
 
+.Minimal-Form-Right-Container{
+    padding: 2rem;
+    width: 40%;
+}
+
+.Minimal-Form-Related-Container{
+    overflow-y: scroll;
+    padding: 1px;
+    display: grid;
+    grid-gap: 2px;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); 
+    grid-template-rows: repeat(3, minmax(100px, 1fr));
+}
+
 .Minimal-Form-Body-Container{
-    max-width: 40%;
+    max-width: 70%;
     overflow-y: scroll;
     max-height: 75%;
     padding: 1px 1.5rem 1px 1px;
@@ -76,6 +97,16 @@
 @media screen and (max-width: 768px){
     .Minimal-Form-Container{
         padding: 1rem;
+        flex-direction: column;
+    }
+
+    .Minimal-Form-Left-Container,
+    .Minimal-Form-Right-Container{
+        width: 100%;
+    }
+
+    .Minimal-Form-Right-Container{
+        padding: 1rem 0;
     }
 
     .Minimal-Form-Error-Container{

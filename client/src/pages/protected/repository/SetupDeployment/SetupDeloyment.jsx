@@ -16,6 +16,10 @@ import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateRepository } from '@services/repository/operations';
+import { CiServer } from 'react-icons/ci';
+import { IoIosGitBranch } from 'react-icons/io';
+import { GoTerminal } from 'react-icons/go';
+import { MdDataObject } from 'react-icons/md';
 import MinimalForm from '@components/general/MinimalForm';
 import './SetupDeployment.css';
 
@@ -46,6 +50,28 @@ const SetupDeployment = () => {
             { title: 'Repositories', to: '/dashboard/' },
             { title: selectedRepository.name, to: '/dashboard/' },
             { title: 'Build & Dev Settings', to: `/repository/${selectedRepository.name}/deployment/setup/` }
+        ]}
+        relatedItems={[
+            { 
+                title: 'File Explorer', 
+                description: 'Explore and manage your files and folders directly from the browser.',
+                icon: CiServer 
+            },
+            { 
+                title: 'Repository CLI', 
+                icon: GoTerminal,
+                description: 'Access and manage your GitHub repositories using a command line interface (CLI).'
+            },
+            { 
+                title: 'Environment Variables', 
+                icon: MdDataObject,
+                description: "Manage your application's environment variables, such as API keys and environment-specific settings."
+            },
+            { 
+                title: 'Deployments', 
+                icon: IoIosGitBranch,
+                description: 'Get a list of all the deployments that currently exist in your repository.'
+            }
         ]}
         formInputs={[
             {
