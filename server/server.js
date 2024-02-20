@@ -45,10 +45,14 @@ process.on('SIGINT', async () => {
 });
 
 httpServer.listen(SERVER_PORT, SERVER_HOST, async () => {
-    bootstrap.validateEnvironmentVariables();
-    await mongoConnector();
-    console.log('[Quantum Cloud]: Docker containers and user applications will be started. This may take a few minutes...');
-    await bootstrap.loadUserContainers();
-    await bootstrap.initializeRepositories();
-    console.log(`[Quantum Cloud]: Server running at http://${SERVER_HOST}:${SERVER_PORT}/.`);
+    try{
+        bootstrap.validateEnvironmentVariables();
+        await mongoConnector();
+        console.log('[Quantum Cloud]: Docker containers and user applications will be started. This may take a few minutes...');
+        await bootstrap.loadUserContainers();
+        await bootstrap.initializeRepositories();
+        console.log(`[Quantum Cloud]: Server running at http://${SERVER_HOST}:${SERVER_PORT}/.`);
+    }catch(error){
+        console.error('[Quantum Cloud]: Error during server initialization:', error);
+    }
 });

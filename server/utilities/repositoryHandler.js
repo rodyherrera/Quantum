@@ -28,7 +28,7 @@ class RepositoryHandler extends ContainerLoggable{
             const userContainers = global.userContainers[this.user._id];
             if(userContainers && userContainers[this.repository._id]){
                 const shellStream = userContainers[this.repository._id];
-                shellStream.write('\x03')
+                shellStream.write('\x03');
                 await shellStream.end();
                 delete userContainers[this.repository._id];
             }
@@ -65,17 +65,8 @@ class RepositoryHandler extends ContainerLoggable{
     };
 
     async executeInteractiveShell(socket){
-        // If the instance has not been created, it means 
-        // that a request from the client to this part of 
-        // the code has been detected and the server is still 
-        // starting, so we will call the function again waiting 
-        // for "instance" to now be available. 
-        if(!global.userContainers[this.user._id]?.instance){
-            // Do this better in future versions.
-            setTimeout(() => {
-                this.executeInteractiveShell(socket);
-            }, 500);
-            return;
+        while(!global.userContainers[this.user._id]?.instance){
+            await new Promise(resolve => setTimeout(resolve, 500));
         }
         const repositoryShell = await this.getOrCreateShell();
         this.setupSocketEvents(socket, repositoryShell);

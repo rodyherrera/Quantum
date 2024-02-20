@@ -94,6 +94,8 @@ UserSchema.methods.deleteAssociatedData = async function(){
     await fs.promises.rm(`${__dirname}/../storage/containers/${this._id}/logs/${this._id}.log`);
     await this.model('Github').findOneAndRemove({ user: this._id });
     await this.model('Deployment').deleteMany({ user: this._id });
+    const container = globals.userContainers[this._id];
+    await container.remove();
 };
 
 UserSchema.post('findOneAndDelete', async function(next){

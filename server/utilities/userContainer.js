@@ -17,8 +17,6 @@ const ContainerLoggable = require('@utilities/containerLoggable');
 
 const docker = new Docker();
 
-// create container when user created.
-
 class UserContainer extends ContainerLoggable{
     constructor(user){
         super(user._id, user._id);
@@ -31,6 +29,22 @@ class UserContainer extends ContainerLoggable{
         const userId = this.user._id.toString();
         const formattedUserId = userId.replace(/[^a-zA-Z0-9_.-]/g, '_');
         return process.env.DOCKERS_CONTAINER_ALIASES + '-' + formattedUserId;
+    };
+
+    async remove(){
+        try{
+            const existingContainer = docker.getContainer(this.dockerName);
+            if(existingContainer){
+                await existingContainer.stop();
+                await existingContainer.remove({ force: true });
+                delete global.userContainers[this.user._id];
+                console.log(`[Quantum Cloud]: Container ${this.dockerName} removed successfully.`);
+            }else{
+                console.log(`[Quantum Cloud]: Container ${this.dockerName} does not exist.`);
+            }
+        }catch(error){
+            this.criticalErrorHandler('removeContainer', error);
+        }
     };
 
     async start(){
