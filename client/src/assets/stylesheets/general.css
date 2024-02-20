@@ -101,7 +101,7 @@ main{
 @media screen and (max-width: 768px){
     .Binary-View-Container{
         flex-direction: column;
-        padding: 0 1rem;
+        padding: 0 1rem !important;
     }
 
     .Binary-View-Left-Container,

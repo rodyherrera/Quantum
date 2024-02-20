@@ -12,6 +12,10 @@
  * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 ****/
 
+#Repository-Storage-Main{
+    height: unset;
+}
+
 #Repository-Storage-Main .Binary-View-Left-Container{
     display: flex;
     justify-content: center;
@@ -32,4 +36,10 @@
 #Repository-Storage-Header-Description{
     font-size: 1rem;
     width: 80%;
+}
+
+@media screen and (max-width: 768px){
+    #Repository-Storage-Header-Description{
+        width: 100%;
+    }
 }

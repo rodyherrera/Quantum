@@ -18,7 +18,6 @@
     display: grid;
     grid-gap: .8rem;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); 
-    grid-template-rows: repeat(3, minmax(100px, 1fr));
 }
 
 @media screen and (max-width: 768px){

@@ -103,6 +103,12 @@
 }
 
 @media screen and (max-width: 768px){
+    .Button.Mobile-Max-Expand{
+        width: 100%;
+        border-radius: 3rem;
+        gap: 1rem;
+    }
+
     .Button{
         padding: .5rem .8rem;
     }

@@ -105,6 +105,7 @@
     }
 
     .Minimal-Form-Body-Container{
+        padding: 1px;
         max-width: 100%;
     }
 
