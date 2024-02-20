@@ -31,7 +31,7 @@ exports.configureApp = ({ app, routes, suffix, middlewares, settings }) => {
 };
 
 exports.restartServer = async () => {
-    // "stdio: 'inherit'" -> Inherit standard flows from the main process
+    // "stdio: 'inherit'" -> Inherit standard flows from the main process.
     const childProcess = spawn('npm', ['run', 'start'], { stdio: 'inherit' });
     childProcess.on('close', (code) => {
         console.log(`[Quantum Cloud]: Server process exited with code ${code}.`);
@@ -72,6 +72,46 @@ exports.initializeRepositories = async () => {
     }catch(error){
         console.log('[Quantum Cloud] CRITICAL ERROR (at @utilities/bootstrap - initializeRepositories):', error);
     }
+};
+
+exports.validateEnvironmentVariables = () => {
+    const requiredVariables = [
+        { name: 'NODE_ENV', validation: /^(development|production)$/i, errorMessage: 'NODE_ENV must be one of "development", "production", or "test".' },
+        { name: 'DOCKERS_CONTAINER_ALIASES' },
+        { name: 'DOMAIN', validation: /^http(s)?:\/\/\S+$/, errorMessage: 'DOMAIN must be a valid URL starting with "http://" or "https://"' },
+        { name: 'SECRET_KEY' },
+        { name: 'REGISTRATION_DISABLED', validation: /^(true|false)$/i, errorMessage: 'REGISTRATION_DISABLED must be either "true" or "false".' },
+        { name: 'CLIENT_HOST', validation: /^http(s)?:\/\/\S+$/, errorMessage: 'CLIENT_HOST must be a valid URL starting with "http://" or "https://"' },
+        { name: 'SERVER_PORT', validation: /^\d+$/, errorMessage: 'SERVER_PORT must be a valid port number between 1 and 65535.' },
+        { name: 'SERVER_HOSTNAME' },
+        { name: 'SESSION_SECRET' },
+        { name: 'GITHUB_CLIENT_ID' },
+        { name: 'GITHUB_CLIENT_SECRET' },
+        { name: 'JWT_EXPIRATION_DAYS', validation: /^(\d+d|\d+h)$/i, errorMessage: 'JWT_EXPIRATION_DAYS must be in the format of "Xd" for days or "Xh" for hours, where X is a number.' },
+        { name: 'CORS_ORIGIN' },
+        { name: 'PRODUCTION_DATABASE' },
+        { name: 'DEVELOPMENT_DATABASE' },
+        { name: 'LOG_PATH_MAX_SIZE', validation: /^\d+$/, errorMessage: 'LOG_PATH_MAX_SIZE must be a positive integer representing size in kilobytes.' },
+        { name: 'MONGO_URI', validation: /^mongodb(?:\+srv)?:\/\/\S+$/, errorMessage: 'MONGO_URI must be a valid MongoDB connection URI.' }
+    ];
+
+    const missingVariables = [];
+    requiredVariables.forEach((variable) => {
+        if(!(variable.name in process.env)){
+            missingVariables.push(variable.name);
+        }else if(variable.validation && !variable.validation.test(process.env[variable.name])){
+            console.error(`[Quantum Cloud]: ${variable.errorMessage}`);
+            process.exit(1);
+        }
+    });
+    
+    if(missingVariables.length > 0){
+        console.error('[Quantum Cloud]: The following environment variables are missing:');
+        console.error(missingVariables.join(', '));
+        process.exit(1);
+    }
+
+    console.log('[Quantum Cloud]: All environment variables are present and valid. Continuing with the server initialization.');
 };
 
 module.exports = exports;

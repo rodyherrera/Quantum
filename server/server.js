@@ -45,6 +45,7 @@ process.on('SIGINT', async () => {
 });
 
 httpServer.listen(SERVER_PORT, SERVER_HOST, async () => {
+    bootstrap.validateEnvironmentVariables();
     await mongoConnector();
     console.log('[Quantum Cloud]: Docker containers and user applications will be started. This may take a few minutes...');
     await bootstrap.loadUserContainers();
