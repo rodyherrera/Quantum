@@ -58,7 +58,7 @@ class UserContainer extends ContainerLoggable{
     async createContainer(imageName, storagePath){
         return docker.createContainer({
             Image: imageName,
-            name: dockerName,
+            name: this.dockerName,
             Tty: true,
             OpenStdin: true,
             StdinOnce: true,

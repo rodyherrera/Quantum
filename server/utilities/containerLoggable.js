@@ -12,12 +12,11 @@
  * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 ****/
 
-const fs = require('fs').promises;
+const fs = require('fs');
 const path = require('path');
 const util = require('util');
 const stat = util.promisify(fs.stat);
 const truncate = util.promisify(fs.truncate);
-const { createWriteStream, existsSync, exists } = require('fs');
 
 class ContainerLoggable{
     constructor(logName, userId){
@@ -38,7 +37,7 @@ class ContainerLoggable{
                 delete global.logStreamStore[this.userId];
             }
             await this.ensureDirectoryExists(this.logDir);
-            const stream = createWriteStream(this.logFile);
+            const stream = fs.createWriteStream(this.logFile);
             global.logStreamStore[this.userId] = stream;
             return stream;
         }catch(error){
@@ -47,7 +46,7 @@ class ContainerLoggable{
     };
 
     async appendLog(data){
-        //await this.checkLogFileStatus();
+        await this.checkLogFileStatus();
         this.logStream.write(data);
     };
 
@@ -63,10 +62,10 @@ class ContainerLoggable{
 
     async ensureDirectoryExists(directoryPath){
         try{
-            await fs.access(directoryPath);
+            await fs.promises.access(directoryPath);
         }catch(error){
             if(error.code === 'ENOENT'){
-                await fs.mkdir(directoryPath, { recursive: true });
+                await fs.promises.mkdir(directoryPath, { recursive: true });
             }else{
                 throw error;
             }
@@ -75,8 +74,8 @@ class ContainerLoggable{
 
     async getLog(){
         try{
-            if(!existsSync(this.logFile)) return '';
-            const content = await fs.readFile(this.logFile);
+            if(!fs.existsSync(this.logFile)) return '';
+            const content = await fs.promises.readFile(this.logFile);
             return content.toString();
         }catch(error){
             console.error('[Quantum Cloud] (at @utilities/userContainer - getLog):', error);
