@@ -27,6 +27,17 @@ require('@config/ws');
 const SERVER_PORT = process.env.SERVER_PORT || 8000;
 const SERVER_HOST = process.env.SERVER_HOSTNAME || '0.0.0.0';
 
+process.on('uncaughtException', async (err) => {
+    console.error('[Quantum Cloud]: Uncaught Exception:', err);
+    await cleanHostEnvironment();
+    console.log('[Quantum Cloud]: Restarting server...');
+    await bootstrap.restartServer();
+});
+
+process.on('unhandledRejection', (reason) => {
+    console.error('[Quantum Cloud]: Unhandled Promise Rejection, reason:', reason);
+});
+
 process.on('SIGINT', async () => {
     console.log('[Quantum Cloud]: SIGINT signal received, shutting down...');
     await cleanHostEnvironment();

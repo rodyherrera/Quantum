@@ -18,6 +18,7 @@ const Github = require('@utilities/github');
 const UserContainer = require('@utilities/userContainer');
 const RepositoryHandler = require('@utilities/repositoryHandler');
 const { capitalizeToLowerCaseWithDelimitier } = require('@utilities/algorithms');
+const { spawn } = require('child_process');
 
 exports.configureApp = ({ app, routes, suffix, middlewares, settings }) => {
     middlewares.forEach((middleware) => app.use(middleware));
@@ -27,6 +28,14 @@ exports.configureApp = ({ app, routes, suffix, middlewares, settings }) => {
         app.use(path, router);
     });
     settings.deactivated.forEach((deactivated) => app.disabled(deactivated));
+};
+
+exports.restartServer = async () => {
+    // "stdio: 'inherit'" -> Inherit standard flows from the main process
+    const childProcess = spawn('npm', ['run', 'start'], { stdio: 'inherit' });
+    childProcess.on('close', (code) => {
+        console.log(`[Quantum Cloud]: Server process exited with code ${code}.`);
+    });
 };
 
 exports.loadUserContainers = async () => {
