@@ -17,6 +17,8 @@ const ContainerLoggable = require('@utilities/containerLoggable');
 
 const docker = new Docker();
 
+// create container when user created.
+
 class UserContainer extends ContainerLoggable{
     constructor(user){
         super(user._id, user._id);

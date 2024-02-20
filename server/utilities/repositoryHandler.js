@@ -21,8 +21,6 @@ class RepositoryHandler extends ContainerLoggable{
         this.repository = repository;
         this.user = user;
         this.workingDir = `/app/github-repos/${repository._id}${repository.rootDirectory}`;
-        this.exec = null;
-        this.stream = null;
     };
 
     async stopAndRemoveShell(){
@@ -83,8 +81,8 @@ class RepositoryHandler extends ContainerLoggable{
         this.setupSocketEvents(socket, repositoryShell);
     };
 
-    setupSocketEvents(socket, repositoryShell){
-        socket.emit('history', this.getLog());
+    async setupSocketEvents(socket, repositoryShell){
+        socket.emit('history', await this.getLog());
         socket.on('command', (command) => {
             command = command + '\n';
             repositoryShell.write(command);

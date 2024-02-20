@@ -37,7 +37,7 @@ class ContainerLoggable{
                 delete global.logStreamStore[this.userId];
             }
             await this.ensureDirectoryExists(this.logDir);
-            const stream = fs.createWriteStream(this.logFile);
+            const stream = fs.createWriteStream(this.logFile, { flags: 'a' });
             global.logStreamStore[this.userId] = stream;
             return stream;
         }catch(error){
