@@ -48,6 +48,7 @@ const Header = () => {
                     <div className='Header-Links-Right-Container'>
                         {(isAuthenticated) && (
                             <React.Fragment>
+                                <IconLink title='My Account' to='/auth/account/' />
                                 <IconLink title='Cloud Console' onClick={() => dispatch(setIsCloudConsoleEnabled(!isCloudConsoleEnabled))} />
                             </React.Fragment>
                         )}

@@ -15,11 +15,13 @@
 import github from './github';
 import repository from './repository';
 import general from './general';
+import authentication from './authentication';
 
 const pages = {
     github,
     repository,
-    general
+    general,
+    authentication
 };
 
 export default pages;
