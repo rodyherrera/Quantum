@@ -54,5 +54,6 @@ httpServer.listen(SERVER_PORT, SERVER_HOST, async () => {
         console.log(`[Quantum Cloud]: Server running at http://${SERVER_HOST}:${SERVER_PORT}/.`);
     }catch(error){
         console.error('[Quantum Cloud]: Error during server initialization:', error);
+        process.exit(1);
     }
 });

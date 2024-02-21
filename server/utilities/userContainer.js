@@ -14,6 +14,8 @@
 
 const Docker = require('dockerode');
 const ContainerLoggable = require('@utilities/containerLoggable');
+const path = require('path');
+const fs = require('fs').promises;
 
 const docker = new Docker();
 
@@ -23,12 +25,13 @@ class UserContainer extends ContainerLoggable{
         this.user = user;
         this.dockerName = this.getUserDockerName();
         this.instance = null;
+        this.storagePath = path.join(__dirname, '../storage/containers', this.user._id.toString());
     };
 
     getUserDockerName(){
         const userId = this.user._id.toString();
         const formattedUserId = userId.replace(/[^a-zA-Z0-9_.-]/g, '_');
-        return process.env.DOCKERS_CONTAINER_ALIASES + '-' + formattedUserId;
+        return `${process.env.DOCKERS_CONTAINER_ALIASES}-${formattedUserId}`;
     };
 
     async remove(){
@@ -37,6 +40,7 @@ class UserContainer extends ContainerLoggable{
             if(existingContainer){
                 await existingContainer.stop();
                 await existingContainer.remove({ force: true });
+                await fs.rm(this.storagePath, { recursive: true });
                 delete global.userContainers[this.user._id];
                 console.log(`[Quantum Cloud]: Container ${this.dockerName} removed successfully.`);
             }else{
@@ -51,8 +55,6 @@ class UserContainer extends ContainerLoggable{
         try{
             const existingContainer = await this.getExistingContainer();
             this.instance = existingContainer;
-            const containerInfo = await existingContainer.inspect();
-            if(containerInfo.State.Running) await existingContainer.restart();
             global.userContainers[this.user._id] = this;
             await this.installPackages();
         }catch(error){
@@ -82,7 +84,8 @@ class UserContainer extends ContainerLoggable{
             HostConfig: { 
                 Binds: [`${storagePath}:/app:rw`],
                 // In future version, isolate the network.
-                NetworkMode: 'host'
+                NetworkMode: 'host',
+                RestartPolicy: { Name: 'no' }
             }
         });
     };

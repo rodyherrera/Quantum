@@ -16,7 +16,7 @@ const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcryptjs');
 const TextSearch = require('mongoose-partial-search');
-const fs = require('fs');
+const UserContainer = require('@utilities/userContainer');
 
 const UserSchema = new mongoose.Schema({
     username: {
@@ -91,18 +91,20 @@ UserSchema.plugin(TextSearch);
 UserSchema.index({ username: 'text', fullname: 'text', email: 'text' });
 
 UserSchema.post('findOneAndDelete', async function(){
-    const user = this._conditions; // Obtenemos las condiciones de la consulta
-    // delete if exists
-    //await fs.promises.rm(`${__dirname}/../storage/containers/${user._id}/logs/${user._id}.log`);
+    const user = this._conditions;
     await mongoose.model('Github').findOneAndDelete({ user: user._id });
     await mongoose.model('Deployment').deleteMany({ user: user._id });
     await mongoose.model('Repository').deleteMany({ user: user._id });
     const container = global.userContainers[user._id];
-    if(container) await container.remove();
+    await container.remove();
 });
 
 UserSchema.pre('save', async function(next){
     try{
+        if(this.isNew){
+            const container = new UserContainer(this);
+            await container.start();
+        }
         if(!this.isModified('password')) return next();
         this.username = this.username.replace(/\s/g, '');
         this.password = await bcrypt.hash(this.password, 12);
