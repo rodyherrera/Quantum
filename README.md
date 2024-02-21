@@ -73,6 +73,7 @@ While Quantum offers a panel for configuring commands such as installing depende
 - **Repository Command Line Interface (CLI):** Each deployed repository comes with its own CLI for monitoring execution output (logs) and executing specific commands.
 - **File Explorer:** Make local changes within your repository without requiring a GitHub commit or application redeployment. Changes are overwritten upon subsequent commits.
 - **Command Panel:** Configure commands such as dependency installation, source code building, and software startup within a dedicated panel.
+- **Deployment Isolation:** Each user has an associated docker instance, where all their deployments will be created in that instance.
 - **Environment Variable Management:** Manage environment variables associated with your deployment, with automatic mapping of variables upon repository cloning. Create, delete, and modify variables as needed.
 - **Continuous deployment:** When a commit is made to the repository within Github, it is automatically redeployed to Quantum.
 - **Service Status:** You can check the status of the server through the web-ui. It will determine if the server is working in optimal conditions or if it is overloaded.
@@ -135,10 +136,15 @@ Inside the "server" folder, there is the source code of the application that pro
 # NODE_ENV: Defines the server execution environment. 
 NODE_ENV = development
 
+# DOCKERS_CONTAINER_ALIASES: The content of the variable will indicate 
+# the value that will be concatenated at the beginning of each container 
+# name that is created for a specific user. Changing this value after 
+# having already deployed and having your database with users can cause problems. 
+# This value is the way to determine which container belongs to Quantum.
+DOCKERS_CONTAINER_ALIASES = Quantum-Container
+
 # DOMAIN: Specifies the base domain of the server. This is the 
 # main access point for the application.
-# IMPORTANT: THIS SHOULD MATCH THE: "Authorization callback URL" 
-# WHEN YOU REGISTER YOUR APP.
 DOMAIN = www.backend-domain.com
 
 # SECRET_KEY: Secret key used for encrypting 
@@ -282,10 +288,25 @@ When deploying Quantum, you must use this CLI, since user registration for secur
 
 ![Quantum CLI](/screenshots/QuantumCLI.png)
 
-### Inside the future
-As mentioned in the previous section, the platform default in the .env file located in "server/" establishes that the registration of new user accounts is disabled, this is because each user will be able to execute commands through the "Cloud Shell" or through the CLI provided by each repository deployed directly on the server where Quantum is hosted. This means that, if you use the platform in production, having user registration enabled will be synonymous with "hello, create an account and destroy my server".
+### How does this work?
 
-To solve this problem, and allow multiple users to have their account on Quantum without compromising the integrity of the server, a Docker instance will be associated with each user who registers on the platform. In this way, when the user through the web-ui will have the "Cloud Shell", he will execute commands directly in his Docker instance and not in the host server, in the same way it will apply to the CLI of the deployed repositories, these will be cloned and deployed within the user's Docker instance, the commands that the user executes as well as those executed when deploying the repository will be executed within the Docker instance and not within the host server.
+When you create an account on Quantum, a Docker instance is spawned within the host server, using the 'alpine:linux' image. Each user is allocated a dedicated Docker instance where their logs and repositories are stored and executed. This setup ensures isolation between users, enabling precise control over their deployments and management.
 
-For now, you can use this in production with user registration disabled. You can create users through the CLI ;). In any case, you should not activate this option unless you want to start a hosting company.
+When a user initiates the creation of a repository or deployment, they select it from the list of public or private repositories associated with their account. The chosen repository is then cloned into their Docker instance. Subsequently, in the web UI, they are directed to the "Build & Dev Settings" page. Here, they configure essential commands for deploying the repository, such as installation, build, and start commands.
 
+Additionally, users have the option to modify the "rootDirectory" parameter, specifying the directory within their repository where these commands should be executed. This is particularly useful if their application is not located in the root directory ("/") of their repository.
+
+Once these parameters are configured, the deployment is created in Quantum and registered in their GitHub repository. A webhook is automatically generated in their repository to listen for commits. Consequently, whenever a commit is made, the repository is redeployed automatically, ensuring seamless updates.
+
+Upon cloning the repository, Quantum initiates a mapping process for environment files. Any environment files detected are then loaded into the database. This preemptive action ensures that project variables are readily available, eliminating the need for manual creation. Users retain the flexibility to modify, add, or delete environment variables as needed.
+
+In addition to accessing the CLI and viewing the deployment log of your repository, which allows you to execute commands directly within your repository instance, you also have access to the "Cloud Console". This feature enables you to execute commands within your Docker instance. It proves useful when you require the installation of additional packages for deploying your repositories.
+
+Moreover, upon starting your instance, the "apk" packages are automatically updated, and common development packages like git, npm, nodejs, and python are installed by default.
+
+### What happens when the server is closed?
+When initiating the shutdown of the host server (Quantum Server), it won't close immediately. Instead, upon detecting the shutdown signal, the server systematically shuts down all Docker instances belonging to users. Consequently, their deployments and repositories are also gracefully closed. Only after all Docker instances on the platform are safely shut down does the server proceed to shut down successfully.
+
+Similarly, upon restarting the server, the platform bootloader takes charge of mounting all users' Docker instances during server runtime. Once these Docker instances are successfully started, the bootloader proceeds to launch the repositories of all users within their respective instances. Please note that this startup process may require a few minutes, depending on your hardware specifications and the number of users on the platform.
+
+If a server crash occurs, it won't simply shut down. Instead, the error will be displayed in the console, and the server will promptly initiate an automatic restart. If the error persists and another occurrence happens, the server will persistently attempt to restart until it can do so successfully. This proactive approach is vital for security reasons; it ensures that deployments aren't compromised due to server issues without the user's awareness. Therefore, the server diligently strives to recover and restart after any crash, safeguarding the continuity of operations.
