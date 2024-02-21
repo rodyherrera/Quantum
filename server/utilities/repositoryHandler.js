@@ -76,8 +76,8 @@ class RepositoryHandler extends ContainerLoggable{
         socket.emit('history', await this.getLog());
         socket.on('command', (command) => {
             command = command + '\n';
-            repositoryShell.write(command);
             this.appendLog(command);
+            repositoryShell.write(command);
         });
         repositoryShell.on('data', (chunk) => {
             chunk = chunk.toString('utf8');
@@ -110,13 +110,12 @@ class RepositoryHandler extends ContainerLoggable{
 
     async getCurrentDeployment(){
         const currentDeploymentId = this.repository.deployments[0];
-        return Deployment
+        return await Deployment
             .findById(currentDeploymentId)
             .select('environment githubDeploymentId status');
     };
 
     executeCommands(commands, formattedEnvironment, repositoryShell){
-        // Is this ok?
         repositoryShell.on('data', (chunk) => {
             chunk = chunk.toString('utf8');
             this.appendLog(chunk);

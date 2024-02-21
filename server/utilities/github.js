@@ -29,7 +29,7 @@ class Github{
 
     static async deleteLogAndDirectory(logPath, directoryPath){
         try{
-            await fs.promises.rm(logPath);
+            if(logPath) await fs.promises.rm(logPath);
             await fs.promises.rm(directoryPath, { recursive: true });
         }catch (error){
             console.error('[Quantum Cloud]: CRITCAL ERROR -> Deletion failed:', error.message);

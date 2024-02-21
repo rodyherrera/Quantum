@@ -16,6 +16,7 @@ const Repository = require('@models/repository');
 const User = require('@models/user');
 const RuntimeError = require('@utilities/runtimeError');
 const Github = require('@utilities/github');
+const RepositoryHandler = require('@utilities/repositoryHandler');
 
 // When a repository is registered on the platform, a webhook with the 
 // "push" event is created in it. Therefore, we assume that when Github 
@@ -38,8 +39,11 @@ exports.webhook = async (req, res) => {
             throw new RuntimeError('Repository::Not::Found');
         const repositoryUser = await User.findById(requestedRepository.user).populate('github');
         const github = new Github(repositoryUser, requestedRepository);
+        const repositoryHandler = new RepositoryHandler(requestedRepository, repositoryUser);
+        const shellStream = global.userContainers[repositoryUser._id][requestedRepository._id];
+        shellStream.write('\x03');
         await Github.deleteLogAndDirectory(
-            `${__dirname}/../storage/containers/${repositoryUser._id}/logs/${requestedRepository._id}.log`,
+            null,
             `${__dirname}/../storage/containers/${repositoryUser._id}/github-repos/${requestedRepository._id}/`
         );
         const deployment = await github.deployRepository();
@@ -49,6 +53,7 @@ exports.webhook = async (req, res) => {
         await Repository.updateOne({ _id: requestedRepository._id }, {
             $push: { deployments: deployment._id }
         });
+        await repositoryHandler.start(github);
         res.status(200).json({ status: 'success' });
     }catch(error){
         console.log('[Quantum Cloud] Critical Error (at @controllers/webhook):', error.message);
