@@ -184,7 +184,7 @@ RepositorySchema.post('findOneAndDelete', async function(deletedDoc){
 
 RepositorySchema.pre('findOneAndUpdate', async function(next){
     try{
-        await handleUpdateCommands();
+        await handleUpdateCommands(this);
         next();
     }catch (error){
         next(error);
