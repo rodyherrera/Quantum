@@ -56,10 +56,14 @@ RepositorySchema.plugin(TextSearch);
 RepositorySchema.index({ alias: 1, user: 1 }, { unique: true });
 RepositorySchema.index({ name: 'text', alias: 'text' });
 
-const removeRepositoryReference = async (userId, repositoryId) => {
-    return await User
-        .findByIdAndUpdate(userId, { $pull: { repositories: repositoryId } })
-        .populate('github');
+const removeRepositoryReference = async (repository) => {
+    const { user, _id, deployments } = repository;
+    const updatedUser = await User.findOneAndUpdate(
+        { _id: user },
+        { $pull: { repositories: _id, deployments: { $in: deployments } } },
+        { new: true }
+    ).populate('github');
+    return updatedUser;
 };
 
 const getAndDeleteDeployments = async (repositoryId) => {
@@ -98,7 +102,7 @@ const performCleanupTasks = async (deletedDoc, repositoryUser, deployments) => {
 
 const deleteRepositoryHandler = async (deletedDoc) => {
     // Remove repository reference from user's repositories array
-    const repositoryUser = await removeRepositoryReference(deletedDoc.user, deletedDoc._id);
+    const repositoryUser = await removeRepositoryReference(deletedDoc);
     // Retrieve and delete deployments associated with the repository
     const deployments = await getAndDeleteDeployments(deletedDoc._id);
     // Perfom cleanup task using PTYhandler and Github utility
