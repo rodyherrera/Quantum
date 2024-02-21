@@ -14,6 +14,7 @@
 
 import React from 'react';
 import MinimalForm from '@components/general/MinimalForm';
+import AuthSignInRelatedSections from '@components/authentication/AuthSignInRelatedSections';
 import { signIn } from '@services/authentication/operations';
 import { useSelector, useDispatch } from 'react-redux';
 import './SignIn.css';
@@ -32,6 +33,7 @@ const SignIn = () => {
         submitButtonTitle='Sign in'
         error={error}
         handleFormSubmit={handleFormSubmit} 
+        RightContainerComponent={AuthSignInRelatedSections}
         isLoading={isLoading}
         formInputs={[
             { 

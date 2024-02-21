@@ -14,6 +14,7 @@
 
 import React from 'react';
 import MinimalForm from '@components/general/MinimalForm';
+import AuthSignInRelatedSections from '@components/authentication/AuthSignInRelatedSections';
 import { useSelector, useDispatch } from 'react-redux';
 import { signUp } from '@services/authentication/operations';
 import './SignUp.css';
@@ -30,6 +31,7 @@ const SignUp = () => {
         headerTitle='Creating a new account'
         headerSubtitle="Tell us a little more about yourself..."
         submitButtonTitle='Create account'
+        RightContainerComponent={AuthSignInRelatedSections}
         handleFormSubmit={handleFormSubmit}
         error={error}
         isLoading={isLoading}
