@@ -74,6 +74,7 @@ While Quantum offers a panel for configuring commands such as installing depende
 - **File Explorer:** Make local changes within your repository without requiring a GitHub commit or application redeployment. Changes are overwritten upon subsequent commits.
 - **Command Panel:** Configure commands such as dependency installation, source code building, and software startup within a dedicated panel.
 - **Deployment Isolation:** Each user has an associated docker instance, where all their deployments will be created in that instance.
+- **Responsive Design:** The user interface (web-ui) is completely responsive, designed considering every detail, with the aim of giving you an optimal experience compared to other open-source alternatives of the same nature.
 - **Environment Variable Management:** Manage environment variables associated with your deployment, with automatic mapping of variables upon repository cloning. Create, delete, and modify variables as needed.
 - **Continuous deployment:** When a commit is made to the repository within Github, it is automatically redeployed to Quantum.
 - **Service Status:** You can check the status of the server through the web-ui. It will determine if the server is working in optimal conditions or if it is overloaded.
@@ -304,9 +305,22 @@ In addition to accessing the CLI and viewing the deployment log of your reposito
 
 Moreover, upon starting your instance, the "apk" packages are automatically updated, and common development packages like git, npm, nodejs, and python are installed by default.
 
+When the server is started after it has been shut down/restarted, the users' Docker instances and their repositories will automatically start.
+
+When a user deletes their account, all associated deployments and repositories are permanently removed from the platform's database and file system. This deletion process extends to their Docker instance as well, ensuring a clean slate. It's important to note that this action is irreversible.
+
+Regarding deployments, Quantum takes responsibility for deleting them from GitHub, but only if the deployment is exclusively linked to Quantum. If the repository contains deployments from other platforms like Vercel or Heroku, they remain unaffected. Additionally, any webhooks created to monitor repository commits are also deleted as part of this process.
+
 ### What happens when the server is closed?
 When initiating the shutdown of the host server (Quantum Server), it won't close immediately. Instead, upon detecting the shutdown signal, the server systematically shuts down all Docker instances belonging to users. Consequently, their deployments and repositories are also gracefully closed. Only after all Docker instances on the platform are safely shut down does the server proceed to shut down successfully.
 
 Similarly, upon restarting the server, the platform bootloader takes charge of mounting all users' Docker instances during server runtime. Once these Docker instances are successfully started, the bootloader proceeds to launch the repositories of all users within their respective instances. Please note that this startup process may require a few minutes, depending on your hardware specifications and the number of users on the platform.
 
 If a server crash occurs, it won't simply shut down. Instead, the error will be displayed in the console, and the server will promptly initiate an automatic restart. If the error persists and another occurrence happens, the server will persistently attempt to restart until it can do so successfully. This proactive approach is vital for security reasons; it ensures that deployments aren't compromised due to server issues without the user's awareness. Therefore, the server diligently strives to recover and restart after any crash, safeguarding the continuity of operations.
+
+
+
+
+
+
+
