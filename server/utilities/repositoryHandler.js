@@ -116,10 +116,6 @@ class RepositoryHandler extends ContainerLoggable{
     };
 
     executeCommands(commands, formattedEnvironment, repositoryShell){
-        repositoryShell.on('data', (chunk) => {
-            chunk = chunk.toString('utf8');
-            this.appendLog(chunk);
-        });
         for(const command of commands){
             const formattedCommand = `${formattedEnvironment} ${command}\r\n`;
             repositoryShell.write(formattedCommand);

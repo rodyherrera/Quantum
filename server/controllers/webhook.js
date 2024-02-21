@@ -18,45 +18,65 @@ const RuntimeError = require('@utilities/runtimeError');
 const Github = require('@utilities/github');
 const RepositoryHandler = require('@utilities/repositoryHandler');
 
-// When a repository is registered on the platform, a webhook with the 
-// "push" event is created in it. Therefore, we assume that when Github 
-// sends a request to this place, it will be an update to 
-// the repository. Therefore, we are going to re-deploy.
+/**
+ * Handles push event webhooks from GitHub.
+ * This endpoint is triggered whenever a change is pushed to a registered repository.
+ * The function performs the following:
+ *  1. Verifies the webhook payload.
+ *  2. Retrieves the relevant repository and user data.
+ *  3. Handles potential errors (e.g., repository not found).
+ *  4. Initiates a new deployment using the GitHub and RepositoryHandler utilities.
+ *  5. Updates the user and repository models with the new deployment.
+ *  6. Stops any existing container for the updated repository.
+ *  7. Starts a new deployment container.
+ *
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+*/
 exports.webhook = async (req, res) => {
-    const { pusher } = req.body;
-    // In case "commit" and "pusher" are "undefined", it 
-    // is nothing more than Github sending the request 
-    // that the Webhook has been created.
-    // Therefore, there is nothing to do, we return ;).
     try{
-        if(!pusher){
-            res.status(200).json({ status: 'success' });
-            return;
+        // 1. Payload Verification
+        if(!req.body.pusher){
+            // Acknowledge test webhook from GitHub
+            return res.status(200).json({ status: 'success' });
         }
+        
+        // 2. Data Retrieval
         const { repositoryId } = req.params;
         const requestedRepository = await Repository.findById(repositoryId);
-        if(!requestedRepository) 
+        if(!requestedRepository){
             throw new RuntimeError('Repository::Not::Found');
+        }
         const repositoryUser = await User.findById(requestedRepository.user).populate('github');
+
+        // 3. Setup
         const github = new Github(repositoryUser, requestedRepository);
         const repositoryHandler = new RepositoryHandler(requestedRepository, repositoryUser);
+
+        // 4. Stop Existing Container (if any)
         const shellStream = global.userContainers[repositoryUser._id][requestedRepository._id];
-        shellStream.write('\x03');
-        await Github.deleteLogAndDirectory(
-            null,
-            `${__dirname}/../storage/containers/${repositoryUser._id}/github-repos/${requestedRepository._id}/`
-        );
+        // Send Control-C for graceful termination
+        if(shellStream) shellStream.write('\x03');
+
+        // 5. Clean Up Old Deployment Artifacts
+        await Github.deleteLogAndDirectory(null, `${__dirname}/../storage/containers/${repositoryUser._id}/github-repos/${requestedRepository._id}/`);
+
+        // 6. Deploy new Version
         const deployment = await github.deployRepository();
+
+        // 7. Update Database Records
         await User.updateOne({ _id: repositoryUser._id }, {
             $push: { deployments: deployment._id }
         });
         await Repository.updateOne({ _id: requestedRepository._id }, {
             $push: { deployments: deployment._id }
         });
+
+        // 8. Start the repository
         await repositoryHandler.start(github);
         res.status(200).json({ status: 'success' });
     }catch(error){
-        console.log('[Quantum Cloud] Critical Error (at @controllers/webhook):', error.message);
+        console.error('[Quantum Cloud] Critical Error (at @controllers/webhook):', error.message);
         res.status(500).json({ status: 'error' });
     }
 };
