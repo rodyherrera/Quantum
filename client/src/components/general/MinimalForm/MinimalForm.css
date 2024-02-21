@@ -87,6 +87,7 @@
 
 @media screen and (max-width: 768px){
     .Minimal-Form-Container{
+        height: unset;
         padding: 1rem;
         flex-direction: column;
     }
