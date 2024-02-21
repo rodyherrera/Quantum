@@ -1,10 +1,11 @@
 import React, { useEffect } from 'react';
 import MinimalForm from '@components/general/MinimalForm'
 import RelatedItems from '@components/general/RelatedItems';
-import { getMyProfile } from '@services/authentication/operations';
+import { getMyProfile, updateMyProfile } from '@services/authentication/operations';
 import { GoGitPullRequest } from 'react-icons/go';
 import { BsHddNetwork } from 'react-icons/bs';
 import { useSelector, useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import './Account.css';
 
 // Implement Skeleton for data loading, for now 
@@ -12,16 +13,23 @@ import './Account.css';
 // with new data from the server.
 const AccountPage = () => {
     const dispatch = useDispatch();
-    const { user, error } = useSelector((state) => state.auth);
+    const navigate = useNavigate();
+    const { user, error, isOperationLoading } = useSelector((state) => state.auth);
 
     useEffect(() => {
         dispatch(getMyProfile());
     }, []);
 
+    const handleFormSubmit = (formValues) => {
+        dispatch(updateMyProfile(formValues, navigate));
+    };
+
     return (
         <MinimalForm
             error={error}
+            isLoading={isOperationLoading}
             submitButtonTitle='Save Changes'
+            handleFormSubmit={handleFormSubmit}
             HeaderComponent={() => (
                 <div id='Account-Page-Header-Title-Container'>
                     <h1 id='Account-Page-Header-Title'>
