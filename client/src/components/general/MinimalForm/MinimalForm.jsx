@@ -53,7 +53,7 @@ const MinimalForm = ({
         <AnimatedMain 
             className='Minimal-Form-Container'
             style={{
-                ...((formInputs.length > 3) && ({ height: 'unset' }))
+                ...((formInputs.length >= 3) && ({ height: 'unset' }))
             }}
         >
             <div className='Minimal-Form-Left-Container'>

@@ -77,6 +77,15 @@
     opacity: .8;
 }
 
+.Button.White{
+    background-color: #F5F5F5;
+    color: #000000;
+}
+
+.Button.White:hover{
+    opacity: .9;
+}
+
 .Button.Extend{
     padding: .9rem 1.5rem;
     gap: 8rem;

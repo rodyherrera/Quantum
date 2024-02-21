@@ -1,3 +1,17 @@
+/***
+ * Copyright (C) Rodolfo Herrera Hernandez. All rights reserved.
+ * Licensed under the MIT license. See LICENSE file in the project root
+ * for full license information.
+ *
+ * =+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
+ *
+ * For related information - https://github.com/rodyherrera/Quantum/
+ *
+ * All your applications, just in one place. 
+ *
+ * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+****/
+
 #Account-Page-Header-Title{
     font-size: 2.5rem;
 }
@@ -14,4 +28,68 @@
     padding: .2rem 1rem;
     margin-left: .5rem;
     border-radius: .25rem;
+}
+
+#Account-Page-Delete-Footer-Container .Button-Text{
+    font-size: .8rem;
+}
+
+#Account-Page-Delete-Footer-Container{
+    display: flex;
+    background-color: #000000;
+    justify-content: center;
+    padding: 1rem;
+    border-top: 1px solid #000000;
+    align-items: center;
+}
+
+#Account-Page-Delete-Container{
+    border: 1px solid #000000;
+    overflow: hidden;
+    display: flex;
+    backdrop-filter: blur(2px);
+    border-radius: .5rem;
+    flex-direction: column;
+}
+
+#Account-Page-Delete-Header-Container{
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+    gap: .5rem;
+}
+
+#Account-Page-Delete-Title-Highlight{
+    background-color: #000000;
+    color: #F5F5F5;
+    padding: .4rem .6rem;
+    font-size: .95rem;
+    border-radius: 5rem;
+}
+
+#Account-Page-Delete-Right-Container{
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+#Account-Page-Delete-Title{
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+}
+
+#Account-Page-Delete-Description{
+    font-size: .9rem;
+}
+
+@media screen and (max-width: 768px){
+    #Account-Page-Delete-Footer-Container .Button-Text{
+        font-size: .6rem;
+    }
+
+    #Account-Page-Delete-Title-Highlight{
+        padding: .3rem .6rem;
+    }
 }

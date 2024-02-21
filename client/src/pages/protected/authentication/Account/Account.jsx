@@ -1,6 +1,21 @@
+/***
+ * Copyright (C) Rodolfo Herrera Hernandez. All rights reserved.
+ * Licensed under the MIT license. See LICENSE file in the project root
+ * for full license information.
+ *
+ * =+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
+ *
+ * For related information - https://github.com/rodyherrera/Quantum/
+ *
+ * All your applications, just in one place. 
+ *
+ * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+****/
+
 import React, { useEffect } from 'react';
 import MinimalForm from '@components/general/MinimalForm'
 import RelatedItems from '@components/general/RelatedItems';
+import Button from '@components/general/Button';
 import { getMyProfile, updateMyProfile } from '@services/authentication/operations';
 import { GoGitPullRequest } from 'react-icons/go';
 import { BsHddNetwork } from 'react-icons/bs';
@@ -40,22 +55,37 @@ const AccountPage = () => {
                 </div>
             )}
             RightContainerComponent={() => (
-                <RelatedItems
-                    items={[
-                        {
-                            title: `${user.repositories.length} repositories`,
-                            description: 'Manage all your repositories hosted within the platform.',
-                            icon: GoGitPullRequest,
-                            to: '/dashboard/'
-                        },
-                        {
-                            title: `${user.deployments.length} deployments`,
-                            description: 'All deployments related to the repositories that you have hosted on the platform.',
-                            icon: BsHddNetwork,
-                            to: '/dashboard/'
-                        }
-                    ]}
-                />
+                <div id='Account-Page-Delete-Right-Container'>
+                    <div id='Account-Page-Delete-Container'>
+                        <div id='Account-Page-Delete-Header-Container'>
+                            <h3 id='Account-Page-Delete-Title'>Delete <span id='Account-Page-Delete-Title-Highlight'>Account</span></h3>
+                            <p id='Account-Page-Delete-Description'>Permanently remove your Personal Account and all of its contents from the Quantum platform. This action is not reversible, so please continue with caution. Your services will be permanently deleted.</p>
+                        </div>
+                        <div id='Account-Page-Delete-Footer-Container'>
+                            <Button 
+                                variant='White'
+                                title='Ok, I agree and I know the consequences.'
+                            />
+                        </div>
+                    </div>
+
+                    <RelatedItems
+                        items={[
+                            {
+                                title: `${user.repositories.length} repositories`,
+                                description: 'Manage all your repositories hosted within the platform.',
+                                icon: GoGitPullRequest,
+                                to: '/dashboard/'
+                            },
+                            {
+                                title: `${user.deployments.length} deployments`,
+                                description: 'All deployments related to the repositories that you have hosted on the platform.',
+                                icon: BsHddNetwork,
+                                to: '/dashboard/'
+                            }
+                        ]}
+                    />
+                </div>
             )}
             breadcrumbsItems={[
                 { title: 'Home', to: '/' },
