@@ -25,6 +25,7 @@ import './MinimalForm.css';
 const MinimalForm = ({
     headerTitle,
     headerSubtitle,
+    HeaderComponent = null,
     error,
     formInputs,
     submitButtonTitle,
@@ -62,8 +63,14 @@ const MinimalForm = ({
                     )}
 
                     <div className='Minimal-Form-Title-Container'>
-                        <h1 className='Minimal-Form-Title'>{headerTitle}</h1>
-                        <p className='Minimal-Form-Subtitle'>{headerSubtitle}</p>
+                        {HeaderComponent !== null ? (
+                            <HeaderComponent />
+                        ) : (
+                            <React.Fragment>
+                                <h1 className='Minimal-Form-Title'>{headerTitle}</h1>
+                                <p className='Minimal-Form-Subtitle'>{headerSubtitle}</p>
+                            </React.Fragment>
+                        )}
                     </div>
 
                     {error?.length >= 1 && (

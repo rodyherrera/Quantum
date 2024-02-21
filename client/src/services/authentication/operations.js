@@ -23,6 +23,15 @@ const handleAuthResponse = (data, dispatch) => {
     dispatch(authSlice.setIsAuthenticated(true));
 };
 
+export const getMyProfile = () => async (dispatch) => {
+    const operation = new OperationHandler(authSlice, dispatch);
+    operation.on('response', (data) => dispatch(authSlice.setUser(data)));
+    operation.use({
+        api: authService.myProfile,
+        loaderState: authSlice.setIsLoading
+    });
+};
+
 export const signUp = (body) => async (dispatch) => {
     const operation = new OperationHandler(authSlice, dispatch);
     operation.on('response', (data) => handleAuthResponse(data, dispatch));
