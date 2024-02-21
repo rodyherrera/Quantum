@@ -12,14 +12,33 @@
  * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 ****/
 
-#Sign-Up-Right-Container-Component{
+.Sign-Up-Information-Body{
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: .5rem;
 }
 
-@media screen and (max-width: 768px){
-    #Sign-Up-Right-Container-Component{
-        flex-direction: column-reverse;
-    }
+.Sign-Up-Information-Article{
+    font-size: .85rem;
+}
+
+.Sign-Up-Information-Header-Title{
+    display: flex;
+    align-items: center;
+    font-size: 1.5rem;
+    gap: .5rem;
+}
+
+.Sign-Up-Information-Header-Title-Highlight{
+    background: #000000;
+    color: #F5F5F5;
+    font-size: 1.2rem;
+    padding: .3rem .6rem;
+    border-radius: 4rem;
+}
+
+.Sign-Up-Information-Container{
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
 }

@@ -31,6 +31,11 @@ const SignIn = () => {
         headerTitle='Welcome back!'
         headerSubtitle='We are glad to see you again.'
         submitButtonTitle='Sign in'
+        breadcrumbsItems={[
+            { title: 'Home', to: '/' },
+            { title: 'Authentication', to: '/' },
+            { title: 'Connecting to your Quantum account', to: '/auth/sign-up/' }
+        ]}
         error={error}
         handleFormSubmit={handleFormSubmit} 
         RightContainerComponent={AuthSignInRelatedSections}

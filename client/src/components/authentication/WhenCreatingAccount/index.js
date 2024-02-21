@@ -12,14 +12,6 @@
  * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 ****/
 
-#Sign-Up-Right-Container-Component{
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-}
+import WhenCreatingAccount from './WhenCreatingAccount';
 
-@media screen and (max-width: 768px){
-    #Sign-Up-Right-Container-Component{
-        flex-direction: column-reverse;
-    }
-}
+export default WhenCreatingAccount;
