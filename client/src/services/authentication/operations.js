@@ -55,13 +55,16 @@ export const signIn = (body) => async (dispatch) => {
 export const updateMyProfile = (body, navigate) => async (dispatch) => {
     const operation = new OperationHandler(authSlice, dispatch);
     operation.on('response', (data) => {
-        authSlice.setUser(data);
+        dispatch(authSlice.setUser(data));
         navigate('/dashboard/');
     });
     operation.use({
         api: authService.updateMyProfile,
         loaderState: authSlice.setIsOperationLoading,
-        query: { body }
+        query: {
+            body,
+            query: { populate: 'github' }
+        }
     });
 };
 

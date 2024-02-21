@@ -104,7 +104,7 @@ exports.updateMyAccount = catchAsync(async (req, res, next) => {
     const requestedUser = await User.findByIdAndUpdate(req.user.id, filteredBody, {
         new: true,
         runValidators: true
-    });
+    }).populate('github');
     if(!requestedUser){
         return next(new Error('Authentication::Update::UserNotFound'));
     }

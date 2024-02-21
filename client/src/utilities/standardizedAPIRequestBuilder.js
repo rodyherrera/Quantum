@@ -16,6 +16,8 @@ import ServerRequestBuilder from '@utilities/serverRequestBuilder';
 import { getCurrentUserToken } from '@services/authentication/localStorageService';
 import axios from 'axios';
 
+// CHECK THIS CODE!
+
 class StandardizedAPIRequestBuilder{
     constructor(endpoint){
         this.endpoint = endpoint;
