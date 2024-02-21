@@ -17,6 +17,7 @@ import { BiHomeAlt2 } from 'react-icons/bi';
 import { MdOutlineSpaceDashboard } from 'react-icons/md';
 import { BsBook, BsTerminal } from 'react-icons/bs';
 import { CiServer } from 'react-icons/ci';
+import { FiUser } from 'react-icons/fi';
 import { RxReader } from 'react-icons/rx';
 import { setIsCloudConsoleEnabled, setIsMenuEnabled } from '@services/core/slice';
 import { GoProjectSymlink } from 'react-icons/go';
@@ -31,6 +32,7 @@ const Menu = () => {
     const dispatch = useDispatch();
     const menuItems = [
         ['Home', <BiHomeAlt2 />, '/'],
+        ['My Account', <FiUser />, '/auth/account/'],
         ['Deployments', <MdOutlineSpaceDashboard />, '/dashboard/'],
         ['Create Deployment', <GoProjectSymlink />, '/repository/create/'],
         ['Service Status', <CiServer />, '/service-status/'],
