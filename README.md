@@ -26,46 +26,39 @@ While Quantum offers a panel for configuring commands such as installing depende
 
 ![Repository Environment Variables](/screenshots/RepositoryEnvironVariables.png)
 
-
+### Table of Contents
 # Table of Contents
-1. **[Introduction](#quantum---open-source-continuous-deployment-platform)**
-   - [Overview of Quantum](#quantum---open-source-continuous-deployment-platform)
-   - [Table of Contents](#table-of-contents)
-2. **[Features](#features)**
-   - [Github Integration](#github-integration)
-   - [Cloud Shell](#cloud-shell)
-   - [Repository Command Line Interface (CLI)](#repository-command-line-interface-cli)
-   - [File Explorer](#file-explorer)
-   - [Command Panel](#command-panel)
-   - [Environment Variable Management](#environment-variable-management)
-   - [Continuous Deployment](#continuous-deployment)
-   - [Service Status](#service-status)
-3. **[Project Requirements](#project-requirements)**
-   - [Node.js 20.11.1 Installation](#nodejs-21-installation)
-     - [Installing NVM](#installing-nvm)
-     - [Installing Node.js 20.11.1](#installing-nodejs-20111)
-4. **[Installation](#installation)**
-   - [All-in-one Installation Command](#all-in-one-installation-command)
-   - [Installation Guide](#installation-guide)
-     - [Clone the Quantum Repository](#clone-the-quantum-repository)
-     - [Navigate to the Quantum Directory](#navigate-to-the-quantum-directory)
-     - [Install Server Dependencies](#install-server-dependencies)
-     - [Install Client Dependencies](#install-client-dependencies)
-5. **[Post-Installation Configuration](#post-installation-configuration)**
-   - [Setting Environment Variables](#setting-environment-variables)
-     - [Server Environment Variables](#server-environment-variables)
-     - [Client Environment Variables](#client-environment-variables)
-   - [Obtaining GitHub Client Secret and Client ID](#obtaining-github-client-secret-and-client-id)
-6. **[Deploying Quantum](#deploying-quantum)**
-   - [Starting the Backend Server](#starting-the-backend-server)
-   - [Starting the Client Application](#starting-the-client-application)
-   - [Building the Client Application](#building-the-client-application)
-7. **[The Quantum CLI](#the-quantum-cli)**
-   - [Accessing the CLI](#accessing-the-cli)
-   - [CLI Usage and Options](#cli-usage-and-options)
-8. **[Inside the Future](#inside-the-future)**
-   - [Explanation of Future Developments](#explanation-of-future-developments)
-   - [Docker Integration for Multi-User Support](#docker-integration-for-multi-user-support)
+
+1. [Features](#features)
+    - [Github Integration](#github-integration)
+    - [Cloud Shell](#cloud-shell)
+    - [Repository Command Line Interface (CLI)](#repository-command-line-interface-cli)
+    - [File Explorer](#file-explorer)
+    - [Command Panel](#command-panel)
+    - [Tailored User Experience](#tailored-user-experience)
+    - [Environment Variable Management](#environment-variable-management)
+    - [Continuous Deployment](#continuous-deployment)
+    - [Service Status](#service-status)
+    - [Docker-Based Isolation](#docker-based-isolation)
+2. [Project Requirements](#project-requirements)
+    - [Node.js Installation](#nodejs-installation)
+3. [Installation](#installation)
+    - [Installation Guide](#installation-guide)
+    - [Post-Installation Configuration](#post-installation-configuration)
+    - [Obtaining GitHub Client Secret and Client ID](#obtaining-github-client-secret-and-client-id)
+4. [Deploying Quantum](#deploying-quantum)
+5. [Building the Client Application](#building-the-client-application)
+6. [The Quantum CLI](#the-quantum-cli)
+    - [User Account Creation](#user-account-creation)
+7. [How Does This Work?](#how-does-this-work)
+    - [Docker Instance Creation](#docker-instance-creation)
+    - [Deployment Workflow](#deployment-workflow)
+    - [Server Shutdown Process](#server-shutdown-process)
+    - [Error Handling and Server Restart](#error-handling-and-server-restart)
+8. [Feedback and Support](#feedback-and-support)
+    - [Contribution](#contribution)
+    - [Star/Fork](#starfork)
+    - [Coffee](#coffee-donation)
 
 ### Features
 - **Github Integration:** Securely connect your GitHub account to Quantum for repository access and management of deployments.
@@ -73,11 +66,11 @@ While Quantum offers a panel for configuring commands such as installing depende
 - **Repository Command Line Interface (CLI):** Each deployed repository comes with its own CLI for monitoring execution output (logs) and executing specific commands.
 - **File Explorer:** Make local changes within your repository without requiring a GitHub commit or application redeployment. Changes are overwritten upon subsequent commits.
 - **Command Panel:** Configure commands such as dependency installation, source code building, and software startup within a dedicated panel.
-- **Deployment Isolation:** Each user has an associated docker instance, where all their deployments will be created in that instance.
-- **Responsive Design:** The user interface (web-ui) is completely responsive, designed considering every detail, with the aim of giving you an optimal experience compared to other open-source alternatives of the same nature.
+- **Tailored User Experience:** The user interface (web-ui) is completely responsive, designed considering every detail, with the aim of giving you an optimal experience compared to other open-source alternatives of the same nature.
 - **Environment Variable Management:** Manage environment variables associated with your deployment, with automatic mapping of variables upon repository cloning. Create, delete, and modify variables as needed.
 - **Continuous deployment:** When a commit is made to the repository within Github, it is automatically redeployed to Quantum.
 - **Service Status:** You can check the status of the server through the web-ui. It will determine if the server is working in optimal conditions or if it is overloaded.
+- **Docker-Based Isolation:** Each user receives a dedicated Docker instance for their deployment, ensuring smooth operations and minimizing conflicts.
 
 ### Project Requirements
 To run this project, Node.js 21 or higher is required. It is recommended to use nvm (Node Version Manager) to manage Node.js versions on your system. Below are the steps to install Node.js 21 using nvm:
@@ -318,9 +311,11 @@ Similarly, upon restarting the server, the platform bootloader takes charge of m
 
 If a server crash occurs, it won't simply shut down. Instead, the error will be displayed in the console, and the server will promptly initiate an automatic restart. If the error persists and another occurrence happens, the server will persistently attempt to restart until it can do so successfully. This proactive approach is vital for security reasons; it ensures that deployments aren't compromised due to server issues without the user's awareness. Therefore, the server diligently strives to recover and restart after any crash, safeguarding the continuity of operations.
 
+### We'd love your feedback and support!
+Your involvement is vital to make Quantum the best it can be. Here's how you can get involved:
 
-
-
-
+**Contribute**: Explore the codebase on GitHub, fix bugs, implement new features, and become a part of the development team.
+**Star/Fork**: Increase Quantum's visibility on GitHub by starring and forking the repository. This helps others discover our project.
+**Coffee**: If Quantum has become a valuable tool for you, consider showing your appreciation with a small donation on Ko-fi https://ko-fi.com/codewithrodi. Your support fuels our team's continued development efforts.
 
 
