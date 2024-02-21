@@ -69,9 +69,9 @@ export const updateMyProfile = (body, navigate) => async (dispatch) => {
     });
 };
 
-export const deleteMyProfile = (navigate) => async (dispatch) => {
+export const deleteMyProfile = () => async (dispatch) => {
     const operation = new OperationHandler(authSlice, dispatch);
-    operation.on('response', () => navigate('/'));
+    operation.on('response', () => dispatch(logout()));
     operation.use({
         api: authService.deleteMyProfile,
         loaderState: authSlice.setIsEliminatingAccount

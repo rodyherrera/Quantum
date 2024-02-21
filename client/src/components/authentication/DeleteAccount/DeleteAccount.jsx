@@ -1,13 +1,11 @@
 import React from 'react';
 import Button from '@components/general/Button';
 import { deleteMyProfile } from '@services/authentication/operations';
-import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import './DeleteAccount.css';
 
 const DeleteAccount = () => {
     const { isEliminatingAccount } = useSelector((state) => state.auth);
-    const navigate = useNavigate();
     const dispatch = useDispatch();
 
     return (
@@ -19,7 +17,7 @@ const DeleteAccount = () => {
             <div className='Account-Page-Delete-Footer-Container'>
                 <Button 
                     isLoading={isEliminatingAccount}
-                    onClick={() => dispatch(deleteMyProfile(navigate))}
+                    onClick={() => dispatch(deleteMyProfile())}
                     variant='White'
                     title='Ok, I agree and I know the consequences.'
                 />
