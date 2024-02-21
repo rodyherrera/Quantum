@@ -314,8 +314,8 @@ If a server crash occurs, it won't simply shut down. Instead, the error will be 
 ### We'd love your feedback and support!
 Your involvement is vital to make Quantum the best it can be. Here's how you can get involved:
 
-**Contribute**: Explore the codebase on GitHub, fix bugs, implement new features, and become a part of the development team.
-**Star/Fork**: Increase Quantum's visibility on GitHub by starring and forking the repository. This helps others discover our project.
-**Coffee**: If Quantum has become a valuable tool for you, consider showing your appreciation with a small donation on Ko-fi https://ko-fi.com/codewithrodi. Your support fuels our team's continued development efforts.
+- **Contribute**: Explore the codebase on GitHub, fix bugs, implement new features, and become a part of the development team.
+- **Star/Fork**: Increase Quantum's visibility on GitHub by starring and forking the repository. This helps others discover our project.
+- **Coffee**: If Quantum has become a valuable tool for you, consider showing your appreciation with a small donation on Ko-fi https://ko-fi.com/codewithrodi. Your support fuels our team's continued development efforts.
 
 
