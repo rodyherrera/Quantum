@@ -56,6 +56,7 @@ export const updateMyProfile = (body, navigate) => async (dispatch) => {
     const operation = new OperationHandler(authSlice, dispatch);
     operation.on('response', (data) => {
         dispatch(authSlice.setUser(data));
+        dispatch(logout());
         navigate('/dashboard/');
     });
     operation.use({
@@ -65,6 +66,15 @@ export const updateMyProfile = (body, navigate) => async (dispatch) => {
             body,
             query: { populate: 'github' }
         }
+    });
+};
+
+export const deleteMyProfile = (navigate) => async (dispatch) => {
+    const operation = new OperationHandler(authSlice, dispatch);
+    operation.on('response', () => navigate('/'));
+    operation.use({
+        api: authService.deleteMyProfile,
+        loaderState: authSlice.setIsEliminatingAccount
     });
 };
 

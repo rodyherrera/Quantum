@@ -15,7 +15,7 @@
 import React, { useEffect } from 'react';
 import MinimalForm from '@components/general/MinimalForm'
 import RelatedItems from '@components/general/RelatedItems';
-import Button from '@components/general/Button';
+import DeleteAccount from '@components/authentication/DeleteAccount';
 import { getMyProfile, updateMyProfile } from '@services/authentication/operations';
 import { GoGitPullRequest } from 'react-icons/go';
 import { BsHddNetwork } from 'react-icons/bs';
@@ -56,19 +56,7 @@ const AccountPage = () => {
             )}
             RightContainerComponent={() => (
                 <div id='Account-Page-Delete-Right-Container'>
-                    <div id='Account-Page-Delete-Container'>
-                        <div id='Account-Page-Delete-Header-Container'>
-                            <h3 id='Account-Page-Delete-Title'>Delete <span id='Account-Page-Delete-Title-Highlight'>Account</span></h3>
-                            <p id='Account-Page-Delete-Description'>Permanently remove your Personal Account and all of its contents from the Quantum platform. This action is not reversible, so please continue with caution. Your services will be permanently deleted.</p>
-                        </div>
-                        <div id='Account-Page-Delete-Footer-Container'>
-                            <Button 
-                                variant='White'
-                                title='Ok, I agree and I know the consequences.'
-                            />
-                        </div>
-                    </div>
-
+                    <DeleteAccount />
                     <RelatedItems
                         items={[
                             {

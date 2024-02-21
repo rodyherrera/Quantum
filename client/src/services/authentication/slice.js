@@ -19,6 +19,7 @@ const state = {
     isAuthenticated: false,
     isCachedAuthLoading: true,
     isLoading: false,
+    isEliminatingAccount: false,
     isOperationLoading: false,
     error: null
 };
@@ -27,6 +28,9 @@ const authSlice = createSlice({
     name: 'auth',
     initialState: state,
     reducers: {
+        setIsEliminatingAccount: (state, action) => {
+            state.isEliminatingAccount = action.payload;
+        },
         setIsOperationLoading: (state, action) => {
             state.isOperationLoading = action.payload;
         },
@@ -56,6 +60,7 @@ export const {
     setIsCachedAuthLoading, 
     setGithubAccount,
     setUser, 
+    setIsEliminatingAccount,
     setError,
     setIsOperationLoading,
     setIsAuthenticated 

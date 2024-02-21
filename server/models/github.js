@@ -42,12 +42,12 @@ GithubSchema.index({ username: 'text' });
 
 GithubSchema.post('save', async function(){
     const { user, _id } = this;
-    await this.model('User').findByIdAndUpdate(user, { github: _id });
+    await mongoose.model('User').findByIdAndUpdate(user, { github: _id });
 }); 
 
 GithubSchema.post('findOneAndDelete', async function(){
     const { user } = this;
-    await this.model('User').findByIdAndUpdate(user, { $unset: { github: 1 } });
+    await mongoose.model('User').findByIdAndUpdate(user, { $unset: { github: 1 } });
 });
 
 const Github = mongoose.model('Github', GithubSchema);

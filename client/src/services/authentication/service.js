@@ -30,6 +30,11 @@ export const updateMyProfile = AuthenticationAPI.register({
     method: 'PATCH'
 });
 
+export const deleteMyProfile = AuthenticationAPI.register({
+    path: '/me/',
+    method: 'DELETE'
+});
+
 export const signIn = AuthenticationAPI.register({
     path: '/sign-in/',
     method: 'POST'

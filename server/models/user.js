@@ -90,17 +90,15 @@ const UserSchema = new mongoose.Schema({
 UserSchema.plugin(TextSearch);
 UserSchema.index({ username: 'text', fullname: 'text', email: 'text' });
 
-UserSchema.methods.deleteAssociatedData = async function(){
-    await fs.promises.rm(`${__dirname}/../storage/containers/${this._id}/logs/${this._id}.log`);
-    await this.model('Github').findOneAndRemove({ user: this._id });
-    await this.model('Deployment').deleteMany({ user: this._id });
-    const container = globals.userContainers[this._id];
-    await container.remove();
-};
-
-UserSchema.post('findOneAndDelete', async function(next){
-    await this.deleteAssociatedData();
-    next();
+UserSchema.post('findOneAndDelete', async function(){
+    const user = this._conditions; // Obtenemos las condiciones de la consulta
+    // delete if exists
+    //await fs.promises.rm(`${__dirname}/../storage/containers/${user._id}/logs/${user._id}.log`);
+    await mongoose.model('Github').findOneAndDelete({ user: user._id });
+    await mongoose.model('Deployment').deleteMany({ user: user._id });
+    await mongoose.model('Repository').deleteMany({ user: user._id });
+    const container = global.userContainers[user._id];
+    if(container) await container.remove();
 });
 
 UserSchema.pre('save', async function(next){

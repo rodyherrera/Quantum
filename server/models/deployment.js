@@ -65,8 +65,10 @@ DeploymentSchema.methods.getFormattedEnvironment = function(){
 DeploymentSchema.post('findOneAndDelete', async function(){
     const { user, repository, _id } = this;
 
-    const userUpdatePromise = this.model('User').updateOne({ _id: user }, { $pull: { deployments: _id } }).lean().exec();
-    const repoUpdatePromise = this.model('Repository').updateOne({ _id: repository }, { $pull: { deployments: _id } }).lean().exec();
+    const userUpdatePromise = await mongoose.model('User')
+        .updateOne({ _id: user }, { $pull: { deployments: _id } }).lean().exec();
+    const repoUpdatePromise = await mongoose.model('Repository')
+        .updateOne({ _id: repository }, { $pull: { deployments: _id } }).lean().exec();
 
     await Promise.all([userUpdatePromise, repoUpdatePromise]);
 });

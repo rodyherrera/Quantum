@@ -15,8 +15,6 @@
 const mongoose = require('mongoose');
 const TextSearch = require('mongoose-partial-search');
 const Github = require('@utilities/github');
-const Deployment = require('@models/deployment');
-const User = require('@models/user');
 const RepositoryHandler = require('@utilities/repositoryHandler');
 const { v4 } = require('uuid');
 
@@ -58,7 +56,7 @@ RepositorySchema.index({ name: 'text', alias: 'text' });
 
 const removeRepositoryReference = async (repository) => {
     const { user, _id, deployments } = repository;
-    const updatedUser = await User.findOneAndUpdate(
+    const updatedUser = await mongoose.model('User').findOneAndUpdate(
         { _id: user },
         { $pull: { repositories: _id, deployments: { $in: deployments } } },
         { new: true }
@@ -67,10 +65,10 @@ const removeRepositoryReference = async (repository) => {
 };
 
 const getAndDeleteDeployments = async (repositoryId) => {
-    const deployments = await Deployment
+    const deployments = await mongoose.model('Deployment')
         .find({ repository: repositoryId })
         .select('githubDeploymentId');
-    await Deployment.deleteMany({ repository: repositoryId });
+    await mongoose.model('Deployment').deleteMany({ repository: repositoryId });
     return deployments;
 };
 
@@ -132,8 +130,7 @@ const handleUpdateCommands = async (context) => {
 };
 
 RepositorySchema.methods.updateAliasIfNeeded = async function(){
-    const existingRepository = await this
-        .model('Repository')
+    const existingRepository = await mongoose.model('Repository')
         .findOne({ alias: this.alias, user: this.user });
     if(existingRepository){
         this.alias = this.alias + '-' + v4().slice(0, 4);
@@ -141,8 +138,7 @@ RepositorySchema.methods.updateAliasIfNeeded = async function(){
 };
 
 RepositorySchema.methods.getUserWithGithubData = async function(){
-    const data = await this
-        .model('User')
+    const data = await mongoose.model('User')
         .findById(this.user)
         .populate('github');
     return data;
@@ -152,7 +148,7 @@ RepositorySchema.methods.updateUserAndRepository = async function(deployment){
     const updateUser = {
         $push: { repositories: this._id, deployments: deployment._id }
     };
-    await this.model('User').findByIdAndUpdate(this.user, updateUser);
+    await mongoose.model('User').findByIdAndUpdate(this.user, updateUser);
     this.deployments.push(deployment._id);
 };
 
@@ -188,7 +184,7 @@ RepositorySchema.post('findOneAndDelete', async function(deletedDoc){
 
 RepositorySchema.pre('findOneAndUpdate', async function(next){
     try{
-        await handleUpdateCommands(this);
+        await handleUpdateCommands();
         next();
     }catch (error){
         next(error);
