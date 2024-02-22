@@ -134,7 +134,7 @@ RepositorySchema.methods.updateAliasIfNeeded = async function(){
         .findOne({ alias: this.alias, user: this.user });
     if(existingRepository){
         this.alias = this.alias + '-' + v4().slice(0, 4);
-    }    
+    }
 };
 
 RepositorySchema.methods.getUserWithGithubData = async function(){
@@ -181,6 +181,22 @@ RepositorySchema.post('findOneAndDelete', async function(deletedDoc){
         console.log('[Quantum Cloud]: Critical Error (@models/repository):', error);
     }
 });
+
+
+RepositorySchema.pre('deleteMany', async function() {
+    const repositories = await this.model.find(this._conditions);
+    for(const deletedDoc of repositories){
+        try{
+            const repositoryUser = await removeRepositoryReference(deletedDoc);
+            const deployments = await getAndDeleteDeployments(deletedDoc._id);
+            await performCleanupTasks(deletedDoc, repositoryUser, deployments);
+        }catch (error){
+            console.log('[Quantum Cloud]: Critical Error during deleteMany cleanup (@models/repository):', error);
+        }
+    }
+});
+  
+
 
 RepositorySchema.pre('findOneAndUpdate', async function(next){
     try{

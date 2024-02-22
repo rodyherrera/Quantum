@@ -90,11 +90,13 @@ const UserSchema = new mongoose.Schema({
 UserSchema.plugin(TextSearch);
 UserSchema.index({ username: 'text', fullname: 'text', email: 'text' });
 
-UserSchema.post('findOneAndDelete', async function(){
+UserSchema.pre('findOneAndDelete', async function(){
+    // CHECK WEBHOOK AND ALIAS REPO
     const user = this._conditions;
-    await mongoose.model('Github').findOneAndDelete({ user: user._id });
-    await mongoose.model('Deployment').deleteMany({ user: user._id });
     await mongoose.model('Repository').deleteMany({ user: user._id });
+    // Is deployment deleteMany needed?
+    await mongoose.model('Deployment').deleteMany({ user: user._id });
+    await mongoose.model('Github').findOneAndDelete({ user: user._id });
     const container = global.userContainers[user._id];
     await container.remove();
 });
