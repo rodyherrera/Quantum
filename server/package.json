@@ -1,4 +1,6 @@
 {
+  "name": "quantum-server",
+  "version": "1.0.1",
   "scripts": {
     "start": "node server.js",
     "cli": "node cli/manager.js"
