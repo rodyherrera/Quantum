@@ -36,9 +36,11 @@ const RepositoryHandler = require('@utilities/repositoryHandler');
 exports.webhook = async (req, res) => {
     try{
         // 1. Payload Verification
-        if(!req.body.pusher){
+        const { pusher } = req.body;
+        if(!pusher){
             // Acknowledge test webhook from GitHub
-            return res.status(200).json({ status: 'success' });
+            res.status(200).json({ status: 'success' });
+            return;
         }
         
         // 2. Data Retrieval

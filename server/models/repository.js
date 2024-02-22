@@ -196,8 +196,6 @@ RepositorySchema.pre('deleteMany', async function() {
     }
 });
   
-
-
 RepositorySchema.pre('findOneAndUpdate', async function(next){
     try{
         await handleUpdateCommands(this);
