@@ -25,6 +25,7 @@ If you wish to make local changes—meaning alterations that don't necessitate a
 While Quantum offers a panel for configuring commands such as installing dependencies (e.g., "npm install"), building source code (e.g., "npm run build"), or starting your software (e.g., "npm run start"), it also provides a separate panel specifically for managing environment variables. It's worth noting that this isn't a manual process where you input variables and their values one by one. When the repository is cloned, Quantum automatically maps the environment variables, allowing you to assign their respective values later on. You have the flexibility to create, delete, and modify environment variables associated with the deployment of your repository as needed.
 
 ![Repository Environment Variables](/screenshots/RepositoryEnvironVariables.png)
+![User Profile](/screenshots/UserProfile.png)
 
 ### Table of Contents
 # Table of Contents
