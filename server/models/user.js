@@ -109,7 +109,13 @@ UserSchema.pre('findOneAndDelete', async function(){
 
 UserSchema.pre('save', async function(next){
     try{
-        if(this.isNew){
+        // The existence of "global.logStreamStore" is checked 
+        // because it is an object that is created when the server runs. 
+        // However, when you run the CLI and choose the "Create new user" 
+        // option, this code is also executed, but the variable does not 
+        // exist. Therefore, if it does not exist, the code block inside 
+        // is not executed.
+        if(this.isNew && global?.logStreamStore !== undefined){
             const container = new UserContainer(this);
             // "container.start()" returns a promise, however this 
             // takes a little time, which will make it take time to 
