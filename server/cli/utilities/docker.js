@@ -1,7 +1,7 @@
 const Docker = require('dockerode');
+const docker = new Docker();
 
-const filterAvailableContainers = async (activeOnly = false) => {
-    const docker = new Docker();
+exports.filterAvailableContainers = async (activeOnly = false) => {
     const containers = await docker.listContainers({ all: !activeOnly });
     if(process.env.DOCKERS_CONTAINER_ALIASES){
         const aliases = process.env.DOCKERS_CONTAINER_ALIASES.split(',');
@@ -17,11 +17,4 @@ const filterAvailableContainers = async (activeOnly = false) => {
     return activeOnly ? containers.filter((containerInfo) => containerInfo.State === 'running') : containers;
 };
 
-const listContainers = async () => {
-    const activeContainers = await filterAvailableContainers(true);
-    activeContainers.forEach((container) => {
-        console.log('->', container.Names[0]);
-    });
-};
-
-module.exports = listContainers;
+module.exports = exports;

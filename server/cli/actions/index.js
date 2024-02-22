@@ -14,12 +14,14 @@
 
 const createUser = require('@cli/actions/createUser');
 const dropDatabase = require('@cli/actions/dropDatabase');
-const listContainers = require('@cli/actions/listContainers');
+const listActiveContainers = require('@cli/actions/listActiveContainers');
+const listCreatedContainers = require('@cli/actions/listCreatedContainers');
 
 const actions = {
     createUser,
-    listContainers,
-    dropDatabase
+    listActiveContainers,
+    dropDatabase,
+    listCreatedContainers
 };
 
 module.exports = actions;
