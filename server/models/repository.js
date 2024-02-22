@@ -111,8 +111,8 @@ const handleUpdateCommands = async (context) => {
     const { buildCommand, installCommand, startCommand, rootDirectory } = context._update;
     const { _id } = context._conditions;
     if(
-        rootDirectory.length || buildCommand.length ||
-        installCommand.length || startCommand.length
+        rootDirectory?.length || buildCommand?.length ||
+        installCommand?.length || startCommand?.length
     ){
         const { user, name, deployments } = await Repository
             .findById(_id)

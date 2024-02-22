@@ -51,7 +51,6 @@ exports.webhook = async (req, res) => {
 
         // 3. Setup
         const github = new Github(repositoryUser, requestedRepository);
-        const repositoryHandler = new RepositoryHandler(requestedRepository, repositoryUser);
 
         // 4. Stop Existing Container (if any)
         const shellStream = global.userContainers[repositoryUser._id][requestedRepository._id];
@@ -68,11 +67,15 @@ exports.webhook = async (req, res) => {
         await User.updateOne({ _id: repositoryUser._id }, {
             $push: { deployments: deployment._id }
         });
+
         await Repository.updateOne({ _id: requestedRepository._id }, {
             $push: { deployments: deployment._id }
         });
 
+        requestedRepository.deployments.push(deployment._id);
+
         // 8. Start the repository
+        const repositoryHandler = new RepositoryHandler(requestedRepository, repositoryUser);
         await repositoryHandler.start(github);
         res.status(200).json({ status: 'success' });
     }catch(error){

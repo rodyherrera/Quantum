@@ -95,7 +95,9 @@ class RepositoryHandler extends ContainerLoggable{
             const repositoryShell = await this.getOrCreateShell();
             this.executeCommands(commands, formattedEnvironment, repositoryShell);
             const { githubDeploymentId } = deployment;
-            githubUtility.updateDeploymentStatus(githubDeploymentId, 'success');
+            // IS USING THE FIRST DEP
+            // DELETE FROM GIT AND LCOAL DB
+            await githubUtility.updateDeploymentStatus(githubDeploymentId, 'success');
             deployment.status = 'success';
             await deployment.save();
         }catch(error){
@@ -109,7 +111,7 @@ class RepositoryHandler extends ContainerLoggable{
     };
 
     async getCurrentDeployment(){
-        const currentDeploymentId = this.repository.deployments[0];
+        const currentDeploymentId = this.repository.deployments.slice(-1)[0]
         return await Deployment
             .findById(currentDeploymentId)
             .select('environment githubDeploymentId status');
