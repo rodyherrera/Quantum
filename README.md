@@ -42,6 +42,7 @@ While Quantum offers a panel for configuring commands such as installing depende
     - [Docker-Based Isolation](#docker-based-isolation)
 2. [Project Requirements](#project-requirements)
     - [Node.js Installation](#nodejs-installation)
+    - [Docker Installation](#docker-installation)
 3. [Installation](#installation)
     - [Installation Guide](#installation-guide)
     - [Post-Installation Configuration](#post-installation-configuration)
@@ -73,24 +74,51 @@ While Quantum offers a panel for configuring commands such as installing depende
 - **Docker-Based Isolation:** Each user receives a dedicated Docker instance for their deployment, ensuring smooth operations and minimizing conflicts.
 
 ### Project Requirements
-To run this project, Node.js 21 or higher is required. It is recommended to use nvm (Node Version Manager) to manage Node.js versions on your system. Below are the steps to install Node.js 21 using nvm:
-1. **Installing NVM:**
-    ```bash
-    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
-    ```
-    Or, if you prefer to use wget:
-    ```bash
-    wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
-    ```
-2. **Close and reopen the terminal:** It is important to close and reopen the terminal after installing nvm for the changes to take effect.
-3. **Installing Node.js 20.11.1:** 
-    ```bash
-    nvm install 20.11.1
-    ```
-4. **Set the default version:** Then, you can set the newly installed version as the default using the following command:
-    ```bash
-    nvm alias default 20.11.1
-    ```
+To run this project, you'll need the following:
+
+* **Node.js 21 or higher:**  It is recommended to use nvm (Node Version Manager) to manage Node.js versions on your system. Here's how to install Node.js 21 using nvm:
+
+    1. **Installing NVM:**
+        ```bash
+        curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+        ```
+        Or, if you prefer to use wget:
+        ```bash
+        wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
+        ```
+
+    2. **Close and reopen the terminal:** It is important to close and reopen the terminal after installing nvm for the changes to take effect.
+
+    3. **Installing Node.js 20.11.1:** 
+        ```bash
+        nvm install 20.11.1
+        ```
+
+    4. **Set the default version:** Then, you can set the newly installed version as the default using the following command:
+        ```bash
+        nvm alias default 20.11.1
+        ```
+
+* **Docker:** Docker is required to run any containerized components of this project. Follow the installation instructions for your operating system:
+    * **Linux:** https://docs.docker.com/engine/install/
+    **If you have a Debian-based server (such as Ubuntu):**
+      ```bash
+      sudo apt-get update
+      sudo apt-get install ca-certificates curl
+      sudo install -m 0755 -d /etc/apt/keyrings
+      sudo curl -fsSL [https://download.docker.com/linux/debian/gpg](https://download.docker.com/linux/debian/gpg) -o /etc/apt/keyrings/docker.asc
+      sudo chmod a+r /etc/apt/keyrings/docker.asc
+
+      echo \
+        "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] [https://download.docker.com/linux/debian](https://download.docker.com/linux/debian) \
+        $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+        sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+      sudo apt-get update
+      sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin 
+      ```
+    * **macOS:** https://docs.docker.com/desktop/install/mac-install/
+    * **Windows:** https://docs.docker.com/desktop/install/windows-install/
+
 
 ### Installation
 You may prefer the all-in-one command, to run in your terminal, clone the repository and install dependencies.
@@ -317,5 +345,3 @@ Your involvement is vital to make Quantum the best it can be. Here's how you can
 - **Contribute**: Explore the codebase on GitHub, fix bugs, implement new features, and become a part of the development team.
 - **Star/Fork**: Increase Quantum's visibility on GitHub by starring and forking the repository. This helps others discover our project.
 - **Coffee**: If Quantum has become a valuable tool for you, consider showing your appreciation with a small donation on Ko-fi https://ko-fi.com/codewithrodi. Your support fuels our team's continued development efforts.
-
-
