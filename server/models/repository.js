@@ -22,8 +22,7 @@ const RepositorySchema = new mongoose.Schema({
     alias: {
         type: String,
         maxlength: [32, 'Repository::Alias::MaxLength'],
-        minlength: [4, 'Repository::Alias::MinLength'],
-        unique: true
+        minlength: [4, 'Repository::Alias::MinLength']
     },
     name: {
         type: String,

@@ -91,7 +91,6 @@ UserSchema.plugin(TextSearch);
 UserSchema.index({ username: 'text', fullname: 'text', email: 'text' });
 
 UserSchema.pre('findOneAndDelete', async function(){
-    // ALIAS REPO
     const user = this._conditions;
     await mongoose.model('Repository').deleteMany({ user: user._id });
     // Is deployment deleteMany needed?
