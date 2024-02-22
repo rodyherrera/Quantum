@@ -93,18 +93,32 @@ UserSchema.index({ username: 'text', fullname: 'text', email: 'text' });
 UserSchema.pre('findOneAndDelete', async function(){
     const user = this._conditions;
     await mongoose.model('Repository').deleteMany({ user: user._id });
-    // Is deployment deleteMany needed?
-    await mongoose.model('Deployment').deleteMany({ user: user._id });
+    // You won't need to use "Deployment.deleteMany" because when 
+    // deleting the user, the associated repositories are also 
+    // deleted using "deleteMany" in the respective model. This 
+    // action automatically removes the related deployments. Repeating 
+    // the process is unnecessary computational overhead.
+    // await mongoose.model('Deployment').deleteMany({ user: user._id });
     await mongoose.model('Github').findOneAndDelete({ user: user._id });
     const container = global.userContainers[user._id];
-    await container.remove();
+    // .then() to avoid I/O blocking, do this better in future versions.
+    container.remove().then().catch((error) => {
+        console.log(`[Quantum Cloud] CRITICAL ERROR (at @models/user - pre findOneAndDelete middleware): ${error}`)
+    });
 });
 
 UserSchema.pre('save', async function(next){
     try{
         if(this.isNew){
             const container = new UserContainer(this);
-            await container.start();
+            // "container.start()" returns a promise, however this 
+            // takes a little time, which will make it take time to 
+            // load after sending the form to create the account. By 
+            // not using await and using .then() we avoid blocking I/O. 
+            // However, this must be implemented in a better way.
+            container.start().then().catch((error) => {
+                console.log(`[Quantum Cloud] CRITICAL ERROR (at @models/user - pre save middleware): ${error}`)
+            });
         }
         if(!this.isModified('password')) return next();
         this.username = this.username.replace(/\s/g, '');
