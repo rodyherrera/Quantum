@@ -12,11 +12,15 @@
  * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 ****/
 
-import React from 'react';
+import React, { useEffect } from 'react';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger'; 
 import { FaLongArrowAltRight } from 'react-icons/fa';
 import { useSelector } from 'react-redux';
 import IconLink from '@components/general/IconLink';
 import './WelcomeSection.css';
+
+gsap.registerPlugin(ScrollTrigger);
 
 const WelcomeSection = ({ ...props }) => {
     const { isAuthenticated, user } = useSelector(state => state.auth);
@@ -25,6 +29,38 @@ const WelcomeSection = ({ ...props }) => {
         ['Contribute', 'https://ko-fi.com/codewithrodi'],
         ['Github', 'https://github.com/rodyherrera/Quantum/']
     ];
+
+    useEffect(() => {
+        gsap.from('.Welcome-Title', {
+            opacity: 0,
+            duration: 0.8,
+            ease: 'power1.out',
+            scrollTrigger: {
+                trigger: '.Welcome-Container', 
+                start: 'top 80%'
+            }
+        });
+
+        // Target links directly with a more specific selector 
+        gsap.from('.Welcome-Navigation-Container div', { 
+            x: -30,
+            opacity: 0,
+            duration: 0.8,
+            stagger: 0.1,
+            ease: 'back(1.5)',
+            scrollTrigger: {
+                trigger: '.Welcome-Navigation-Container', 
+                start: 'top 80%'
+            }
+        });
+
+        // Target icons - Add a class to icons if needed for specificity
+        gsap.from('.Welcome-Navigation-Container div svg', { 
+            rotation: 15,
+            duration: 0.4,
+            ease: 'power1.out'
+        });
+    }, []);
 
     return (
         <aside className='Welcome-Container' {...props}>

@@ -12,7 +12,9 @@
  * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 ****/
 
-import React from 'react';
+import React, { useEffect } from 'react';
+import { gsap } from 'gsap'; 
+import { ScrollTrigger } from 'gsap/ScrollTrigger'; 
 import { HiOutlineArrowRight } from 'react-icons/hi';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
@@ -23,9 +25,76 @@ import DashedContainer from '@components/general/DashedContainer';
 import CircleContainedText from '@components/general/CircleContainedText';
 import './Home.css';
 
+gsap.registerPlugin(ScrollTrigger);
+
 const HomePage = () => {
     const { isAuthenticated } = useSelector(state => state.auth);
     const navigate = useNavigate();
+
+
+    useEffect(() => {
+        // Title Animation Setup
+        const titleElements = '#Home-Presentation-Title-Container h1';
+        gsap.from(titleElements, { 
+            y: 30, 
+            opacity: 0, 
+            duration: 0.5,
+            delay: 0.1, 
+            stagger: 0.2, 
+            ease: 'back'
+        }); 
+
+        // Subtitle Animations
+        gsap.from('#Home-Presentation-Container-Subtitle', { 
+            y: 20, 
+            opacity: 0, 
+            duration: 0.7,
+            delay: 0.5 
+        });
+        gsap.from('#Home-Short-Subtitle', {
+            opacity: 0,
+            scale: 0.95,
+            duration: 0.8,
+            ease: 'power2.out',
+            scrollTrigger: {
+                trigger: '#Home-Short-Subtitle',
+                start: 'top 80%',
+            }
+        });
+
+        // Button Slide-in Animations
+        const actionButtons = '#Home-Presentation-Container-Actions-Container button';
+        gsap.from(actionButtons, { 
+            // Slide opposite directions
+            x: (index) => index === 0 ? -50 : 50, 
+            opacity: 0, 
+            duration: 0.8, 
+            stagger: 0.15, 
+            ease: 'back(2)', 
+        });
+
+        // Docs Button and Circle Animations
+        gsap.from('#Docs-Button', {
+            y: 20,
+            opacity: 0,
+            duration: 0.6,
+            ease: 'power2.out',
+            scrollTrigger: {
+                trigger: '#Docs-Button',
+                start: 'top 80%',
+            }
+        });
+        gsap.from('#Circle-Contained-Text-Wrapper', { 
+            scale: 0.8,
+            opacity: 0, 
+            duration: 1.2, 
+            ease: 'back(1.5)',
+            scrollTrigger: {
+                trigger: '#Circle-Contained-Text-Wrapper',
+                start: 'top 70%'
+            } 
+        });
+    }, []); 
     
     return (
         <AnimatedMain id='Home-Page-Main'>
@@ -40,7 +109,11 @@ const HomePage = () => {
                 <article id='Home-Presentation-Container-Platform-Container'>
                     <span id='Home-Short-Subtitle'>Everything you need, in one place.</span>
                     <div id='Home-Presentation-Title-Container'>
-                        <h1 id='Home-Presentation-Container-Title'>Unlock your <br/>entrepreneurial spirit!</h1>
+                        <h1 id='Home-Presentation-Container-Title'>
+                            <span>Unlock your </span>
+                            <br/>
+                            <span>entrepreneurial spirit!</span>
+                        </h1>
                         <WelcomeSection />
                     </div>
                     <p id='Home-Presentation-Container-Subtitle'>

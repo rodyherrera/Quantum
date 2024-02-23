@@ -18,6 +18,7 @@
     "@uiw/react-textarea-code-editor": "^3.0.2",
     "axios": "^1.6.2",
     "framer-motion": "^11.0.3",
+    "gsap": "^3.12.5",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-icons": "^4.12.0",
