@@ -12,8 +12,9 @@
  * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 ****/
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { CircularProgress } from '@mui/material';
+import { gsap } from 'gsap';
 import Button from '@components/general/Button';
 import Breadcrumbs from '@components/general/Breadcrumbs';
 import AnimatedMain from '@components/general/AnimatedMain'
@@ -35,6 +36,28 @@ const DataRenderer = ({
     RightContainerComponent = null,
     ...props
 }) => {
+
+    useEffect(() => {
+        gsap.from('.Data-Renderer-Main', { 
+            duration: 0.8, 
+            y: 20, 
+            ease: 'Power2.easeOut' 
+        });
+
+        gsap.from(['.Data-Renderer-Header-Container', '.Data-Renderer-Body-Container'], {
+            duration: 0.5, 
+            y: 10, 
+            ease: 'Power2.easeOut',
+            // Small delay between header and body animations 
+            stagger: 0.1 
+        });
+    }, []);
+
+    useEffect(() => {
+        if(isLoading || isOperationLoading){
+            gsap.to('.Data-Renderer-Loading-Container', { duration: 0.4, opacity: 1 });
+        }
+    }, [isLoading, isOperationLoading, error, data]);
 
     return (
         <AnimatedMain {...props} className='Data-Renderer-Main Binary-View-Container'>

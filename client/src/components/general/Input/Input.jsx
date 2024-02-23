@@ -12,13 +12,13 @@
  * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 ****/
 
-import React from 'react';
+import React, { forwardRef, useEffect } from 'react';
 import './Input.css';
 
-const Input = ({ helperText, endIcon = null, ...props }) => {
+const Input = forwardRef(({ helperText, endIcon = null, ...props }, ref) => {
 
     return (
-        <div className='Input-Container'>
+        <div className='Input-Container' ref={ref}>
             <div className='Input-Wrapper-Container'>
                 <input className='Input' {...props} />
                 {(endIcon) && (
@@ -32,6 +32,6 @@ const Input = ({ helperText, endIcon = null, ...props }) => {
             </div>
         </div>
     );
-};
+});
 
 export default Input;

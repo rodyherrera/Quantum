@@ -12,11 +12,12 @@
  * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 ****/
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Input from '@components/general/Input';
 import Button from '@components/general/Button';
 import Breadcrumbs from '@components/general/Breadcrumbs';
 import AnimatedMain from '@components/general/AnimatedMain'
+import { gsap } from 'gsap';
 import { BiErrorCircle } from 'react-icons/bi';
 import { BsArrowRight } from 'react-icons/bs';
 import { CircularProgress } from '@mui/material';
@@ -36,6 +37,9 @@ const MinimalForm = ({
 }) => {
     const [formValues, setFormValues] = useState(
         formInputs.map(input => ({ [input.name]: input?.value || '' })).reduce((acc, cur) => ({ ...acc, ...cur }), {}));
+    
+    // Array to hold input refs
+    const inputRefs = useRef([]); 
 
     const keyPressHandler = (e) => {
         if(e.key === 'Enter'){
@@ -44,10 +48,37 @@ const MinimalForm = ({
     };
 
     useEffect(() => {
+        gsap.from('.Minimal-Form-Container', { 
+            duration: 0.8, 
+            y: 20, 
+            ease: 'Power2.easeOut' 
+        });
+    
+        gsap.from(inputRefs.current, {
+            duration: 0.4,
+            opacity: 0,
+            y: 10,
+            stagger: 0.15,
+            ease: 'Back.easeOut(1.2)'
+        });
         return () => {
             setFormValues(formInputs.map(input => ({ [input.name]: '' })));
         }
     }, []);
+
+    useEffect(() => {
+        if(error){
+            gsap.fromTo('.Minimal-Form-Error-Container', { 
+                opacity: 0,
+                x: -10
+            }, {
+                duration: 0.4, 
+                opacity: 1, 
+                x: 0, 
+                ease: 'Elastic.easeOut(1, 0.4)' 
+            });
+        }
+    }, [error]);
 
     return (
         <AnimatedMain 
@@ -89,6 +120,7 @@ const MinimalForm = ({
                             key={index}
                             type={input.type}
                             value={formValues[input.name]}
+                            ref={(el) => inputRefs.current[index] = el}
                             onKeyPress={keyPressHandler}
                             onChange={(e) => setFormValues({ ...formValues, [input.name]: e.target.value })}
                             name={input.name}

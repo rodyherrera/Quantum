@@ -14,6 +14,7 @@
 
 .Minimal-Form-Container{
     padding: 1rem 2rem;
+    opacity: 1;
     height: calc(100% - 139px);
     display: flex;
     justify-content: space-between;
@@ -73,7 +74,7 @@
 
 .Minimal-Form-Body-Container{
     max-width: 70%;
-    overflow-y: scroll;
+    overflow-y: hidden;
     max-height: 75%;
     padding: 1px 1.5rem 1px 1px;
     gap: 1.5rem;
