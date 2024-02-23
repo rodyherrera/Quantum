@@ -125,7 +125,7 @@ To run this project, you'll need the following:
 ### Installation
 You may prefer the all-in-one command, to run in your terminal, clone the repository and install dependencies.
 ```bash
-git clone -b 1.0.0 https://github.com/rodyherrera/Quantum && cd Quantum && cd server && npm install --force && cd ../client &&  npm install --force
+git clone -b 1.0.1 https://github.com/rodyherrera/Quantum && cd Quantum && cd server && npm install --force && cd ../client &&  npm install --force
 ```
 
 #### Installation Guide
