@@ -93,7 +93,7 @@ class UserContainer extends ContainerLoggable{
     async installPackages(){
         try{
             await this.executeCommand('apk update');
-            await this.executeCommand('apk add --no-cache git docker nodejs npm python3');
+            await this.executeCommand(`apk add --no-cache ${process.env.DOCKER_APK_STARTER_PACKAGES}`);
         }catch(error){
             this.criticalErrorHandler('installPackages', error);
         }

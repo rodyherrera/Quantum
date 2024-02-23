@@ -167,6 +167,10 @@ NODE_ENV = development
 # This value is the way to determine which container belongs to Quantum.
 DOCKERS_CONTAINER_ALIASES = Quantum-Container
 
+# DOCKER_APK_STARTER_PACKAGES: Initial packages to install once
+# the user container is created.
+DOCKER_APK_STARTER_PACKAGES = "git docker nodejs npm python3 py3-pip"
+
 # DOMAIN: Specifies the base domain of the server. This is the 
 # main access point for the application.
 DOMAIN = www.backend-domain.com
