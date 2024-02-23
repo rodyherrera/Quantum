@@ -56,7 +56,6 @@ export const updateMyProfile = (body, navigate) => async (dispatch) => {
     const operation = new OperationHandler(authSlice, dispatch);
     operation.on('response', (data) => {
         dispatch(authSlice.setUser(data));
-        dispatch(logout());
         navigate('/dashboard/');
     });
     operation.use({
