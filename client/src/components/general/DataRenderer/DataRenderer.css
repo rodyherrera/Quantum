@@ -61,9 +61,9 @@
 }
 
 .Data-Renderer-Body-Container{
-    max-height: 65%;
+    max-height: 66%;
     position: relative;
-    min-height: 65%;
+    min-height: 66%;
     overflow-y: scroll;
     padding-right: .5rem;
 }
