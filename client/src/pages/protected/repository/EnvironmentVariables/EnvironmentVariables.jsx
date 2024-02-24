@@ -16,6 +16,7 @@ import React, { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { CircularProgress } from '@mui/material';
+import { gsap } from 'gsap'; 
 import Breadcrumbs from '@components/general/Breadcrumbs';
 import EnvironmentVariable from '@components/repository/EnvironmentVariable';
 import AnimatedMain from '@components/general/AnimatedMain';
@@ -37,7 +38,72 @@ const EnvironmentVariables = () => {
 
     useEffect(() => {
         initializeEnvironment();
+        // Title Area Animations 
+        gsap.from('#Environment-Variables-Left-Title', { 
+            duration: 0.8, 
+            y: 30, 
+            stagger: 0.1, 
+            ease: 'back' 
+        });
+
+        gsap.from('#Environment-Variables-Left-Subtitle', {
+            duration: 0.8,
+            scale: 0.95,
+            ease: 'power2.out'
+        });
+
+        // Environment Variable Items Animation
+        gsap.from('.Environment-Variable-Container', { 
+            duration: 0.8, 
+            // Slide in from the right
+            x: 50,
+            stagger: 0.15,
+             // Add a 'pop' effect
+            ease: 'back(2)',
+            scrollTrigger: {
+                trigger: '.Environment-Variable-Container' 
+            }
+        });
+
+        gsap.from('#Environment-Variables-Navigation-Container button', {
+            duration: 0.8,
+            // Slide in from opposite sides
+            x: (index) => index === 0 ? -50 : 50, 
+            stagger: 0.1,
+            ease: 'back(2)'
+        }); 
+
+        const addNewTween = gsap.to('#Environment-Variables-Create-New-Container', {
+            scale: 1.05, 
+            duration: 0.5, 
+            ease: 'power1.out', 
+            paused: true 
+        });
+        
+        const mouseEnterHandler = () => addNewTween.play();
+        const mouseLeaveHandler = () => addNewTween.reverse();
+        const addNewContainer = document.getElementById('Environment-Variables-Create-New-Container');
+        addNewContainer.addEventListener('mouseenter', mouseEnterHandler);
+        addNewContainer.addEventListener('mouseleave', mouseLeaveHandler);
+        
+        return () => {
+            addNewContainer.removeEventListener('mouseenter', mouseEnterHandler);
+            addNewContainer.removeEventListener('mouseleave', mouseLeaveHandler);
+        };
     }, []);
+
+    useEffect(() => {
+        if(isEnvironmentLoading) return;
+        gsap.from('.Environment-Variable-Container', { 
+            duration: 0.8, 
+            opacity: 0, 
+            y: 20, 
+            stagger: 0.15, 
+            scrollTrigger: {
+                trigger: '.Environment-Variable-Container' 
+            }
+        });
+    }, [isEnvironmentLoading]);
 
     const initializeEnvironment = () => {
         if(!selectedRepository) return navigate('/dashboard/');
