@@ -19,38 +19,46 @@ const fs = require('fs').promises;
 
 const docker = new Docker();
 
+/**
+ * Represents a user container within Quantum Cloud
+ * Manages operations related to its life cycle and interaction.
+*/
 class UserContainer extends ContainerLoggable{
     constructor(user){
+        // Pass IDs to maintain flexibility
         super(user._id, user._id);
         this.user = user;
-        this.dockerName = this.getUserDockerName();
-        this.instance = null;
+        this.dockerName = this.formatDockerName(this.user._id);
         this.storagePath = path.join(__dirname, '../storage/containers', this.user._id.toString());
+        this.instance = null;
     };
 
-    getUserDockerName(){
-        const userId = this.user._id.toString();
-        const formattedUserId = userId.replace(/[^a-zA-Z0-9_.-]/g, '_');
+    /**
+     * Format dockerName to comply with restrictions
+     * @param {string} userId 
+     * @returns {string} 
+    */
+    formatDockerName(userId){
+        const formattedUserId = userId.toString().replace(/[^a-zA-Z0-9_.-]/g, '_'); 
         return `${process.env.DOCKERS_CONTAINER_ALIASES}-${formattedUserId}`;
-    };
+    }
 
+    // Delete the container and its associated storage
     async remove(){
         try{
             const existingContainer = docker.getContainer(this.dockerName);
-            if(existingContainer){
-                await existingContainer.stop();
-                await existingContainer.remove({ force: true });
-                await fs.rm(this.storagePath, { recursive: true });
-                delete global.userContainers[this.user._id];
-                console.log(`[Quantum Cloud]: Container ${this.dockerName} removed successfully.`);
-            }else{
-                console.log(`[Quantum Cloud]: Container ${this.dockerName} does not exist.`);
-            }
+            if(!existingContainer) return;
+            await existingContainer.stop();
+            await existingContainer.remove({ force: true });
+            await fs.rm(this.storagePath, { recursive: true });
+            delete global.userContainers[this.user._id];
+            console.log(`[Quantum Cloud]: Container ${this.dockerName} removed successfully.`);
         }catch(error){
             this.criticalErrorHandler('removeContainer', error);
         }
     };
 
+    // Attempts to start the container, creating it if it does not exist.
     async start(){
         try{
             const existingContainer = await this.getExistingContainer();
@@ -65,7 +73,11 @@ class UserContainer extends ContainerLoggable{
             }
         }
     };
-
+    
+    /**
+     * Gets an existing instance of the container, if applicable.
+     * @returns {Promise<Container>}
+    */
     async getExistingContainer(){
         const existingContainer = docker.getContainer(this.dockerName);
         const { State } = await existingContainer.inspect();
@@ -179,6 +191,11 @@ class UserContainer extends ContainerLoggable{
         }
     };
 
+    /**
+     * Run an interactive terminal inside the container.
+     * @param {SocketIO.Socket} 
+     * @param {string} [workDir='/app'] Home directory
+    */
     async executeInteractiveShell(socket, workDir = '/app'){
         try{
             const exec = await this.instance.exec({
