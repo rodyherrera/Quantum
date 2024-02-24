@@ -1,0 +1,72 @@
+/***
+ * Copyright (C) Rodolfo Herrera Hernandez. All rights reserved.
+ * Licensed under the MIT license. See LICENSE file in the project root
+ * for full license information.
+ *
+ * =+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
+ *
+ * For related information - https://github.com/rodyherrera/Quantum/
+ *
+ * All your applications, just in one place. 
+ *
+ * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+****/
+
+@keyframes Project-Image-Animation{
+    0%{ border-radius: 50%; }
+    25%{ border-radius: 45% 48% 46% 37%; }
+    50%{ border-radius: 36% 45% 44% 48%; }
+    75%{ border-radius: 30% 40% 46% 40%; }
+    100%{ border-radius: 50%; }
+}
+
+.Project-Header-Container{
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    height: 40px;
+    align-items: flex-start;
+    width: 100%;
+    gap: 1rem;
+}
+
+.Project-Image{
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: #F5F5F5;
+}
+
+.Project-Image-Container{
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #000000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    will-change: transform;
+    animation: Project-Image-Animation 5s infinite;
+}
+
+.Project-Title{
+    font-size: 1rem;
+}
+
+.Project-Container:hover .Project-Title{
+    text-decoration: underline;
+}
+
+.Project-URL{
+    font-size: .8rem;
+    opacity: .8;
+}
+
+.Project-Title-Container{
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 0.2rem;
+}
