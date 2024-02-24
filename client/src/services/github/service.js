@@ -12,8 +12,8 @@
  * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 ****/
 
-import StandardizedAPIRequestBuilder from '@utilities/standardizedAPIRequestBuilder';
-export const GithubAPI = new StandardizedAPIRequestBuilder('/github');
+import APIRequestBuilder from '@utilities/apiRequestBuilder';
+export const GithubAPI = new APIRequestBuilder('/github');
 
 export const createAccount = GithubAPI.register({
     path: '/',

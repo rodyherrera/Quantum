@@ -12,8 +12,8 @@
  * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 ****/
 
-import StandardizedAPIRequestBuilder from '@utilities/standardizedAPIRequestBuilder';
-export const RepositoryAPI = new StandardizedAPIRequestBuilder('/repository');
+import APIRequestBuilder from '@utilities/apiRequestBuilder';
+export const RepositoryAPI = new APIRequestBuilder('/repository');
 
 export const getMyGithubRepositories = RepositoryAPI.register({
     path: '/me/github/',

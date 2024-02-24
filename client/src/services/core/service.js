@@ -12,8 +12,8 @@
  * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 ****/
 
-import StandardizedAPIRequestBuilder from '@utilities/standardizedAPIRequestBuilder';
-export const ServerAPI = new StandardizedAPIRequestBuilder('/server');
+import APIRequestBuilder from '@utilities/apiRequestBuilder';
+export const ServerAPI = new APIRequestBuilder('/server');
 
 export const getServerHealth = ServerAPI.register({
     path: '/health',

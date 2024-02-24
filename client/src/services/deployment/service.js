@@ -12,8 +12,8 @@
  * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 ****/
 
-import StandardizedAPIRequestBuilder from '@utilities/standardizedAPIRequestBuilder';
-export const DeploymentAPI = new StandardizedAPIRequestBuilder('/deployment');
+import APIRequestBuilder from '@utilities/apiRequestBuilder';
+export const DeploymentAPI = new APIRequestBuilder('/deployment');
 
 export const getRepositoryDeployments = DeploymentAPI.register({
     path: '/repository/:repositoryName/',

@@ -12,8 +12,8 @@
  * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 ****/
 
-import StandardizedAPIRequestBuilder from '@utilities/standardizedAPIRequestBuilder';
-export const AuthenticationAPI = new StandardizedAPIRequestBuilder('/auth');
+import APIRequestBuilder from '@utilities/apiRequestBuilder';
+export const AuthenticationAPI = new APIRequestBuilder('/auth');
 
 export const signUp = AuthenticationAPI.register({
     path: '/sign-up/',
