@@ -1,0 +1,38 @@
+/***
+ * Copyright (C) Rodolfo Herrera Hernandez. All rights reserved.
+ * Licensed under the MIT license. See LICENSE file in the project root
+ * for full license information.
+ *
+ * =+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
+ *
+ * For related information - https://github.com/rodyherrera/Quantum/
+ *
+ * All your applications, just in one place. 
+ *
+ * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+****/
+
+.File-Explorer-File-Container{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    padding: .8rem 1rem;
+    cursor: pointer;
+}
+
+.File-Explorer-File-Container{
+    border-bottom: 1px solid #000000;
+}
+
+.File-Explorer-File-Container:hover .File-Explorer-File-Name{
+    text-decoration: underline;
+}
+
+.File-Explorer-File-Icon-Container{
+    font-size: .9rem;
+}
+
+.File-Explorer-File-Name{
+    font-size: .8rem;
+}

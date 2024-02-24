@@ -71,11 +71,14 @@ const RelatedRepositorySections = ({ isRepositorySelected = true }) => {
             icon: IoIosGitBranch,
             description: 'Get a list of all the deployments that currently exist in your repository.',
             to: `/repository/${encodeURIComponent(selectedRepository?.alias)}/deployments/`
-        },
-        ...unselectedRepositoryItems
+        }
     ];
 
-    return <RelatedItems items={isRepositorySelected ? selectedRepositoryItems : unselectedRepositoryItems} />
+    const itemsToDisplay = isRepositorySelected
+        ? [...selectedRepositoryItems, ...unselectedRepositoryItems]
+        : unselectedRepositoryItems;
+
+    return <RelatedItems items={itemsToDisplay} />
 };
 
 export default RelatedRepositorySections;

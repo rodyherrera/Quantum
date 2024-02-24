@@ -13,28 +13,33 @@
 ****/
 
 import React, { useEffect } from 'react';
-import { CiFileOn } from 'react-icons/ci';
-import { GoFileDirectory } from 'react-icons/go';
 import { gsap } from 'gsap';
 import { useSearchParams } from 'react-router-dom';
-import { storageExplorer, readRepositoryFile, updateRepositoryFile } from '@services/repository/operations';
+import { storageExplorer, readRepositoryFile } from '@services/repository/operations';
 import { setSelectedRepositoryFile } from '@services/repository/slice';
 import { CircularProgress } from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux';
-import Button from '@components/general/Button';
 import CodeEditor from '@uiw/react-textarea-code-editor';
+import FileExplorerHeader from '@components/repository/FileExplorerHeader';
+import FileExplorerContent from '@components/repository/FileExplorerContent';
 import './FileExplorer.css';
 
+/**
+ * FileExplorer component for repository file navigation and editing.
+ * 
+ * @param {string} repositoryId - ID of the repository associated with the file explorer.
+*/
 const FileExplorer = ({ repositoryId }) => {
     const [searchParams, setSearchParams] = useSearchParams();
     const dispatch = useDispatch();
+    const { isOperationLoading, selectedRepositoryFile } = useSelector((state) => state.repository);
 
-    const {
-        isOperationLoading,
-        repositoryFiles,
-        selectedRepositoryFile
-    } = useSelector((state) => state.repository);
-
+    /**
+     * Loads a directory or file based on the current path.
+     * 
+     * @param {string} path - The path of the file or directory to load.
+     * @param {boolean} isDirectory - Whether the specified path points to a directory.
+    */
     const loadPath = (path, isDirectory = true) => {
         setSearchParams({ path });
         if(isDirectory){
@@ -43,38 +48,9 @@ const FileExplorer = ({ repositoryId }) => {
         dispatch(readRepositoryFile(repositoryId, path));
     };
 
-    const overwriteFileHandler = () => {
-        const { content } = selectedRepositoryFile;
-        const path = searchParams.get('path');
-        dispatch(updateRepositoryFile(repositoryId, path, content));
-        goBackHandler();
+    const getFileExtension = (filename) => {
+        return filename.split('.').pop();
     };
-
-    const repositoryClickHandler = ({ name, isDirectory }) => {
-        const currentPath = searchParams.get('path') || '';
-        const path = currentPath.endsWith('/') ? currentPath + name : currentPath + '/' + name;
-        loadPath(path, isDirectory);
-    };
-
-    const goBackHandler = () => {
-        if(selectedRepositoryFile !== null) dispatch(setSelectedRepositoryFile(null));
-        const currentPath = searchParams.get('path');
-        const newPath = currentPath.split('/').slice(0, -1).join('/') || '/';
-        loadPath(newPath);
-    };
-
-    const getFileExtension = (filename) => filename.split('.').pop();
-
-    useEffect(() => {
-        if(!repositoryFiles.length) return;
-        gsap.from('.File-Explorer-File-Container', { 
-            duration: 0.2, 
-            opacity: 0,
-            // Add a slight delay between each item's animation
-            stagger: 0.1,
-            ease: 'power2.out' 
-        });
-    }, [repositoryFiles]);
 
     useEffect(() => {
         const path = searchParams.get('path') || '/';
@@ -92,7 +68,7 @@ const FileExplorer = ({ repositoryId }) => {
             // Slight delay after the title
             delay: 0.2, 
             ease: 'power2.out' 
-       });
+        });
         return () => {
             dispatch(setSelectedRepositoryFile(null));
         };
@@ -104,22 +80,7 @@ const FileExplorer = ({ repositoryId }) => {
         </div>
     ) : (
         <div className='File-Explorer-Body-Container'>
-            {searchParams.get('path') !== '/' && (
-                <div className='File-Explorer-Actions-Container'>
-                    <div className='File-Explorer-Go-Back-Container' onClick={goBackHandler}>
-                        <span className='File-Explorer-Go-Back-Text'>...</span>
-                    </div>
-                    {selectedRepositoryFile && (
-                        <div className='File-Explorer-Header-Right-Container'>
-                            <Button 
-                                onClick={overwriteFileHandler}
-                                title='Save Changes & Exit'
-                                variant='Small Contained Extended-Sides'
-                            />
-                        </div>
-                    )}
-                </div>
-            )}
+            <FileExplorerHeader repositoryId={repositoryId} loadPath={loadPath} />
             {selectedRepositoryFile !== null ? (
                 <div className='File-Explorer-Code-Block-Container'>
                     <CodeEditor
@@ -133,18 +94,7 @@ const FileExplorer = ({ repositoryId }) => {
                     />
                 </div>
             ) : (
-                repositoryFiles.map(({ name, isDirectory }, index) => (
-                    <div
-                        onClick={() => repositoryClickHandler({ name, isDirectory })}
-                        className='File-Explorer-File-Container'
-                        key={index}
-                    >
-                        <i className='File-Explorer-File-Icon-Container'>
-                            {isDirectory ? <GoFileDirectory /> : <CiFileOn />}
-                        </i>
-                        <span className='File-Explorer-File-Name'>{name}</span>
-                    </div>
-                ))
+                <FileExplorerContent loadPath={loadPath} />
             )}
         </div>
     )

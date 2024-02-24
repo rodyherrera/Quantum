@@ -19,12 +19,26 @@ import { CiTrash } from 'react-icons/ci';
 import * as deploymentSlice from '@services/deployment/slice';
 import './EnvironmentVariable.css';
 
+/**
+ * Component to represent an individual environment variable.
+ * 
+ * @param {string} name -  Name of the environment variable.
+ * @param {string} value - Environment variable value.
+ * @param {number} index -  Index of the tone variable within its list.
+ * @param {object} props -  Additional props for the component.
+*/
 const EnvironmentVariable = ({ name, value, index, ...props }) => {
     const dispatch = useDispatch();
     const unionRef = useRef(null);
     const variableContainerRef = useRef(null);
     const { environment } = useSelector(state => state.deployment);
 
+    /**
+     * Updates the environment variable when modifying the name or value field.
+     * 
+     * @param {string} newKey - The new name of the variable.
+     * @param {string} newValue - The new value of the variable.
+    */
     const updateEnvironmentVariable = (newKey, newValue) => {
         const updatedVariables = environment.variables.map((variable, i) => {
             if(i === index) return [newKey, newValue];
@@ -39,6 +53,7 @@ const EnvironmentVariable = ({ name, value, index, ...props }) => {
         dispatch(deploymentSlice.setEnvironment({ ...environment, variables: updatedVariables }));
     };
 
+    // Handle clicks outside the component (to reset the style)
     useEffect(() => {
         if(!variableContainerRef.current || !unionRef.current) return;
         const clickEventHandler = (e) => {
