@@ -12,23 +12,40 @@
  * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 ****/
 
-export default class ServerRequestBuilder{
+/**
+ * A utility class for executing and managing server requests, focusing on
+ * consistent error handling and a simplified interface.
+*/
+class ServerRequestBuilder{
+    /**
+     * Extracts and processes potential errors from server responses.
+     * 
+     * @param {Error} error - The error object caught during the request.
+     * @returns {ServerRequestError} - A structured error for easier handling.
+    */
     handleRejection(error){
-        if(error?.response?.data?.message){
-            return error.response.data.message;
-        }
-        return error.message;
+        const message = error.response?.data?.message || error.message;
+        return message;
     };
 
-    register({ callback, args }){
-        return new Promise(async (resolve, reject) => {
-            try{
-                const response = await callback(...(args || []));
-                resolve(response?.data || response);
-            }catch(rejection){
-                const error = this.handleRejection(rejection);
-                reject(error);
-            }
-        });
+    /**
+     * Executes a provided callback function (presumably making a network request) 
+     * while handling potential errors and providing a consistent response format.
+     * 
+     * @param {object} config - Request configuration
+     * @param {function} config.callback - The function to execute, expected to perform an API call.
+     * @param {array} [config.args=[]] - Arguments to be passed to the callback function.
+     * @returns {Promise<any>} - Resolves with the response data or rejects with a `ServerRequestError`.
+    */
+    async register({ callback, args = [] }){
+        try{
+            const response = await callback(...args);
+            // Asumming Quantum Backend API consitency
+            return response.data || response;
+        }catch(error){
+            throw this.handleRejection(error);
+        }
     };
 };
+
+export default ServerRequestBuilder;
