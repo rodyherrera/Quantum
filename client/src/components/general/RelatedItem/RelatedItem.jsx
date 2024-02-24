@@ -32,6 +32,10 @@ const RelatedItem = ({ Icon, description, title, to }) => {
         };
         itemRef.current.addEventListener('mouseenter', mouseEnterHandler);
         itemRef.current.addEventListener('mouseleave', mouseLeaveHandler);
+        return () => {
+            itemRef.current.removeEventListener('mouseenter', mouseEnterHandler);
+            itemRef.current.removeEventListener('mouseleave', mouseLeaveHandler);
+        };
     }, [itemRef]);
 
     return (

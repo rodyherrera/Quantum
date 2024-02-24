@@ -12,9 +12,10 @@
  * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 ****/
 
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import PolicyArticle from '@components/legal/PolicyArticle';
 import AnimatedMain from '@components/general/AnimatedMain';
+import { gsap } from 'gsap';
 import './PrivacyPolicy.css';
 
 const PrivacyPolicy = () => {
@@ -65,6 +66,22 @@ const PrivacyPolicy = () => {
         }
     ];
 
+    const sectionRefs = useRef([]);
+    sectionRefs.current = policies.map((_, i) => sectionRefs.current[i] ?? React.createRef());
+
+    useEffect(() => {
+        sectionRefs.current.forEach((ref, index) => {
+            gsap.from(ref.current, {
+                opacity: 0,
+                y: 20, 
+                duration: 1, 
+                // Stagger the animations
+                delay: index * 0.3,
+                ease: "power2.out"
+            });
+        });
+    }, []);
+
     return (
         <AnimatedMain id='Privacy-Policy-Main'>
             <section id='Privacy-Policy-Header-Container'>
@@ -75,7 +92,11 @@ const PrivacyPolicy = () => {
 
             <section id='Privacy-Policy-Body-Container'>
                 {policies.map(({ title, articles }, index) => (
-                    <article className='Privacy-Policy-Section-Container' key={index}>
+                    <article 
+                        className='Privacy-Policy-Section-Container' 
+                        key={index}
+                        ref={sectionRefs.current[index]}
+                    >
                         <div className='Privacy-Policy-Section-Title-Container'>
                             <h3 className='Privacy-Policy-Section-Title'>{title}</h3>
                         </div>

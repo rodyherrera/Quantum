@@ -17,6 +17,7 @@ import { CircularProgress } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { getServerHealth } from '@services/core/operations';
 import { FaCheckCircle } from 'react-icons/fa';
+import { gsap } from 'gsap';
 import Button from '@components/general/Button';
 import AnimatedMain from '@components/general/AnimatedMain';
 import './ServiceStatus.css';
@@ -28,6 +29,30 @@ const ServiceStatus = () => {
     useEffect(() => {
         dispatch(getServerHealth());
     }, []);
+
+    useEffect(() => {
+        if(isServerHealthLoading) return;
+        gsap.from('#Service-Status-Container', {
+            duration: 0.8,
+            opacity: 0,
+            x: -20,
+            ease: 'back'
+        });
+        // Animate status details
+        gsap.from('#Service-Detailed-Status-Container p', {
+            duration: 0.7,
+            y: 20,
+            opacity: 0,
+            // Animate each paragraph slightly after the previous one
+            stagger: 0.1, 
+        });
+        gsap.from('#Service-Status-Footer-Container', {
+            duration: 0.8,
+            y: 50,
+            opacity: 0,
+            ease: 'back',
+        });
+    }, [isServerHealthLoading]);
 
     return (
         <AnimatedMain id='Service-Status-Main'>
@@ -42,7 +67,10 @@ const ServiceStatus = () => {
             ) : (
                 <React.Fragment>
                 <section id='Service-Status-Body-Container'>
-                        <article id='Service-Status-Container' className={serverHealth.serverStatus === 'Server::Health::Overloaded' ? 'Error' : ''}>
+                        <article 
+                            id='Service-Status-Container' 
+                            className={serverHealth.serverStatus === 'Server::Health::Overloaded' ? 'Error' : ''}
+                        >
                             <i id='Service-Status-Icon'>
                                 <FaCheckCircle />
                             </i>

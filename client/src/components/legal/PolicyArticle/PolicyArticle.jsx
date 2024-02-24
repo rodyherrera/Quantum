@@ -12,13 +12,25 @@
  * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 ****/
 
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
+import { gsap } from 'gsap';
 import './PolicyArticle.css';
 
 const PolicyArticle = ({ content, title = null }) => {
+    const articleRef = useRef(null);
+
+    useEffect(() => {
+        if(!articleRef.current) return;
+        gsap.from(articleRef.current, {
+            opacity: 0,
+            y: 10,
+            duration: 0.8,
+            ease: 'power1.out'
+        });
+    }, [articleRef]);
 
     return (
-        <div className='Privacy-Policy-Article-Container'>
+        <div className='Privacy-Policy-Article-Container' ref={articleRef}>
             <p className='Privacy-Policy-Article'>
                 {title && (
                     <b className='Privacy-Policy-Article-Title'>{title}:</b>
