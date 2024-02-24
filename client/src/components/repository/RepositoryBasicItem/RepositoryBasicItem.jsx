@@ -19,17 +19,6 @@ import { formatDate } from '@utilities/runtime';
 import './RepositoryBasicItem.css';
 
 const RepositoryBasicItem = ({ repository, onClick }) => {
-    const formatCreationDate = (lastUpdate) => {
-        const lastUpdateDate = new Date(lastUpdate);
-        const currentDate = new Date();
-        const difference = currentDate.getTime() - lastUpdateDate.getTime();
-        const differenceInHours = Math.round(difference / (1000 * 3600));
-        const differenceInDays = Math.round(difference / (1000 * 3600 * 24));
-        if(differenceInHours < 24)
-            return `${differenceInHours} hours`;
-        return `${differenceInDays} days`;
-    };
-
     return (
         <article className='Repository-Item' onClick={onClick}>
             <article className='Repository-Item-Content'>

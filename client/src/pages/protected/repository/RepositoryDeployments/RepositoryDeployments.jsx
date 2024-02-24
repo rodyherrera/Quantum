@@ -14,6 +14,7 @@
 
 import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+import { gsap } from 'gsap';
 import { useDispatch, useSelector } from 'react-redux';
 import DeploymentItem from '@components/deployment/DeploymentItem';
 import DataRenderer from '@components/general/DataRenderer';
@@ -31,6 +32,26 @@ const RepositoryDeployments = () => {
     useEffect(() => {
         dispatch(deploymentOperations.getRepositoryDeployments(selectedRepository.name));
     }, []);
+
+    useEffect(() => {
+        if(!deployments.length) return;
+        gsap.from('.Repository-Deployment-Container:first-child', {
+            // Start slightly smaller
+            scale: 0.95, 
+            opacity: 0,
+            duration: 1,
+            ease: "power2.out" 
+        });
+        gsap.from('.Repository-Deployment-Container:not(:first-child)', { 
+            y: 50, 
+            opacity: 0, 
+            duration: 1,
+             // 0.2 seconds between each item animation
+            stagger: 0.2, 
+            // A bouncy effect
+            ease: "back.out(1.7)"  
+        });
+    }, [deployments]);
 
     return (
         <DataRenderer

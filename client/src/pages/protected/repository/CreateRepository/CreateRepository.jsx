@@ -15,6 +15,7 @@
 import React, { useEffect } from 'react';
 import { getMyGithubRepositories, createRepository } from '@services/repository/operations';
 import { useSelector, useDispatch } from 'react-redux';
+import { gsap } from 'gsap';
 import { useNavigate } from 'react-router-dom';
 import DataRenderer from '@components/general/DataRenderer';
 import RepositoryBasicItem from '@components/repository/RepositoryBasicItem';
@@ -27,7 +28,7 @@ const CreateRepository = () => {
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    
+
     useEffect(() => {
         dispatch(getMyGithubRepositories());
     }, []);
@@ -40,6 +41,26 @@ const CreateRepository = () => {
         };
         await dispatch(createRepository(body, navigate));
     };
+
+    useEffect(() => {
+        if(!githubRepositories.length) return;
+        gsap.from('.Repository-Item:first-child', {
+            // Start slightly smaller
+            scale: 0.95, 
+            opacity: 0,
+            duration: 1,
+            ease: "power2.out" 
+        });
+        gsap.from('.Repository-Item:not(:first-child)', { 
+            y: 50, 
+            opacity: 0, 
+            duration: 1,
+             // 0.2 seconds between each item animation
+            stagger: 0.2, 
+            // A bouncy effect
+            ease: "back.out(1.7)"  
+        });
+    }, [githubRepositories]);
 
     return (
         <DataRenderer
