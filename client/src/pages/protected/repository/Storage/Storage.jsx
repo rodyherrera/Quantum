@@ -16,6 +16,7 @@ import React, { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { formatDate } from '@utilities/runtime';
+import { gsap } from 'gsap';
 import FileExplorer from '@components/repository/FileExplorer';
 import Breadcrumbs from '@components/general/Breadcrumbs';
 import AnimatedMain from '@components/general/AnimatedMain';

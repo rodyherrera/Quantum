@@ -15,6 +15,7 @@
 import React, { useEffect } from 'react';
 import { CiFileOn } from 'react-icons/ci';
 import { GoFileDirectory } from 'react-icons/go';
+import { gsap } from 'gsap';
 import { useSearchParams } from 'react-router-dom';
 import { storageExplorer, readRepositoryFile, updateRepositoryFile } from '@services/repository/operations';
 import { setSelectedRepositoryFile } from '@services/repository/slice';
@@ -65,8 +66,33 @@ const FileExplorer = ({ repositoryId }) => {
     const getFileExtension = (filename) => filename.split('.').pop();
 
     useEffect(() => {
+        if(!repositoryFiles.length) return;
+        gsap.from('.File-Explorer-File-Container', { 
+            duration: 0.2, 
+            opacity: 0,
+            // Add a slight delay between each item's animation
+            stagger: 0.1,
+            ease: 'power2.out' 
+        });
+    }, [repositoryFiles]);
+
+    useEffect(() => {
         const path = searchParams.get('path') || '/';
         loadPath(path);
+        gsap.from('#Repository-Storage-Header-Title', { 
+            duration: 0.8, 
+            opacity: 0, 
+            scale: 0.95, 
+            ease: 'power2.out' 
+        });
+        gsap.from('#Repository-Storage-Header-Description', { 
+            duration: 0.8, 
+            opacity: 0, 
+            y: 20,
+            // Slight delay after the title
+            delay: 0.2, 
+            ease: 'power2.out' 
+       });
         return () => {
             dispatch(setSelectedRepositoryFile(null));
         };
