@@ -15,6 +15,8 @@
 #Dashboard-Projects-Container{
     display: flex;
     flex-wrap: wrap;
+    height: 100%;
+    overflow-y: scroll;
     gap: 2rem;
 }
 

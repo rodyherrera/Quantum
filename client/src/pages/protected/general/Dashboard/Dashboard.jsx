@@ -37,7 +37,7 @@ const Dashboard = () => {
             dispatch(repositoriesSlice.setIsLoading(true));
         };
     }, [dispatch]);
-
+    
     return (
         <DataRenderer
             title='Dashboard'
