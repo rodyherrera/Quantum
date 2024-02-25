@@ -43,6 +43,7 @@ const ConfirmModal = ({
     const confirmButtonRef = useRef(null);
 
     const hideConfirmModal = (callback) => {
+        window.scrollTo({ behavior: 'smooth', top: 0 });
         gsap.to(confirmButtonRef.current, {
             backgroundColor: '#004ad5',
             duration: 0.2,
@@ -58,7 +59,7 @@ const ConfirmModal = ({
             ease: 'power2.in', 
             onComplete: () => {
                 if(callback) callback();
-                setIsActive(!isActive)
+                setIsActive(!isActive);
             } 
         });
     };
