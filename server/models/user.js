@@ -107,6 +107,7 @@ UserSchema.pre('findOneAndDelete', async function(){
     });
 });
 
+// DOCKER CONTAINER IS CREATED IF ERROR EXISTS
 UserSchema.pre('save', async function(next){
     try{
         // The existence of "global.logStreamStore" is checked 

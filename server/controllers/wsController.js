@@ -17,33 +17,67 @@ const RuntimeError = require('@utilities/runtimeError');
 const Repository = require('@models/repository');
 const RepositoryHandler = require('@utilities/repositoryHandler');
 
+/**
+ * Authenticates user based on provided token.
+ * @param {import('socket.io').Socket} socket - Socket.IO socket object.
+ * @param {import('socket.io').NextFunction} next - Socket.IO next function.
+*/
 const userAuthentication = async (socket, next) => {
     const { token } = socket.handshake.auth;
     if(!token) return next(new RuntimeError('Authentication::Token::Required'));
-    const user = await getUserByToken(token);
-    socket.user = user;
-    next();
+    try{
+        const user = await getUserByToken(token);
+        socket.user = user;
+    }catch(error){
+        next(error);
+    }
 };
 
+/**
+ * Verifies user ownership of the requested repository.
+ * @param {import('socket.io').Socket} socket - Socket.IO socket object.
+ * @param {import('socket.io').NextFunction} next - Socket.IO next function.
+*/
 const tokenOwnership = async (socket, next) => {
     const { repositoryAlias } = socket.handshake.query;
     if(!repositoryAlias) return next(new RuntimeError('Repository::Name::Required'));
-    const repository = await Repository.findOne({ alias: repositoryAlias, user: socket.user._id });
-    if(!repository) return next(new RuntimeError('Repository::Not::Found'));
-    socket.repository = repository;
-    next();
+    try{
+        const repository = await Repository.findOne({ alias: repositoryAlias, user: socket.user._id });
+        if(!repository) return next(new RuntimeError('Repository::Not::Found'));
+        socket.repository = repository;
+        next();
+    }catch(error){
+        next(error);
+    }
+
 };
 
+/**
+ * Handles repository interactive shell connections.
+ * @param {import('socket.io').Socket} socket - Socket.IO socket object.
+*/
 const repositoryShellHandler = async (socket) => {
-    const { repository, user } = socket;
-    const repositoryHandler = new RepositoryHandler(repository, user);
-    await repositoryHandler.executeInteractiveShell(socket);
+    try{
+        const { repository, user } = socket;
+        const repositoryHandler = new RepositoryHandler(repository, user);
+        await repositoryHandler.executeInteractiveShell(socket);
+    }catch(error){
+        console.log('[Quantum Cloud]: Critical Error (@controllers/wsController - repositoryShellHandler)', error);
+    }
 };
 
+/**
+ * Handles cloud console connections.
+ * @param {import('socket.io').Socket} socket - Socket.IO socket object.
+*/
 const cloudConsoleHandler = async (socket) => {
-    const { user } = socket;
-    const container = global.userContainers[user._id];
-    await container.executeInteractiveShell(socket);
+    try{
+        const { user } = socket;
+        const container = global.userContainers[user._id];
+        await container.executeInteractiveShell(socket);
+    }catch(error){
+        console.log('[Quantum Cloud]: Critical Error (@controllers/wsController - cloudConsoleHandler)', error);
+    }
 };
 
 module.exports = (io) => {
