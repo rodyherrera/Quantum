@@ -163,3 +163,18 @@
     flex-direction: column;
     gap: 2rem;
 }
+
+@media screen and (max-width: 768px){
+    .Confirm-Modal{
+        height: auto;
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
+    }
+
+    .Confirm-Modal-Container{
+        top: unset;
+        left: unset;
+        right: unset;
+        align-items: flex-end;
+    }
+}
