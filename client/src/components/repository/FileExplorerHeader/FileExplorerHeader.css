@@ -28,7 +28,7 @@
 @media screen and (max-width: 768px){
     .File-Explorer-Header-Right-Container{
         flex-direction: column-reverse;
-        align-items: flex-end;
+        align-items: flex-end !important;
         gap: 0;
     }
 }

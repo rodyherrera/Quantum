@@ -16,6 +16,7 @@
     width: 800px;
     margin: 0 auto;
     display: flex;
+    min-height: 400px;
     gap: 2rem;
     flex-direction: column;
     height: 100%;
