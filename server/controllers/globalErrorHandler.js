@@ -13,7 +13,6 @@
 ****/
 
 const RuntimeError = require('@utilities/runtimeError');
-const mongooseErrorHandler = require('mongoose-error-handler');
 
 /**
  * Maps common errors to informative messages and appropriate HTTP status codes.
