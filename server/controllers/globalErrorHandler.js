@@ -35,7 +35,7 @@ const parseError = (err) => {
         TokenExpiredError: { message: 'JWT::Expired', statusCode: 401 },
         MongoServerError: (code) => { 
           if(code === 11000) return { message: 'Database::Duplicated::Fields', statusCode: 400 };
-          return { message: 'Database:Error', statusCode: 500 };
+          return { message: err.message, statusCode: err.statusCode };
         }
     };
     const handler = errorMap[err.name] || errorMap.MongoServerError; 
@@ -54,7 +54,6 @@ const parseError = (err) => {
 const errorHandler = (err, req, res, next) => {
     err.statusCode = err.statusCode || 500;
     err.message = err.message || 'Server Error';
-    console.log('[Quantum Cloud] @globalErrorHandler:', err);
     if(err instanceof RuntimeError){
         return res.status(err.statusCode).send({ status: 'error', message: err.message });
     }

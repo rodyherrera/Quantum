@@ -107,9 +107,12 @@ UserSchema.pre('findOneAndDelete', async function(){
     });
 });
 
-// DOCKER CONTAINER IS CREATED IF ERROR EXISTS
 UserSchema.pre('save', async function(next){
     try{
+        if(!this.isModified('password')) return next();
+        this.username = this.username.replace(/\s/g, '');
+        this.password = await bcrypt.hash(this.password, 12);
+        this.passwordConfirm = undefined;
         // The existence of "global.logStreamStore" is checked 
         // because it is an object that is created when the server runs. 
         // However, when you run the CLI and choose the "Create new user" 
@@ -127,11 +130,6 @@ UserSchema.pre('save', async function(next){
                 console.log(`[Quantum Cloud] CRITICAL ERROR (at @models/user - pre save middleware): ${error}`)
             });
         }
-        if(!this.isModified('password')) return next();
-        this.username = this.username.replace(/\s/g, '');
-        this.password = await bcrypt.hash(this.password, 12);
-        this.passwordConfirm = undefined;
-        
         if(!this.isModified('password') || this.isNew) return next();
         this.passwordChangedAt = Date.now() - 1000;
         next();
