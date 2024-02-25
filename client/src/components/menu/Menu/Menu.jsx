@@ -22,6 +22,7 @@ import { RxReader } from 'react-icons/rx';
 import { setIsCloudConsoleEnabled, setIsMenuEnabled } from '@services/core/slice';
 import { GoProjectSymlink } from 'react-icons/go';
 import { useDispatch } from 'react-redux';
+import { gsap } from 'gsap';
 import MenuItem from '@components/menu/MenuItem';
 import Button from '@components/general/Button';
 import Header from '@components/header/Header';
@@ -46,7 +47,54 @@ const Menu = () => {
     };
 
     useEffect(() => {
- 
+        const menuItems = document.querySelectorAll('.Menu-Item-Container');
+        gsap.from(menuItems, {
+            opacity: 0,
+            // Random variation in 'y'
+            y: () => (Math.random() - 0.5) * 30,
+            // Random variation in 'x'
+            x: () => (Math.random() - 0.5) * 20, 
+            duration: 0.4, 
+            ease: 'power3.out', 
+            stagger: 0.1 
+        });
+
+        const buttons = document.querySelectorAll('.Menu-Header-Actions-Container .Button');
+        gsap.from(buttons, { 
+            opacity: 0, 
+            scale: 0.9, 
+            duration: 0.4,  
+            ease: 'back.out(1.7)' // Easing con rebote
+        });
+
+        const copyrightText = document.querySelector('.Quantum-Copyright-Text'); 
+        gsap.from(copyrightText, { 
+            opacity: 0, 
+            y: -50,  
+            duration: 0.6, 
+            ease: 'power2.out'
+        }).then(() => {
+            gsap.to(copyrightText, { 
+                scale: 1.05, 
+                duration: 0.5, 
+                yoyo: true, 
+                repeat: 1 
+            });
+        });
+
+        const terminalButton = document.querySelector('.Menu-Bottom-Container button'); 
+        const terminalIcon = terminalButton.querySelector('svg'); 
+    
+        gsap.from(terminalButton, { 
+            opacity: 0, 
+            x: 20,  
+            duration: 0.4, 
+            ease: 'power2.out' 
+        });
+        gsap.from(terminalIcon, { 
+            opacity: 0,  
+            delay: 0.2 
+        });
     }, []);
 
     return (
