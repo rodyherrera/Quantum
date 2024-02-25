@@ -12,7 +12,7 @@
  * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 ****/
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BiHomeAlt2 } from 'react-icons/bi';
 import { MdOutlineSpaceDashboard } from 'react-icons/md';
 import { BsBook, BsTerminal } from 'react-icons/bs';
@@ -44,6 +44,10 @@ const Menu = () => {
         dispatch(setIsCloudConsoleEnabled(true));
         dispatch(setIsMenuEnabled(false));
     };
+
+    useEffect(() => {
+ 
+    }, []);
 
     return (
         <aside className='Menu-Container'>

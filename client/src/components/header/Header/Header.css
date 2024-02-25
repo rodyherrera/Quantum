@@ -12,8 +12,6 @@
  * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 ****/
 
-.Header-Navigation-Container,
-.Header-Brand-Container,
 .Header .Header-Child-Container,
 .Header{
     display: flex;
@@ -28,43 +26,6 @@
     width: 100%;
 }
 
-.Hamburguer-Menu-Container{
-    display: none;
-}
-
-.Header-Brand-Container{
-    gap: .8rem;
-    padding: 1.5rem 3rem;
-    cursor: pointer;
-    border-right: 1px solid #000000;
-}
-
-.Header-Brand-Container:hover{
-    opacity: .6;
-}
-
-.Header-Brand-Logo{
-    width: 30px;
-    height: 30px;
-    opacity: 1;
-    border-radius: 50%;
-    background-color: #000000;
-}
-
-.Header-Links-Container{
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-}
-
-.Header-Links-Left-Container,
-.Header-Links-Right-Container{
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-}
-
 .Header-Center-Container{
     padding: 0 .5rem;
     width: 50%;
@@ -76,20 +37,10 @@
     max-width: 50%;
 }
 
-.Header-Brand-Title{
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: #000000;
-}
-
 .Header-Right-Container{
     justify-content: flex-end;
     width: auto;
     max-width: 50%;
-}
-
-.Header-Navigation-Container{
-    gap: 1rem;
 }
 
 @media screen and (max-width: 768px){
@@ -97,31 +48,8 @@
         height: 50px;
     }
 
-    .Hamburguer-Menu-Container{
-        display: flex;
-    }
-    
-    .Header-Brand-Title{
-        font-size: 1.1rem;
-    }
-
-    .Header-Navigation-Container{
-        gap: 0;
-    }
-
-    .Header-Brand-Logo{
-        width: 25px;
-        height: 25px;
-    }
-
     .Header-Right-Container{
         max-width: unset;
-    }
-
-    .Header-Brand-Container{
-        border-right: unset;
-        padding: 0 1rem;
-        gap: .5rem;
     }
 
     .Header-Center-Container{

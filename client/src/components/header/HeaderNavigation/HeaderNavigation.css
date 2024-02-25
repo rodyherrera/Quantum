@@ -1,0 +1,33 @@
+/***
+ * Copyright (C) Rodolfo Herrera Hernandez. All rights reserved.
+ * Licensed under the MIT license. See LICENSE file in the project root
+ * for full license information.
+ *
+ * =+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
+ *
+ * For related information - https://github.com/rodyherrera/Quantum/
+ *
+ * All your applications, just in one place. 
+ *
+ * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+****/
+
+.Header-Navigation-Container{
+    gap: 1rem;
+    display: flex;
+    align-items: center;
+}
+
+.Hamburguer-Menu-Container{
+    display: none;
+}
+
+@media screen and (max-width: 768px){
+    .Header-Navigation-Container{
+        gap: 0;
+    }
+
+    .Hamburguer-Menu-Container{
+        display: flex;
+    }
+}

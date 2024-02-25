@@ -1,0 +1,60 @@
+/***
+ * Copyright (C) Rodolfo Herrera Hernandez. All rights reserved.
+ * Licensed under the MIT license. See LICENSE file in the project root
+ * for full license information.
+ *
+ * =+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
+ *
+ * For related information - https://github.com/rodyherrera/Quantum/
+ *
+ * All your applications, just in one place. 
+ *
+ * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+****/
+
+.Header-Brand-Container{
+    display: flex;
+    align-items: center;
+}
+
+.Header-Brand-Container{
+    gap: .8rem;
+    padding: 1.5rem 3rem;
+    cursor: pointer;
+    border-right: 1px solid #000000;
+}
+
+.Header-Brand-Container:hover{
+    opacity: .6;
+}
+
+.Header-Brand-Logo{
+    width: 30px;
+    height: 30px;
+    opacity: 1;
+    border-radius: 50%;
+    background-color: #000000;
+}
+
+.Header-Brand-Title{
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #000000;
+}
+
+@media screen and (max-width: 768px){
+    .Header-Brand-Container{
+        border-right: unset;
+        padding: 0 1rem;
+        gap: .5rem;
+    }
+
+    .Header-Brand-Title{
+        font-size: 1.1rem;
+    }
+
+    .Header-Brand-Logo{
+        width: 25px;
+        height: 25px;
+    }
+}
