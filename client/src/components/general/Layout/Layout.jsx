@@ -27,7 +27,6 @@ import Header from '@components/header/Header';
 import Menu from '@components/menu/Menu';
 import SquaredBackground from '@components/general/SquaredBackground';
 import useWindowSize from '@hooks/useWindowSize';
-
 import './Layout.css';
 
 const Layout = () => {
