@@ -40,15 +40,24 @@ const ConfirmModal = ({
     const [isContinueBtnDisabled, setIsContinueBtnDisabled] = useState(true);
     const confirmModalRef = useRef(null);
 
-    const hideConfirmModal = () => {
+    const hideConfirmModal = (callback) => {
         gsap.fromTo(confirmModalRef.current,
             { opacity: 1, y: 0 },
-            { opacity: 0, y: 50, duration: 0.3, ease: 'power2.in', onComplete: () => setIsActive(!isActive) }
+            { 
+                opacity: 0, 
+                y: 50, 
+                duration: 0.3, 
+                ease: 'power2.in', 
+                onComplete: () => {
+                    if(callback) callback();
+                    setIsActive(!isActive)
+                } 
+            }
         );
     };
 
     const handleContinueBtn = () => {
-        confirmHandler();
+        hideConfirmModal(confirmHandler);
     };
 
     useEffect(() => {
