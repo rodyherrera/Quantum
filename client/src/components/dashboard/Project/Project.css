@@ -16,6 +16,7 @@
     display: flex;
     flex-wrap: wrap;
     max-height: 150px;
+    opacity: 0;
     min-height: 150px;
     justify-content: space-between;
     padding: 1rem;

@@ -12,13 +12,16 @@
  * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 ****/
 
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import ProjectHeader from '@components/dashboard/ProjectHeader';
 import ProjectActions from '@components/dashboard/ProjectActions';
 import ProjectFooter from '@components/dashboard/ProjectFooter';
+import { gsap } from 'gsap';
 import './Project.css';
 
 const Project = ({ repository, ...props }) => {
+    const projectRef= useRef(null);
+
     const onClickHandler = (e) => {
         if(
             e.target.classList.contains('Context-Menu-Container') || 
@@ -28,9 +31,31 @@ const Project = ({ repository, ...props }) => {
         }
         props?.onClick?.();
     };
+    useEffect(() => {
+        const projectContainers = document.querySelectorAll('.Project-Container');
+        projectContainers.forEach((container, index) => {
+            gsap.fromTo(container, { 
+                opacity: 0,
+                duration: 0.3,
+                ease: 'power2.out',
+            }, {
+                opacity: 1,
+                delay: index * 0.05, 
+            });
+        });
+
+        const body = projectRef.current.querySelector('.Project-Body-Container');
+        const footer = projectRef.current.querySelector('.Project-Footer-Container');
+        gsap.from([body, footer], {
+            y: 20,
+            opacity: 0,
+            duration: 0.4,
+            stagger: 0.15
+        });
+    }, []); 
 
     return (
-        <div className='Project-Container' {...props} onClick={onClickHandler}>
+        <div className='Project-Container' {...props} onClick={onClickHandler} ref={projectRef}>
             <ProjectActions repository={repository} />
             <ProjectHeader repository={repository} />
             <div className='Project-Body-Container'>
