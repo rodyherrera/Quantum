@@ -39,7 +39,7 @@ const ProjectActions = ({ repository }) => {
             title='Project'
             isActive={isDeleteModalActive}
             setIsActive={setIsDeleteModalActive}
-            description='This project will be deleted, along with all of its Deployments, Domains, Environment Variables, Serverless Functions, and Settings.'
+            description='The deployments associated with your repository along with all its configuration within the platform will be permanently deleted. Only deployments associated with your account will be deleted.'
             warning='This action is not reversible. Please be certain.'
             confirmHandler={() => dispatch(deleteRepository(repository._id, repositories, navigate))}
             firstInputRender={(
