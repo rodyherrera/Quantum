@@ -59,6 +59,10 @@
     color: #000000;
 }
 
+.Confirm-Modal-Input-Title{
+    user-select: none;
+}
+
 .Confirm-Modal-Warning-Container{
     background-color: #ffebeb;
     padding: .5rem;

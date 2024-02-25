@@ -39,34 +39,54 @@ const ConfirmModal = ({
     const [lastInputValue, setLastInputValue] = useState('');
     const [isContinueBtnDisabled, setIsContinueBtnDisabled] = useState(true);
     const confirmModalRef = useRef(null);
+    const closeIconRef = useRef(null);
+    const confirmButtonRef = useRef(null);
 
     const hideConfirmModal = (callback) => {
-        gsap.fromTo(confirmModalRef.current,
-            { opacity: 1, y: 0 },
-            { 
-                opacity: 0, 
-                y: 50, 
-                duration: 0.3, 
-                ease: 'power2.in', 
-                onComplete: () => {
-                    if(callback) callback();
-                    setIsActive(!isActive)
-                } 
-            }
-        );
+        gsap.to(confirmButtonRef.current, {
+            backgroundColor: '#004ad5',
+            duration: 0.2,
+            ease: 'power2.inOut'
+        });
+        gsap.fromTo(confirmModalRef.current, { 
+            opacity: 1,
+            y: 0 
+        }, { 
+            opacity: 0, 
+            y: 50, 
+            duration: 0.3, 
+            ease: 'power2.in', 
+            onComplete: () => {
+                if(callback) callback();
+                setIsActive(!isActive)
+            } 
+        });
     };
 
     const handleContinueBtn = () => {
         hideConfirmModal(confirmHandler);
     };
+    
+    const closeIconClickHandler = () => {
+        gsap.to(closeIconRef.current, {
+            rotation: 360,
+            duration: 0.5,
+            ease: 'back.out',
+            onComplete: hideConfirmModal
+        });
+    };
 
     useEffect(() => {
         if(!isActive) return;
-        gsap.fromTo(confirmModalRef.current,
-            // From: opacity: 0, slightly down
-            { opacity: 0, y: 50 },
-            { opacity: 1, y: 0, duration: 0.4, ease: 'power2.out' }
-        );
+        gsap.fromTo(confirmModalRef.current, { 
+            opacity: 0, 
+            y: 50 
+        }, { 
+            opacity: 1,
+            y: 0, 
+            duration: 0.4, 
+            ease: 'power2.out' 
+        });
     }, [isActive]);
 
     useEffect(() => {
@@ -105,7 +125,7 @@ const ConfirmModal = ({
                                 <h3 className='Confirm-Modal-Header-Title'>
                                     <span className='Confirm-Modal-Title-Hightlight'>{highlightTitle}</span> {title}
                                 </h3>
-                                <i className='Confirm-Modal-Header-Icon-Container' onClick={hideConfirmModal}>
+                                <i className='Confirm-Modal-Header-Icon-Container' ref={closeIconRef} onClick={closeIconClickHandler}>
                                     <IoMdClose />
                                 </i>
                             </div>
@@ -143,6 +163,7 @@ const ConfirmModal = ({
                                 className='Confirm-Modal-Option-Container Contained' 
                                 disabled={isContinueBtnDisabled}
                                 onClick={handleContinueBtn}
+                                ref={confirmButtonRef}
                             >
                                 <span className='Confirm-Modal-Option-Title'>Confirm</span>
                                 <i className='Confirm-Modal-Option-Icon-Container'>
