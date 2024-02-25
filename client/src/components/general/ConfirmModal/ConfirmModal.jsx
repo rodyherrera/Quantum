@@ -16,6 +16,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom';
 import Input from  '@components/general/Input';
 import { IoMdClose } from 'react-icons/io';
+import { gsap } from 'gsap';
 import { IoIosArrowForward } from 'react-icons/io';
 import './ConfirmModal.css';
 
@@ -39,10 +40,25 @@ const ConfirmModal = ({
     const [isContinueBtnDisabled, setIsContinueBtnDisabled] = useState(true);
     const confirmModalRef = useRef(null);
 
+    const hideConfirmModal = () => {
+        gsap.fromTo(confirmModalRef.current,
+            { opacity: 1, y: 0 },
+            { opacity: 0, y: 50, duration: 0.3, ease: 'power2.in', onComplete: () => setIsActive(!isActive) }
+        );
+    };
+
     const handleContinueBtn = () => {
-        setIsActive(!isActive);
         confirmHandler();
     };
+
+    useEffect(() => {
+        if(!isActive) return;
+        gsap.fromTo(confirmModalRef.current,
+            // From: opacity: 0, slightly down
+            { opacity: 0, y: 50 },
+            { opacity: 1, y: 0, duration: 0.4, ease: 'power2.out' }
+        );
+    }, [isActive]);
 
     useEffect(() => {
         setIsContinueBtnDisabled(
@@ -55,7 +71,7 @@ const ConfirmModal = ({
         if(!isActive) return;
         const keydownHandler = (e) => {
             if(e.key === 'Enter' && !isContinueBtnDisabled) handleContinueBtn();
-            else if(e.key === 'Escape') setIsActive(!isActive);
+            else if(e.key === 'Escape') hideConfirmModal();
         };
         document.addEventListener('keydown', keydownHandler);
         return () => {
@@ -80,7 +96,7 @@ const ConfirmModal = ({
                                 <h3 className='Confirm-Modal-Header-Title'>
                                     <span className='Confirm-Modal-Title-Hightlight'>{highlightTitle}</span> {title}
                                 </h3>
-                                <i className='Confirm-Modal-Header-Icon-Container' onClick={() => setIsActive(!isActive)}>
+                                <i className='Confirm-Modal-Header-Icon-Container' onClick={hideConfirmModal}>
                                     <IoMdClose />
                                 </i>
                             </div>
@@ -110,7 +126,7 @@ const ConfirmModal = ({
                         </div>
 
                         <div className='Confirm-Modal-Footer-Container'>
-                            <button className='Confirm-Modal-Option-Container Text' onClick={() => setIsActive(false)}>
+                            <button className='Confirm-Modal-Option-Container Text' onClick={hideConfirmModal}>
                                 <span className='Confirm-Modal-Option-Title'>Cancel</span>
                             </button>
 
