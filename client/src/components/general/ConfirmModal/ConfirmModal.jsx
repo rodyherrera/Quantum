@@ -14,10 +14,10 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom';
-import Input from  '@components/general/Input';
-import { IoMdClose } from 'react-icons/io';
+import ConfirmModalHeader from '@components/general/ConfirmModalHeader';
+import ConfirmModalBody from '@components/general/ConfirmModalBody';
+import ConfirmModalFooter from '@components/general/ConfirmModalFooter';
 import { gsap } from 'gsap';
-import { IoIosArrowForward } from 'react-icons/io';
 import './ConfirmModal.css';
 
 // TODO: Write this component better.
@@ -35,14 +35,11 @@ const ConfirmModal = ({
     isActive,
     setIsActive
 }) => {
-    const [firstInputValue, setFirstInputValue] = useState('');
-    const [lastInputValue, setLastInputValue] = useState('');
     const [isContinueBtnDisabled, setIsContinueBtnDisabled] = useState(true);
     const confirmModalRef = useRef(null);
-    const closeIconRef = useRef(null);
     const confirmButtonRef = useRef(null);
 
-    const hideConfirmModal = (callback) => {
+    const hideConfirmModal = (callback = null) => {
         window.scrollTo({ behavior: 'smooth', top: 0 });
         gsap.to(confirmButtonRef.current, {
             backgroundColor: '#004ad5',
@@ -67,15 +64,6 @@ const ConfirmModal = ({
     const handleContinueBtn = () => {
         hideConfirmModal(confirmHandler);
     };
-    
-    const closeIconClickHandler = () => {
-        gsap.to(closeIconRef.current, {
-            rotation: 360,
-            duration: 0.5,
-            ease: 'back.out',
-            onComplete: hideConfirmModal
-        });
-    };
 
     useEffect(() => {
         if(!isActive) return;
@@ -91,13 +79,6 @@ const ConfirmModal = ({
     }, [isActive]);
 
     useEffect(() => {
-        setIsContinueBtnDisabled(
-            firstInputMatch !== firstInputValue ||
-            lastInputMatch !== lastInputValue              
-        );
-    }, [firstInputValue, lastInputValue]);
-
-    useEffect(() => {
         if(!isActive) return;
         const keydownHandler = (e) => {
             if(e.key === 'Enter' && !isContinueBtnDisabled) handleContinueBtn();
@@ -109,69 +90,30 @@ const ConfirmModal = ({
         };
     }, [isActive, isContinueBtnDisabled]);
 
-    useEffect(() => {
-        return () => {
-            setFirstInputValue('');
-            setLastInputValue('');
-        };
-    }, []);
-
     return (
         <React.Fragment>
             {isActive && ReactDOM.createPortal(
                 <div className='Confirm-Modal-Container' ref={confirmModalRef}>
                     <div className='Confirm-Modal'>
-                        <div className='Confirm-Modal-Header-Container'>
-                            <div className='Confirm-Modal-Header-Title-Container'>
-                                <h3 className='Confirm-Modal-Header-Title'>
-                                    <span className='Confirm-Modal-Title-Hightlight'>{highlightTitle}</span> {title}
-                                </h3>
-                                <i className='Confirm-Modal-Header-Icon-Container' ref={closeIconRef} onClick={closeIconClickHandler}>
-                                    <IoMdClose />
-                                </i>
-                            </div>
-                            <p className='Confirm-Modal-Header-Description'>{description}</p>
-                            <div className='Confirm-Modal-Warning-Container'>
-                                <span className='Confirm-Modal-Warning-Title'>Warning:</span>
-                                <span className='Confirm-Modal-Warning-Content'>{warning}</span>
-                            </div>
-                        </div>
+                        <ConfirmModalHeader 
+                            hideConfirmModal={hideConfirmModal}
+                            title={title}
+                            highlightTitle={highlightTitle} 
+                            description={description} 
+                            warning={warning} />
 
-                        <div className='Confirm-Modal-Body-Container'>
-                            <div className='Confirm-Modal-Input-Container'>
-                                {firstInputRender}
-                                <Input
-                                    value={firstInputValue}
-                                    onChange={(e) => setFirstInputValue(e.target.value)}
-                                />
-                            </div>
+                        <ConfirmModalBody
+                            firstInputRender={firstInputRender}
+                            lastInputRender={lastInputRender}
+                            firstInputMatch={firstInputMatch} 
+                            lastInputMatch={lastInputMatch}
+                            setIsContinueBtnDisabled={setIsContinueBtnDisabled} />
 
-                            <div className='Confirm-Modal-Input-Container'>
-                                {lastInputRender}
-                                <Input
-                                    value={lastInputValue}
-                                    onChange={(e) => setLastInputValue(e.target.value)}
-                                />
-                            </div>
-                        </div>
-
-                        <div className='Confirm-Modal-Footer-Container'>
-                            <button className='Confirm-Modal-Option-Container Text' onClick={hideConfirmModal}>
-                                <span className='Confirm-Modal-Option-Title'>Cancel</span>
-                            </button>
-
-                            <button 
-                                className='Confirm-Modal-Option-Container Contained' 
-                                disabled={isContinueBtnDisabled}
-                                onClick={handleContinueBtn}
-                                ref={confirmButtonRef}
-                            >
-                                <span className='Confirm-Modal-Option-Title'>Confirm</span>
-                                <i className='Confirm-Modal-Option-Icon-Container'>
-                                    <IoIosArrowForward />
-                                </i>
-                            </button>
-                        </div>
+                        <ConfirmModalFooter
+                            hideConfirmModal={hideConfirmModal}
+                            isContinueBtnDisabled={isContinueBtnDisabled}
+                            handleContinueBtn={handleContinueBtn}
+                            confirmButtonRef={confirmButtonRef} />
                     </div>
                 </div>
             , document.getElementById('QuantumCloud-ROOT'))}

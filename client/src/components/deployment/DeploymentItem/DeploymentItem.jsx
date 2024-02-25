@@ -37,7 +37,7 @@ const DeploymentItem = ({ deployment, repository }) => {
                     <p className='Repository-Deployment-Environment'>{deployment.environment}</p>
                 </div>
             </div>
-
+        
             <div className='Repository-Deployment-Extras-Container'>
                 <figure className='Repository-Deployment-User-Image-Container' onClick={() => window.open(deployment.creator.html_url, '_blank')}>
                     <img className='Repository-Deployment-User-Image' src={deployment.creator.avatar_url} alt='User' />

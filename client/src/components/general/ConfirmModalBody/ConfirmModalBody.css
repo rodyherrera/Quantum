@@ -1,0 +1,37 @@
+/***
+ * Copyright (C) Rodolfo Herrera Hernandez. All rights reserved.
+ * Licensed under the MIT license. See LICENSE file in the project root
+ * for full license information.
+ *
+ * =+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
+ *
+ * For related information - https://github.com/rodyherrera/Quantum/
+ *
+ * All your applications, just in one place. 
+ *
+ * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+****/
+
+.Confirm-Modal-Body-Container{
+    display: flex;
+    border: 1px solid #b6b6b6;
+    border-left: unset;
+    border-right: unset;
+    flex-direction: column;
+    gap: 2rem;
+    padding: 1.5rem;
+}
+
+.Confirm-Modal-Input-Title{
+    user-select: none;
+}
+
+.Confirm-Modal-Input-Container{
+    font-size: .95rem;
+}
+
+.Confirm-Modal-Input-Container{
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+}
