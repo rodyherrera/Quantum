@@ -28,6 +28,7 @@ const userAuthentication = async (socket, next) => {
     try{
         const user = await getUserByToken(token);
         socket.user = user;
+        next();
     }catch(error){
         next(error);
     }

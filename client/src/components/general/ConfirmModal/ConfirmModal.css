@@ -12,40 +12,8 @@
  * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 ****/
 
-.Confirm-Modal-Container{
-    background: rgba(0, 0, 0, .3);
-    width: 100vw;
-    height: 100vh;
-    position: fixed;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    z-index: 1000000;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
 .Confirm-Modal-Header-Description{
     font-size: .95rem;
-}
-
-.Confirm-Modal{
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    background-color: #FFFFFF;
-    box-shadow: 0 0 1px 0 #000000;
-    border-radius: 1rem;
-    height: 500px;
-    width: 450px;
-}
-
-.Confirm-Modal-Header-Container,
-.Confirm-Modal-Body-Container,
-.Confirm-Modal-Footer-Container{
-    padding: 1.5rem;
 }
 
 .Confirm-Modal-Header-Container{
@@ -166,6 +134,38 @@
     border-right: unset;
     flex-direction: column;
     gap: 2rem;
+}
+
+.Confirm-Modal-Container{
+    background: rgba(0, 0, 0, .3);
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1000000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.Confirm-Modal{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background-color: #FFFFFF;
+    box-shadow: 0 0 1px 0 #000000;
+    border-radius: 1rem;
+    height: 500px;
+    width: 450px;
+}
+
+.Confirm-Modal-Header-Container,
+.Confirm-Modal-Body-Container,
+.Confirm-Modal-Footer-Container{
+    padding: 1.5rem;
 }
 
 @media screen and (max-width: 768px){

@@ -43,6 +43,7 @@ const Shell = () => {
     useEffect(() => {
         if(!xterm) return;
         const authToken = getCurrentUserToken();
+        console.log('Connecting');
         const newSocket = io(import.meta.env.VITE_SERVER, {
             transports: ['websocket'],
             auth: { token: authToken },
