@@ -12,19 +12,21 @@
  * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 ****/
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import Project from '@components/dashboard/Project';
 import Button from '@components/general/Button';
 import DataRenderer from '@components/general/DataRenderer';
 import { useSelector, useDispatch } from 'react-redux';
 import { getRepositories } from '@services/repository/operations';
 import { HiPlus } from 'react-icons/hi';
-import * as repositoriesSlice from '@services/repository/slice';
+import { setRepositories, setIsLoading } from '@services/repository/slice';
+import { gsap } from 'gsap';
 import './Dashboard.css';
 
 const Dashboard = () => {
     const dispatch = useDispatch();
     const { repositories, isLoading, isOperationLoading, error } = useSelector(state => state.repository);
+    const createRepoBtnRef = useRef(null);
 
     useEffect(() => {
         dispatch(getRepositories());
@@ -33,10 +35,23 @@ const Dashboard = () => {
         }, 15000);
         return () => {
             clearInterval(intervalId);
-            dispatch(repositoriesSlice.setRepositories([]));
-            dispatch(repositoriesSlice.setIsLoading(true));
+            dispatch(setRepositories([]));
+            dispatch(setIsLoading(true));
         };
     }, [dispatch]);
+
+    useEffect(() => {
+        if(isLoading) return;
+        gsap.fromTo(createRepoBtnRef.current, { 
+            opacity: 0, 
+            x: -20,
+            duration: 0.3, 
+            ease: 'power2.out' 
+        }, {
+            opacity: 1,
+            x: 0
+        });
+    }, [isLoading]);
     
     return (
         <DataRenderer
@@ -60,6 +75,7 @@ const Dashboard = () => {
             headerRightContainer={() => (
                 (!isLoading) && (
                     <Button 
+                        ref={createRepoBtnRef}
                         to='/repository/create/'
                         title='Create new' 
                         variant='Contained End-Icon' 

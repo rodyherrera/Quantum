@@ -12,19 +12,19 @@
  * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 ****/
 
-import React from 'react';
+import React, { forwardRef } from 'react';
 import { CircularProgress } from '@mui/material'
 import { useNavigate } from 'react-router-dom';
 import './Button.css';
 
-const Button = ({ 
+const Button = forwardRef(({ 
     title, 
     icon = null, 
     to = null, 
     variant = null, 
     isLoading = null,
     ...props 
-}) => {
+}, ref) => {
     const navigate = useNavigate();
 
     const handleOnClick = () => {
@@ -41,6 +41,7 @@ const Button = ({
     return (
         <button 
             {...props}
+            ref={ref}
             className={`Button ${variant ? ` ${variant}` : ''}`}
             onClick={handleOnClick}
         >
@@ -51,6 +52,6 @@ const Button = ({
             {icon && <i className='Button-Icon'>{icon}</i>}
         </button>
     );
-};
+});
 
 export default Button;
