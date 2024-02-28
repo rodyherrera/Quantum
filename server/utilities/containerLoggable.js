@@ -17,8 +17,6 @@ const path = require('path');
 const util = require('util');
 const stat = util.promisify(fs.stat);
 const truncate = util.promisify(fs.truncate);
-// For platform-independent path handling
-const os = require('os');
 
 /**
  * Manages logs for a user's containers.
