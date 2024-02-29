@@ -12,20 +12,6 @@
  * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 ****/
 
-#Account-Page-Header-Title{
-    font-size: 2.5rem;
-}
+import AuthenticaticatedUserRelatedSections from './AuthenticatedUserRelatedSections';
 
-#Account-Page-Header-Title-Container{
-    display: flex;
-    flex-direction: column;
-    gap: .5rem;
-}
-
-#Account-Page-Header-Title-User-First-Name{
-    background-color: #000000;
-    color: #F5F5F5;
-    padding: .2rem 1rem;
-    margin-left: .5rem;
-    border-radius: .25rem;
-}
+export default AuthenticaticatedUserRelatedSections;

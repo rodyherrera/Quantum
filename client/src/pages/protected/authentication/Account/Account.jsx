@@ -14,13 +14,10 @@
 
 import React, { useEffect } from 'react';
 import MinimalForm from '@components/general/MinimalForm'
-import RelatedItems from '@components/general/RelatedItems';
-import DeleteAccount from '@components/authentication/DeleteAccount';
 import { getMyProfile, updateMyProfile } from '@services/authentication/operations';
-import { GoGitPullRequest } from 'react-icons/go';
-import { BsHddNetwork } from 'react-icons/bs';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import AuthenticatedUserRelatedSections from '@components/authentication/AuthenticatedUserRelatedSections'
 import './Account.css';
 
 // Implement Skeleton for data loading, for now 
@@ -54,27 +51,7 @@ const AccountPage = () => {
                     <p id='Account-Page-Header-Description'>We appreciate the trust you place in us to host your applications.</p>
                 </div>
             )}
-            RightContainerComponent={() => (
-                <div id='Account-Page-Delete-Right-Container'>
-                    <DeleteAccount />
-                    <RelatedItems
-                        items={[
-                            {
-                                title: `${user.repositories.length} repositories`,
-                                description: 'Manage all your repositories hosted within the platform.',
-                                icon: GoGitPullRequest,
-                                to: '/dashboard/'
-                            },
-                            {
-                                title: `${user.deployments.length} deployments`,
-                                description: 'All deployments related to the repositories that you have hosted on the platform.',
-                                icon: BsHddNetwork,
-                                to: '/dashboard/'
-                            }
-                        ]}
-                    />
-                </div>
-            )}
+            RightContainerComponent={AuthenticatedUserRelatedSections}
             breadcrumbsItems={[
                 { title: 'Home', to: '/' },
                 { title: 'Dashboard', to: '/dashboard/' },

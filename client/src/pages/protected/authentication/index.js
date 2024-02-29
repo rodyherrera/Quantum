@@ -13,9 +13,11 @@
 ****/
 
 import Account from './Account';
+import ChangePassword from './ChangePassword';
 
 const pages = {
-    Account
+    Account,
+    ChangePassword
 };
 
 export default pages;

@@ -25,6 +25,11 @@ export const myProfile = AuthenticationAPI.register({
     method: 'GET'
 });
 
+export const updateMyPassword = AuthenticationAPI.register({
+    path: '/me/update/password/',
+    method: 'PATCH'
+});
+
 export const updateMyProfile = AuthenticationAPI.register({
     path: '/me/',
     method: 'PATCH'

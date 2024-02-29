@@ -67,7 +67,7 @@ exports.signUp = catchAsync(async (req, res, next) => {
 });
 
 exports.updateMyPassword = catchAsync(async (req, res, next) => {
-    const requestedUser = await User.findById(req.user.id).select('+password');
+    const requestedUser = await User.findById(req.user.id).select('+password').populate('github');
     if(!(await requestedUser.isCorrectPassword(req.body.passwordCurrent, requestedUser.password))){
         return next(new Error('Authentication::Update::PasswordCurrentIncorrect'));
     }

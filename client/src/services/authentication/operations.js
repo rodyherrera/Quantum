@@ -77,6 +77,19 @@ export const deleteMyProfile = () => async (dispatch) => {
     });
 };
 
+export const updateMyPassword = (body, navigate) => async (dispatch) => {
+    const operation = new OperationHandler(authSlice, dispatch);
+    operation.on('response', (data) => {
+        handleAuthResponse(data, dispatch);
+        navigate('/auth/account/');
+    });
+    operation.use({
+        api: authService.updateMyPassword,
+        loaderState: authSlice.setIsOperationLoading,
+        query: { body }
+    });
+};
+
 export const logout = () => async (dispatch) => {
     await dispatch(authSlice.setIsLoading(true));
     authLocalStorageService.removeCurrentUserToken();
