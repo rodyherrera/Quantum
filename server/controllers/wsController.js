@@ -26,7 +26,7 @@ const userAuthentication = async (socket, next) => {
     const { token } = socket.handshake.auth;
     if(!token) return next(new RuntimeError('Authentication::Token::Required'));
     try{
-        const user = await getUserByToken(token);
+        const user = await getUserByToken(token, next);
         socket.user = user;
         next();
     }catch(error){

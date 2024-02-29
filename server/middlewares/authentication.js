@@ -27,7 +27,7 @@ const { catchAsync } = require('@utilities/runtime');
  * @throws {RuntimeError} - If the user is not found or password has changed after 
  *                          the token was issued.
 */
-exports.getUserByToken = async (token) => {
+exports.getUserByToken = async (token, next) => {
     const decodedToken = await promisify(jwt.verify)(token, process.env.SECRET_KEY);
     // Retrieve the user from the database
     const freshUser = await User.findById(decodedToken.id);
@@ -58,7 +58,7 @@ exports.protect = catchAsync(async (req, res, next) => {
         return next(new RuntimeError('Authentication::Required', 401));
     }
     // 2. Verify token and retrieve the user
-    const freshUser = await this.getUserByToken(token);
+    const freshUser = await this.getUserByToken(token, next);
     // 3. Attach the user to the request object for subsequent middleware to use
     req.user = freshUser;
     next();
