@@ -147,15 +147,28 @@ class Github{
     };
 
     async getRepositoryInfo(){
-        const latestCommit = await this.getLatestCommit();
-        const details = await this.getRepositoryDetails();
-        const information = {
-            branch: details.default_branch,
-            website: details.homepage,
-            latestCommitMessage: latestCommit.commit.message,
-            latestCommit: latestCommit.commit.author.date
-        };
-        return information;
+        try{
+            const latestCommit = await this.getLatestCommit();
+            const details = await this.getRepositoryDetails();
+            const information = {
+                branch: details.default_branch,
+                website: details.homepage,
+                latestCommitMessage: latestCommit.commit.message,
+                latestCommit: latestCommit.commit.author.date
+            };
+            return information;
+        }catch(error){
+            // There is no hook that allows an event to be fired when a repository 
+            // is deleted (or so I think). For that reason, if a repository is 
+            // deleted, an error will be thrown when trying to request information 
+            // regarding it. By capturing and handling the error, we will 
+            // remove the repository from the platform.
+            if(error?.response?.data?.message === 'Not Found'){
+                await Deployment.findByIdAndDelete(this.repository._id);
+                return null;
+            }
+            throw error;
+        }
     };
 
     async createWebhook(webhookUrl, webhookSecret){

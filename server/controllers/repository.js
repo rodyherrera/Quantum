@@ -75,9 +75,11 @@ exports.getMyRepositories = catchAsync(async (req, res) => {
     const repositoriesWithInfo = await Promise.all(repositories.map(async (repository) => {
         const github = new Github(req.user, repository);
         const repositoryInfo = await github.getRepositoryInfo();
+        if(!repositoryInfo) return null;
         return { ...repository, ...repositoryInfo };
     }));
-    res.status(200).json({ status: 'success', data: repositoriesWithInfo });
+    const filteredRepositoriesWithInfo = repositoriesWithInfo.filter(repo => repo !== null);
+    res.status(200).json({ status: 'success', data: filteredRepositoriesWithInfo });
 });
 
 const getRequestedPath = (req) => {

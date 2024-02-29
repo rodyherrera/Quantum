@@ -40,7 +40,7 @@ const parseError = (err) => {
     };
     const handler = errorMap[err.name] || errorMap.MongoServerError; 
     // Allow customizing messages for MongoServerError based on the error code
-    return typeof handler === 'function' ? handler(err.code) : handler; 
+    return typeof handler === 'function' ? handler(err.status) : handler; 
 };
 
 /**
