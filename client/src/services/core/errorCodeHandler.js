@@ -23,7 +23,7 @@ const ERROR_CODES = {
     'Authentication::Update::UserNotFound': "User not found for update. Please check the user's existence before attempting an update.",
     'Authentication::Token::Required': 'Authentication token is required for this operation. Please provide a valid authentication token',
     'Authentication::User::NotFound': 'User not found. Please make sure the user exists and try again.',
-    'Authentication::PasswordChanged': 'Password has been changed successfully.',
+    'Authentication::PasswordChanged': 'Password has been changed, error trying to authenticate. Please log in again with your correct password.',
     'Authentication::Unauthorized': 'Unauthorized access. Please log in with the proper credentials.',
     'Authentication::Required': 'Authentication is required to perform this action. Please log in and try again.',
     'Authentication::Disabled': 'Authentication is disabled by the system administrator.',
