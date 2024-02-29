@@ -52,6 +52,7 @@ export const signIn = (body) => async (dispatch) => {
     });
 };
 
+// In backend, verify (newPassword === currentPassword -> err)
 export const updateMyProfile = (body, navigate) => async (dispatch) => {
     const operation = new OperationHandler(authSlice, dispatch);
     operation.on('response', (data) => {

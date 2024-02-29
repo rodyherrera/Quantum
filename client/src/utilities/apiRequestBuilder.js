@@ -28,8 +28,6 @@ class APIRequestBuilder{
     */
     constructor(baseEndpoint){
         this.baseEndpoint = baseEndpoint;
-        // Sets authorization header on creation
-        this.setAuthorizationHeader();
     };
 
     /**
@@ -80,6 +78,7 @@ class APIRequestBuilder{
         return ({ query = {}, body = {}}) => {
             const url = this.buildUrl(path, query?.params, query?.queryParams);
             const args = [url, body];
+            this.setAuthorizationHeader();
             return new ServerRequestBuilder()
                 .register({ callback: axios[method.toLowerCase()], args });
         };
