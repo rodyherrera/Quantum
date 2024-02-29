@@ -21,6 +21,7 @@ const ERROR_CODES = {
     'Authentication::Delete::UserNotFound': 'User not found for deletion. Please verify the user exists before attempting deletion.',
     'Authentication::Get::UserNotFound': 'User not found. Please make sure the user exists and try again.',
     'Authentication::Update::UserNotFound': "User not found for update. Please check the user's existence before attempting an update.",
+    'Authentication::Update::PasswordsAreSame': 'Your current account password is the same as your new password. If you are going to update your password, you cannot enter the current one.',
     'Authentication::Token::Required': 'Authentication token is required for this operation. Please provide a valid authentication token',
     'Authentication::User::NotFound': 'User not found. Please make sure the user exists and try again.',
     'Authentication::PasswordChanged': 'Password has been changed, error trying to authenticate. Please log in again with your correct password.',

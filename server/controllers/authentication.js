@@ -68,8 +68,14 @@ exports.signUp = catchAsync(async (req, res, next) => {
 
 exports.updateMyPassword = catchAsync(async (req, res, next) => {
     const requestedUser = await User.findById(req.user.id).select('+password').populate('github');
+    // Verify if the current password provided by the user is indeed the current password of the account.
     if(!(await requestedUser.isCorrectPassword(req.body.passwordCurrent, requestedUser.password))){
         return next(new Error('Authentication::Update::PasswordCurrentIncorrect'));
+    }
+    // Check if the new password is different from the current account password. 
+    // If the return of the function is true, it means that they are the same.
+    if(await requestedUser.isCorrectPassword(req.body.passwordConfirm, requestedUser.password)){
+        return next(new Error('Authentication::Update::PasswordsAreSame'));
     }
     requestedUser.password = req.body.password;
     requestedUser.passwordConfirm = req.body.passwordConfirm;
