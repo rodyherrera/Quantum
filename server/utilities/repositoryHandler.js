@@ -95,8 +95,8 @@ class RepositoryHandler extends ContainerLoggable{
             const repositoryShell = await this.getOrCreateShell();
             this.executeCommands(commands, formattedEnvironment, repositoryShell);
             const { githubDeploymentId } = deployment;
-            // IS USING THE FIRST DEP
-            // DELETE FROM GIT AND LCOAL DB
+            // TODO: IS USING THE FIRST DEP
+            // TODO: SO, DELETE FROM GIT AND MONGODB!!
             await githubUtility.updateDeploymentStatus(githubDeploymentId, 'success');
             deployment.status = 'success';
             await deployment.save();
