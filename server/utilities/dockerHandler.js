@@ -25,6 +25,9 @@ class DockerHandler extends ContainerLoggable{
         this.dockerName = this.formatDockerName(dockerName);
     };
 
+    /**
+     * Removes the container and its associated storage.
+    */
     async removeContainer(){
         try{
             const existingContainer = docker.getContainer(this.dockerName);
@@ -39,7 +42,7 @@ class DockerHandler extends ContainerLoggable{
 
     /**
      * Gets an existing instance of the container, if applicable.
-     * @returns {Promise<Container>}
+     * @returns {Promise<Container>} Returns a Docker container object.
     */
     async getExistingContainer(){
         const existingContainer = docker.getContainer(this.dockerName);
@@ -48,11 +51,20 @@ class DockerHandler extends ContainerLoggable{
         return existingContainer;
     };
 
+    /**
+     * Formats a docker name, replacing special characters for compatibility.
+     * @param {string} name - The original docker name to format.
+     * @returns {string} - The formatted docker name.
+    */
     formatDockerName(name){
         const formattedName = name.replace(/[^a-zA-Z0-9_.-]/g, '_');
         return `${process.env.DOCKERS_CONTAINER_ALIASES}-${formattedName}`;
     };
 
+    /**
+     * Creates a new Docker container instance.
+     * @returns {Promise<Container>} Returns a Docker container object.
+    */
     async createContainer(){
         return docker.createContainer({
             Image: this.imageName,
@@ -70,6 +82,10 @@ class DockerHandler extends ContainerLoggable{
         });
     };
 
+    /**
+     * Checks if a Docker image exists locally.
+     * @returns {Promise<boolean>} Returns true if the image exists, false otherwise.
+    */
     async checkImageExists(){
         const image = docker.getImage(this.imageName);
         try{
@@ -83,6 +99,9 @@ class DockerHandler extends ContainerLoggable{
         }
     };
 
+    /**
+     * Pulls a Docker image from a remote repository.
+    */
     async pullImage(){
         try{
             console.log(`[Quantum Cloud]: Pulling "${this.imageName}"...`);
@@ -103,6 +122,10 @@ class DockerHandler extends ContainerLoggable{
         }
     };
 
+    /**
+     * Creates a new Docker container and starts it.
+     * @returns {Promise<Container>} Returns a Docker container object.
+    */
     async createAndStartContainer(){
         try{
             const imageExists = await this.checkImageExists();

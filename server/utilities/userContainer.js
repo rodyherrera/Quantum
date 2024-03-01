@@ -12,7 +12,6 @@
  * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 ****/
 
-const Docker = require('dockerode');
 const DockerHandler = require('@utilities/dockerHandler');
 const path = require('path');
 
