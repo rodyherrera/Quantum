@@ -27,8 +27,7 @@ const Authenticate = () => {
 
     const handleAccountCreation = async () => {
         const accessToken = query.get('accessToken');
-        const { id, username, _json } = JSON.parse(query.get('profile'));
-        const { avatar_url } = _json;
+        const { id, username, avatar_url } = JSON.parse(query.get('data'));
         const body = {
             accessToken,
             username,

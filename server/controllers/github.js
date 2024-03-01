@@ -35,9 +35,12 @@ exports.deleteAccount = GithubFactory.deleteOne();
 
 exports.authCallback = catchAsync(async (req, res) => {
     const { accessToken, profile } = req.user;
+    const { id, username, _json } = profile;
+    const { avatar_url } = _json;
+    const data = { id, username, avatar_url };
     // res.redirect just dont work... ???
     res.writeHead(302, {
-        'Location': `${process.env.CLIENT_HOST}/github/authenticate/?accessToken=${accessToken}&profile=${JSON.stringify(profile)}`
+        'Location': `${process.env.CLIENT_HOST}/github/authenticate/?accessToken=${accessToken}&data=${JSON.stringify(data)}`
       });
     res.end();
 });
