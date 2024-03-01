@@ -15,15 +15,17 @@
 const Docker = require('dockerode');
 const DockerHandler = require('@utilities/dockerHandler');
 const path = require('path');
-const fs = require('fs').promises;
-
-const docker = new Docker();
 
 /**
  * Represents a user container within Quantum Cloud
  * Manages operations related to its life cycle and interaction.
 */
 class UserContainer extends DockerHandler{
+    /**
+     * Creates a new UserContainer instance.
+     * 
+     * @param {Object} user - The user object associated with the container.
+    */
     constructor(user){
         const storagePath = path.join(__dirname, '../storage/containers', user._id.toString());
         super({
@@ -37,6 +39,9 @@ class UserContainer extends DockerHandler{
         this.instance = null;
     };
 
+    /**
+     * Removes the user's container and associated resources.  
+    */
     async remove(){
         try{
             await this.removeContainer();
@@ -47,6 +52,9 @@ class UserContainer extends DockerHandler{
         }
     };
 
+    /**
+     * Starts or creates the user's container and installs necessary packages.
+    */
     async start(){
         try{
             const existingContainer = await this.getExistingContainer();
@@ -64,6 +72,9 @@ class UserContainer extends DockerHandler{
         }
     };
     
+    /**
+     * Installs the required packages in the container.
+    */
     async installPackages(){
         try{
             await this.executeCommand('apk update');
@@ -73,6 +84,13 @@ class UserContainer extends DockerHandler{
         }
     };
 
+    /**
+     * Executes a command within the container.
+     * 
+     * @param {string} command - The command to execute.
+     * @param {string} [workDir='/'] - Path to the working directory (optional).
+     * @returns {Promise<string>} The command output.
+    */
     async executeCommand(command, workDir = '/'){
         try{
             const exec = await this.instance.exec({
@@ -89,6 +107,12 @@ class UserContainer extends DockerHandler{
         }
     };
 
+    /**
+     * Collects and cleans the output of a container execution stream.
+     * 
+     * @param {Stream} stream - The execution stream. 
+     * @returns {Promise<string>} The collected output
+    */
     async collectStreamOutput(stream){
         return new Promise((resolve, reject) => {
             let output = '';
