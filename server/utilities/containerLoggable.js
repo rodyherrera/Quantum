@@ -43,6 +43,20 @@ class ContainerLoggable{
         this.logStream = await this.createLogStream();
     };
 
+    async setupSocketEvents(socket, shell){
+        socket.emit('history', await this.getLog());
+        socket.on('command', (command) => {
+            command = command + '\n';
+            this.appendLog(command);
+            shell.write(command);
+        });
+        shell.on('data', (chunk) => {
+            chunk = chunk.toString('utf8');
+            this.appendLog(chunk);
+            socket.emit('response', chunk);
+        });
+    };
+
     /**
      * Initializes the logger, creating the log stream if needed.
      * If a previous log stream exists for this user, it's closed.

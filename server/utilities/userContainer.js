@@ -141,18 +141,7 @@ class UserContainer extends DockerHandler{
                 Tty: true
             });
             const stream = await exec.start({ hijack: true, stdin: true });
-            // DUPLICATED CODE WITH REPOSITORYHANDLER FIX IT
-            socket.emit('history', await this.getLog());
-            socket.on('command', (command) => {
-                command = command + '\n';
-                this.appendLog(command);
-                stream.write(command);
-            });
-            stream.on('data', (chunk) => {
-                chunk = chunk.toString('utf8');
-                this.appendLog(chunk);
-                socket.emit('response', chunk);
-            });
+            this.setupSocketEvents(socket, stream);
         }catch(error){
             this.criticalErrorHandler('executeInteractiveShell', error);
         }

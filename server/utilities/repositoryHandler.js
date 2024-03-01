@@ -72,20 +72,6 @@ class RepositoryHandler extends ContainerLoggable{
         this.setupSocketEvents(socket, repositoryShell);
     };
 
-    async setupSocketEvents(socket, repositoryShell){
-        socket.emit('history', await this.getLog());
-        socket.on('command', (command) => {
-            command = command + '\n';
-            this.appendLog(command);
-            repositoryShell.write(command);
-        });
-        repositoryShell.on('data', (chunk) => {
-            chunk = chunk.toString('utf8');
-            this.appendLog(chunk);
-            socket.emit('response', chunk);
-        });
-    };
-
     async start(githubUtility){
         try{
             const commands = this.getValidCommands();
