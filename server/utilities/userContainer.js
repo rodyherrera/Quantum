@@ -26,9 +26,8 @@ class UserContainer extends DockerHandler{
      * @param {Object} user - The user object associated with the container.
     */
     constructor(user){
-        const storagePath = path.join(__dirname, '../storage/containers', user._id.toString());
         super({
-            storagePath,
+            storagePath: path.join(__dirname, '../storage/containers', user._id.toString()),
             imageName: 'alpine:latest',
             dockerName: user._id.toString(),
             logName: user._id,
@@ -44,6 +43,7 @@ class UserContainer extends DockerHandler{
     async remove(){
         try{
             await this.removeContainer();
+            // FOR FUTURE VERSIONS: Avoid storing containers globally (scalability)
             delete global.userContainers[this.user._id];
             console.log(`[Quantum Cloud]: Container ${this.dockerName} removed successfully.`);
         }catch(error){
@@ -141,9 +141,18 @@ class UserContainer extends DockerHandler{
                 Tty: true
             });
             const stream = await exec.start({ hijack: true, stdin: true });
+            // DUPLICATED CODE WITH REPOSITORYHANDLER FIX IT
             socket.emit('history', await this.getLog());
-            socket.on('command', (command) => stream.write(command + '\n'));
-            stream.on('data', (chunk) => socket.emit('response', chunk.toString('utf8')));
+            socket.on('command', (command) => {
+                command = command + '\n';
+                this.appendLog(command);
+                stream.write(command);
+            });
+            stream.on('data', (chunk) => {
+                chunk = chunk.toString('utf8');
+                this.appendLog(chunk);
+                socket.emit('response', chunk);
+            });
         }catch(error){
             this.criticalErrorHandler('executeInteractiveShell', error);
         }
