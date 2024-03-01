@@ -13,7 +13,7 @@
 ****/
 
 const Docker = require('dockerode');
-const ContainerLoggable = require('@utilities/containerLoggable');
+const DockerHandler = require('@utilities/dockerHandler');
 const path = require('path');
 const fs = require('fs').promises;
 
@@ -23,34 +23,23 @@ const docker = new Docker();
  * Represents a user container within Quantum Cloud
  * Manages operations related to its life cycle and interaction.
 */
-class UserContainer extends ContainerLoggable{
+class UserContainer extends DockerHandler{
     constructor(user){
-        // Pass IDs to maintain flexibility
-        super(user._id, user._id);
+        const storagePath = path.join(__dirname, '../storage/containers', user._id.toString());
+        super({
+            storagePath,
+            imageName: 'alpine:latest',
+            dockerName: user._id.toString(),
+            logName: user._id,
+            userId: user._id
+        });
         this.user = user;
-        this.dockerName = this.formatDockerName(this.user._id);
-        this.storagePath = path.join(__dirname, '../storage/containers', this.user._id.toString());
         this.instance = null;
     };
 
-    /**
-     * Format dockerName to comply with restrictions
-     * @param {string} userId 
-     * @returns {string} 
-    */
-    formatDockerName(userId){
-        const formattedUserId = userId.toString().replace(/[^a-zA-Z0-9_.-]/g, '_'); 
-        return `${process.env.DOCKERS_CONTAINER_ALIASES}-${formattedUserId}`;
-    }
-
-    // Delete the container and its associated storage
     async remove(){
         try{
-            const existingContainer = docker.getContainer(this.dockerName);
-            if(!existingContainer) return;
-            await existingContainer.stop();
-            await existingContainer.remove({ force: true });
-            await fs.rm(this.storagePath, { recursive: true });
+            await this.removeContainer();
             delete global.userContainers[this.user._id];
             console.log(`[Quantum Cloud]: Container ${this.dockerName} removed successfully.`);
         }catch(error){
@@ -58,7 +47,6 @@ class UserContainer extends ContainerLoggable{
         }
     };
 
-    // Attempts to start the container, creating it if it does not exist.
     async start(){
         try{
             const existingContainer = await this.getExistingContainer();
@@ -67,41 +55,15 @@ class UserContainer extends ContainerLoggable{
             await this.installPackages();
         }catch(error){
             if(error.statusCode === 404){
-                await this.createAndStartContainer();
+                this.instance = await this.createAndStartContainer();
+                global.userContainers[this.user._id] = this;
+                await this.installPackages()
             }else{
                 this.criticalErrorHandler('startContainer', error);
             }
         }
     };
     
-    /**
-     * Gets an existing instance of the container, if applicable.
-     * @returns {Promise<Container>}
-    */
-    async getExistingContainer(){
-        const existingContainer = docker.getContainer(this.dockerName);
-        const { State } = await existingContainer.inspect();
-        if(!State.Running) await existingContainer.start();
-        return existingContainer;
-    };
-
-    async createContainer(imageName, storagePath){
-        return docker.createContainer({
-            Image: imageName,
-            name: this.dockerName,
-            Tty: true,
-            OpenStdin: true,
-            StdinOnce: true,
-            Cmd: ['/bin/ash'],
-            HostConfig: { 
-                Binds: [`${storagePath}:/app:rw`],
-                // In future version, isolate the network.
-                NetworkMode: 'host',
-                RestartPolicy: { Name: 'no' }
-            }
-        });
-    };
-
     async installPackages(){
         try{
             await this.executeCommand('apk update');
@@ -138,57 +100,6 @@ class UserContainer extends ContainerLoggable{
             stream.on('end', () => resolve(output));
             stream.on('error', (error) => reject(error));
         });
-    };
-
-    async checkIfImageExists(imageName){
-        const image = docker.getImage(imageName);
-        try{
-            await image.inspect();
-            return true;
-        }catch(error){
-            if(error.statusCode === 404){
-                return false;
-            }   
-            throw error;
-        }
-    };
-
-    async pullImage(imageName){
-        console.log(`[Quantum Cloud]: Pulling "${imageName}"...`);
-        try{
-            await new Promise((resolve, reject) => {
-                docker.pull(imageName, (error, stream) => {
-                    if(error){
-                        reject(error);
-                    }else{
-                        docker.modem.followProgress(stream, (fprogressError) => {
-                            if(fprogressError) reject(fprogressError);
-                            else resolve();
-                        });
-                    }
-                });
-            });
-            console.log(`[Quantum Cloud]: Image "${imageName}" downloaded.`);
-        }catch(error){
-            console.error('Error pulling image:', error);
-        }
-    };
-
-    async createAndStartContainer(){
-        try{
-            const imageName = 'alpine:latest';
-            const imageExists = await this.checkIfImageExists(imageName);
-            if(!imageExists) await this.pullImage(imageName);
-            const storagePath = `${__dirname}/../storage/containers/${this.user._id}`;
-            await this.ensureDirectoryExists(storagePath);
-            const container = await this.createContainer(imageName, storagePath);
-            await container.start();
-            this.instance = container;
-            global.userContainers[this.user._id] = this;
-            await this.installPackages();
-        }catch(error){
-            this.criticalErrorHandler('createContainer', error);
-        }
     };
 
     /**
