@@ -29,6 +29,8 @@ const truncate = util.promisify(fs.truncate);
 */
 class ContainerLoggable{
     /**
+     * Creates a new ContainerLoggable instance.
+     *
      * @param {string} logName - Name for the log file (without extension).
      * @param {string} userId  - Unique identifier for the user.
     */
@@ -39,10 +41,22 @@ class ContainerLoggable{
         this.init();
     };
 
+    /**
+     * Initializes the logger, creating the log stream if needed.
+     * If a previous log stream exists for this user, it's closed.
+     * 
+     * @returns {fs.WriteStream} The log stream.
+    */
     async init(){
         this.logStream = await this.createLogStream();
     };
 
+    /**
+     * Sets up socket events to handle streaming logs to the client.
+     *
+     * @param {SocketIO.Socket} socket - The socket to emit events on.
+     * @param {object} shell - A shell interface to the container.  
+    */
     async setupSocketEvents(socket, shell){
         socket.emit('history', await this.getLog());
         socket.on('command', (command) => {
