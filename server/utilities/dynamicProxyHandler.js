@@ -14,7 +14,6 @@ const dynamicProxyHandler = (req, res, next) => {
     const userServicePort = global.repositoryDomains.get(requestedDomain);
     if(!userServicePort){
         // If no domain is found, we will assume it is ume it is an API call.
-        return next();an API call.
         return next();
     }
     proxyServer.web(req, res, { target: `http://0.0.0.0:${userServicePort}` });
