@@ -14,8 +14,13 @@
 
 require('./aliases');
 
+// FUTURE VERSION USE REDIS OR ANOTHER TOOL
+// FOR AVOID THE RUNTIME GLOBAL DATA 
 global.logStreamStore = {};
 global.userContainers = {};
+// key: domain && value: port
+// view how it works in @utilities/dynamicProxyHandler.js
+global.repositoryDomains = new Map();
 
 const { httpServer } = require('@config/express');
 const { cleanHostEnvironment } = require('@utilities/runtime');

@@ -46,6 +46,8 @@ const RepositorySchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Deployment',
     }],
+    domains: [{ type: String }],
+    port: { type: Number },
     createdAt: { type: Date, default: Date.now, },
 });
 
@@ -107,7 +109,13 @@ const deleteRepositoryHandler = async (deletedDoc) => {
 };
 
 const handleUpdateCommands = async (context) => {
-    const { buildCommand, installCommand, startCommand, rootDirectory } = context._update;
+    const { 
+        buildCommand, 
+        installCommand, 
+        startCommand, 
+        rootDirectory,
+        domains,
+        port } = context._update;
     const { _id } = context._conditions;
     if(
         rootDirectory?.length || buildCommand?.length ||
@@ -125,6 +133,10 @@ const handleUpdateCommands = async (context) => {
         const repository = new RepositoryHandler(document, user);
         const github = new Github(user, document);
         repository.start(github);
+    }else if(domains?.length || port){
+        for(const domain of domains){
+            global.repositoryDomains.set(domain, port);
+        }
     }
 };
 

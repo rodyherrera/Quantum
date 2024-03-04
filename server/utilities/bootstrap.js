@@ -62,6 +62,13 @@ exports.initializeRepositories = async () => {
                 select: 'username',
                 populate: { path: 'github', select: 'accessToken username' }
             });
+        for(const repository of repositories){
+            if(repository?.domains?.length && repository?.port){
+                for(const domain of repository.domains){
+                    global.repositoryDomains.set(domain, repository.port);
+                }
+            }
+        }
         console.log(`[Quantum Cloud]: Found ${repositories.length} repositories.`);
         await Promise.all(repositories.map(async (repository) => {
             const repositoryHandler = new RepositoryHandler(repository, repository.user);
