@@ -16,7 +16,16 @@ const dynamicProxyHandler = (req, res, next) => {
         // If no domain is found, we will assume it is ume it is an API call.
         return next();
     }
-    proxyServer.web(req, res, { target: `http://0.0.0.0:${userServicePort}` });
+    proxyServer.web(req, res, { target: `http://0.0.0.0:${userServicePort}` }, (error) => {
+        if(error.code === 'ECONNREFUSED'){
+            res.status(200).json({
+                status: 'success',
+                data: { message: 'We are setting up the domain, please wait...' }
+            });
+            return;
+        }
+        throw error;
+    });
 };
 
 module.exports = dynamicProxyHandler;

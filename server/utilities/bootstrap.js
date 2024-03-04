@@ -75,6 +75,7 @@ exports.initializeRepositories = async () => {
             });
         console.log(`[Quantum Cloud]: Found ${repositories.length} repositories.`);
         await Promise.all(repositories.map(async (repository) => {
+            // MOUNT REPOSITORY DOMAINS HERE...
             const repositoryHandler = new RepositoryHandler(repository, repository.user);
             const github = new Github(repository.user, repository);
             await repositoryHandler.start(github);
