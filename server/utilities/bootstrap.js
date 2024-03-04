@@ -52,6 +52,17 @@ exports.loadUserContainers = async () => {
     }
 };
 
+const mountRepositoryDomains = (repositories) => {
+    console.log('[Quantum Cloud]: Mounting the configured domains at runtime...');
+    for(const repository of repositories){
+        if(!(repository?.domains?.length && repository?.port)) return;
+        for(const domain of repository.domains){
+            global.repositoryDomains.set(domain, repository.port);
+        }
+    }
+    console.log('[Quantum Cloud]: Success, configured.');
+};
+
 exports.initializeRepositories = async () => {
     try{
         console.log('[Quantum Cloud]: Initializing the repositories loaded on the platform...');
@@ -62,13 +73,6 @@ exports.initializeRepositories = async () => {
                 select: 'username',
                 populate: { path: 'github', select: 'accessToken username' }
             });
-        for(const repository of repositories){
-            if(repository?.domains?.length && repository?.port){
-                for(const domain of repository.domains){
-                    global.repositoryDomains.set(domain, repository.port);
-                }
-            }
-        }
         console.log(`[Quantum Cloud]: Found ${repositories.length} repositories.`);
         await Promise.all(repositories.map(async (repository) => {
             const repositoryHandler = new RepositoryHandler(repository, repository.user);
@@ -76,6 +80,7 @@ exports.initializeRepositories = async () => {
             await repositoryHandler.start(github);
         }));
         console.log('[Quantum Cloud]: All repositories were initialized.');
+        mountRepositoryDomains(repositories);
     }catch(error){
         console.log('[Quantum Cloud] CRITICAL ERROR (at @utilities/bootstrap - initializeRepositories):', error);
     }
