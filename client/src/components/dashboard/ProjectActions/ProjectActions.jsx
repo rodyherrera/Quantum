@@ -60,6 +60,7 @@ const ProjectActions = ({ repository }) => {
                     className='Project-More-Icon-Container' 
                     options={[
                         { title: 'Delete', onClick: () => setIsDeleteModalActive(true) },
+                        { title: 'Manage Domains', onClick: () => handleRepositorySelection(`/repository/${repository.alias}/domains/`) },
                         { title: 'Build & Dev Settings',  onClick: () => handleRepositorySelection(`/repository/${repository.alias}/deployment/setup/`) },
                         { title: 'Environment Variables',  onClick: () => handleRepositorySelection(`/repository/${repository.alias}/deployment/environment-variables/`) },
                         { title: 'File Explorer',  onClick: () => handleRepositorySelection(`/repository/${repository.alias}/storage/`) },

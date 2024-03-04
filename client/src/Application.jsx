@@ -50,6 +50,7 @@ const Application = () => {
                     <Route path='/repository/:repositoryAlias/deployment/setup/' element={<pages.protected.repository.SetupDeployment />} />
                     <Route path='/repository/:repositoryAlias/deployment/environment-variables/' element={<pages.protected.repository.EnvironmentVariables />} />
                     <Route path='/repository/:repositoryAlias/shell/' element={<pages.protected.repository.Shell />} />
+                    <Route path='/repository/:repositoryAlias/domains/' element={<pages.protected.repository.RepositoryDomains />} />
 
                     <Route path='/dashboard/' element={<pages.protected.general.Dashboard />} />
                 </Route>

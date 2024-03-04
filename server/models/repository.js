@@ -46,7 +46,10 @@ const RepositorySchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Deployment',
     }],
-    domains: [{ type: String }],
+    domains: [{
+        type: String,
+        trim: true
+    }],
     port: { type: Number },
     createdAt: { type: Date, default: Date.now, },
 });

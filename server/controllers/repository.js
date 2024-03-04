@@ -31,6 +31,8 @@ const RepositoryFactory = new HandlerFactory({
         'alias',
         'deployments',
         'buildCommand',
+        'domains',
+        'port',
         'installCommand',
         'startCommand',
         'rootDirectory'
