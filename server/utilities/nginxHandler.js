@@ -4,9 +4,7 @@ const util = require('util');
 const { exec } = require('child_process');
 const execAsync = util.promisify(exec);
 
-// Configuration
-const NGINX_PATH = '/etc/nginx';
-const NGINX_FILE = NGINX_PATH + '/sites-enabled/default';
+const NGINX_FILE = process.env.NGINX_PATH + '/sites-enabled/default';
 
 /**
  * Reads the current contents of the Nginx configuration file.
