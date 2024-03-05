@@ -22,7 +22,6 @@ const socketIO = require('socket.io');
 const passport = require('@config/passport');
 const bootstrap = require('@utilities/bootstrap');
 const globalErrorHandler = require('@controllers/globalErrorHandler');
-const dynamicProxyHandler = require('@utilities/dynamicProxyHandler');
 
 const app = express();
 const httpServer = http.createServer(app);
@@ -49,7 +48,8 @@ bootstrap.configureApp({
         bodyParser.json(),
         bodyParser.urlencoded({ extended: true }),
         passport.initialize(),
-        passport.session()
+        passport.session(),
+        express.static('public')
     ],
     settings: {
         deactivated: [
@@ -57,8 +57,6 @@ bootstrap.configureApp({
         ]
     }
 });
-
-app.use(dynamicProxyHandler);
 
 app.all('*', (req, res) => {
     if(req.path.startsWith('/api/v1/')){

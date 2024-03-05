@@ -16,6 +16,7 @@ const mongoose = require('mongoose');
 const TextSearch = require('mongoose-partial-search');
 const Github = require('@utilities/github');
 const RepositoryHandler = require('@utilities/repositoryHandler');
+const nginxHandler = require('@utilities/nginxHandler');
 const { v4 } = require('uuid');
 
 const RepositorySchema = new mongoose.Schema({
@@ -137,8 +138,13 @@ const handleUpdateCommands = async (context) => {
         const github = new Github(user, document);
         repository.start(github);
     }else if(domains?.length || port){
-        for(const domain of domains){
-            global.repositoryDomains.set(domain, port);
+        for(let domain of domains){
+            // VERIFY IF IS A DOMAIN HERE (...)
+            // ON ADD DOMAIN VERIFY IF ALREADY EXISTS
+            domain = domain.trim();
+            await nginxHandler.addDomain({ domain, port: process.env.SERVER_PORT, ipv4: '0.0.0.0' });
+            await nginxHandler.generateSSLCert(domain, 'herzidor@gmail.com');
+            await nginxHandler.updateDomain({ domain, port, ipv4: '0.0.0.0', ssl: true })
         }
     }
 };
