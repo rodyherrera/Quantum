@@ -140,11 +140,10 @@ const handleUpdateCommands = async (context) => {
     }else if(domains?.length || port){
         for(let domain of domains){
             // VERIFY IF IS A DOMAIN HERE (...)
-            // ON ADD DOMAIN VERIFY IF ALREADY EXISTS
             domain = domain.trim();
             await nginxHandler.addDomain({ domain, port: process.env.SERVER_PORT, ipv4: '0.0.0.0' });
             await nginxHandler.generateSSLCert(domain, 'herzidor@gmail.com');
-            await nginxHandler.updateDomain({ domain, port, ipv4: '0.0.0.0', ssl: true })
+            await nginxHandler.updateDomain({ domain, port, ipv4: '0.0.0.0', useSSL: true })
         }
     }
 };

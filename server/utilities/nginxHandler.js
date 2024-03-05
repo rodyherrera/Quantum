@@ -38,10 +38,23 @@ exports.removeDomains = () => {
 };
 
 /**
+ * Checks if a specific domain's configuration block exists in the Nginx file.
+ * @param {string} domain The domain name to check for.
+ * @returns {boolean} True if the domain block exists, false otherwise.
+ */
+ exports.domainExists = (domain) => {
+    const currentConfig = getCurrentConfig();
+    const startPattern = `# Start-Quantum-Block-${domain}\n`;
+    const endPattern = `# End-Quantum-Block-${domain}\n`;
+    return currentConfig.includes(startPattern) && currentConfig.includes(endPattern);
+};
+
+/**
  * Removes a specific domain's configuration block from the Nginx file.
  * @param {string} domain The domain name to remove.
 */
 exports.removeDomain = async (domain) => {
+    if(!this.domainExists(domain)) return;
     const currentConfig = getCurrentConfig();
     const startPattern = `# Start-Quantum-Block-${domain}\n`;
     const endPattern = `# End-Quantum-Block-${domain}\n`;
@@ -68,20 +81,25 @@ exports.updateDomain = async (domainConfig) => {
     await this.addDomain(domainConfig);
 };
 
-/**
- * Adds a new domain configuration block to the Nginx file.
- * @param {Object} domainConfig An object containing domain configuration properties:
- *   - domain: The domain name.
- *   - ipv4: The IPv4 address.
- *   - port: The port number.
-*/
 exports.addDomain = async (domainConfig) => {
-    const { domain, ipv4, port } = domainConfig;
-    let sslTemplate = ''; 
-    if(domainConfig){
+    const { domain, ipv4, port, useSSL = false } = domainConfig;
+    if(this.domainExists(domain)) return;
+    // Input validation
+    if(!domain || !ipv4 || !port){
+        throw new Error('NGINXHandler::Invalid::Params');
+    }
+    // SSL Configuration (if enabled)
+    let sslTemplate = '';
+    if(useSSL){
         sslTemplate = `
-server{
+server {
+    listen 443 ssl;
     server_name ${domain};
+
+    ssl_certificate /etc/letsencrypt/live/${domain}/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/${domain}/privkey.pem;
+    include /etc/letsencrypt/options-ssl-nginx.conf;
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
 
     location / {
         proxy_set_header Host $host;
@@ -90,17 +108,14 @@ server{
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
     }
-
-    listen 443 ssl;
-    ssl_certificate /etc/letsencrypt/live/${domain}/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/${domain}/privkey.pem; 
-    include /etc/letsencrypt/options-ssl-nginx.conf;
-    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; 
-}`;
+}
+        `;
     }
+    // Main Configuration Template
     const template = `
 # Start-Quantum-Block-${domain}
-server{
+server {
+    listen 80; 
     server_name ${domain};
 
     location / {
@@ -114,19 +129,25 @@ server{
 
 ${sslTemplate}
 
+# Redirect HTTP to HTTPS (if SSL is enabled)
 server {
     if ($host = ${domain}) {
         return 301 https://$host$request_uri;
     } 
-
-	server_name ${domain};
     listen 80;
+    server_name ${domain};
     return 404; 
 }
 # End-Quantum-Block-${domain}
-`;
-    fs.appendFileSync(NGINX_FILE, template);
-    await reloadNginx();
+    `;
+    // File Modification
+    try{
+        fs.appendFileSync(NGINX_FILE, template);
+        await reloadNginx();
+    }catch(error){
+        console.error('[Quantum Cloud]: Error adding domain configuration ->', error);
+        throw error;
+    }
 };
 
 /**
@@ -141,7 +162,6 @@ exports.generateSSLCert = async (domain, email) => {
     try{
         await execAsync(command);
         console.log(`[Quantum Cloud]: SSL certificate generated successfully for ${domain}`);
-        await reloadNginx();
     }catch(error){
         console.error(`[Quantum Cloud]: Error generating SSL certificate: ${error}`);
         // Re-throw to propagate the error
