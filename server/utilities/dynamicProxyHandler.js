@@ -1,7 +1,8 @@
 const httpProxy = require('http-proxy');
+const generateSSLCertificate = require('@utilities/generateSSLCertificate');
 const proxyServer = httpProxy.createProxyServer({});
 
-const dynamicProxyHandler = (req, res, next) => {
+const dynamicProxyHandler = async (req, res, next) => {
     const requestedDomain = req.hostname;
     // When a user service is loaded during runtime, it undergoes
     // a check to determine if it includes domains along with their 
@@ -16,7 +17,12 @@ const dynamicProxyHandler = (req, res, next) => {
         // If no domain is found, we will assume it is ume it is an API call.
         return next();
     }
-    proxyServer.web(req, res, { target: `http://0.0.0.0:${userServicePort}` }, (error) => {
+    const [key, cert] = await generateSSLCertificate(requestedDomain);
+    const proxyOptions = {
+        target: `http://0.0.0.0:${userServicePort}`,
+        ssl: { key, cert }
+    };
+    proxyServer.web(req, res, proxyOptions, (error) => {
         if(error.code === 'ECONNREFUSED'){
             res.status(200).json({
                 status: 'success',
