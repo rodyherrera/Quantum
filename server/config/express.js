@@ -27,6 +27,8 @@ const app = express();
 const httpServer = http.createServer(app);
 const io = socketIO(httpServer, { cors: { origin: process.env.CORS_ORIGIN } });
 
+bootstrap.ensurePublicFolderExistence();
+
 bootstrap.configureApp({
     app,
     suffix: '/api/v1/',

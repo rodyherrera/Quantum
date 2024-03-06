@@ -15,11 +15,21 @@
 const Repository = require('@models/repository');
 const User = require('@models/user');
 const Github = require('@utilities/github');
+const fs = require('fs');
+const path = require('path');
 const UserContainer = require('@utilities/userContainer');
 const RepositoryHandler = require('@utilities/repositoryHandler');
 const { capitalizeToLowerCaseWithDelimitier } = require('@utilities/algorithms');
 const { spawn } = require('child_process');
 
+exports.ensurePublicFolderExistence = () => {
+    const publicFolderPath = path.join(__dirname, '../public');
+    const exists = fs.existsSync(publicFolderPath);
+    if(!exists){
+        fs.mkdirSync(publicFolderPath);
+    }
+};
+  
 exports.configureApp = ({ app, routes, suffix, middlewares, settings }) => {
     middlewares.forEach((middleware) => app.use(middleware));
     routes.forEach((route) => {
