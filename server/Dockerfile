@@ -12,13 +12,9 @@ RUN rm /etc/nginx/sites-enabled/default && \
 
 WORKDIR /app
 
-COPY . .
-
-RUN npm install
-
 EXPOSE 80
 
-CMD nginx -g 'daemon off;' & npm run start
+CMD nginx -g 'daemon off;' & npm install & npm run start
 
 # sudo docker build -t quantum-backend-server .
-# sudo docker run -p 80:80 -v /var/run/docker.sock:/var/run/docker.sock quantum-backend-server
+# sudo docker run -p 80:80 -v $(pwd):/app -v /var/run/docker.sock:/var/run/docker.sock quantum-backend-server
