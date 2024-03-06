@@ -38,6 +38,13 @@ exports.createDeployment = DeploymentFactory.createOne();
 exports.updateDeployment = DeploymentFactory.updateOne();
 exports.deleteDeployment = DeploymentFactory.deleteOne();
 
+/** 
+ * Handles repository-related actions (restart, stop, start). Interacts with the GitHub API for deployment status updates.
+ *
+ * @param {Object} req - The Express request object.
+ * @param {Object} res - The Express response object.
+ * @returns {Promise<void>}
+*/
 const repositoryOperationHandler = async (repository, action) => {
     await repository.populate({
         path: 'user',
@@ -83,6 +90,11 @@ const repositoryOperationHandler = async (repository, action) => {
     return currentDeployment;
 };
 
+/**
+ * Handles repository operation requests, such as starting, stopping, and restarting deployments.
+ *
+ * @returns {Promise<void>}
+*/
 exports.repositoryOperations = catchAsync(async (req, res) => {
     const { user } = req;
     const { repositoryAlias } = req.params;
@@ -103,6 +115,13 @@ exports.repositoryOperations = catchAsync(async (req, res) => {
     });
 });
 
+/**
+ * Retrieves the deployments of a GitHub repository.
+ * 
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ * @throws {RuntimeError} If the deployments are not found. 
+*/
 exports.getRepositoryDeployments = catchAsync(async (req, res) => {
     const { user } = req;
     const { repositoryName } = req.params;
@@ -113,6 +132,13 @@ exports.getRepositoryDeployments = catchAsync(async (req, res) => {
     res.status(200).json({ status: 'success', data: deployments });
 });
 
+/**
+ * Deletes a GitHub deployment and retrieves the updated deployments of a repository.  
+ *
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ * @throws {RuntimeError} If the deployments are not found. 
+*/
 exports.deleteGithubDeployment = catchAsync(async (req, res) => {
     const { user } = req;
     const { repositoryName, deploymentId } = req.params;
@@ -124,6 +150,14 @@ exports.deleteGithubDeployment = catchAsync(async (req, res) => {
     res.status(200).json({ status: 'success', data: deployments });
 });
 
+/**
+ * Retrieves the active deployment environment for a given repository.
+ *
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @throws {RuntimeError} If the repository is not found.
+ * @returns {Object} An object containing the environment details and deployment ID
+*/
 exports.getActiveDeploymentEnvironment = catchAsync(async (req, res) => {
     const { user } = req;
     const { repositoryAlias } = req.params;
@@ -139,3 +173,5 @@ exports.getActiveDeploymentEnvironment = catchAsync(async (req, res) => {
     const { environment, _id } = activeDeployment;
     res.status(200).json({ status: 'success', data: { ...environment, _id } });
 });
+
+module.exports = exports;
