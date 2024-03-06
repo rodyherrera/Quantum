@@ -109,6 +109,8 @@ const deleteRepositoryHandler = async (deletedDoc) => {
     const repositoryUser = await removeRepositoryReference(deletedDoc);
     // Retrieve and delete deployments associated with the repository
     const deployments = await getAndDeleteDeployments(deletedDoc._id);
+    // Remove repository domains
+    await nginxHandler.removeDomainList(deletedDoc.domains);
     // Perfom cleanup task using PTYhandler and Github utility
     await performCleanupTasks(deletedDoc, repositoryUser, deployments);
 };

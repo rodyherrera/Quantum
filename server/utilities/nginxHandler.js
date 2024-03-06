@@ -50,6 +50,22 @@ exports.removeDomains = () => {
 };
 
 /**
+ * Removes a list of domains from the Nginx configuration.
+ * 
+ * @param {string[]} domains An array of domain names to remove.
+ * @returns {Promise<void>} Resolves when all domains have been processed.
+*/
+exports.removeDomainList = async (domains) => {
+    await Promise.all(domains.map(async (domain) => {
+        try{
+            await exports.removeDomain(domain);
+        }catch(error){
+            console.error(`[Quantum Cloud]: Error removing domain '${domain}':`, error);
+        }
+    }));
+};
+
+/**
  * Removes a specific domain's configuration block from the Nginx file.
  * @param {string} domain The domain name to remove.
 */
