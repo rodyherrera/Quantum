@@ -22,6 +22,9 @@ const RepositoryHandler = require('@utilities/repositoryHandler');
 const { capitalizeToLowerCaseWithDelimitier } = require('@utilities/algorithms');
 const { spawn } = require('child_process');
 
+/**
+ * Ensures the existence of the "../public" folder, creating it if necessary.
+*/
 exports.ensurePublicFolderExistence = () => {
     const publicFolderPath = path.join(__dirname, '../public');
     const exists = fs.existsSync(publicFolderPath);
@@ -29,7 +32,17 @@ exports.ensurePublicFolderExistence = () => {
         fs.mkdirSync(publicFolderPath);
     }
 };
-  
+
+/**
+ * Configures the Express application with provided routes, middlewares, and settings.
+ *
+ * @param {Object} options - Configuration options
+ * @param {Object} options.app - The Express application instance.
+ * @param {Array} options.routes - Array of route names.
+ * @param {string} options.suffix - Base route suffix for the configured routes.
+ * @param {Array} options.middlewares - Array of middleware functions.
+ * @param {Object} options.settings - Settings for enabling/disabling app features.
+*/
 exports.configureApp = ({ app, routes, suffix, middlewares, settings }) => {
     middlewares.forEach((middleware) => app.use(middleware));
     routes.forEach((route) => {
@@ -40,6 +53,9 @@ exports.configureApp = ({ app, routes, suffix, middlewares, settings }) => {
     settings.deactivated.forEach((deactivated) => app.disabled(deactivated));
 };
 
+/**
+ * Restarts the Node.js server by spawning a new process. Terminates the current process after spawning new one.
+*/
 exports.restartServer = async () => {
     // "stdio: 'inherit'" -> Inherit standard flows from the main process.
     const childProcess = spawn('npm', ['run', 'start'], { stdio: 'inherit' });
@@ -48,6 +64,10 @@ exports.restartServer = async () => {
     });
 };
 
+/**
+ * Loads and initializes Docker containers for all registered users.
+ * Handles errors that may occur during this process.
+*/
 exports.loadUserContainers = async () => {
     try{
         console.log('[Quantum Cloud]: Loading users docker containers...');
@@ -62,6 +82,10 @@ exports.loadUserContainers = async () => {
     }
 };
 
+/**
+ * Initializes repositories on the platform by cloning and building them.
+ * Handles errors that may occur during this process.
+*/
 exports.initializeRepositories = async () => {
     try{
         console.log('[Quantum Cloud]: Initializing the repositories loaded on the platform...');
@@ -84,6 +108,10 @@ exports.initializeRepositories = async () => {
     }
 };
 
+/**
+ * Validates required environment variables and ensures compliance with format restrictions. 
+ * Exits the process if any validation fails.
+*/
 exports.validateEnvironmentVariables = () => {
     const requiredVariables = [
         { name: 'NODE_ENV', validation: /^(development|production)$/i, errorMessage: 'NODE_ENV must be one of "development", "production", or "test".' },
