@@ -29,41 +29,19 @@ While Quantum offers a panel for configuring commands such as installing depende
 I've successfully **migrated all my frontend applications from Vercel and my various VPS services to Quantum**. The platform's ease of use and efficiency are evident in the 15 repositories I currently have deployed – a testament to my confidence in Quantum.
 
 ### Table of Contents
-# Table of Contents
-
-1. [Features](#features)
-    - [Github Integration](#github-integration)
-    - [Cloud Shell](#cloud-shell)
-    - [Repository Command Line Interface (CLI)](#repository-command-line-interface-cli)
-    - [File Explorer](#file-explorer)
-    - [Command Panel](#command-panel)
-    - [Tailored User Experience](#tailored-user-experience)
-    - [Environment Variable Management](#environment-variable-management)
-    - [Continuous Deployment](#continuous-deployment)
-    - [Service Status](#service-status)
-    - [Docker-Based Isolation](#docker-based-isolation)
-3. [Deploying with Docker](#deploying-with-docker)
-4. [Project Requirements](#project-requirements)
-    - [Node.js Installation](#nodejs-installation)
-    - [Docker Installation](#docker-installation)
-5. [Installation](#installation)
-    - [Installation Guide](#installation-guide)
-    - [Post-Installation Configuration](#post-installation-configuration)
-    - [Obtaining GitHub Client Secret and Client ID](#obtaining-github-client-secret-and-client-id)
-6. [Deploying Quantum](#deploying-quantum)
-7. [Building the Client Application](#building-the-client-application)
-8. [The Quantum CLI](#the-quantum-cli)
-    - [User Account Creation](#user-account-creation)
-9. [How Does This Work?](#how-does-this-work)
-    - [Docker Instance Creation](#docker-instance-creation)
-    - [Deployment Workflow](#deployment-workflow)
-    - [Server Shutdown Process](#server-shutdown-process)
-    - [Error Handling and Server Restart](#error-handling-and-server-restart)
-10. [Feedback and Support](#feedback-and-support)
-    - [Contribution](#contribution)
-    - [Star/Fork](#starfork)
-    - [Coffee](#coffee-donation)
-
+- [Features](#features)
+- [Post-Installation Configuration](#post-installation-configuration)
+- [Obtaining GitHub Client Secret and Client ID](#obtaining-github-client-secret-and-client-id)
+- [Deploying with Docker](#deploying-with-docker)
+- [Project Requirements](#project-requirements)
+- [Installation](#installation)
+- [Deploying Quantum](#deploying-quantum)
+- [Building the client application](#building-the-client-application)
+- [The Quantum CLI](#the-quantum-cli)
+- [How does this work?](#how-does-this-work)
+- [What happens when the server is closed?](#what-happens-when-the-server-is-closed)
+- [We'd love your feedback and support!](#we-d-love-your-feedback-and-support)
+  
 ### Features
 - **Github Integration:** Securely connect your GitHub account to Quantum for repository access and management of deployments.
 - **Cloud Shell:** Access a dedicated environment for executing commands directly on your Virtual Private Server (VPS) or hosting environment where Quantum is deployed.
@@ -76,77 +54,6 @@ I've successfully **migrated all my frontend applications from Vercel and my var
 - **Service Status:** You can check the status of the server through the web-ui. It will determine if the server is working in optimal conditions or if it is overloaded.
 - **Docker-Based Isolation:** Each user receives a dedicated Docker instance for their deployment, ensuring smooth operations and minimizing conflicts.
 
-### Deploying with Docker
-When cloning the repository, inside the generated folder (root), you will discover the "docker-compose.yml" file, which will allow you to deploy both the backend and frontend servers using the command "docker-compose up -d --build ".
-```bash
-# First, you must clone the repository.
-git clone -b 1.0.3 https://github.com/rodyherrera/Quantum
-```
-After cloning the repository, we go inside the generated folder to run docker-compose.
-```bash
-docker-compose up -d --build 
-```
-After executing the command, Docker will deploy the frontend server (webui) and the backend.
-
-### Project Requirements
-To run this project, you'll need the following:
-* **Docker:** Docker is required to run any containerized components of this project. Furthermore, if you intend to deploy Quantum using Docker, you'll require it as well. You can utilize the .sh script located within the project's root directory:
-    ```bash
-    bash install_docker.sh
-    ```
-* **Node.js 21 or higher:**  It is recommended to use nvm (Node Version Manager) to manage Node.js versions on your system. Here's how to install Node.js 21 using nvm:
-
-    1. **Installing NVM:**
-        ```bash
-        curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
-        ```
-        Or, if you prefer to use wget:
-        ```bash
-        wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
-        ```
-
-    2. **Close and reopen the terminal:** It is important to close and reopen the terminal after installing nvm for the changes to take effect.
-
-    3. **Installing Node.js 20.11.1:** 
-        ```bash
-        nvm install 20.11.1
-        ```
-
-    4. **Set the default version:** Then, you can set the newly installed version as the default using the following command:
-        ```bash
-        nvm alias default 20.11.1
-        ```
-        
-### Installation
-You may prefer the all-in-one command, to run in your terminal, clone the repository and install dependencies.
-```bash
-git clone -b 1.0.3 https://github.com/rodyherrera/Quantum && cd Quantum && cd server && npm install --force && cd ../client &&  npm install --force
-```
-
-#### Installation Guide
-1. **Clone the Quantum Repository:**
-    ```bash
-    git clone -b 1.0.3 https://github.com/rodyherrera/Quantum
-    ```
-    This command clones the Quantum repository from GitHub to your local machine.
-2. **Navigate to the Quantum Directory:**
-    ```bash
-    cd Quantum
-    ```
-    Move into the cloned repository directory.
-3. **Install Server Dependencies:**
-    ```bash
-    cd server
-    npm install --force
-    ```
-    This command installs the necessary dependencies for the server component of Quantum.
-4. **Install Client Dependencies:**
-    ```bash
-    cd ../client
-    npm install --force
-    ```
-    Navigate to the client directory within the Quantum repository and install the frontend dependencies.
-    
 ### Post-Installation Configuration
 After cloning the repository and installing the dependencies for the client and server application, you will need to modify some environment variables.
 
@@ -256,6 +163,77 @@ To integrate your application with GitHub's API, you'll need to obtain a Client 
 8. **Utilize the credentials in your application:** Use the Client ID and Client Secret in your application's configuration to authenticate requests to GitHub's API.
 
 It is important that you do this step, otherwise NO ONE will simply be able to use your application, including you.
+
+### Deploying with Docker
+When cloning the repository, inside the generated folder (root), you will discover the "docker-compose.yml" file, which will allow you to deploy both the backend and frontend servers using the command "docker-compose up -d --build ".
+```bash
+# First, you must clone the repository.
+git clone -b 1.0.3 https://github.com/rodyherrera/Quantum
+```
+After cloning the repository, we go inside the generated folder to run docker-compose.
+```bash
+docker-compose up -d --build 
+```
+After executing the command, Docker will deploy the frontend server (webui) and the backend.
+
+### Project Requirements
+To run this project, you'll need the following:
+* **Docker:** Docker is required to run any containerized components of this project. Furthermore, if you intend to deploy Quantum using Docker, you'll require it as well. You can utilize the .sh script located within the project's root directory:
+    ```bash
+    bash install_docker.sh
+    ```
+* **Node.js 21 or higher:**  It is recommended to use nvm (Node Version Manager) to manage Node.js versions on your system. Here's how to install Node.js 21 using nvm:
+
+    1. **Installing NVM:**
+        ```bash
+        curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+        ```
+        Or, if you prefer to use wget:
+        ```bash
+        wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
+        ```
+
+    2. **Close and reopen the terminal:** It is important to close and reopen the terminal after installing nvm for the changes to take effect.
+
+    3. **Installing Node.js 20.11.1:** 
+        ```bash
+        nvm install 20.11.1
+        ```
+
+    4. **Set the default version:** Then, you can set the newly installed version as the default using the following command:
+        ```bash
+        nvm alias default 20.11.1
+        ```
+        
+### Installation
+You may prefer the all-in-one command, to run in your terminal, clone the repository and install dependencies.
+```bash
+git clone -b 1.0.3 https://github.com/rodyherrera/Quantum && cd Quantum && cd server && npm install --force && cd ../client &&  npm install --force
+```
+
+#### Installation Guide
+1. **Clone the Quantum Repository:**
+    ```bash
+    git clone -b 1.0.3 https://github.com/rodyherrera/Quantum
+    ```
+    This command clones the Quantum repository from GitHub to your local machine.
+2. **Navigate to the Quantum Directory:**
+    ```bash
+    cd Quantum
+    ```
+    Move into the cloned repository directory.
+3. **Install Server Dependencies:**
+    ```bash
+    cd server
+    npm install --force
+    ```
+    This command installs the necessary dependencies for the server component of Quantum.
+4. **Install Client Dependencies:**
+    ```bash
+    cd ../client
+    npm install --force
+    ```
+    Navigate to the client directory within the Quantum repository and install the frontend dependencies.
 
 ### Deploying Quantum
 Once dependencies are installed, you'll be prepared to deploy Quantum on your server. To accomplish this, initiate the server application first, followed by the client application.
