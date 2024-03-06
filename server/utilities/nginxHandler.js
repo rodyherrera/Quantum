@@ -158,6 +158,12 @@ const reloadNginx = async () => {
 };
 
 exports.generateSSLCert = async (domain, email) => {
+    const certPath = `/etc/letsencrypt/live/${domain}/fullchain.pem`;
+    // Check if SSL certificate already exists
+    if(fs.existsSync(certPath)){
+        console.log(`[Quantum Cloud]: SSL Certificate already exists for ${domain}.`);
+        return;
+    }
     const command = `certbot certonly --webroot -w ${__dirname}/../public -d ${domain} --agree-tos --email ${email} --non-interactive`;
     try{
         await execAsync(command);
