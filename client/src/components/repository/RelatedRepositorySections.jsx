@@ -19,7 +19,7 @@ import { IoIosGitBranch } from 'react-icons/io';
 import { GoTerminal } from 'react-icons/go';
 import { GrDeploy } from 'react-icons/gr';
 import { VscGitPullRequestCreate } from 'react-icons/vsc';
-import { MdDataObject } from 'react-icons/md';
+import { MdDataObject, MdHttp } from 'react-icons/md';
 import { RxDashboard } from 'react-icons/rx';
 import { useSelector } from 'react-redux';
 
@@ -65,6 +65,12 @@ const RelatedRepositorySections = ({ isRepositorySelected = true }) => {
             icon: GrDeploy,
             description: 'Customize your repository deployment settings, including installation, start, and build commands, among other configurations.',
             to: `/repository/${encodeURIComponent(selectedRepository?.alias)}/deployment/setup/`
+        },
+        {
+            title: 'Manage Domains',
+            icon: MdHttp,
+            description: 'Add one or more domains to your repository. We take care of your SSL certificate.',
+            to: `/repository/${encodeURIComponent(selectedRepository?.alias)}/domains/`
         },
         { 
             title: 'Deployments', 
