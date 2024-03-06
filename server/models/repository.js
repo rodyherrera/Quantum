@@ -19,6 +19,9 @@ const RepositoryHandler = require('@utilities/repositoryHandler');
 const nginxHandler = require('@utilities/nginxHandler');
 const { v4 } = require('uuid');
 
+// TODO: CREATE /PUBLIC/ IF NOT EXISTS
+// NGINX 80 -> REVERSE PROXY TO BACKEND SERVER
+
 const RepositorySchema = new mongoose.Schema({
     alias: {
         type: String,
@@ -114,26 +117,31 @@ const deleteRepositoryHandler = async (deletedDoc) => {
     await performCleanupTasks(deletedDoc, repositoryUser, deployments);
 };
 
-const handleDomains = async (domains, port) => {
-    await Promise.all(domains.map(async (domain) => {
+const handleDomains = async (domains, port, currentDomains, userEmail) => {
+    const domainsToAdd = domains.filter((domain) => !currentDomains.includes(domain));
+    const domainsToRemove = currentDomains.filter((domain) => !domains.includes(domain));
+
+    await Promise.all(domainsToAdd.map(async (domain) => {
         const trimmedDomain = domain.trim();
         try{
             await nginxHandler.addDomain({ domain: trimmedDomain, port: process.env.SERVER_PORT, ipv4: '0.0.0.0' });
-            await nginxHandler.generateSSLCert(trimmedDomain, 'email@service.com');
+            await nginxHandler.generateSSLCert(trimmedDomain, userEmail);
             await nginxHandler.updateDomain({ domain: trimmedDomain, port, ipv4: '0.0.0.0', useSSL: true });
         }catch(error){
-            console.error(`[Quantum Cloud] Error processing domain '${trimmedDomain}':`, error);
+            console.error(`[Quantum Cloud]: Error processing domain (add) '${trimmedDomain}':`, error);
         }
     }));
+
+    await nginxHandler.removeDomainList(domainsToRemove);
 };
 
 const getRepositoryData = async (_id) => {
     return await Repository
         .findById(_id)
-        .select('user name deployments')
+        .select('user name deployments domains')
         .populate({
             path: 'user',
-            select: 'username',
+            select: 'username email',
             populate: { path: 'github', select: 'accessToken username' }
         });
 };
@@ -153,8 +161,8 @@ const handleUpdateCommands = async (context) => {
         const githubHandler = new Github(user, document);
         repositoryHandler.start(githubHandler);
     }
-
-    if(domains?.length) await handleDomains(domains, port);
+    
+    if(domains?.length) await handleDomains(domains, port, repositoryData.domains, repositoryData.user.email);
 };
 
 RepositorySchema.methods.updateAliasIfNeeded = async function(){
