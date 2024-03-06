@@ -75,6 +75,18 @@ I've successfully **migrated all my frontend applications from Vercel and my var
 - **Service Status:** You can check the status of the server through the web-ui. It will determine if the server is working in optimal conditions or if it is overloaded.
 - **Docker-Based Isolation:** Each user receives a dedicated Docker instance for their deployment, ensuring smooth operations and minimizing conflicts.
 
+### Docker Installation
+When cloning the repository, inside the generated folder (root), you will discover the "docker-compose.yml" file, which will allow you to deploy both the backend and frontend servers using the command "docker-compose up -d --build ".
+```bash
+# First, you must clone the repository.
+git clone -b 1.0.3 https://github.com/rodyherrera/Quantum
+```
+After cloning the repository, we go inside the generated folder to run docker-compose.
+```bash
+docker-compose up -d --build 
+```
+After executing the command, Docker will deploy the frontend server (webui) and the backend.
+
 ### Project Requirements
 To run this project, you'll need the following:
 
