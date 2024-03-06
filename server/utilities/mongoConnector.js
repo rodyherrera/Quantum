@@ -14,6 +14,10 @@
 
 const mongoose = require('mongoose');
 
+/**
+ * Establishes a connection to the appropriate MongoDB database based on the environment.
+ * Logs errors to the console for troubleshooting.
+*/
 const mongoConnector = async () => {
     const databaseName = process.env.NODE_ENV === 'production'
         ? process.env.PRODUCTION_DATABASE
