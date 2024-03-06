@@ -23,23 +23,35 @@ const nginxHandler = require('@utilities/nginxHandler');
 const { capitalizeToLowerCaseWithDelimitier } = require('@utilities/algorithms');
 const { spawn } = require('child_process');
 
+/**
+ * Asynchronously sets up an Nginx reverse proxy configuration.
+ *
+ * @returns {Promise<void>}
+*/
 exports.setupNginxReverseProxy = async () => {
-    await nginxHandler.removeDomain('_');
-    await nginxHandler.addDomain({
-        domain: '_',
-        ipv4: '127.0.0.1',
-        port: process.env.SERVER_PORT
-    });
+    try{
+        await nginxHandler.removeDomain('_');
+        await nginxHandler.addDomain({
+            domain: '_',
+            ipv4: '127.0.0.1',
+            port: process.env.SERVER_PORT
+        });
+    }catch(error){
+        console.error('[Quantum Cloud] Error configuring reverse proxy:', error);
+    }
 };
 
 /**
  * Ensures the existence of the "../public" folder, creating it if necessary.
+ * 
+ * @returns {Promise<void>}
 */
-exports.ensurePublicFolderExistence = () => {
+exports.ensurePublicFolderExistence = async () => {
     const publicFolderPath = path.join(__dirname, '../public');
-    const exists = fs.existsSync(publicFolderPath);
-    if(!exists){
-        fs.mkdirSync(publicFolderPath);
+    try{
+        await fs.promises.access(publicFolderPath, fs.constants.F_OK); // Check existence efficiently
+    }catch(error){
+        await fs.promises.mkdir(publicFolderPath);
     }
 };
 
@@ -76,7 +88,8 @@ exports.restartServer = async () => {
 
 /**
  * Loads and initializes Docker containers for all registered users.
- * Handles errors that may occur during this process.
+ *
+ * @returns {Promise<void>}
 */
 exports.loadUserContainers = async () => {
     try{
@@ -94,7 +107,8 @@ exports.loadUserContainers = async () => {
 
 /**
  * Initializes repositories on the platform by cloning and building them.
- * Handles errors that may occur during this process.
+ *
+ * @returns {Promise<void>}
 */
 exports.initializeRepositories = async () => {
     try{
