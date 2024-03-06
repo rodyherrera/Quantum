@@ -4,7 +4,8 @@ const util = require('util');
 const { exec } = require('child_process');
 const execAsync = util.promisify(exec);
 
-const NGINX_FILE = process.env.NGINX_PATH + '/sites-enabled/default';
+// Is this correct?
+const NGINX_FILE = '/etc/nginx/sites-enabled/default';
 
 /**
  * Reads the current contents of the Nginx configuration file.
@@ -12,29 +13,6 @@ const NGINX_FILE = process.env.NGINX_PATH + '/sites-enabled/default';
 */
 const getCurrentConfig = () => {
     return fs.readFileSync(NGINX_FILE, 'utf-8');
-};
-
-/**
- * Removes all Quantum Blocks from the Nginx configuration file.
-*/
-exports.removeDomains = () => {
-    const rl = readline.createInterface({ input: fs.createReadStream(NGINX_FILE) });
-    let newConfig = '';
-    let inQuantumBlock = false;
-    rl.on('line', (line) => {
-        if(line.startsWith('# Start-Quantum-Block-')){
-            inQuantumBlock = true;
-        }else if(line.startsWith('# End-Quantum-Block-')){
-            inQuantumBlock = false;
-        }else if(!inQuantumBlock){
-            newConfig += line + '\n';
-        }
-    });
-    rl.on('close', async () => {
-        fs.writeFileSync(NGINX_FILE, newConfig);
-        // Reload NGINX for changes to take effect
-        await reloadNginx();
-    });
 };
 
 /**
@@ -63,6 +41,29 @@ exports.removeDomainList = async (domains) => {
             console.error(`[Quantum Cloud]: Error removing domain '${domain}':`, error);
         }
     }));
+};
+
+/**
+ * Removes all Quantum Blocks from the Nginx configuration file.
+*/
+exports.removeDomains = () => {
+    const rl = readline.createInterface({ input: fs.createReadStream(NGINX_FILE) });
+    let newConfig = '';
+    let inQuantumBlock = false;
+    rl.on('line', (line) => {
+        if(line.startsWith('# Start-Quantum-Block-')){
+            inQuantumBlock = true;
+        }else if(line.startsWith('# End-Quantum-Block-')){
+            inQuantumBlock = false;
+        }else if(!inQuantumBlock){
+            newConfig += line + '\n';
+        }
+    });
+    rl.on('close', async () => {
+        fs.writeFileSync(NGINX_FILE, newConfig);
+        // Reload NGINX for changes to take effect
+        await reloadNginx();
+    });
 };
 
 /**
