@@ -18,7 +18,6 @@ const Github = require('@utilities/github');
 const RepositoryHandler = require('@utilities/repositoryHandler');
 const nginxHandler = require('@utilities/nginxHandler');
 const { v4 } = require('uuid');
-const validator = require('validator');
 
 const RepositorySchema = new mongoose.Schema({
     alias: {
@@ -117,9 +116,6 @@ const deleteRepositoryHandler = async (deletedDoc) => {
 
 const handleDomains = async (domains, port) => {
     await Promise.all(domains.map(async (domain) => {
-        if(!validator.isFQDN(domain)){
-            return;
-        }
         const trimmedDomain = domain.trim();
         try{
             await nginxHandler.addDomain({ domain: trimmedDomain, port: process.env.SERVER_PORT, ipv4: '0.0.0.0' });
