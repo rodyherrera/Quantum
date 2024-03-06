@@ -19,9 +19,6 @@ const RepositoryHandler = require('@utilities/repositoryHandler');
 const nginxHandler = require('@utilities/nginxHandler');
 const { v4 } = require('uuid');
 
-// TODO: CREATE /PUBLIC/ IF NOT EXISTS
-// NGINX 80 -> REVERSE PROXY TO BACKEND SERVER
-
 const RepositorySchema = new mongoose.Schema({
     alias: {
         type: String,
@@ -81,29 +78,28 @@ const getAndDeleteDeployments = async (repositoryId) => {
 };
 
 const performCleanupTasks = async (deletedDoc, repositoryUser, deployments) => {
+    const github = new Github(repositoryUser, deletedDoc);
     const repositoryHandler = new RepositoryHandler(deletedDoc, repositoryUser);
-    // repositoryHandler.logStream.end();
     repositoryHandler.removeFromRuntime();
     // Use Github utility for cleanup
-    await Github.deleteLogAndDirectory(
-        `${__dirname}/../storage/containers/${repositoryUser._id}/logs/${deletedDoc._id}.log`,
-        `${__dirname}/../storage/containers/${repositoryUser._id}/github-repos/${deletedDoc._id}/`
-    );
-    const github = new Github(repositoryUser, deletedDoc);
-    // Delete webhook and repository deployments
-    await github.deleteWebhook();
+    await Promise.all([
+        await Github.deleteLogAndDirectory(
+            `${__dirname}/../storage/containers/${repositoryUser._id}/logs/${deletedDoc._id}.log`,
+            `${__dirname}/../storage/containers/${repositoryUser._id}/github-repos/${deletedDoc._id}/`
+        ),
+        github.deleteWebhook()
+    ]);
     // The current deployment should be at index 0, and it 
     // cannot be deleted until it has changed its status to 
     // inactive. Well, Github prevents deleting an active deployment.
-    const { githubDeploymentId: currentDeploymentId } = deployments[0];
+    const currentDeploymentId = deployments[0].githubDeploymentId;
     await github.updateDeploymentStatus(currentDeploymentId, 'inactive');
     // Now, that the current deployment is in an inactive 
     // state, it is possible to delete it, along with all the 
     // deployments that existed for the repository within our platform.
-    for(const deployment of deployments){
-        const { githubDeploymentId } = deployment;
-        await github.deleteRepositoryDeployment(githubDeploymentId);
-    }
+    await Promise.all(deployments.map(deployment => (
+        github.deleteRepositoryDeployment(deployment.githubDeploymentId)
+    )));
 };
 
 const deleteRepositoryHandler = async (deletedDoc) => {
@@ -144,6 +140,17 @@ const getRepositoryData = async (_id) => {
             select: 'username email',
             populate: { path: 'github', select: 'accessToken username' }
         });
+};
+
+const createWebhook = async (github, webhookEndpoint) => {
+    try{
+        const webhookId = await github.createWebhook(webhookEndpoint, process.env.SECRET_KEY);
+        return webhookId;
+    }catch(err){
+        if(err?.response?.data?.message !== 'Repository was archived so is read-only.')
+            throw err;
+        return undefined;
+    }
 };
 
 const handleUpdateCommands = async (context) => {
@@ -191,19 +198,16 @@ RepositorySchema.methods.updateUserAndRepository = async function(deployment){
 RepositorySchema.pre('save', async function(next){
     try{
         if(!this.alias) this.alias = this.name;
-        if(!this.isNew) return next();
         await this.updateAliasIfNeeded();
-        const repositoryUser = await this.getUserWithGithubData();
-        const github = new Github(repositoryUser, this);
-        const deployment = await github.deployRepository();
-        const webhookEndpoint = `${process.env.DOMAIN}/api/v1/webhook/${this._id}/`;
-        try{
-            this.webhookId = await github.createWebhook(webhookEndpoint, process.env.SECRET_KEY);
-        }catch(err){
-            if(err?.response?.data?.message !== 'Repository was archived so is read-only.')
-                throw err;
+
+        if(this.isNew){
+            const repositoryUser = await this.getUserWithGithubData();
+            const github = new Github(repositoryUser, this);
+            const deployment = await github.deployRepository();
+            const webhookEndpoint = `${process.env.DOMAIN}/api/v1/webhook/${this._id}/`;
+            this.webhookId = await createWebhook(github, webhookEndpoint);
+            await this.updateUserAndRepository(deployment);
         }
-        await this.updateUserAndRepository(deployment);
         next();
     }catch(error){
         return next(error);
@@ -211,25 +215,14 @@ RepositorySchema.pre('save', async function(next){
 });
 
 RepositorySchema.post('findOneAndDelete', async function(deletedDoc){
-    try{
-        await deleteRepositoryHandler(deletedDoc);
-    }catch(error){
-        console.log('[Quantum Cloud]: Critical Error (@models/repository):', error);
-    }
+    await deleteRepositoryHandler(deletedDoc);
 });
 
-
-RepositorySchema.pre('deleteMany', async function() {
+RepositorySchema.pre('deleteMany', async function(){
     const repositories = await this.model.find(this._conditions);
-    for(const deletedDoc of repositories){
-        try{
-            const repositoryUser = await removeRepositoryReference(deletedDoc);
-            const deployments = await getAndDeleteDeployments(deletedDoc._id);
-            await performCleanupTasks(deletedDoc, repositoryUser, deployments);
-        }catch (error){
-            console.log('[Quantum Cloud]: Critical Error during deleteMany cleanup (@models/repository):', error);
-        }
-    }
+    await Promise.all(repositories.map(async (deletedDoc) => {
+        await deleteRepositoryHandler(deletedDoc);
+    }));
 });
   
 RepositorySchema.pre('findOneAndUpdate', async function(next){
