@@ -1,0 +1,23 @@
+# docker-compose up -d --build 
+
+version: '3.8'
+
+services:
+  backend-server:
+    build: 
+      context: ./server
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    volumes:
+      - ./server:/app # Mount the backend code
+      - /var/run/docker.sock:/var/run/docker.sock # For Quantum users instances
+
+  frontend-server:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    ports:
+      - "3030:80" # Frontend's external port
+    volumes:
+      - ./client:/app # Mount the frontend code
