@@ -18,6 +18,7 @@ const Github = require('@utilities/github');
 const RepositoryHandler = require('@utilities/repositoryHandler');
 const nginxHandler = require('@utilities/nginxHandler');
 const { v4 } = require('uuid');
+const validator = require('validator');
 
 const RepositorySchema = new mongoose.Schema({
     alias: {
@@ -112,40 +113,50 @@ const deleteRepositoryHandler = async (deletedDoc) => {
     await performCleanupTasks(deletedDoc, repositoryUser, deployments);
 };
 
-const handleUpdateCommands = async (context) => {
-    const { 
-        buildCommand, 
-        installCommand, 
-        startCommand, 
-        rootDirectory,
-        domains,
-        port } = context._update;
-    const { _id } = context._conditions;
-    if(
-        rootDirectory?.length || buildCommand?.length ||
-        installCommand?.length || startCommand?.length
-    ){
-        const { user, name, deployments } = await Repository
-            .findById(_id)
-            .select('user name deployments')
-            .populate({ 
-                path: 'user', select: 'username',
-                populate: { path: 'github', select: 'accessToken username' }
-            });
-        const document = { user, name, deployments, buildCommand, 
-            installCommand, startCommand, rootDirectory, _id };
-        const repository = new RepositoryHandler(document, user);
-        const github = new Github(user, document);
-        repository.start(github);
-    }else if(domains?.length || port){
-        for(let domain of domains){
-            // VERIFY IF IS A DOMAIN HERE (...)
-            domain = domain.trim();
-            await nginxHandler.addDomain({ domain, port: process.env.SERVER_PORT, ipv4: '0.0.0.0' });
-            await nginxHandler.generateSSLCert(domain, 'herzidor@gmail.com');
-            await nginxHandler.updateDomain({ domain, port, ipv4: '0.0.0.0', useSSL: true })
+const handleDomains = async (domains, port) => {
+    await Promise.all(domains.map(async (domain) => {
+        if(!validator.isFQDN(domain)){
+            return;
         }
+        const trimmedDomain = domain.trim();
+        try{
+            await nginxHandler.addDomain({ domain: trimmedDomain, port: process.env.SERVER_PORT, ipv4: '0.0.0.0' });
+            await nginxHandler.generateSSLCert(trimmedDomain, 'email@service.com');
+            await nginxHandler.updateDomain({ domain: trimmedDomain, port, ipv4: '0.0.0.0', useSSL: true });
+        }catch(error){
+            console.error(`[Quantum Cloud] Error processing domain '${trimmedDomain}':`, error);
+        }
+    }));
+};
+
+const getRepositoryData = async (_id) => {
+    return await Repository
+        .findById(_id)
+        .select('user name deployments')
+        .populate({
+            path: 'user',
+            select: 'username',
+            populate: { path: 'github', select: 'accessToken username' }
+        });
+};
+
+const handleUpdateCommands = async (context) => {
+    const { buildCommand, installCommand, startCommand, rootDirectory, domains, port } = context._update;
+    const { _id } = context._conditions;
+
+    const repositoryData = await getRepositoryData(_id);
+    if(!repositoryData) return;
+
+    const { user, name, deployments } = repositoryData;
+
+    if(buildCommand || installCommand || startCommand || rootDirectory){
+        const document = { user, name, deployments, buildCommand, installCommand, startCommand, rootDirectory, _id };
+        const repositoryHandler = new RepositoryHandler(document, user);
+        const githubHandler = new Github(user, document);
+        repositoryHandler.start(githubHandler);
     }
+
+    if(domains?.length) await handleDomains(domains, port);
 };
 
 RepositorySchema.methods.updateAliasIfNeeded = async function(){
