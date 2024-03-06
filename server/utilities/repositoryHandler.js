@@ -15,7 +15,17 @@
 const Deployment = require('@models/deployment');
 const ContainerLoggable = require('@utilities/containerLoggable');
 
+/**
+ * This class manages interactions with a specific repository within the Quantum Cloud platform.  
+ * It handles repository deployment, shell interactions, and error logging. 
+*/
 class RepositoryHandler extends ContainerLoggable{
+    /**
+     * Creates a new RepositoryHandler instance.
+     *
+     * @param {Object} repository - The Mongoose model object representing the repository.
+     * @param {Object} user - The Mongoose model object representing the user associated with the repository.
+    */
     constructor(repository, user){
         super(repository._id, user._id);
         this.repository = repository;
@@ -23,6 +33,12 @@ class RepositoryHandler extends ContainerLoggable{
         this.workingDir = `/app/github-repos/${repository._id}${repository.rootDirectory}`;
     };
 
+    /**
+     * Stops and removes the interactive shell associated with the repository.
+     * Used during cleanup or when the container is no longer needed.
+     *
+     * @returns {Promise<void>}
+    */
     async stopAndRemoveShell(){
         try{
             const userContainers = global.userContainers[this.user._id];
@@ -37,6 +53,11 @@ class RepositoryHandler extends ContainerLoggable{
         }
     };
     
+    /**
+     * Retrieves an existing interactive shell for the repository, or creates a new one if necessary.
+     *
+     * @returns {Promise<Object>} - A stream object representing the interactive shell.
+    */
     async getOrCreateShell(){
         try{
             const userContainers = global.userContainers[this.user._id];
@@ -59,11 +80,23 @@ class RepositoryHandler extends ContainerLoggable{
         }
     };
 
+    /**
+     * Marks the repository as inactive by removing it from runtime management (stopping shell and deleting associated data).
+     *
+     * @returns {Promise<void>}
+    */
     async removeFromRuntime(){
         this.stopAndRemoveShell();
         delete global.userContainers[this.user._id][this.repository._id];
     };
 
+    /**
+     * Handles interactive shell sessions initiated through a socket connection.
+     * Forwards user input to the shell and sends shell output back to the client.
+     *
+     * @param {Object} socket - Socket.io connection to the client.
+     * @returns {Promise<void>}
+    */
     async executeInteractiveShell(socket){
         while(!global.userContainers[this.user._id]?.instance){
             await new Promise(resolve => setTimeout(resolve, 500));
@@ -72,6 +105,12 @@ class RepositoryHandler extends ContainerLoggable{
         this.setupSocketEvents(socket, repositoryShell);
     };
 
+    /**
+     * Initiates the deployment process for the repository. Executes installation, build, and start commands within the repository's containerized environment.
+     *
+     * @param {Object} githubUtility - An instance of the `Github` class to interact with the GitHub API. 
+     * @returns {Promise<void>} - Resolves when the deployment process completes or an error occurs.
+    */
     async start(githubUtility){
         try{
             const commands = this.getValidCommands();
@@ -91,11 +130,21 @@ class RepositoryHandler extends ContainerLoggable{
         }
     };
 
+    /**
+     * Filters repository commands, returning only valid (non-empty) commands.
+     *
+     * @returns {Array<string>} - An array of installation, build, and start commands.
+    */
     getValidCommands(){
         const { buildCommand, installCommand, startCommand } = this.repository;
         return [installCommand, buildCommand, startCommand].filter(Boolean);
     };
 
+    /**
+     * Retrieves the most recent deployment record for the repository.
+     *
+     * @returns {Promise<Deployment>} - The Deployment object representing the most recent deployment.
+    */
     async getCurrentDeployment(){
         const currentDeploymentId = this.repository.deployments.slice(-1)[0]
         return await Deployment
@@ -103,6 +152,13 @@ class RepositoryHandler extends ContainerLoggable{
             .select('environment githubDeploymentId status');
     };
 
+    /**
+     * Executes a series of commands within the repository's interactive shell.
+     *
+     * @param {Array<string>} commands - An array of commands to execute.
+     * @param {string} formattedEnvironment - Environment variables formatted for shell execution.
+     * @param {Object} repositoryShell - Stream object representing the interactive shell.
+    */
     executeCommands(commands, formattedEnvironment, repositoryShell){
         for(const command of commands){
             const formattedCommand = `${formattedEnvironment} ${command}\r\n`;
@@ -110,6 +166,12 @@ class RepositoryHandler extends ContainerLoggable{
         }
     };
 
+    /**
+     * Logs critical errors encountered during the repository handling process.
+     *
+     * @param {string} method - The name of the method where the error occurred.
+     * @param {Error} error - The error object.
+    */
     handleCriticalError(method, error){
         console.log(`[Quantum Cloud] CRITICAL ERROR (at @utilities/repositoryHandler - ${method}):`, error);
         throw error;
