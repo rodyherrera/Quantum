@@ -21,6 +21,13 @@ const exec = promisify(require('child_process').exec);
 const mongoose = require('mongoose');
 const fs = require('fs');
 
+/**
+ *  This class is designed to interact with the GitHub API on behalf of a user,  
+ *  handling repository-related actions within the Quantum Cloud platform.
+ *
+ * @param {User} user - The Quantum Cloud user object 
+ * @param {Repository} repository - The Quantum Cloud repository object
+*/
 class Github{
     constructor(user, repository){
         this.user = user;
@@ -28,6 +35,14 @@ class Github{
         this.octokit = new Octokit({ auth: user.github.accessToken });
     };
 
+    /**
+     * Deletes a locally-stored log file and a working directory associated with a repository.
+     * Used as a cleanup mechanism in case of errors.
+     *
+     * @param {string} logPath - Path to the log file to be deleted.
+     * @param {string} directoryPath - Path to the directory to be deleted.
+     * @returns {Promise<void>} - Resolves if deletion is successful, rejects with an error if not.
+    */
     static async deleteLogAndDirectory(logPath, directoryPath){
         try{
             if(logPath) await fs.promises.rm(logPath);
@@ -37,6 +52,11 @@ class Github{
         }
     };
     
+    /**
+     * Clones a GitHub repository into a local directory.
+     *
+     * @returns {Promise<void>} - Resolves if the cloning process is successful, rejects with an error if not.
+    */
     async cloneRepository() {
         const destinationPath = `./storage/containers/${this.user._id}/github-repos/${this.repository._id}`;
         try {
@@ -53,6 +73,11 @@ class Github{
         }
     }
 
+    /**
+     * Reads environment variables defined in `.env` files within a cloned repository.
+     *
+     * @returns {Promise<Object>} - An object containing key-value pairs of environment variables. 
+    */
     async readEnvironmentVariables(){
         let envFiles = await simpleGit(`./storage/containers/${this.user._id}/github-repos/${this.repository._id}`).raw(['ls-tree', 'HEAD', '-r', '--name-only']);
         envFiles = envFiles.split('\n').filter(file => file.includes('.env'));
@@ -71,6 +96,11 @@ class Github{
         return environmentVariables;
     };
 
+    /**
+     * Retrieves information about the latest commit on the main branch.
+     *
+     * @returns {Promise<Object>} - An object containing details about the commit (message, author, etc.).
+    */
     async getLatestCommit(){
         const { data: commits } = await this.octokit.repos.listCommits({
             owner: this.user.github.username,
@@ -81,6 +111,12 @@ class Github{
         return commits[0];
     };
 
+    /**
+     * Creates a new deployment record in the database and updates old deployments.
+     *
+     * @param {number} githubDeploymentId - The ID of the newly created GitHub deployment.
+     * @returns {Promise<Deployment>} - The newly created Deployment object.
+    */
     async createNewDeployment(githubDeploymentId){
         const repositoryHandler = new RepositoryHandler(this.repository, this.repository.user);
         repositoryHandler.removeFromRuntime();
@@ -116,6 +152,13 @@ class Github{
         return newDeployment;
     };
 
+    /**
+     * Updates the deployment status on GitHub (e.g., "success", "failure", "pending").
+     *
+     * @param {number} deploymentId - The ID of the deployment to update.
+     * @param {string} state - The new status (e.g., "in_progress", "success", "failure").
+     * @returns {Promise<void>} - Resolves when the update is sent to GitHub.
+    */
     async updateDeploymentStatus(deploymentId, state){
         await this.octokit.repos.createDeploymentStatus({
             owner: this.user.github.username,
@@ -125,6 +168,12 @@ class Github{
         });   
     };
 
+    /**
+     * Creates a new deployment on GitHub for the associated repository.
+     * 
+     * @returns {Promise<number>} - The ID of the newly created deployment.
+     * @throws {RuntimeError} - If the deployment creation fails on GitHub's side.
+    */
     async createGithubDeployment(){
         const { data: { id: deploymentId } } = await this.octokit.repos.createDeployment({
             owner: this.user.github.username,
@@ -139,6 +188,11 @@ class Github{
         return deploymentId;
     };
 
+    /**
+     * Retrieves detailed information about the associated GitHub repository.
+     *
+     * @returns {Promise<Object>} - An object containing repository details (e.g., name, description, owner, etc.).
+    */
     async getRepositoryDetails(){
         const { data: repositoryDetails } = await this.octokit.repos.get({
             owner: this.user.github.username,
@@ -147,6 +201,17 @@ class Github{
         return repositoryDetails;
     };
 
+    /**
+     * Fetches essential repository information, including the latest commit details.
+     * Handles potential errors if the repository has been deleted.
+     *
+     * @returns {Promise<Object>} - An object containing:
+     *   * branch: The default branch name
+     *   * website: The repository's homepage URL (if defined)
+     *   * latestCommitMessage: The message of the most recent commit
+     *   * latestCommit: The date and time of the most recent commit
+     * @returns {null} - If the repository is deleted on GitHub.
+    */
     async getRepositoryInfo(){
         try{
             const latestCommit = await this.getLatestCommit();
@@ -175,6 +240,13 @@ class Github{
         }
     };
 
+    /**
+     * Creates a new webhook for the repository on GitHub, configured to trigger on 'push' events.
+     *
+     * @param {string} webhookUrl - The URL to which webhook events will be sent.
+     * @param {string} webhookSecret - A secret used to verify the authenticity of webhook payloads.
+     * @returns {Promise<number>} - The ID of the newly created webhook.
+    */
     async createWebhook(webhookUrl, webhookSecret){
         const response = await this.octokit.repos.createWebhook({
             owner: this.user.github.username,
@@ -192,6 +264,12 @@ class Github{
         return id;
     };
 
+    /**
+     * Deletes an existing webhook from the repository on GitHub. Handles cases where repositories might not have webhooks.
+     *
+     * @returns {Promise<void>} - Resolves if deletion is successful, or if there's no webhook to delete.
+     * @throws {Error} - If the webhook deletion process encounters an error on GitHub's side.
+    */
     async deleteWebhook(){
         // Some repositories will not have a webhook, and this is because if 
         // the repository is archived (Read-Only) it will not allow 
@@ -210,6 +288,11 @@ class Github{
         }
     };
 
+    /**
+     * Lists existing deployments for the repository on GitHub.
+     *
+     * @returns {Promise<Array<Object>>} - An array of deployment objects, each containing deployment details.
+    */
     async getRepositoryDeployments(){
         const { data: deployments } = await this.octokit.repos.listDeployments({
             owner: this.user.github.username,
@@ -218,6 +301,12 @@ class Github{
         return deployments;
     };
 
+    /**
+     * Deletes a specified deployment on GitHub. 
+     *
+     * @param {number} deploymentId - The ID of the deployment to delete.
+     * @returns {Promise<void>} - Resolves if the deployment deletion is successful.
+    */
     async deleteRepositoryDeployment(deploymentId){
         await this.octokit.repos.deleteDeployment({
             owner: this.user.github.username,
@@ -226,6 +315,13 @@ class Github{
         });
     };
 
+    /**
+     * Orchestrates the deployment process for a repository. Includes 
+     * cloning, creating a GitHub deployment, and updating 
+     * the deployment status.
+     *
+     * @returns {Promise<Deployment>} - The newly created Deployment object, representing the deployment record in the Quantum Cloud system.
+    */
     async deployRepository(){
         await this.cloneRepository();
         const githubDeploymentId = await this.createGithubDeployment();
