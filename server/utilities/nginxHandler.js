@@ -171,7 +171,7 @@ server {
  * Reloads the Nginx configuration.
 */
 const reloadNginx = async () => {
-    await execAsync('sudo nginx -s reload');
+    await execAsync('nginx -s reload');
 };
 
 exports.generateSSLCert = async (domain, email) => {

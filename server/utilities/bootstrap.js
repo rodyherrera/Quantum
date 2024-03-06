@@ -19,8 +19,18 @@ const fs = require('fs');
 const path = require('path');
 const UserContainer = require('@utilities/userContainer');
 const RepositoryHandler = require('@utilities/repositoryHandler');
+const nginxHandler = require('@utilities/nginxHandler');
 const { capitalizeToLowerCaseWithDelimitier } = require('@utilities/algorithms');
 const { spawn } = require('child_process');
+
+exports.setupNginxReverseProxy = async () => {
+    await nginxHandler.removeDomain('_');
+    await nginxHandler.addDomain({
+        domain: '_',
+        ipv4: '127.0.0.1',
+        port: process.env.SERVER_PORT
+    });
+};
 
 /**
  * Ensures the existence of the "../public" folder, creating it if necessary.
