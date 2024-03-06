@@ -42,23 +42,24 @@ I've successfully **migrated all my frontend applications from Vercel and my var
     - [Continuous Deployment](#continuous-deployment)
     - [Service Status](#service-status)
     - [Docker-Based Isolation](#docker-based-isolation)
-2. [Project Requirements](#project-requirements)
+3. [Deploying with Docker](#deploying-with-docker)
+4. [Project Requirements](#project-requirements)
     - [Node.js Installation](#nodejs-installation)
     - [Docker Installation](#docker-installation)
-3. [Installation](#installation)
+5. [Installation](#installation)
     - [Installation Guide](#installation-guide)
     - [Post-Installation Configuration](#post-installation-configuration)
     - [Obtaining GitHub Client Secret and Client ID](#obtaining-github-client-secret-and-client-id)
-4. [Deploying Quantum](#deploying-quantum)
-5. [Building the Client Application](#building-the-client-application)
-6. [The Quantum CLI](#the-quantum-cli)
+6. [Deploying Quantum](#deploying-quantum)
+7. [Building the Client Application](#building-the-client-application)
+8. [The Quantum CLI](#the-quantum-cli)
     - [User Account Creation](#user-account-creation)
-7. [How Does This Work?](#how-does-this-work)
+9. [How Does This Work?](#how-does-this-work)
     - [Docker Instance Creation](#docker-instance-creation)
     - [Deployment Workflow](#deployment-workflow)
     - [Server Shutdown Process](#server-shutdown-process)
     - [Error Handling and Server Restart](#error-handling-and-server-restart)
-8. [Feedback and Support](#feedback-and-support)
+10. [Feedback and Support](#feedback-and-support)
     - [Contribution](#contribution)
     - [Star/Fork](#starfork)
     - [Coffee](#coffee-donation)
@@ -75,7 +76,7 @@ I've successfully **migrated all my frontend applications from Vercel and my var
 - **Service Status:** You can check the status of the server through the web-ui. It will determine if the server is working in optimal conditions or if it is overloaded.
 - **Docker-Based Isolation:** Each user receives a dedicated Docker instance for their deployment, ensuring smooth operations and minimizing conflicts.
 
-### Docker Installation
+### Deploying with Docker
 When cloning the repository, inside the generated folder (root), you will discover the "docker-compose.yml" file, which will allow you to deploy both the backend and frontend servers using the command "docker-compose up -d --build ".
 ```bash
 # First, you must clone the repository.
@@ -89,7 +90,10 @@ After executing the command, Docker will deploy the frontend server (webui) and 
 
 ### Project Requirements
 To run this project, you'll need the following:
-
+* **Docker:** Docker is required to run any containerized components of this project. Furthermore, if you intend to deploy Quantum using Docker, you'll require it as well. You can utilize the .sh script located within the project's root directory:
+    ```bash
+    bash install_docker.sh
+    ```
 * **Node.js 21 or higher:**  It is recommended to use nvm (Node Version Manager) to manage Node.js versions on your system. Here's how to install Node.js 21 using nvm:
 
     1. **Installing NVM:**
@@ -112,28 +116,7 @@ To run this project, you'll need the following:
         ```bash
         nvm alias default 20.11.1
         ```
-
-* **Docker:** Docker is required to run any containerized components of this project. Follow the installation instructions for your operating system:
-    * **Linux:** https://docs.docker.com/engine/install/
-    **If you have a Debian-based server (such as Ubuntu):**
-      ```bash
-      sudo apt-get update
-      sudo apt-get install ca-certificates curl
-      sudo install -m 0755 -d /etc/apt/keyrings
-      sudo curl -fsSL [https://download.docker.com/linux/debian/gpg](https://download.docker.com/linux/debian/gpg) -o /etc/apt/keyrings/docker.asc
-      sudo chmod a+r /etc/apt/keyrings/docker.asc
-
-      echo \
-        "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] [https://download.docker.com/linux/debian](https://download.docker.com/linux/debian) \
-        $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
-        sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-      sudo apt-get update
-      sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin 
-      ```
-    * **macOS:** https://docs.docker.com/desktop/install/mac-install/
-    * **Windows:** https://docs.docker.com/desktop/install/windows-install/
-
-
+        
 ### Installation
 You may prefer the all-in-one command, to run in your terminal, clone the repository and install dependencies.
 ```bash
