@@ -27,7 +27,6 @@
     "simple-git": "^3.21.0",
     "socket.io": "^4.7.3",
     "uuid": "^9.0.1",
-    "validator": "^13.11.0",
-    "vhost": "^3.0.2"
+    "validator": "^13.11.0"
   }
 }
