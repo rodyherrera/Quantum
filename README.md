@@ -164,7 +164,7 @@ To integrate your application with GitHub's API, you'll need to obtain a Client 
 
 It is important that you do this step, otherwise NO ONE will simply be able to use your application, including you.
 
-### Deploying with Docker
+## Deploying with Docker
 When cloning the repository, inside the generated folder (root), you will discover the "docker-compose.yml" file, which will allow you to deploy both the backend and frontend servers using the command "docker-compose up -d --build ".
 ```bash
 # First, you must clone the repository.
@@ -177,6 +177,42 @@ docker-compose up -d --build
 After executing the command, Docker will deploy the frontend server (webui) and the backend.
 
 The `docker-compose.yml` file contains the **port configuration for exposure**. The **backend server** is exposed to the host network through port `80`, while the **frontend application (webui)** is accessible via port `3030`. Modifying these ports is as simple as editing the "docker-compose.yml" file.
+
+## Using NGINX as a reverse proxy
+If you already have `NGINX` running on your server, **you will not be able to deploy the Quantum server on port 80**, since the port is already occupied, so you will have an error from Docker.
+
+**To fix this**, simply change the exposure port to the server's host network within the `docker-compose.yml` file, and then reverse proxy through NGINX to that port, for example:
+```yml
+services:
+  backend-server:
+    ports:
+      # - "80:80"
+      - "8080:80"
+```
+We've commented out the line declaring port '80' exposure on the local network for accessing the Quantum server. Instead, `we're now utilizing port '8080' to redirect to port '80'` within the Docker container where the Quantum server is hosted.
+
+Now, this will still not work, since we must add the reverse proxy to NGINX:
+```yml
+server {
+	location / {
+		proxy_set_header Host $host;
+		proxy_set_header X-Real-IP $remote_addr;
+		proxy_pass http://0.0.0.0:8080;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+	}
+    listen 80;
+}
+```
+Now, we instruct NGINX to listen for requests on port 80, enabling us to redirect them to the newly assigned port for the Quantum server. 
+
+Now, you just have to reload the NGINX configuration for the changes to take effect.
+
+```bash
+sudo nginx -s reload
+```
+
+Problem solved!
 
 ### Project Requirements
 To run this project, you'll need the following:
