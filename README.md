@@ -176,6 +176,8 @@ docker-compose up -d --build
 ```
 After executing the command, Docker will deploy the frontend server (webui) and the backend.
 
+The `docker-compose.yml` file contains the **port configuration for exposure**. The **backend server** is exposed to the host network through port `80`, while the **frontend application (webui)** is accessible via port `3030`. Modifying these ports is as simple as editing the "docker-compose.yml" file.
+
 ### Project Requirements
 To run this project, you'll need the following:
 * **Docker:** Docker is required to run any containerized components of this project. Furthermore, if you intend to deploy Quantum using Docker, you'll require it as well. You can utilize the .sh script located within the project's root directory:
