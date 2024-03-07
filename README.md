@@ -349,6 +349,13 @@ When a user deletes their account, all associated deployments and repositories a
 
 Regarding deployments, Quantum takes responsibility for deleting them from GitHub, but only if the deployment is exclusively linked to Quantum. If the repository contains deployments from other platforms like Vercel or Heroku, they remain unaffected. Additionally, any webhooks created to monitor repository commits are also deleted as part of this process.
 
+## Custom domains for your deployments
+Once you have configured your repository, and subsequently deployed it on the network (you can check if it is accessible through the port it is running on), you can assign as many custom domains as you want through the user interface.
+
+When you enter one or more domains, it will first be verified if it has already been generated, to avoid generating it again. If it does not exist, it will be generated through "certbot" automatically, to later adjust the NGINX configuration related to your repository.
+
+Consider that, for this to work correctly, the domain must have a type A record where it points to the address of your server.
+
 ### What happens when the server is closed?
 When initiating the shutdown of the host server (Quantum Server), it won't close immediately. Instead, upon detecting the shutdown signal, the server systematically shuts down all Docker instances belonging to users. Consequently, their deployments and repositories are also gracefully closed. Only after all Docker instances on the platform are safely shut down does the server proceed to shut down successfully.
 
