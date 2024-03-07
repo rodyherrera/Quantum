@@ -28,7 +28,7 @@ While Quantum offers a panel for configuring commands such as installing depende
 ![User Profile](/screenshots/UserProfile.png)
 I've successfully **migrated all my frontend applications from Vercel and my various VPS services to Quantum**. The platform's ease of use and efficiency are evident in the 15 repositories I currently have deployed – a testament to my confidence in Quantum.
 
-### Table of Contents
+## Table of Contents
 - [Features](#features)
 - [Post-Installation Configuration](#post-installation-configuration)
 - [Obtaining GitHub Client Secret and Client ID](#obtaining-github-client-secret-and-client-id)
@@ -42,7 +42,7 @@ I've successfully **migrated all my frontend applications from Vercel and my var
 - [What happens when the server is closed?](#what-happens-when-the-server-is-closed)
 - [We'd love your feedback and support!](#we-d-love-your-feedback-and-support)
   
-### Features
+## Features
 - **Github Integration:** Securely connect your GitHub account to Quantum for repository access and management of deployments.
 - **Cloud Shell:** Access a dedicated environment for executing commands directly on your Virtual Private Server (VPS) or hosting environment where Quantum is deployed.
 - **Repository Command Line Interface (CLI):** Each deployed repository comes with its own CLI for monitoring execution output (logs) and executing specific commands.
@@ -54,7 +54,7 @@ I've successfully **migrated all my frontend applications from Vercel and my var
 - **Service Status:** You can check the status of the server through the web-ui. It will determine if the server is working in optimal conditions or if it is overloaded.
 - **Docker-Based Isolation:** Each user receives a dedicated Docker instance for their deployment, ensuring smooth operations and minimizing conflicts.
 
-### Post-Installation Configuration
+## Post-Installation Configuration
 After cloning the repository and installing the dependencies for the client and server application, you will need to modify some environment variables.
 
 Inside the "server" folder, there is the source code of the application that provides the platform API. You will find inside a file called ".env.example", which contains the environment variables that you must establish in the file. ".env" from the same directory:
@@ -214,7 +214,7 @@ sudo nginx -s reload
 
 Problem solved!
 
-### Project Requirements
+## Project Requirements
 To run this project, you'll need the following:
 * **Docker:** Docker is required to run any containerized components of this project. Furthermore, if you intend to deploy Quantum using Docker, you'll require it as well. You can utilize the .sh script located within the project's root directory:
     ```bash
@@ -243,13 +243,13 @@ To run this project, you'll need the following:
         nvm alias default 20.11.1
         ```
         
-### Installation
+## Installation
 You may prefer the all-in-one command, to run in your terminal, clone the repository and install dependencies.
 ```bash
 git clone -b 1.0.3 https://github.com/rodyherrera/Quantum && cd Quantum && cd server && npm install --force && cd ../client &&  npm install --force
 ```
 
-#### Installation Guide
+### Installation Guide
 1. **Clone the Quantum Repository:**
     ```bash
     git clone -b 1.0.3 https://github.com/rodyherrera/Quantum
@@ -273,7 +273,7 @@ git clone -b 1.0.3 https://github.com/rodyherrera/Quantum && cd Quantum && cd se
     ```
     Navigate to the client directory within the Quantum repository and install the frontend dependencies.
 
-### Deploying Quantum
+## Deploying Quantum from Source
 Once dependencies are installed, you'll be prepared to deploy Quantum on your server. To accomplish this, initiate the server application first, followed by the client application.
 
 At this juncture in the documentation, it is assumed that both applications are already configured (environment variables).
@@ -294,7 +294,7 @@ cd client
 npm run dev
 ```
 
-### Building the client application
+## Building the client application
 In the preceding section, we deployed the client application alongside the server. However, the frontend application is currently running in development mode, initiated with "npm run dev." Should we aim to run this application in a production environment, we'll need to build it using Vite.
 ```bash
 # Navigate to the client directory.
@@ -311,7 +311,7 @@ serve -s -l PORT dist/
 ```
 Replace "PORT" with the command where you want to deploy your application ;).
 
-### The Quantum CLI 
+## The Quantum CLI 
 Through the CLI, you can create a user account as an administrator, reestablish the database among other options provided by the platform for management purposes.
 
 In order to access the CLI, you must go to the "server" directory, and there execute the "npm run cli" command, followed by this, the program will start and you must choose the option you want to use in the administrator.
@@ -327,7 +327,7 @@ When deploying Quantum, you must use this CLI, since user registration for secur
 
 ![Quantum CLI](/screenshots/QuantumCLI.png)
 
-### How does this work?
+## How does this work?
 
 When you create an account on Quantum, a Docker instance is spawned within the host server, using the 'alpine:linux' image. Each user is allocated a dedicated Docker instance where their logs and repositories are stored and executed. This setup ensures isolation between users, enabling precise control over their deployments and management.
 
@@ -356,14 +356,14 @@ When you enter one or more domains, it will first be verified if it has already 
 
 Consider that, for this to work correctly, the domain must have a type A record where it points to the address of your server.
 
-### What happens when the server is closed?
+## What happens when the server is closed?
 When initiating the shutdown of the host server (Quantum Server), it won't close immediately. Instead, upon detecting the shutdown signal, the server systematically shuts down all Docker instances belonging to users. Consequently, their deployments and repositories are also gracefully closed. Only after all Docker instances on the platform are safely shut down does the server proceed to shut down successfully.
 
 Similarly, upon restarting the server, the platform bootloader takes charge of mounting all users' Docker instances during server runtime. Once these Docker instances are successfully started, the bootloader proceeds to launch the repositories of all users within their respective instances. Please note that this startup process may require a few minutes, depending on your hardware specifications and the number of users on the platform.
 
 If a server crash occurs, it won't simply shut down. Instead, the error will be displayed in the console, and the server will promptly initiate an automatic restart. If the error persists and another occurrence happens, the server will persistently attempt to restart until it can do so successfully. This proactive approach is vital for security reasons; it ensures that deployments aren't compromised due to server issues without the user's awareness. Therefore, the server diligently strives to recover and restart after any crash, safeguarding the continuity of operations.
 
-### We'd love your feedback and support!
+## We'd love your feedback and support!
 Your involvement is vital to make Quantum the best it can be. Here's how you can get involved:
 
 - **Contribute**: Explore the codebase on GitHub, fix bugs, implement new features, and become a part of the development team.
