@@ -356,6 +356,8 @@ When you enter one or more domains, it will first be verified if it has already 
 
 Consider that, for this to work correctly, the domain must have a type A record where it points to the address of your server.
 
+![NameCheap A Record](/screenshots/NameCheapARecord.png)
+
 ## What happens when the server is closed?
 When initiating the shutdown of the host server (Quantum Server), it won't close immediately. Instead, upon detecting the shutdown signal, the server systematically shuts down all Docker instances belonging to users. Consequently, their deployments and repositories are also gracefully closed. Only after all Docker instances on the platform are safely shut down does the server proceed to shut down successfully.
 
