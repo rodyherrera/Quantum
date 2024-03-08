@@ -7,11 +7,10 @@ services:
     build: 
       context: ./server
       dockerfile: Dockerfile
-    ports:
-      - "80:80"
     volumes:
       - ./server:/app # Mount the backend code
       - /var/run/docker.sock:/var/run/docker.sock # For Quantum users instances
+    network_mode: "host"  # Use the host network for this service
 
   frontend-server:
     build:
