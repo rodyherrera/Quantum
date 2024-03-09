@@ -15,14 +15,22 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const state = {
+    // Stores repository-related errors
     error: null,
+    // Tracks overall loading state for repository data
     isLoading: true,
+    // Tracks loading state for repository operations 
     isOperationLoading: false,
+    // Array to store your Quantum Cloud repositories
     repositories: [],
+    // Array to store files within a selected repository
     repositoryFiles: [],
+    // Array to store user's GitHub repositories 
     githubRepositories: [],
+    // The currently selected repository 
     selectedRepository: null,
-    selectedRepositoryFile: null,
+    // The currently selected file within a repository
+    selectedRepositoryFile: null
 };
 
 const repositorySlice = createSlice({
