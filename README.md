@@ -361,6 +361,11 @@ Consider that, for this to work correctly, the domain must have a type A record 
 
 ![NameCheap A Record](/screenshots/NameCheapARecord.png)
 
+## Where are repositories and logs stored?
+All platform repositories, along with their respective logs, are stored in `/var/lib/quantum`. This directory is automatically created whether you deploy with or without Docker.
+
+Please be aware that all information related to your Quantum instance and users will persist in this directory. If you opt to use the software's CLI and select "delete database and related", this directory will be emptied accordingly.
+
 ## What happens when the server is closed?
 When initiating the shutdown of the host server (Quantum Server), it won't close immediately. Instead, upon detecting the shutdown signal, the server systematically shuts down all Docker instances belonging to users. Consequently, their deployments and repositories are also gracefully closed. Only after all Docker instances on the platform are safely shut down does the server proceed to shut down successfully.
 
