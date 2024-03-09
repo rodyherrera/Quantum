@@ -8,7 +8,7 @@ services:
       context: ./server
       dockerfile: Dockerfile
     ports:
-      - "5520:80"
+      - "80:80"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock # For Quantum users instances
       - ./server:/app
@@ -19,6 +19,6 @@ services:
       context: ./client
       dockerfile: Dockerfile
     ports:
-      - "5001:80" # Frontend's external port
+      - "3030:80" # Frontend's external port
     volumes:
       - ./client:/app # Mount the frontend code
