@@ -15,7 +15,9 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const state = {
+    // // Stores GitHub related errors
     error: null,
+    // Tracks global loading state for GitHub operations
     isLoading: false
 };
 
