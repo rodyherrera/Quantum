@@ -66,6 +66,7 @@ class DockerHandler extends ContainerLoggable{
      * @returns {Promise<Container>} Returns a Docker container object.
     */
     async createContainer(){
+        console.log('Storage Path:', this.storagePath);
         return docker.createContainer({
             Image: this.imageName,
             name: this.dockerName,

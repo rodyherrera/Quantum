@@ -1,20 +1,28 @@
-FROM node:20.11.0 AS base
+FROM node:20.11.0 AS build
 
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm install --force --silent
+RUN apt-get update && apt-get install ca-certificates curl
+RUN install -m 0755 -d /etc/apt/keyrings
+RUN curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc
+RUN chmod a+r /etc/apt/keyrings/docker.asc
+RUN echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian \
+  $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+    tee /etc/apt/sources.list.d/docker.list > /dev/null
+RUN apt-get update && apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 RUN apt-get update && apt-get install -y nginx
-
 RUN apt-get update && apt-get install -y make
-
-RUN apt-get update && \
-    apt-get install -y certbot python3-certbot-nginx
+RUN apt-get update && apt-get install -y certbot python3-certbot-nginx
 
 RUN rm /etc/nginx/sites-enabled/default && \
     touch /etc/nginx/sites-enabled/default
 
-WORKDIR /app
+COPY . .
+
+CMD service nginx start && npm install && npm run start
 
 EXPOSE 80
 
-CMD nginx -g 'daemon off;' & npm install & npm run start
-
-# sudo docker build -t quantum-backend-server .
-# sudo docker run -p 80:80 -v $(pwd):/app -v /var/run/docker.sock:/var/run/docker.sock quantum-backend-server

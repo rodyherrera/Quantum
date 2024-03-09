@@ -35,7 +35,7 @@ class ContainerLoggable{
      * @param {string} userId  - Unique identifier for the user.
     */
     constructor(logName, userId){
-        this.logDir = path.join(__dirname, '..', 'storage', 'containers', userId.toString(), 'logs');
+        this.logDir = path.join(process.env.STORAGE_PATH, 'containers', userId.toString(), 'logs');
         this.userId = userId;
         this.logFile = path.join(this.logDir, `${logName}.log`);
         this.init();

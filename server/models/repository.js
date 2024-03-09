@@ -84,8 +84,8 @@ const performCleanupTasks = async (deletedDoc, repositoryUser, deployments) => {
     // Use Github utility for cleanup
     await Promise.all([
         await Github.deleteLogAndDirectory(
-            `${__dirname}/../storage/containers/${repositoryUser._id}/logs/${deletedDoc._id}.log`,
-            `${__dirname}/../storage/containers/${repositoryUser._id}/github-repos/${deletedDoc._id}/`
+            `${process.env.STORAGE_PATH}/containers/${repositoryUser._id}/logs/${deletedDoc._id}.log`,
+            `${process.env.STORAGE_PATH}/containers/${repositoryUser._id}/github-repos/${deletedDoc._id}/`
         ),
         github.deleteWebhook()
     ]);

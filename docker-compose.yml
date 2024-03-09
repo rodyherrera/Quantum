@@ -8,15 +8,16 @@ services:
       context: ./server
       dockerfile: Dockerfile
     volumes:
-      - ./server:/app # Mount the backend code
       - /var/run/docker.sock:/var/run/docker.sock # For Quantum users instances
-    network_mode: "host"  # Use the host network for this service
+      - ./server:/app
+      - /var/lib/quantum:/var/lib/quantum/
+    network_mode: 'host'
 
   frontend-server:
     build:
       context: ./client
       dockerfile: Dockerfile
     ports:
-      - "3030:80" # Frontend's external port
+      - "5001:80" # Frontend's external port
     volumes:
       - ./client:/app # Mount the frontend code
