@@ -22,6 +22,10 @@ RUN rm /etc/nginx/sites-enabled/default && \
 
 COPY . .
 
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+ENTRYPOINT ["/entrypoint.sh"] 
+
 CMD service nginx start && npm install && npm run start
 
 EXPOSE 80

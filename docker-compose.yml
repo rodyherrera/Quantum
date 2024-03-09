@@ -7,11 +7,12 @@ services:
     build: 
       context: ./server
       dockerfile: Dockerfile
+    ports:
+      - "5520:80"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock # For Quantum users instances
       - ./server:/app
-      - /var/lib/quantum:/var/lib/quantum/
-    network_mode: 'host'
+      - /var/lib/quantum:/var/lib/quantum
 
   frontend-server:
     build:
