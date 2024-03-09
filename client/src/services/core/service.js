@@ -13,8 +13,19 @@
 ****/
 
 import APIRequestBuilder from '@utilities/apiRequestBuilder';
+
+/**
+ * @constant ServerAPI
+ * @description Represents the base endpoint for server-related API requests.
+ * @type {APIRequestBuilder} An instance of the APIRequestBuilder utility.
+*/
 export const ServerAPI = new APIRequestBuilder('/server');
 
+/**
+ * @function getServerHealth
+ * @description Fetches the health status of the Quantum Cloud server.
+ * @returns {Promise} Resolves or rejects based on the API request outcome. 
+*/
 export const getServerHealth = ServerAPI.register({
     path: '/health',
     method: 'GET'

@@ -15,11 +15,17 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const state = {
+    // Controls visibility of a navigation or menu component
     isMenuEnabled: false,
+    // Controls visibility of the cloud console 
     isCloudConsoleEnabled: false,
+    // Array to store global application errors 
     errors: [],
+    // Tracks if the server health check is in progress 
     isServerHealthLoading: true,
+    // Stores the server's health status
     serverHealth: null,
+    // Stores potential slice-specific errors 
     error: null
 };
 
