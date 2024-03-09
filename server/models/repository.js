@@ -84,8 +84,8 @@ const performCleanupTasks = async (deletedDoc, repositoryUser, deployments) => {
     // Use Github utility for cleanup
     await Promise.all([
         await Github.deleteLogAndDirectory(
-            `/var/lib/quantum/containers/${repositoryUser._id}/logs/${deletedDoc._id}.log`,
-            `/var/lib/quantum/containers/${repositoryUser._id}/github-repos/${deletedDoc._id}/`
+            `/var/lib/quantum/${process.env.NODE_ENV}/containers/${repositoryUser._id}/logs/${deletedDoc._id}.log`,
+            `/var/lib/quantum/${process.env.NODE_ENV}/containers/${repositoryUser._id}/github-repos/${deletedDoc._id}/`
         ),
         github.deleteWebhook()
     ]);

@@ -15,6 +15,7 @@
 const prompts = require('prompts');
 const mongoose = require('mongoose');
 const fs = require('fs');
+const path = require('path');
 
 const dropDatabase = async () => {
     const { confirm } = await prompts({
@@ -28,9 +29,12 @@ const dropDatabase = async () => {
         return;
     }
     await mongoose.connection.dropDatabase();
+    const quantumDir = path.join('/var/lib/quantum', process.env.NODE_ENV);
     console.log('[Quantum Manager]: The database has been deleted successfully.');
-    console.log(`[Quantum Manager]: Tried to delete the "/var/lib/quantum" directory that contains .logs files and downloaded repositories...`);
-    fs.rm('/var/lib/quantum', { recursive: true }, () => console.log(`[Quantum Manager]: Directory "/var/lib/quantum" successfully deleted. The database has been cleaned and the debris within the file system as well. Your instance is clean.`));
+    console.log(`[Quantum Manager]: Tried to delete the "${quantumDir}" directory that contains .logs files and downloaded repositories...`);
+    fs.rm(quantumDir, { recursive: true }, () => {
+        console.log(`[Quantum Manager]: Directory "${quantumDir}" successfully deleted. The database has been cleaned and the debris within the file system as well. Your instance is clean.`)
+    });
 };
 
 module.exports = dropDatabase;

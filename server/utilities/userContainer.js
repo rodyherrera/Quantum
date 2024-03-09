@@ -27,7 +27,7 @@ class UserContainer extends DockerHandler{
     */
     constructor(user){
         super({
-            storagePath: path.join('/var/lib/quantum', 'containers', user._id.toString()),
+            storagePath: path.join('/var/lib/quantum', process.env.NODE_ENV, 'containers', user._id.toString()),
             imageName: 'alpine:latest',
             dockerName: user._id.toString(),
             logName: user._id,

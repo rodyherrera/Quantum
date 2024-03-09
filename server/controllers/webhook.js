@@ -60,7 +60,8 @@ exports.webhook = async (req, res) => {
         if(shellStream) shellStream.write('\x03');
 
         // 5. Clean Up Old Deployment Artifacts
-        await Github.deleteLogAndDirectory(null, `/var/lib/quantum/containers/${repositoryUser._id}/github-repos/${requestedRepository._id}/`);
+        // USE PATH HERE!!!!!!
+        await Github.deleteLogAndDirectory(null, `/var/lib/quantum/${process.env.NODE_ENV}/containers/${repositoryUser._id}/github-repos/${requestedRepository._id}/`);
 
         // 6. Deploy new Version
         const deployment = await github.deployRepository();

@@ -58,7 +58,7 @@ class Github{
      * @returns {Promise<void>} - Resolves if the cloning process is successful, rejects with an error if not.
     */
     async cloneRepository() {
-        const destinationPath = `/var/lib/quantum/containers/${this.user._id}/github-repos/${this.repository._id}`;
+        const destinationPath = `/var/lib/quantum/${process.env.NODE_ENV}/containers/${this.user._id}/github-repos/${this.repository._id}`;
         try {
             const repositoryInfo = await this.octokit.repos.get({ 
                 owner: this.user.github.username, 
@@ -79,11 +79,11 @@ class Github{
      * @returns {Promise<Object>} - An object containing key-value pairs of environment variables. 
     */
     async readEnvironmentVariables(){
-        let envFiles = await simpleGit(`/var/lib/quantum/containers/${this.user._id}/github-repos/${this.repository._id}`).raw(['ls-tree', 'HEAD', '-r', '--name-only']);
+        let envFiles = await simpleGit(`/var/lib/quantum/${process.env.NODE_ENV}/containers/${this.user._id}/github-repos/${this.repository._id}`).raw(['ls-tree', 'HEAD', '-r', '--name-only']);
         envFiles = envFiles.split('\n').filter(file => file.includes('.env'));
         const environmentVariables = {};
         for(const envFile of envFiles){
-            const file = await simpleGit(`/var/lib/quantum/containers/${this.user._id}/github-repos/${this.repository._id}`).raw(['show', 'HEAD:' + envFile]);
+            const file = await simpleGit(`/var/lib/quantum/${process.env.NODE_ENV}/containers/${this.user._id}/github-repos/${this.repository._id}`).raw(['show', 'HEAD:' + envFile]);
             const lines = file.split('\n');
             lines.forEach(line => {
                 if(line.trim() === '' || line.trim().startsWith('#')){
