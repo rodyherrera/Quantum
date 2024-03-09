@@ -15,12 +15,19 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const state = {
+    // Stores the authenticated user's data
     user: {},
+    // Authentication status flag
     isAuthenticated: false,
+    // Tracks if initial state from local storage is being loaded
     isCachedAuthLoading: true,
+    // General loading state for authentication processes
     isLoading: false,
+    // Flag if account deletion is in progress
     isEliminatingAccount: false,
+    // Tracks loading state for specific operations (e.g., updating profile)
     isOperationLoading: false,
+    // Stores authentication-related errors
     error: null
 };
 
