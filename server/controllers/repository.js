@@ -117,7 +117,7 @@ exports.getMyRepositories = catchAsync(async (req, res) => {
 */
 const getRequestedPath = (req) => {
     const route = req.params.route || '';
-    const basePath = path.join(process.env.STORAGE_PATH, `/containers/${req.user._id}/github-repos/`, req.params.id);
+    const basePath = path.join('/var/lib/quantum', `/containers/${req.user._id}/github-repos/`, req.params.id);
     return path.join(basePath, route);
 };
 

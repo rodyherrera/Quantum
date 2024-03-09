@@ -29,8 +29,8 @@ const dropDatabase = async () => {
     }
     await mongoose.connection.dropDatabase();
     console.log('[Quantum Manager]: The database has been deleted successfully.');
-    console.log(`[Quantum Manager]: Tried to delete the "${process.env.STORAGE_PATH}" directory that contains .logs files and downloaded repositories...`);
-    fs.rm(process.env.STORAGE_PATH, { recursive: true }, () => console.log(`[Quantum Manager]: Directory "${process.env.STORAGE_PATH}" successfully deleted. The database has been cleaned and the debris within the file system as well. Your instance is clean.`));
+    console.log(`[Quantum Manager]: Tried to delete the "/var/lib/quantum" directory that contains .logs files and downloaded repositories...`);
+    fs.rm('/var/lib/quantum', { recursive: true }, () => console.log(`[Quantum Manager]: Directory "/var/lib/quantum" successfully deleted. The database has been cleaned and the debris within the file system as well. Your instance is clean.`));
 };
 
 module.exports = dropDatabase;
