@@ -366,6 +366,10 @@ All platform repositories, along with their respective logs, are stored in `/var
 
 Please be aware that all information related to your Quantum instance and users will persist in this directory. If you opt to use the software's CLI and select "delete database and related", this directory will be emptied accordingly.
 
+In the **.env file** or its **.env.example counterpart**, you'll encounter a variable named `NODE_ENV`, accepting either `production` or `development` as values. Based on this assignment, or any value you specify, a corresponding directory will be generated within `/var/lib/quantum` to house the persistent data associated with that particular execution mode.
+
+For instance, **when NODE_ENV is set to development**, data like logs and user repositories will reside in `/var/lib/quantum/development/`. Conversely, **when NODE_ENV is production**, the data will be located in `/var/ lib/quantum/production`.
+
 ## What happens when the server is closed?
 When initiating the shutdown of the host server (Quantum Server), it won't close immediately. Instead, upon detecting the shutdown signal, the server systematically shuts down all Docker instances belonging to users. Consequently, their deployments and repositories are also gracefully closed. Only after all Docker instances on the platform are safely shut down does the server proceed to shut down successfully.
 
