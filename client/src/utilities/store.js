@@ -19,6 +19,13 @@ import repositoryReducer from '@services/repository/slice';
 import deploymentReducer from '@services/deployment/slice';
 import coreReducer from '@services/core/slice';
 
+/**
+ * @function configureStore 
+ * @description Configures the Redux store for the Quantum Cloud application.
+ * @param {Object} options - Configuration options for the Redux store.
+ * @param {Object} options.reducer - A combined reducer object containing slices of state for different application areas.
+ * @returns {Store} The configured Redux store.
+*/
 const store = configureStore({
     reducer: {
         core: coreReducer,
