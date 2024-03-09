@@ -15,11 +15,17 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const state = {
+    // Stores deployment-related errors
     error: null,
+    // Tracks overall loading state for deployment data
     isLoading: true,
+    // Tracks loading state for deployment actions (start, restart, etc.)
     isOperationLoading: false,
+    // Tracks if the deployment environment is being fetched
     isEnvironmentLoading: true,
+    // Array to store deployment information
     deployments: [],
+    // Stores details about the deployment environment
     environment: {}
 };
 
