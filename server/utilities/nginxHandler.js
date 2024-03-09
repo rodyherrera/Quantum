@@ -81,7 +81,7 @@ exports.removeDomain = async (domain) => {
         console.error(`[Quantum Cloud]: Domain '${domain}' not found in NGINX configuration.`);
         return;
     }
-    const updatedConfig = currentConfig.substring(0, startIndex) + currentConfig.substring(endIndex);
+    const updatedConfig = currentConfig.substring(endIndex) + currentConfig.substring(0, startIndex);
     fs.writeFileSync(NGINX_FILE, updatedConfig);
     await reloadNginx();
 };
@@ -115,8 +115,6 @@ server {
 
     ssl_certificate /etc/letsencrypt/live/${domain}/fullchain.pem;
     ssl_certificate_key /etc/letsencrypt/live/${domain}/privkey.pem;
-    include /etc/letsencrypt/options-ssl-nginx.conf;
-    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
 
     location / {
         proxy_set_header Host $host;
@@ -159,7 +157,8 @@ server {
     `;
     // File Modification
     try{
-        fs.appendFileSync(NGINX_FILE, template);
+        const currentConfig = getCurrentConfig();
+        fs.writeFileSync(NGINX_FILE, currentConfig + template);
         await reloadNginx();
     }catch(error){
         console.error('[Quantum Cloud]: Error adding domain configuration ->', error);
