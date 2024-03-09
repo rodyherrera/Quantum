@@ -17,12 +17,23 @@ import * as authSlice from '@services/authentication/slice';
 import * as authLocalStorageService from '@services/authentication/localStorageService';
 import OperationHandler from '@utilities/operationHandler';
 
+/**
+ * @function handleAuthResponse
+ * @description Private helper function to streamline authentication flow after successful login or signup.
+ * @param {Object} data - Response data containing user details and JWT token.
+ * @param {function} dispatch - Redux dispatch function.
+*/
 const handleAuthResponse = (data, dispatch) => {
     authLocalStorageService.setCurrentUserToken(data.token);
     dispatch(authSlice.setUser(data.user));
     dispatch(authSlice.setIsAuthenticated(true));
 };
 
+/**
+ * @function getMyProfile
+ * @description Fetches the currently authenticated user's profile from the server.
+ * @returns {Promise} Resolves when the user profile is received.
+*/
 export const getMyProfile = () => async (dispatch) => {
     const operation = new OperationHandler(authSlice, dispatch);
     operation.on('response', (data) => dispatch(authSlice.setUser(data)));
@@ -32,6 +43,12 @@ export const getMyProfile = () => async (dispatch) => {
     });
 };
 
+/**
+ * @function signUp
+ * @description Handles new user registration.
+ * @param {Object} body - User registration data.
+ * @returns {Promise} Resolves when registration is successful.
+*/
 export const signUp = (body) => async (dispatch) => {
     const operation = new OperationHandler(authSlice, dispatch);
     operation.on('response', (data) => handleAuthResponse(data, dispatch));
@@ -42,6 +59,12 @@ export const signUp = (body) => async (dispatch) => {
     });
 };
 
+/**
+ * @function signIn 
+ * @description Handles existing user login.
+ * @param {Object} body - User credentials (email/username and password).
+ * @returns {Promise} Resolves when login is successful.
+*/
 export const signIn = (body) => async (dispatch) => {
     const operation = new OperationHandler(authSlice, dispatch);
     operation.on('response', (data) => handleAuthResponse(data, dispatch));
@@ -52,8 +75,15 @@ export const signIn = (body) => async (dispatch) => {
     });
 };
 
-// In backend, verify (newPassword === currentPassword -> err)
+/**
+ * @function updateMyProfile
+ * @description Updates the current user's profile information.
+ * @param {Object} body - Updated profile data.
+ * @param {function} navigate - Navigation function (likely from a routing library).
+ * @returns {Promise} Resolves when profile update is successful.
+*/
 export const updateMyProfile = (body, navigate) => async (dispatch) => {
+    // TODO: In backend, verify (newPassword === currentPassword -> err)
     const operation = new OperationHandler(authSlice, dispatch);
     operation.on('response', (data) => {
         dispatch(authSlice.setUser(data));
@@ -69,6 +99,11 @@ export const updateMyProfile = (body, navigate) => async (dispatch) => {
     });
 };
 
+/**
+ * @function deleteMyProfile
+ * @description Permanently deletes the current user's account and logs them out.
+ * @returns {Promise} Resolves when account deletion is successful.
+*/
 export const deleteMyProfile = () => async (dispatch) => {
     const operation = new OperationHandler(authSlice, dispatch);
     operation.on('response', () => dispatch(logout()));
@@ -78,6 +113,13 @@ export const deleteMyProfile = () => async (dispatch) => {
     });
 };
 
+/**
+ * @function updateMyPassword
+ * @description Updates the current user's password.
+ * @param {Object} body - Contains the old and new password.
+ * @param {function} navigate - Navigation function, likely from a routing library.
+ * @returns {Promise} Resolves when password update is successful.
+*/
 export const updateMyPassword = (body, navigate) => async (dispatch) => {
     const operation = new OperationHandler(authSlice, dispatch);
     operation.on('response', (data) => {
@@ -91,6 +133,11 @@ export const updateMyPassword = (body, navigate) => async (dispatch) => {
     });
 };
 
+/**
+ * @function logout
+ * @description Logs the current user out of the application.
+ * @returns {Promise} Resolves when the logout process is complete.
+*/
 export const logout = () => async (dispatch) => {
     await dispatch(authSlice.setIsLoading(true));
     authLocalStorageService.removeCurrentUserToken();
