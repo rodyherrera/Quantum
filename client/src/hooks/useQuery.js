@@ -15,6 +15,11 @@
 import React from 'react';
 import { useLocation } from 'react-router-dom';
 
+/**
+ * @function useQuery
+ * @description A React hook that provides easy access to URL query parameters from React Router.
+ * @returns {URLSearchParams} A URLSearchParams object representing the parsed query parameters.
+*/
 const useQuery = () => {
     const { search } = useLocation();
 
