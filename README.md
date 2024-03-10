@@ -194,6 +194,8 @@ We've commented out the line declaring port '80' exposure on the local network f
 Now, this will still not work, since we must add the reverse proxy to NGINX:
 ```yml
 server {
+    server_name _;
+
 	location / {
 		proxy_set_header Host $host;
 		proxy_set_header X-Real-IP $remote_addr;
@@ -204,8 +206,10 @@ server {
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection "upgrade";
 	}
+    
     listen 80;
 }
+
 ```
 Now, we instruct NGINX to listen for requests on port 80, enabling us to redirect them to the newly assigned port for the Quantum server. 
 
