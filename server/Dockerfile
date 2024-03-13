@@ -15,6 +15,9 @@
 # Define the base image
 FROM node:20.11.0 AS build
 
+# Environment variable to know if the execution is inside or outside of Docker
+ENV RUNNING_IN_DOCKER=true 
+
 # Set the working directory inside the container
 WORKDIR /app
 

@@ -29,6 +29,7 @@ const { spawn } = require('child_process');
  * @returns {Promise<void>}
 */
 exports.setupNginxReverseProxy = async () => {
+    if(!process.env.RUNNING_IN_DOCKER) return;
     try{
         await nginxHandler.removeDomain('_');
         await nginxHandler.addDomain({
