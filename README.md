@@ -191,8 +191,8 @@ services:
 ```
 We've commented out the line declaring port '80' exposure on the local network for accessing the Quantum server. Instead, `we're now utilizing port '8080' to redirect to port '80'` within the Docker container where the Quantum server is hosted.
 
-Now, this will still not work, since we must add the reverse proxy to NGINX:
-```yml
+Now this still won't work as we need to add the following configuration inside the existing **http{}** block in `/etc/nginx/nginx.conf`.
+```conf
 server {
     server_name _;
 
@@ -209,9 +209,29 @@ server {
     
     listen 80;
 }
-
 ```
-Now, we instruct NGINX to listen for requests on port 80, enabling us to redirect them to the newly assigned port for the Quantum server. 
+In the `server_name` directive, we use `_` to denote any requests not explicitly defined in NGINX. This configuration directs such requests to the address specified in `proxy_pass.` For instance, consider the domain `bar.example.com` which resolves to your server's IP address. Upon accessing this domain, NGINX intercepts the request. However, lacking a corresponding `server{}` block with `server_name bar.example. com` NGINX forwards the request to `http://0.0.0.0:8080`. This destination hosts instructions to handle the requested domain
+
+Furthermore, you'll need to create another block akin to the preceding one. While the previous block facilitates managing various domains associated with your application, this new 'server{}' directive will exclusively handle requests directed to the quantum backend. This approach proves advantageous as it allows you to precisely define the server's domain and assign it an SSL certificate.
+
+```conf
+server{
+	server_name quantum-server.your_domain.com;
+
+	location / {
+		proxy_set_header Host $host;
+		proxy_set_header X-Real-IP $remote_addr;
+		proxy_pass http://0.0.0.0:8080;
+		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+		proxy_set_header X-Forwarded-Proto $scheme;
+		proxy_http_version 1.1;
+		proxy_set_header Upgrade $http_upgrade;
+		proxy_set_header Connection "upgrade";
+	}
+}
+```
+
+Notice how we now specify the `server_name` with the domain through which we intend to route requests to our backend server. Subsequently, we employ reverse proxying with the same configuration as the preceding block. Should you opt for **SSL encryption**, you have the option to manually configure it at this juncture. Alternatively, you can leverage tools such as `certbot --nginx` for streamlined certificate management.
 
 Now, you just have to reload the NGINX configuration for the changes to take effect.
 
