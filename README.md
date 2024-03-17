@@ -384,6 +384,7 @@ When you enter one or more domains, it will first be verified if it has already 
 Consider that, for this to work correctly, the domain must have a type A record where it points to the address of your server.
 
 ![NameCheap A Record](/screenshots/NameCheapARecord.png)
+![Repository Domains](/screenshots/RepositoryDomains.png)
 
 ## Where are repositories and logs stored?
 All platform repositories, along with their respective logs, are stored in `/var/lib/quantum`. This directory is automatically created whether you deploy with or without Docker.
