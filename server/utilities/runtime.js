@@ -14,12 +14,18 @@
 
 const axios = require('axios');
 
+/**
+ * Retrieves the user's public IP address using the ipify.org service.
+ * 
+ * @returns {Promise<string>} A Promise resolving to the public IP address as a string.
+ *                            In case of error, returns '127.0.0.1'.
+*/
 exports.getPublicIPAddress = async () => {
     try{
         const { data } = await axios.get('https://api.ipify.org/');
         return data;
     }catch{
-        // Handle it better.
+        console.error('Error fetching IP address:', error);  
         return '127.0.0.1';
     }
 };
