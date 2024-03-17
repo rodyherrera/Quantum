@@ -396,6 +396,9 @@ In the **.env file** or its **.env.example counterpart**, you'll encounter a var
 For instance, **when NODE_ENV is set to development**, data like logs and user repositories will reside in `/var/lib/quantum/development/`. Conversely, **when NODE_ENV is production**, the data will be located in `/var/ lib/quantum/production`.
 
 ![Quantum Storage Directory](/screenshots/QuantumStorageDir.png)
+
+The way platform content is managed within `/var/lib/quantum/` is quite simple. Well, the `containers` directory stores a list of directories where each of them will have as its name the **id of the user** to whom a respective container belongs. Let's remember that each user will have their own Docker instance where they can host their repositories, and in the `containers` directory there will be the directories of all the users registered on the platform. When you enter a container, it will house two directories, `github-repos` and `logs`, where in the `github-repos` directory all the user's cloned repositories will be stored (which are named after the id that they have in the database), while in the `logs` directory there will be the records associated with these repositories already mentioned as well as the records associated with the user's `Cloud Console` within the platform.
+
 ## What happens when the server is closed?
 When initiating the shutdown of the host server (Quantum Server), it won't close immediately. Instead, upon detecting the shutdown signal, the server systematically shuts down all Docker instances belonging to users. Consequently, their deployments and repositories are also gracefully closed. Only after all Docker instances on the platform are safely shut down does the server proceed to shut down successfully.
 
