@@ -127,6 +127,16 @@ server {
         proxy_set_header Connection "upgrade";
     }
 }
+
+# Redirect HTTP to HTTPS (if SSL is enabled)
+server {
+    if ($host = ${domain}) {
+        return 301 https://$host$request_uri;
+    } 
+    listen 80;
+    server_name ${domain};
+    return 404; 
+}
         `;
     }
     // Main Configuration Template
@@ -149,16 +159,6 @@ server {
 }
 
 ${sslTemplate}
-
-# Redirect HTTP to HTTPS (if SSL is enabled)
-server {
-    if ($host = ${domain}) {
-        return 301 https://$host$request_uri;
-    } 
-    listen 80;
-    server_name ${domain};
-    return 404; 
-}
 # End-Quantum-Block-${domain}
     `;
     // File Modification
