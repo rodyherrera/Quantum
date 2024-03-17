@@ -120,7 +120,7 @@ const handleDomains = async (domains, port, currentDomains, userEmail) => {
     await Promise.all(domainsToAdd.map(async (domain) => {
         const trimmedDomain = domain.trim();
         try{
-            await nginxHandler.addDomain({ domain: trimmedDomain, port: process.env.SERVER_PORT, ipv4: '0.0.0.0' });
+            await nginxHandler.addDomain({ domain: trimmedDomain, port, ipv4: '0.0.0.0' });
             await nginxHandler.generateSSLCert(trimmedDomain, userEmail);
             await nginxHandler.updateDomain({ domain: trimmedDomain, port, ipv4: '0.0.0.0', useSSL: true });
         }catch(error){
