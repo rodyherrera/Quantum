@@ -410,6 +410,13 @@ Similarly, upon restarting the server, the platform bootloader takes charge of m
 
 If a server crash occurs, it won't simply shut down. Instead, the error will be displayed in the console, and the server will promptly initiate an automatic restart. If the error persists and another occurrence happens, the server will persistently attempt to restart until it can do so successfully. This proactive approach is vital for security reasons; it ensures that deployments aren't compromised due to server issues without the user's awareness. Therefore, the server diligently strives to recover and restart after any crash, safeguarding the continuity of operations.
 
+## How can I migrate to new versions?
+While there's currently no streamlined tool for easily uploading a new version, migrating to a fresh iteration of the platform isn't a daunting task. This is because crucial data pertaining to logs and repository information resides securely within the host server. Even if you were to remove the Docker container, delete the source code, or take any other action, your repositories and logs persist within "/var/lib/quantum/" and, of course, within your database.
+
+Should you wish to transition to a newer version of Quantum, the process is straightforward. Simply retain the ".env" files located within the "client/" and "server/" directories. Once the updated Quantum version is cloned, reintegrate these files into their respective directories.
+
+With these steps completed, all that's left is to redeploy—whether through Docker or from the source code. Everything will remain intact, as neither the database nor your files in "/var/lib/quantum/" will be affected.
+
 ## We'd love your feedback and support!
 Your involvement is vital to make Quantum the best it can be. Here's how you can get involved:
 
