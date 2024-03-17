@@ -165,6 +165,8 @@ To integrate your application with GitHub's API, you'll need to obtain a Client 
 It is important that you do this step, otherwise NO ONE will simply be able to use your application, including you.
 
 ## Deploying with Docker
+Before deploying to Docker, **make sure you have correctly configured the environment variables** associated with the client application as well as the backend server.
+
 When cloning the repository, inside the generated folder (root), you will discover the "docker-compose.yml" file, which will allow you to deploy both the backend and frontend servers using the command "docker-compose up -d --build ".
 ```bash
 # First, you must clone the repository.
@@ -232,6 +234,8 @@ server{
 ```
 
 Notice how we now specify the `server_name` with the domain through which we intend to route requests to our backend server. Subsequently, we employ reverse proxying with the same configuration as the preceding block. Should you opt for **SSL encryption**, you have the option to manually configure it at this juncture. Alternatively, you can leverage tools such as `certbot --nginx` for streamlined certificate management.
+
+Consider that you should adjust the endpoint set in the `VITE_SERVER` environment variable located in `client/.env`.
 
 Now, you just have to reload the NGINX configuration for the changes to take effect.
 
