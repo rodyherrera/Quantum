@@ -12,6 +12,18 @@
  * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 ****/
 
+const axios = require('axios');
+
+exports.getPublicIPAddress = async () => {
+    try{
+        const { data } = await axios.get('https://api.ipify.org/');
+        return data;
+    }catch{
+        // Handle it better.
+        return '127.0.0.1';
+    }
+};
+
 /**
  * Initiates a graceful shutdown of the Quantum Cloud server by stopping all active user containers.
 */

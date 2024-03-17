@@ -17,6 +17,7 @@ const TextSearch = require('mongoose-partial-search');
 const Github = require('@utilities/github');
 const RepositoryHandler = require('@utilities/repositoryHandler');
 const nginxHandler = require('@utilities/nginxHandler');
+const { getPublicIPAddress } = require('@utilities/runtime');
 const { v4 } = require('uuid');
 
 const RepositorySchema = new mongoose.Schema({
@@ -116,13 +117,15 @@ const deleteRepositoryHandler = async (deletedDoc) => {
 const handleDomains = async (domains, port, currentDomains, userEmail) => {
     const domainsToAdd = domains.filter((domain) => !currentDomains.includes(domain));
     const domainsToRemove = currentDomains.filter((domain) => !domains.includes(domain));
+    // TODO: STORE IT IN GLOBAL SCOPE 
+    const ipv4 = await getPublicIPAddress();
 
     await Promise.all(domainsToAdd.map(async (domain) => {
         const trimmedDomain = domain.trim();
         try{
-            await nginxHandler.addDomain({ domain: trimmedDomain, port, ipv4: '0.0.0.0' });
+            await nginxHandler.addDomain({ domain: trimmedDomain, port, ipv4 });
             await nginxHandler.generateSSLCert(trimmedDomain, userEmail);
-            await nginxHandler.updateDomain({ domain: trimmedDomain, port, ipv4: '0.0.0.0', useSSL: true });
+            await nginxHandler.updateDomain({ domain: trimmedDomain, port, ipv4, useSSL: true });
         }catch(error){
             console.error(`[Quantum Cloud]: Error processing domain (add) '${trimmedDomain}':`, error);
         }
