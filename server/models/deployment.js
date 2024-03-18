@@ -62,6 +62,19 @@ DeploymentSchema.methods.getFormattedEnvironment = function(){
     return formattedEnvironment.join(' ');
 };
 
+DeploymentSchema.post('findOneAndUpdate', async function(){
+    const updatedDoc = await this.model.findOne(this._conditions).select('environment repository');
+    const { variables } = updatedDoc.environment;
+    for(let [key, value] of variables){
+        key = key.toLowerCase();
+        if(!key.includes('port')) continue;
+        await mongoose.model('Repository')
+            .updateOne({ _id: updatedDoc.repository }, { port: value });
+        // first match, break "for" loop
+        break;
+    }
+});
+
 DeploymentSchema.post('findOneAndDelete', async function(){
     const { user, repository, _id } = this;
 
