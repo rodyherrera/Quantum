@@ -59,20 +59,6 @@ After cloning the repository and installing the dependencies for the client and 
 
 Inside the "server" folder, there is the source code of the application that provides the platform API. You will find inside a file called ".env.example", which contains the environment variables that you must establish in the file. ".env" from the same directory:
 ```env
-# * =+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
-# *
-# * Copyright (C) Rodolfo Herrera Hernandez. All rights reserved.
-# * Licensed under the MIT license. See LICENSE file in the project root
-# * for full license information.
-# *
-# * =+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
-# *
-# * For related information - https://github.com/rodyherrera/Quantum/
-# *
-# * All your applications, just in one place. 
-# *
-# * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-
 # NODE_ENV: Defines the server execution environment. 
 NODE_ENV = development
 
