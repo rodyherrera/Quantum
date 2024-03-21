@@ -13,6 +13,7 @@
 ****/
 
 const RuntimeError = require('@utilities/runtimeError');
+const { sendMail } = require('@utilities/mailHandler');
 
 /**
  * Maps common errors to informative messages and appropriate HTTP status codes.
@@ -51,7 +52,7 @@ const parseError = (err) => {
  * @param {import('express').Response} res - The Express response object.
  * @param {import('express').NextFunction} next - The Express next function.
 */
-const errorHandler = (err, req, res, next) => {
+const errorHandler = async (err, req, res, next) => {
     err.statusCode = err.statusCode || 500;
     err.message = err.message || 'Server Error';
     if(err instanceof RuntimeError){
@@ -59,6 +60,10 @@ const errorHandler = (err, req, res, next) => {
     }
     // Parse error for consistent responses
     const { message, statusCode } = parseError(err);
+    await sendMail({
+        subject: 'A runtime error has occurred.',
+        html: `We have satisfactorily captured the error, it has been handled and a friendly response has been sent to the customer. However, we will provide you with the details of the event in order to be able to find out more about the registered problem.\n\n${message}\n${statusCode}(Status Code)`
+    });
     res.status(statusCode).send({ status: 'error', message });
 };
 

@@ -44,10 +44,14 @@ const SERVER_HOST = process.env.SERVER_HOSTNAME || '0.0.0.0';
  * Handles uncaught exceptions, cleans the environment, and restarts the server. 
  * @param {Error} err - The uncaught exception.
 */
-process.on('uncaughtException', async (err) => {
-    console.error('[Quantum Cloud]: Uncaught Exception:', err);
+process.on('uncaughtException', async (error) => {
+    console.error('[Quantum Cloud]: Uncaught Exception:', error);
     await cleanHostEnvironment();
     console.log('[Quantum Cloud]: Restarting server...');
+    await sendMail({
+        subject: 'Critical runtime error, restarting server...',
+        html: `A critical error has been registered in the execution of the platform server. This error cannot be ignored and continue executing instructions, so the server will be forcefully restarted to maintain the integrity of the platform and its hosted services. Keep in mind that the latter can get into a loop. We will leave you error information:\n${error}`
+    });
     await bootstrap.restartServer();
 });
 
