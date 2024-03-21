@@ -63,6 +63,7 @@ DeploymentSchema.methods.getFormattedEnvironment = function(){
 };
 
 DeploymentSchema.post('findOneAndUpdate', async function(){
+    // DO IT FOT 'save' middleware TOO!!!!!!!
     const updatedDoc = await this.model.findOne(this._conditions).select('environment repository');
     const { variables } = updatedDoc.environment;
     for(let [key, value] of variables){

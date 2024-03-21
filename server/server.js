@@ -29,6 +29,7 @@ global.logStreamStore = {};
 global.userContainers = {};
 
 const { httpServer } = require('@config/express'); 
+const { sendMail } = require('@utilities/mailHandler');
 const { cleanHostEnvironment } = require('@utilities/runtime');
 const mongoConnector = require('@utilities/mongoConnector');
 const bootstrap = require('@utilities/bootstrap');
@@ -64,6 +65,10 @@ process.on('unhandledRejection', (reason) => {
 process.on('SIGINT', async () => {
     console.log('[Quantum Cloud]: SIGINT signal received, shutting down...');
     await cleanHostEnvironment();
+    await sendMail({
+        subject: 'Quantum and hosted services have stopped successfully.',
+        html: 'The server has safely completed execution. A certain signal has been received and all services hosted on the platform have been terminated. After sending this email, the server will be closed. See you later!'
+    });
     process.exit(0);
 });
 
@@ -81,6 +86,11 @@ httpServer.listen(SERVER_PORT, SERVER_HOST, async () => {
         await bootstrap.loadUserContainers();
         // Initializes user repositories (presumably for Git interaction)
         await bootstrap.initializeRepositories();
+        // Email to WEBMASTER_MAIL to notify about the correct opening of the server.
+        await sendMail({
+            subject: 'The Quantum API is now accessible!',
+            html: 'Your instance has been successfully deployed within your server.'
+        });
         console.log(`[Quantum Cloud]: Server running at http://${SERVER_HOST}:${SERVER_PORT}/.`);
     }catch(error){
         console.error('[Quantum Cloud]: Error during server initialization:', error);
