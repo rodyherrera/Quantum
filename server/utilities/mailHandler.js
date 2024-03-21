@@ -14,6 +14,19 @@
 
 const nodemailer = require('nodemailer');
 
+/**
+ * Boolean flag indicating whether all the necessary SMTP environment 
+ * variables are defined for sending emails.
+ * 
+ * The required variables are:
+ *  * SMTP_HOST
+ *  * SMTP_PORT
+ *  * SMTP_AUTH_USER
+ *  * SMTP_AUTH_PASSWORD
+ *  * WEBMASTER_MAIL
+ * 
+ * @type {boolean} 
+*/
 const IS_SMTP_DEFINED = (
     process.env.SMTP_HOST &&
     process.env.SMTP_PORT &&
