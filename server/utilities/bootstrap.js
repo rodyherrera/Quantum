@@ -22,6 +22,7 @@ const RepositoryHandler = require('@utilities/repositoryHandler');
 const nginxHandler = require('@utilities/nginxHandler');
 const { capitalizeToLowerCaseWithDelimitier } = require('@utilities/algorithms');
 const { spawn } = require('child_process');
+const { sendMail } = require('@utilities/mailHandler');
 
 /**
  * Asynchronously sets up an Nginx reverse proxy configuration.
@@ -101,6 +102,10 @@ exports.loadUserContainers = async () => {
             const container = new UserContainer(user);
             await container.start();
         }));
+        await sendMail({
+            subject: "Let's gooo, user containers loaded correctly!",
+            html: 'The containers of all users registered on the platform were successfully mounted on the host.'
+        });
     }catch(error){
         console.log('[Quantum Cloud] CRITICAL ERROR (at @utilities/bootstrap - loadUserContainers):', error);
     }
@@ -127,6 +132,10 @@ exports.initializeRepositories = async () => {
             const github = new Github(repository.user, repository);
             await repositoryHandler.start(github);
         }));
+        await sendMail({
+            subject: 'All repositories accessible now!',
+            html: 'The repositories were correctly initialized, within a few minutes if not now, they should be accessible to everyone.'
+        });
         console.log('[Quantum Cloud]: All repositories were initialized.');
     }catch(error){
         console.log('[Quantum Cloud] CRITICAL ERROR (at @utilities/bootstrap - initializeRepositories):', error);
