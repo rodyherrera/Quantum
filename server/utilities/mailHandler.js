@@ -14,6 +14,13 @@
 
 const nodemailer = require('nodemailer');
 
+const IS_SMTP_DEFINED = (
+    process.env.SMTP_HOST &&
+    process.env.SMTP_PORT &&
+    process.env.SMTP_AUTH_USER,
+    process.env.SMTP_AUTH_PASSWORD
+);
+
 /**
  * Creates a mailer transport object using Nodemailer, configured with 
  * environment variables for security and authentication.
@@ -37,6 +44,7 @@ const transporter = nodemailer.createTransport({
  * @throws {Error} If there's an error during the sending process.
 */
 exports.sendMail = async ({ to = process.env.WEBMASTER_MAIL, subject, html }) => {
+    if(!IS_SMTP_DEFINED) return;
     try{
         await transporter.sendMail({
             from: `Quantum Cloud Platform <${process.env.SMTP_AUTH_USER}>`,
