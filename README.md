@@ -59,6 +59,20 @@ After cloning the repository and installing the dependencies for the client and 
 
 Inside the "server" folder, there is the source code of the application that provides the platform API. You will find inside a file called ".env.example", which contains the environment variables that you must establish in the file. ".env" from the same directory:
 ```env
+# * =+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
+# *
+# * Copyright (C) Rodolfo Herrera Hernandez. All rights reserved.
+# * Licensed under the MIT license. See LICENSE file in the project root
+# * for full license information.
+# *
+# * =+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
+# *
+# * For related information - https://github.com/rodyherrera/Quantum/
+# *
+# * All your applications, just in one place. 
+# *
+# * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
 # NODE_ENV: Defines the server execution environment. 
 NODE_ENV = development
 
@@ -71,11 +85,12 @@ DOCKERS_CONTAINER_ALIASES = Quantum-Container
 
 # DOCKER_APK_STARTER_PACKAGES: Initial packages to install once
 # the user container is created.
-DOCKER_APK_STARTER_PACKAGES = "git docker nodejs npm python3 py3-pip"
+DOCKER_APK_STARTER_PACKAGES = "git nodejs npm python3 py3-pip"
 
 # DOMAIN: Specifies the base domain of the server. This is the 
 # main access point for the application.
 DOMAIN = www.backend-domain.com
+# DOMAIN = http://127.0.0.1:80
 
 # SECRET_KEY: Secret key used for encrypting 
 # sensitive data. It's crucial for ensuring application security.
@@ -92,6 +107,7 @@ REGISTRATION_DISABLED = true
 # CLIENT_HOST: Specifies the host of the application's 
 # client. It's the access point for the user interface.
 CLIENT_HOST = www.frontend-domain.com
+# CLIENT_HOST = http://127.0.0.1:3030
 
 # SERVER_PORT: The port on which the server 
 # is listening for incoming requests.
@@ -137,6 +153,26 @@ LOG_PATH_MAX_SIZE = 250
 # MONGO_URI: MongoDB connection URI 
 # used by the application.
 MONGO_URI = mongodb://user:password@hostname:port
+
+# SMTP_HOST (OPTIONAL): Points to the host of the SMTP server. For example "smtp.myservice.com".
+SMTP_HOST =
+
+# SMTP_PORT (OPTIONAL): Set the port of your SMTP server, it 
+# can be 465, 587 or simply 25, depending on your provider.
+SMTP_PORT =
+
+# SMTP_AUTH_USER (OPTIONAL): Enter the username of the account you want 
+# to send emails with, for example: "no-reply@myquantumservice.com".
+SMTP_AUTH_USER =
+
+# SMTP_AUTH_PASSWORD (OPTIONAL): Enter the password to authenticate 
+# with "SMTP_AUTH_USER".
+SMTP_AUTH_PASSWORD = 
+
+# WEBMASTER_MAIL (OPTIONAL): Enter the email address to which you want 
+# important notifications to be sent about events within the server, such 
+# as errors, reports, among other things.
+WEBMASTER_MAIL = 
 ```
 In the same way, within the "client" directory, you will find the same ".env.example" and ".env" files, obviously with different variables, which you must also set.
 ```bash
