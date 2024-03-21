@@ -17,8 +17,8 @@ const nodemailer = require('nodemailer');
 const IS_SMTP_DEFINED = (
     process.env.SMTP_HOST &&
     process.env.SMTP_PORT &&
-    process.env.SMTP_AUTH_USER,
-    process.env.SMTP_AUTH_PASSWORD
+    process.env.SMTP_AUTH_USER &&
+    process.env.SMTP_AUTH_PASSWORD 
 );
 
 /**
