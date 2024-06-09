@@ -23,6 +23,7 @@ const mongoConnector = async () => {
         NODE_ENV,
         PRODUCTION_DATABASE,
         DEVELOPMENT_DATABASE,
+        MONGO_AUTH_SOURCE,
         MONGO_URI
     } = process.env;
 
@@ -39,7 +40,7 @@ const mongoConnector = async () => {
         autoIndex: NODE_ENV !== 'production', 
         connectTimeoutMS: 10000,
         socketTimeoutMS: 45000, 
-        authSource: 'admin',
+        authSource: MONGO_AUTH_SOURCE,
         appName: 'quantum-cloud',
         serverSelectionTimeoutMS: 5000,
         maxIdleTimeMS: 30000,

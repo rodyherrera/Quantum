@@ -140,6 +140,11 @@ LOG_PATH_MAX_SIZE = 250
 # used by the application.
 MONGO_URI = mongodb://user:password@hostname:port
 
+# MONGO_AUTH_SOURCE: Specifies the database to authenticate against.
+# Use this if your authentication credentials are stored in a different database
+# than the one you're connecting to. Commonly, this is set to "admin".
+MONGO_AUTH_SOURCE = admin
+
 # SMTP_HOST (OPTIONAL): Points to the host of the SMTP server. For example "smtp.myservice.com".
 SMTP_HOST =
 
