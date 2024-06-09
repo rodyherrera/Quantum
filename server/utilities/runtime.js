@@ -13,6 +13,7 @@
 ****/
 
 const axios = require('axios');
+const _ = require('lodash');
 
 /**
  * Retrieves the user's public IP address using the ipify.org service.
@@ -53,10 +54,7 @@ exports.cleanHostEnvironment = async () => {
  * @returns {Object} - A new object containing only the specified fields.
 */
 exports.filterObject = (object, ...fields) => {
-    const filteredObject = {};
-    Object.keys(object).forEach((key) =>
-        (fields.includes(key)) && (filteredObject[key] = object[key]));
-    return filteredObject;
+    return _.pick(object, fields);
 };
 
 /**
@@ -66,9 +64,7 @@ exports.filterObject = (object, ...fields) => {
  * @returns {Object} -  An object with a property of either '_id' (for ObjectIDs) or 'slug' (for slugs).
 */
 exports.checkIfSlugOrId = (id) => {
-    if(id.length === 24)
-        return { _id: id };
-    return { slug: id };
+    return /^[a-fA-F0-9]{24}$/.test(id) ? { _id: id } : { slug: id };
 };
 
 /**
@@ -78,13 +74,14 @@ exports.checkIfSlugOrId = (id) => {
  * @param {Function} [finalFunction] - An optional cleanup function to execute after error handling.
  * @returns {Function} - A middleware function for Express routes.
 */
-exports.catchAsync = (asyncFunction, finalFunction = undefined) => (req, res, next) => {
-    let executeFinally = true;
-    return asyncFunction(req, res, next)
-        .catch(next)
-        .catch(() => (executeFinally = false))
-        .finally(() => setTimeout(() => 
-            (executeFinally && typeof finalFunction === 'function') && (finalFunction(req)), 100));
+exports.catchAsync = (asyncFunction) => {
+    return async (req, res, next) => {
+        try{
+            await asyncFunction(req, res, next);
+        }catch (error){
+            next(error);
+        }
+    };
 };
 
 module.exports = exports;
