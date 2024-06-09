@@ -12,7 +12,7 @@
  * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 ****/
 
-const DockerHandler = require('@utilities/dockerHandler');
+const DockerHandler = require('@services/dockerHandler');
 const path = require('path');
 
 /**

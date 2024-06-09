@@ -13,7 +13,7 @@
 ****/
 
 const RuntimeError = require('@utilities/runtimeError');
-const { sendMail } = require('@utilities/mailHandler');
+const { sendMail } = require('@services/mailHandler');
 
 /**
  * Maps common errors to informative messages and appropriate HTTP status codes.

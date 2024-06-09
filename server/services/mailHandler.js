@@ -67,7 +67,7 @@ exports.sendMail = async ({ to = process.env.WEBMASTER_MAIL, subject, html }) =>
             html
         });
     }catch(error){
-        console.error('[Quantum Cloud] (at @utilities/mailHandler - sendMail):', error);
+        console.error('[Quantum Cloud] (at @services/mailHandler - sendMail):', error);
     }
 };
 

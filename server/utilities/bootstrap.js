@@ -21,7 +21,7 @@ const UserContainer = require('@services/userContainer');
 const RepositoryHandler = require('@services/repositoryHandler');
 const nginxHandler = require('@services/nginxHandler');
 const { spawn } = require('child_process');
-const { sendMail } = require('@utilities/mailHandler');
+const { sendMail } = require('@services/mailHandler');
 
 /**
  * Formats a route name to a URL-friendly format.

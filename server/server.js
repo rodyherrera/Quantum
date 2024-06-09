@@ -29,7 +29,7 @@ global.logStreamStore = {};
 global.userContainers = {};
 
 const { httpServer } = require('@config/express'); 
-const { sendMail } = require('@utilities/mailHandler');
+const { sendMail } = require('@services/mailHandler');
 const { cleanHostEnvironment } = require('@utilities/runtime');
 const mongoConnector = require('@utilities/mongoConnector');
 const bootstrap = require('@utilities/bootstrap');
