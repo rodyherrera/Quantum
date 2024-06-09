@@ -15,7 +15,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import Application from '@/Application.jsx';
-import { MultiProvider } from 'react-pendulum';
+import MultiProvider from '@components/general/MultiProvider';
 import { BrowserRouter } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 import { Provider } from 'react-redux';
