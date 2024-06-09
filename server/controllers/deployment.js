@@ -17,7 +17,7 @@ const Repository = require('@models/repository');
 const HandlerFactory = require('@controllers/handlerFactory');
 const RuntimeError = require('@utilities/runtimeError');
 const Github = require('@utilities/github');
-const RepositoryHandler = require('@utilities/repositoryHandler');
+const RepositoryHandler = require('@services/repositoryHandler');
 const { catchAsync } = require('@utilities/runtime');
 
 const DeploymentFactory = new HandlerFactory({

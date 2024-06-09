@@ -16,7 +16,7 @@ const Repository = require('@models/repository');
 const User = require('@models/user');
 const RuntimeError = require('@utilities/runtimeError');
 const Github = require('@utilities/github');
-const RepositoryHandler = require('@utilities/repositoryHandler');
+const RepositoryHandler = require('@services/repositoryHandler');
 
 /**
  * Handles push event webhooks from GitHub.

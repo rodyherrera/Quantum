@@ -16,7 +16,7 @@ const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcryptjs');
 const TextSearch = require('mongoose-partial-search');
-const UserContainer = require('@utilities/userContainer');
+const UserContainer = require('@services/userContainer');
 
 const UserSchema = new mongoose.Schema({
     username: {

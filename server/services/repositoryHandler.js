@@ -13,7 +13,7 @@
 ****/
 
 const Deployment = require('@models/deployment');
-const ContainerLoggable = require('@utilities/containerLoggable');
+const ContainerLoggable = require('@services/containerLoggable');
 
 /**
  * This class manages interactions with a specific repository within the Quantum Cloud platform.  
@@ -173,7 +173,7 @@ class RepositoryHandler extends ContainerLoggable{
      * @param {Error} error - The error object.
     */
     handleCriticalError(method, error){
-        console.log(`[Quantum Cloud] CRITICAL ERROR (at @utilities/repositoryHandler - ${method}):`, error);
+        console.log(`[Quantum Cloud] CRITICAL ERROR (at @services/repositoryHandler - ${method}):`, error);
         throw error;
     }
 };

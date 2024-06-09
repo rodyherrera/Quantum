@@ -142,7 +142,7 @@ class ContainerLoggable{
             const content = await fs.promises.readFile(this.logFile);
             return content.toString();
         }catch(error){
-            console.error('[Quantum Cloud] (at @utilities/userContainer - getLog):', error);
+            console.error('[Quantum Cloud] (at @services/userContainer - getLog):', error);
             return '';
         };
     };
@@ -157,7 +157,7 @@ class ContainerLoggable{
     };
 
     criticalErrorHandler(operation, error){
-        console.error(`[Quantum Cloud] CRITICAL ERROR (at @utilities/containerLoggable - ${operation}):`, error);
+        console.error(`[Quantum Cloud] CRITICAL ERROR (at @services/containerLoggable - ${operation}):`, error);
         throw error;
     }
 };

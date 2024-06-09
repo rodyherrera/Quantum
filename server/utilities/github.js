@@ -15,7 +15,7 @@
 const { Octokit } = require('@octokit/rest');
 const { promisify } = require('util');
 const simpleGit = require('simple-git');
-const RepositoryHandler = require('@utilities/repositoryHandler');
+const RepositoryHandler = require('@services/repositoryHandler');
 const Deployment = require('@models/deployment');
 const exec = promisify(require('child_process').exec);
 const mongoose = require('mongoose');

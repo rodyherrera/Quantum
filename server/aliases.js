@@ -24,5 +24,6 @@ moduleAlias.addAliases({
     '@models': `${__dirname}/models/`,
     '@middlewares': `${__dirname}/middlewares/`,
     '@config': `${__dirname}/config/`,
-    '@controllers': `${__dirname}/controllers/`
+    '@controllers': `${__dirname}/controllers/`,
+    '@services': `${__dirname}/services/`
 });

@@ -15,8 +15,8 @@
 const mongoose = require('mongoose');
 const TextSearch = require('mongoose-partial-search');
 const Github = require('@utilities/github');
-const RepositoryHandler = require('@utilities/repositoryHandler');
-const nginxHandler = require('@utilities/nginxHandler');
+const RepositoryHandler = require('@services/repositoryHandler');
+const nginxHandler = require('@services/nginxHandler');
 const { getPublicIPAddress } = require('@utilities/runtime');
 const { v4 } = require('uuid');
 

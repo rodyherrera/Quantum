@@ -13,7 +13,7 @@
 ****/
 
 const Docker = require('dockerode');
-const ContainerLoggable = require('@utilities/containerLoggable');
+const ContainerLoggable = require('@services/containerLoggable');
 const docker = new Docker();
 const fs = require('fs').promises;
 

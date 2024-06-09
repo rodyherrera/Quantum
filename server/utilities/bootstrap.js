@@ -17,9 +17,9 @@ const User = require('@models/user');
 const Github = require('@utilities/github');
 const fs = require('fs');
 const path = require('path');
-const UserContainer = require('@utilities/userContainer');
-const RepositoryHandler = require('@utilities/repositoryHandler');
-const nginxHandler = require('@utilities/nginxHandler');
+const UserContainer = require('@services/userContainer');
+const RepositoryHandler = require('@services/repositoryHandler');
+const nginxHandler = require('@services/nginxHandler');
 const { spawn } = require('child_process');
 const { sendMail } = require('@utilities/mailHandler');
 

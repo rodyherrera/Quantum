@@ -15,7 +15,7 @@
 const { getUserByToken } = require('@middlewares/authentication');
 const RuntimeError = require('@utilities/runtimeError');
 const Repository = require('@models/repository');
-const RepositoryHandler = require('@utilities/repositoryHandler');
+const RepositoryHandler = require('@services/repositoryHandler');
 
 /**
  * Authenticates user based on provided token.
