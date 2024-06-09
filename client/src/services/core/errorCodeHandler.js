@@ -74,6 +74,8 @@ const ERROR_CODES = {
     'Github::GithubId::Required': 'GitHub ID is required. Please provide the GitHub ID.',
     'Github::AccessToken::Required': 'GitHub access token is required. Please provide a valid access token.',
     'Github::Username::Required': 'GitHub username is required. Please provide the GitHub username.',
+    'Github::Repository::Excess::Hooks': 'The repository cannot be cloned because it exceeds the number of links allowed by GitHub (+20). Try deleting some and try again.',
+    'Github::Webhook::Creation::Error': 'An unexpected error has occurred while trying to create the hook to listen to events from the repository. There is nothing to do, try later.',
 
     'Database::Cast::Error': 'Error encountered while converting data types in the database. This may occur when attempting to save data with an incompatible type.',
     'Database::Validation::Error': 'Validation error detected in the database. This typically happens when data fails to meet certain criteria or constraints specified in the database schema.',

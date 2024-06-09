@@ -17,6 +17,7 @@ const { promisify } = require('util');
 const simpleGit = require('simple-git');
 const RepositoryHandler = require('@services/repositoryHandler');
 const Deployment = require('@models/deployment');
+const RuntimeError = require('@utilities/runtimeError');
 const exec = promisify(require('child_process').exec);
 const mongoose = require('mongoose');
 const fs = require('fs');
@@ -248,20 +249,34 @@ class Github{
      * @returns {Promise<number>} - The ID of the newly created webhook.
     */
     async createWebhook(webhookUrl, webhookSecret){
-        const response = await this.octokit.repos.createWebhook({
-            owner: this.user.github.username,
-            repo: this.repository.name,
-            name: 'web',
-            config: {
-                url: webhookUrl,
-                content_type: 'json',
-                secret: webhookSecret
-            },
-            events: ['push'],
-            active: true
-        });
-        const { id } = response.data;
-        return id;
+        try{
+            const response = await this.octokit.repos.createWebhook({
+                owner: this.user.github.username,
+                repo: this.repository.name,
+                name: 'web',
+                config: {
+                    url: webhookUrl,
+                    content_type: 'json',
+                    secret: webhookSecret
+                },
+                events: ['push'],
+                active: true
+            });
+            const { id } = response.data;
+            return id;
+        }catch(error){
+            if(!error?.response?.data?.errors?.[0]) return;
+            const errorMessage = error.response.data.errors[0].message;
+            // TODO: In future versions, it would be useful to be able to clone 
+            // repositories that do not exactly belong to the authenticated user, obviously 
+            // hooks should not be registered for this, therefore this error should only be 
+            // thrown when a repository that belongs to the authenticated user exceeds that limit.
+            if(errorMessage === 'The "push" event cannot have more than 20 hooks'){
+                throw new RuntimeError('Github::Repository::Excess::Hooks');
+            }
+            // TODO: Maybe it would be useful here to notify the administrator by email?
+            throw new RuntimeError('Github::Webhook::Creation::Error');
+        }
     };
 
     /**
