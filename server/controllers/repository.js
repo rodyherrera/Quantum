@@ -18,7 +18,7 @@ const path = require('path');
 const Repository = require('@models/repository');
 const HandlerFactory = require('@controllers/handlerFactory');
 const Deployment = require('@models/deployment');
-const Github = require('@utilities/github');
+const Github = require('@services/github');
 const RuntimeError = require('@utilities/runtimeError');
 const { catchAsync } = require('@utilities/runtime');
 

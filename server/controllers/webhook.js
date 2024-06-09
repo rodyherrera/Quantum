@@ -15,7 +15,7 @@
 const Repository = require('@models/repository');
 const User = require('@models/user');
 const RuntimeError = require('@utilities/runtimeError');
-const Github = require('@utilities/github');
+const Github = require('@services/github');
 const RepositoryHandler = require('@services/repositoryHandler');
 
 /**

@@ -14,7 +14,7 @@
 
 const Repository = require('@models/repository');
 const User = require('@models/user');
-const Github = require('@utilities/github');
+const Github = require('@services/github');
 const fs = require('fs');
 const path = require('path');
 const UserContainer = require('@services/userContainer');
