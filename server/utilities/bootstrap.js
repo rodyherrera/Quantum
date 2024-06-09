@@ -20,9 +20,17 @@ const path = require('path');
 const UserContainer = require('@utilities/userContainer');
 const RepositoryHandler = require('@utilities/repositoryHandler');
 const nginxHandler = require('@utilities/nginxHandler');
-const { capitalizeToLowerCaseWithDelimitier } = require('@utilities/algorithms');
 const { spawn } = require('child_process');
 const { sendMail } = require('@utilities/mailHandler');
+
+/**
+ * Formats a route name to a URL-friendly format.
+ * @param {string} route - The route name.
+ * @returns {string} The formatted route path.
+*/
+const formatRoute = (route) => {
+    return route.split(/(?=[A-Z])/).join('-').toLowerCase();
+};
 
 /**
  * Asynchronously sets up an Nginx reverse proxy configuration.
@@ -70,7 +78,7 @@ exports.ensurePublicFolderExistence = async () => {
 exports.configureApp = ({ app, routes, suffix, middlewares, settings }) => {
     middlewares.forEach((middleware) => app.use(middleware));
     routes.forEach((route) => {
-        const path = suffix + capitalizeToLowerCaseWithDelimitier(route);
+        const path = suffix + formatRoute(route);
         const router = require(`../routes/${route}`);
         app.use(path, router);
     });
