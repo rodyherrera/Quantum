@@ -197,7 +197,7 @@ Before deploying to Docker, **make sure you have correctly configured the enviro
 When cloning the repository, inside the generated folder (root), you will discover the "docker-compose.yml" file, which will allow you to deploy both the backend and frontend servers using the command "docker-compose up -d --build ".
 ```bash
 # First, you must clone the repository.
-git clone -b 1.0.4 https://github.com/rodyherrera/Quantum
+git clone -b 1.0.5 https://github.com/rodyherrera/Quantum
 ```
 After cloning the repository, we go inside the generated folder to run docker-compose.
 ```bash
@@ -304,13 +304,13 @@ To run this project, you'll need the following:
 ## Installation
 You may prefer the all-in-one command, to run in your terminal, clone the repository and install dependencies.
 ```bash
-git clone -b 1.0.4 https://github.com/rodyherrera/Quantum && cd Quantum && cd server && npm install --force && cd ../client &&  npm install --force
+git clone -b 1.0.5 https://github.com/rodyherrera/Quantum && cd Quantum && cd server && npm install --force && cd ../client &&  npm install --force
 ```
 
 ### Installation Guide
 1. **Clone the Quantum Repository:**
     ```bash
-    git clone -b 1.0.4 https://github.com/rodyherrera/Quantum
+    git clone -b 1.0.5 https://github.com/rodyherrera/Quantum
     ```
     This command clones the Quantum repository from GitHub to your local machine.
 2. **Navigate to the Quantum Directory:**
