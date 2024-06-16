@@ -31,7 +31,6 @@ const HomePage = () => {
     const { isAuthenticated } = useSelector(state => state.auth);
     const navigate = useNavigate();
 
-
     useEffect(() => {
         // Title Animation Setup
         const titleElements = '#Home-Presentation-Title-Container h1';
@@ -79,6 +78,7 @@ const HomePage = () => {
             opacity: 0
         }, { 
             opacity: 1, 
+            x: 0,
             duration: 0.8, 
             stagger: 0.15, 
             ease: 'back(2)', 
