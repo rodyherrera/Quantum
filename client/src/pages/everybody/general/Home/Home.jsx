@@ -35,9 +35,12 @@ const HomePage = () => {
     useEffect(() => {
         // Title Animation Setup
         const titleElements = '#Home-Presentation-Title-Container h1';
-        gsap.from(titleElements, { 
-            y: 30, 
-            opacity: 0, 
+        gsap.fromTo(titleElements, {
+            y: 30,
+            opacity: 0
+        }, { 
+            y: 0, 
+            opacity: 1, 
             duration: 0.5,
             delay: 0.1, 
             stagger: 0.2, 
@@ -45,15 +48,21 @@ const HomePage = () => {
         }); 
 
         // Subtitle Animations
-        gsap.from('#Home-Presentation-Container-Subtitle', { 
-            y: 20, 
-            opacity: 0, 
+        gsap.fromTo('#Home-Presentation-Container-Subtitle', {
+            y: 20,
+            opacity: 0
+        }, { 
+            y: 0, 
+            opacity: 1, 
             duration: 0.7,
             delay: 0.5 
         });
-        gsap.from('#Home-Short-Subtitle', {
+        gsap.fromTo('#Home-Short-Subtitle', {
             opacity: 0,
             scale: 0.95,
+        }, {
+            opacity: 1,
+            scale: 1,
             duration: 0.8,
             ease: 'power2.out',
             scrollTrigger: {
@@ -64,19 +73,24 @@ const HomePage = () => {
 
         // Button Slide-in Animations
         const actionButtons = '#Home-Presentation-Container-Actions-Container button';
-        gsap.from(actionButtons, { 
+        gsap.fromTo(actionButtons, {
             // Slide opposite directions
             x: (index) => index === 0 ? -50 : 50, 
-            opacity: 0, 
+            opacity: 0
+        }, { 
+            opacity: 1, 
             duration: 0.8, 
             stagger: 0.15, 
             ease: 'back(2)', 
         });
 
         // Docs Button and Circle Animations
-        gsap.from('#Docs-Button', {
+        gsap.fromTo('#Docs-Button', {
             y: 20,
-            opacity: 0,
+            opacity: 0
+        }, {
+            y: 0,
+            opacity: 1,
             duration: 0.6,
             ease: 'power2.out',
             scrollTrigger: {
@@ -84,9 +98,12 @@ const HomePage = () => {
                 start: 'top 80%',
             }
         });
-        gsap.from('#Circle-Contained-Text-Wrapper', { 
-            scale: 0.8,
+        gsap.fromTo('#Circle-Contained-Text-Wrapper', {
             opacity: 0, 
+            scale: 0.8,
+        }, {
+            scale: 1,
+            opacity: 1,
             duration: 1.2, 
             ease: 'back(1.5)',
             scrollTrigger: {

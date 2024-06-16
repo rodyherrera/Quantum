@@ -55,16 +55,22 @@ const FileExplorer = ({ repositoryId }) => {
     useEffect(() => {
         const path = searchParams.get('path') || '/';
         loadPath(path);
-        gsap.from('#Repository-Storage-Header-Title', { 
+        gsap.fromTo('#Repository-Storage-Header-Title', {
+            opacity: 0,
+            scale: 0.95 
+        }, { 
+            scale: 1,
             duration: 0.8, 
-            opacity: 0, 
-            scale: 0.95, 
+            opacity: 1, 
             ease: 'power2.out' 
         });
-        gsap.from('#Repository-Storage-Header-Description', { 
+        gsap.fromTo('#Repository-Storage-Header-Description', {
+            opacity: 0,
+            y: 20
+        }, { 
             duration: 0.8, 
-            opacity: 0, 
-            y: 20,
+            opacity: 1, 
+            y: 0,
             // Slight delay after the title
             delay: 0.2, 
             ease: 'power2.out' 

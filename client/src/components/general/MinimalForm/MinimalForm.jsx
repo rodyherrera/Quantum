@@ -48,16 +48,21 @@ const MinimalForm = ({
     };
 
     useEffect(() => {
-        gsap.from('.Minimal-Form-Container', { 
+        gsap.fromTo('.Minimal-Form-Container', {
+            y: 20
+        }, { 
             duration: 0.8, 
-            y: 20, 
+            y: 0, 
             ease: 'Power2.easeOut' 
         });
     
-        gsap.from(inputRefs.current, {
-            duration: 0.4,
-            opacity: 0,
+        gsap.fromTo(inputRefs.current, {
             y: 10,
+            opacity: 0
+        }, {
+            duration: 0.4,
+            opacity: 1,
+            y: 0,
             stagger: 0.15,
             ease: 'Back.easeOut(1.2)'
         });

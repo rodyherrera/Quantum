@@ -44,16 +44,22 @@ const CreateRepository = () => {
 
     useEffect(() => {
         if(!githubRepositories.length) return;
-        gsap.from('.Repository-Item:first-child', {
-            // Start slightly smaller
-            scale: 0.95, 
+        gsap.fromTo('.Repository-Item:first-child', {
             opacity: 0,
+            // Start slightly smaller
+            scale: 0.95
+        }, {
+            scale: 1,
+            opacity: 1,
             duration: 1,
             ease: "power2.out" 
         });
-        gsap.from('.Repository-Item:not(:first-child)', { 
-            y: 50, 
-            opacity: 0, 
+        gsap.fromTo('.Repository-Item:not(:first-child)', {
+            y: 50,
+            opacity: 0
+        }, { 
+            y: 0, 
+            opacity: 1, 
             duration: 1,
              // 0.2 seconds between each item animation
             stagger: 0.2, 

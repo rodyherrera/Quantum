@@ -31,8 +31,10 @@ const WelcomeSection = ({ ...props }) => {
     ];
 
     useEffect(() => {
-        gsap.from('.Welcome-Title', {
-            opacity: 0,
+        gsap.fromTo('.Welcome-Title', {
+            opacity: 0
+        }, {
+            opacity: 1,
             duration: 0.8,
             ease: 'power1.out',
             scrollTrigger: {
@@ -42,9 +44,12 @@ const WelcomeSection = ({ ...props }) => {
         });
 
         // Target links directly with a more specific selector 
-        gsap.from('.Welcome-Navigation-Container div', { 
+        gsap.fromTo('.Welcome-Navigation-Container div', {
             x: -30,
             opacity: 0,
+        }, { 
+            x: 0,
+            opacity: 1,
             duration: 0.8,
             stagger: 0.1,
             ease: 'back(1.5)',

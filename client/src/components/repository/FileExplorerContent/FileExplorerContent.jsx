@@ -38,9 +38,11 @@ const FileExplorerContent = ({ loadPath }) => {
 
     useEffect(() => {
         if(!repositoryFiles.length) return;
-        gsap.from('.File-Explorer-File-Container', { 
+        gsap.fromTo('.File-Explorer-File-Container', {
+            opacity: 0
+        }, { 
             duration: 0.2, 
-            opacity: 0,
+            opacity: 1,
             // Add a slight delay between each item's animation
             stagger: 0.1,
             ease: 'power2.out' 

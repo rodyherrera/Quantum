@@ -38,15 +38,19 @@ const DataRenderer = ({
 }) => {
 
     useEffect(() => {
-        gsap.from('.Data-Renderer-Main', { 
+        gsap.fromTo('.Data-Renderer-Main', {
+            y: 20
+        }, { 
             duration: 0.8, 
-            y: 20, 
+            y: 0, 
             ease: 'Power2.easeOut' 
         });
 
-        gsap.from(['.Data-Renderer-Header-Container', '.Data-Renderer-Body-Container'], {
+        gsap.fromTo(['.Data-Renderer-Header-Container', '.Data-Renderer-Body-Container'], {
+            y: 10
+        }, {
             duration: 0.5, 
-            y: 10, 
+            y: 0, 
             ease: 'Power2.easeOut',
             // Small delay between header and body animations 
             stagger: 0.1 
@@ -55,7 +59,12 @@ const DataRenderer = ({
 
     useEffect(() => {
         if(isLoading || isOperationLoading){
-            gsap.to('.Data-Renderer-Loading-Container', { duration: 0.4, opacity: 1 });
+            gsap.fromTo('.Data-Renderer-Loading-Container', {
+                opacity: 0
+            }, { 
+                duration: 0.4, 
+                opacity: 1
+            });
         }
     }, [isLoading, isOperationLoading, error, data]);
 

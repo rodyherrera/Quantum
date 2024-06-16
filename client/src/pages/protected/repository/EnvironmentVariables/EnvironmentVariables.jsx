@@ -39,24 +39,30 @@ const EnvironmentVariables = () => {
     useEffect(() => {
         initializeEnvironment();
         // Title Area Animations 
-        gsap.from('#Environment-Variables-Left-Title', { 
+        gsap.fromTo('#Environment-Variables-Left-Title', {
+            y: 30
+        }, { 
             duration: 0.8, 
-            y: 30, 
+            y: 0, 
             stagger: 0.1, 
             ease: 'back' 
         });
 
-        gsap.from('#Environment-Variables-Left-Subtitle', {
+        gsap.fromTo('#Environment-Variables-Left-Subtitle', {
+            scale: 0.95
+        }, {
             duration: 0.8,
-            scale: 0.95,
+            scale: 1,
             ease: 'power2.out'
         });
 
         // Environment Variable Items Animation
-        gsap.from('.Environment-Variable-Container', { 
-            duration: 0.8, 
+        gsap.fromTo('.Environment-Variable-Container', {
             // Slide in from the right
-            x: 50,
+            x: 50
+        }, { 
+            x: 0,
+            duration: 0.8, 
             stagger: 0.15,
              // Add a 'pop' effect
             ease: 'back(2)',
@@ -65,10 +71,12 @@ const EnvironmentVariables = () => {
             }
         });
 
-        gsap.from('#Environment-Variables-Navigation-Container button', {
+        gsap.fromTo('#Environment-Variables-Navigation-Container button', {
+            x: (index) => index === 0 ? -50 : 50
+        }, {
+            x: 0,
             duration: 0.8,
             // Slide in from opposite sides
-            x: (index) => index === 0 ? -50 : 50, 
             stagger: 0.1,
             ease: 'back(2)'
         }); 
@@ -94,10 +102,13 @@ const EnvironmentVariables = () => {
 
     useEffect(() => {
         if(isEnvironmentLoading) return;
-        gsap.from('.Environment-Variable-Container', { 
+        gsap.fromTo('.Environment-Variable-Container', {
+            y: 20,
+            opacity: 0
+        }, { 
             duration: 0.8, 
-            opacity: 0, 
-            y: 20, 
+            opacity: 1, 
+            y: 0, 
             stagger: 0.15, 
             scrollTrigger: {
                 trigger: '.Environment-Variable-Container' 

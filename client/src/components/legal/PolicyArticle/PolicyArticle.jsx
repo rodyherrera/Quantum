@@ -21,9 +21,12 @@ const PolicyArticle = ({ content, title = null }) => {
 
     useEffect(() => {
         if(!articleRef.current) return;
-        gsap.from(articleRef.current, {
+        gsap.fromTo(articleRef.current, {
             opacity: 0,
-            y: 10,
+            y: 10
+        }, {
+            opacity: 1,
+            y: 0,
             duration: 0.8,
             ease: 'power1.out'
         });

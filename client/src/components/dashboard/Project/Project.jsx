@@ -37,20 +37,23 @@ const Project = ({ repository, ...props }) => {
             gsap.fromTo(container, { 
                 opacity: 0,
                 duration: 0.3,
-                ease: 'power2.out',
             }, {
                 opacity: 1,
                 delay: index * 0.05, 
+                ease: 'power2.out',
             });
         });
 
         const body = projectRef.current.querySelector('.Project-Body-Container');
         const footer = projectRef.current.querySelector('.Project-Footer-Container');
-        gsap.from([body, footer], {
+        gsap.fromTo([body, footer], {
             y: 20,
-            opacity: 0,
+            opacity: 0
+        }, {
             duration: 0.4,
-            stagger: 0.15
+            stagger: 0.15,
+            y: 0,
+            opacity: 1
         });
     }, []); 
 

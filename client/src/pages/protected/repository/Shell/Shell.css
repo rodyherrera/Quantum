@@ -13,7 +13,7 @@
 ****/
 
 #Repository-Shell-Main{
-    height: unset;
+    height: 87%;
 }
 
 #Repository-Shell-Main .Binary-View-Left-Container{
@@ -71,6 +71,7 @@
 
 @media screen and (max-width: 768px){
     #Repository-Shell-Main{
+        height: unset;
         width: 100%;
     }
 }

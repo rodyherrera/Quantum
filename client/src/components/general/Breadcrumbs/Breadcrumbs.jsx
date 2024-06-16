@@ -22,11 +22,14 @@ const Breadcrumbs = ({ items, ...props }) => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        gsap.from('.Breadcrumbs-Container li', { 
-            duration: 0.4, 
-            opacity: 0, 
+        gsap.fromTo('.Breadcrumbs-Container li', {
             // Slide in slightly from the left
             x: -15,
+            opacity: 0
+        }, { 
+            duration: 0.4, 
+            opacity: 1, 
+            x: 0,
             stagger: 0.08,
             // Add a little bounce
             ease: 'back.out(1.2)'

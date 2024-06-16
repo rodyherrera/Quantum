@@ -35,16 +35,22 @@ const RepositoryDeployments = () => {
 
     useEffect(() => {
         if(!deployments.length) return;
-        gsap.from('.Repository-Deployment-Container:first-child', {
-            // Start slightly smaller
-            scale: 0.95, 
+        gsap.fromTo('.Repository-Deployment-Container:first-child', {
             opacity: 0,
+            // Start slightly smaller
+            scale: 0.95
+        }, {
+            scale: 1,
+            opacity: 1,
             duration: 1,
             ease: "power2.out" 
         });
-        gsap.from('.Repository-Deployment-Container:not(:first-child)', { 
-            y: 50, 
-            opacity: 0, 
+        gsap.fromTo('.Repository-Deployment-Container:not(:first-child)', {
+            y: 50,
+            opacity: 0
+        }, { 
+            y: 0, 
+            opacity: 1, 
             duration: 1,
              // 0.2 seconds between each item animation
             stagger: 0.2, 

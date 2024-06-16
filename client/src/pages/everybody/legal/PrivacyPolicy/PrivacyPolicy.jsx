@@ -71,9 +71,12 @@ const PrivacyPolicy = () => {
 
     useEffect(() => {
         sectionRefs.current.forEach((ref, index) => {
-            gsap.from(ref.current, {
+            gsap.fromTo(ref.current, {
                 opacity: 0,
-                y: 20, 
+                y: 20
+            }, {
+                opacity: 1,
+                y: 0, 
                 duration: 1, 
                 // Stagger the animations
                 delay: index * 0.3,

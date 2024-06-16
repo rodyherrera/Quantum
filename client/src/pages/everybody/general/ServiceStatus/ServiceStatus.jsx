@@ -32,24 +32,33 @@ const ServiceStatus = () => {
 
     useEffect(() => {
         if(isServerHealthLoading) return;
-        gsap.from('#Service-Status-Container', {
-            duration: 0.8,
+        gsap.fromTo('#Service-Status-Container', {
             opacity: 0,
-            x: -20,
+            x: -20
+        }, {
+            duration: 0.8,
+            opacity: 1,
+            x: 0,
             ease: 'back'
         });
         // Animate status details
-        gsap.from('#Service-Detailed-Status-Container p', {
-            duration: 0.7,
+        gsap.fromTo('#Service-Detailed-Status-Container p', {
             y: 20,
-            opacity: 0,
+            opacity: 0
+        }, {
+            duration: 0.7,
+            y: 0,
+            opacity: 1,
             // Animate each paragraph slightly after the previous one
             stagger: 0.1, 
         });
-        gsap.from('#Service-Status-Footer-Container', {
-            duration: 0.8,
+        gsap.fromTo('#Service-Status-Footer-Container', {
             y: 50,
-            opacity: 0,
+            opacity: 0
+        }, {
+            duration: 0.8,
+            y: 0,
+            opacity: 1,
             ease: 'back',
         });
     }, [isServerHealthLoading]);
