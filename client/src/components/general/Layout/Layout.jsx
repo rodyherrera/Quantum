@@ -70,7 +70,7 @@ const Layout = () => {
                     <Banner text='We sprinkle magic to ease your production deployment. 🎉️' />
                     <Header />
                     <Outlet />
-                    <Waves />
+                    {width <= 768 && <Waves />}
                     <SquaredBackground />
                 </React.Fragment>
             )}
