@@ -22,7 +22,6 @@ const { sendMail } = require('@services/mailHandler');
  * @returns {Object} An object containing 'message' (string) and 'statusCode' (number).
 */
 const parseError = (err) => {
-    console.log(err);
     const errorMap = {
         CastError: { message: 'Database::Cast::Error', statusCode: 400 },
         ValidationError: () => {
