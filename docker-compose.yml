@@ -1,4 +1,4 @@
-# docker compose up -d --build 
+version: '3.8'
 
 services:
   server:
@@ -8,57 +8,88 @@ services:
     ports:
       - "80:80"
     environment:
-      NODE_ENV: development
+      NODE_ENV: ${NODE_ENV:-development}
       DOCKERS_CONTAINER_ALIASES: Quantum-Container
       DOCKER_APK_STARTER_PACKAGES: "git nodejs npm python3 py3-pip"
-      DOMAIN: http://quantum-server.foo.com
-      SECRET_KEY: ""
-      REGISTRATION_DISABLED: "true"
-      CLIENT_HOST: http://quantum.foo.com
-      SESSION_SECRET: ""
-      GITHUB_CLIENT_ID: ""
-      GITHUB_CLIENT_SECRET: ""
-      JWT_EXPIRATION_DAYS: 7d
-      CORS_ORIGIN: "*"
-      SERVER_PORT: 8000
-      SERVER_HOST: 0.0.0.0
-      PRODUCTION_DATABASE: quantumcloud@production
-      DEVELOPMENT_DATABASE: quantumcloud@development
-      LOG_PATH_MAX_SIZE: 250
-      MONGO_URI: mongodb://root:changeme@mongodb:27020
+      DOMAIN: ${DOMAIN:-http://quantum-server-dev.rodyherrera.com}
+      SECRET_KEY: ${SECRET_KEY}
+      REGISTRATION_DISABLED: ${REGISTRATION_DISABLED:-"true"}
+      CLIENT_HOST: ${CLIENT_HOST:-http://quantum.rodyherrera.com}
+      SESSION_SECRET: ${SESSION_SECRET}
+      GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID}
+      GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET}
+      JWT_EXPIRATION_DAYS: ${JWT_EXPIRATION_DAYS:-7d}
+      CORS_ORIGIN: ${CORS_ORIGIN:-"*"}
+      SERVER_PORT: ${SERVER_PORT:-8000}
+      SERVER_HOST: ${SERVER_HOST:-0.0.0.0}
+      PRODUCTION_DATABASE: ${PRODUCTION_DATABASE:-quantumcloud@production}
+      DEVELOPMENT_DATABASE: ${DEVELOPMENT_DATABASE:-quantumcloud@development}
+      LOG_PATH_MAX_SIZE: ${LOG_PATH_MAX_SIZE:-250}
+      MONGO_URI: mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@mongodb:27020
       MONGO_AUTH_SOURCE: admin
-      SMTP_HOST: ""
-      SMTP_PORT: ""
-      SMTP_AUTH_USER: ""
-      SMTP_AUTH_PASSWORD: ""
-      WEBMASTER_MAIL: ""
+      SMTP_HOST: ${SMTP_HOST}
+      SMTP_PORT: ${SMTP_PORT}
+      SMTP_AUTH_USER: ${SMTP_AUTH_USER}
+      SMTP_AUTH_PASSWORD: ${SMTP_AUTH_PASSWORD}
+      WEBMASTER_MAIL: ${WEBMASTER_MAIL}
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock # For Quantum users instances
+      - /var/run/docker.sock:/var/run/docker.sock
       - ./server:/app
       - /var/lib/quantum:/var/lib/quantum
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    networks:
+      - quantum_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   client:
     build:
       context: ./client
       dockerfile: Dockerfile
       args:
-        VITE_SERVER: http://quantum-server.foo.com
-        VITE_API_SUFFIX: /api/v1
+        VITE_SERVER: ${VITE_SERVER:-https://quantum-server-dev.rodyherrera.com}
+        VITE_API_SUFFIX: ${VITE_API_SUFFIX:-/api/v1}
     ports:
-      - "5050:80" # Frontend's external port
+      - "5050:80"
     volumes:
-      - ./client:/app # Mount the frontend code
+      - ./client:/app
+    depends_on:
+      - server
+    networks:
+      - quantum_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   mongodb:
     image: mongo:latest
     ports:
       - "27020:27020"
     environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: changeme
-    command: ["mongod", "--port", "27020"]
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+    command: ["mongod", "--port", "27020", "--bind_ip", "0.0.0.0"]
     volumes:
       - mongodb_data:/data/db
+    networks:
+      - quantum_network
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27020/test --quiet
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+
+networks:
+  quantum_network:
+    driver: bridge
 
 volumes:
   mongodb_data:
