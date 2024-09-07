@@ -1,24 +1,64 @@
-# docker-compose up -d --build 
-
-version: '3.8'
+# docker compose up -d --build 
 
 services:
-  backend-server:
+  server:
     build: 
       context: ./server
       dockerfile: Dockerfile
     ports:
       - "80:80"
+    environment:
+      NODE_ENV: development
+      DOCKERS_CONTAINER_ALIASES: Quantum-Container
+      DOCKER_APK_STARTER_PACKAGES: "git nodejs npm python3 py3-pip"
+      DOMAIN: http://quantum-server.foo.com
+      SECRET_KEY: ""
+      REGISTRATION_DISABLED: "true"
+      CLIENT_HOST: http://quantum.foo.com
+      SESSION_SECRET: ""
+      GITHUB_CLIENT_ID: ""
+      GITHUB_CLIENT_SECRET: ""
+      JWT_EXPIRATION_DAYS: 7d
+      CORS_ORIGIN: "*"
+      SERVER_PORT: 8000
+      SERVER_HOST: 0.0.0.0
+      PRODUCTION_DATABASE: quantumcloud@production
+      DEVELOPMENT_DATABASE: quantumcloud@development
+      LOG_PATH_MAX_SIZE: 250
+      MONGO_URI: mongodb://root:changeme@mongodb:27020
+      MONGO_AUTH_SOURCE: admin
+      SMTP_HOST: ""
+      SMTP_PORT: ""
+      SMTP_AUTH_USER: ""
+      SMTP_AUTH_PASSWORD: ""
+      WEBMASTER_MAIL: ""
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock # For Quantum users instances
       - ./server:/app
       - /var/lib/quantum:/var/lib/quantum
 
-  frontend-server:
+  client:
     build:
       context: ./client
       dockerfile: Dockerfile
+      args:
+        VITE_SERVER: http://quantum-server.foo.com
+        VITE_API_SUFFIX: /api/v1
     ports:
-      - "3030:80" # Frontend's external port
+      - "5050:80" # Frontend's external port
     volumes:
       - ./client:/app # Mount the frontend code
+
+  mongodb:
+    image: mongo:latest
+    ports:
+      - "27020:27020"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: changeme
+    command: ["mongod", "--port", "27020"]
+    volumes:
+      - mongodb_data:/data/db
+
+volumes:
+  mongodb_data:

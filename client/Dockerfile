@@ -15,6 +15,12 @@
 # Use node 18 with Alpine Linux as the base image for the build stage
 FROM node:18-alpine3.17 as build
 
+ARG VITE_SERVER
+ARG VITE_API_SUFFIX
+
+ENV VITE_SERVER=$VITE_SERVER
+ENV VITE_API_SUFFIX=$VITE_API_SUFFIX
+
 # Set the working directory inside the container
 WORKDIR /app
 
@@ -27,7 +33,9 @@ RUN npm install --force --silent
 # Copy all files from the current directory to the working directory
 COPY . .
 
-# Build the project
+RUN echo "VITE_SERVER=$VITE_SERVER" > .env && \
+    echo "VITE_API_SUFFIX=$VITE_API_SUFFIX" >> .env
+
 RUN npm run build
 
 # Use nginx 1.16 with Alpine Linux as the base image for the final stage
