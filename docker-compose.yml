@@ -6,15 +6,21 @@ services:
       context: ./server
       dockerfile: Dockerfile
     ports:
+      # The port where the Quantum server will be exposed by default is 
+      # port 80. This is because there is an NGINX server running 
+      # inside, which you can configure within the application. In case 
+      # you already have an NGINX server, change this port to another 
+      # one (for example: 8000), because you will have conflicts. Once you 
+      # change the port to 8000, you can make a reverse proxy.
       - "80:80"
     environment:
       NODE_ENV: ${NODE_ENV:-development}
       DOCKERS_CONTAINER_ALIASES: Quantum-Container
       DOCKER_APK_STARTER_PACKAGES: "git nodejs npm python3 py3-pip"
-      DOMAIN: ${DOMAIN:-http://quantum-server-dev.rodyherrera.com}
+      DOMAIN: ${DOMAIN:-http://quantum-server.yourdomain.com}
       SECRET_KEY: ${SECRET_KEY}
       REGISTRATION_DISABLED: ${REGISTRATION_DISABLED:-"true"}
-      CLIENT_HOST: ${CLIENT_HOST:-http://quantum.rodyherrera.com}
+      CLIENT_HOST: ${CLIENT_HOST:-http://quantum.yourdomain.com}
       SESSION_SECRET: ${SESSION_SECRET}
       GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID}
       GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET}
@@ -52,9 +58,11 @@ services:
       context: ./client
       dockerfile: Dockerfile
       args:
-        VITE_SERVER: ${VITE_SERVER:-https://quantum-server-dev.rodyherrera.com}
+        VITE_SERVER: ${VITE_SERVER:-http://quantum-server.yourdomain.com}
         VITE_API_SUFFIX: ${VITE_API_SUFFIX:-/api/v1}
     ports:
+      # The port to which the web application 
+      # is exposed is 5050 by default.
       - "5050:80"
     volumes:
       - ./client:/app
@@ -71,6 +79,9 @@ services:
   mongodb:
     image: mongo:latest
     ports:
+      # MongoDB starts on port 27020 by default. This is to 
+      # avoid conflicts if you already have a Mongo 
+      # instance deployed on port 27017.
       - "27020:27020"
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
