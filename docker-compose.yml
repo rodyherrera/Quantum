@@ -14,7 +14,7 @@ services:
       # change the port to 8000, you can make a reverse proxy.
       - "80:80"
     environment:
-      NODE_ENV: ${NODE_ENV:-development}
+      NODE_ENV: ${NODE_ENV:-production}
       DOCKERS_CONTAINER_ALIASES: Quantum-Container
       DOCKER_APK_STARTER_PACKAGES: "git nodejs npm python3 py3-pip"
       DOMAIN: ${DOMAIN:-http://quantum-server.yourdomain.com}
