@@ -54,13 +54,95 @@ I've successfully **migrated all my frontend applications from Vercel and my var
 - **Service Status:** You can check the status of the server through the web-ui. It will determine if the server is working in optimal conditions or if it is overloaded.
 - **Docker-Based Isolation:** Each user receives a dedicated Docker instance for their deployment, ensuring smooth operations and minimizing conflicts.
 
-## Post-Installation Configuration
-After cloning the repository and installing the dependencies for the client and server application, you will need to modify some environment variables.
+## Obtaining GitHub Client Secret and Client ID
+To integrate your application with GitHub's API, you'll need to obtain a Client Secret and Client ID. Follow these detailed steps to acquire them:
 
-Inside the "server" folder, there is the source code of the application that provides the platform API. You will find inside a file called ".env.example", which contains the environment variables that you must establish in the file. ".env" from the same directory:
+1. **Sign in to your GitHub account:** Go to [GitHub](https://github.com/) and sign in with your user credentials.
+2. **Access your account settings:** Click on your profile avatar in the top right corner and select "Settings" from the dropdown menu.
+3. **Navigate to the "Developer settings" section:** In the left sidebar, click on "Developer settings."
+4. **Create a new OAuth application:** Select "OAuth Apps" and click on the "New OAuth App" button.
+5. **Provide application information:** Please enter your app name, your home page URL, and return authorization URL. Please note that the "Home Page URL" must be the address where the server is hosted and cannot be local, that is, it must be accessible to third parties, for example: "http://82.208.22.71:5001 " or "quantum-server.mydomain.com". Likewise, the "Return Authorization URL" must contain the address where the server is hosted followed by the path of the API responsible for returning authorization from Github, for example: "http://82.208.22.71:5002/api/v1/github/callback/" or "https://quantum-server.mydomain.com/api/v1/github/callback/".
+6. **Register the application:** Click on the "Register application" button.
+7. **Copy the application credentials:** Once registered, GitHub will generate a Client ID and Client Secret. Copy these values and securely store them.
+8. **Utilize the credentials in your application:** Use the Client ID and Client Secret in your application's configuration to authenticate requests to GitHub's API.
+
+It is important that you do this step, otherwise NO ONE will simply be able to use your application, including you.
+
+## Deploying with Docker
+Deploying Quantum in docker is extremely simple. However, first, **you must configure the required environment variables found in the .env file within the repository**. If you already did it, you can continue ;)
+
+```env
+# NOTE: These environment variables are used in "docker-compose.yml".
+
+# You can generate a random key for these variables in: https://randomkeygen.com/
+SECRET_KEY = 
+SESSION_SECRET = 
+
+# GITHUB_CLIENT_ID: Unique identifier provided by GitHub for OAuth integration.
+# GITHUB_CLIENT_SECRET: Secret key provided by GitHub for OAuth integration.
+# https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/authenticating-to-the-rest-api-with-an-oauth-app#registering-your-app
+GITHUB_CLIENT_ID = 
+GITHUB_CLIENT_SECRET = 
+
+# Credentials that will be used to authenticate with MongoDB.
+MONGO_INITDB_ROOT_USERNAME = root
+MONGO_INITDB_ROOT_PASSWORD = changeme
+
+# OPTIONAL: If you have an SMTP server, complete these variables. 
+# It will serve so that, in case of errors at runtime, you will be notified (WEBMASTER_EMAIL).
+SMTP_HOST =
+SMTP_PORT =
+SMTP_AUTH_USER =
+SMTP_AUTH_PASSWORD =
+WEBMASTER_MAIL =
+
+# DOMAIN: Specifies the base domain of the server. This is the 
+# main access point for the application.
+DOMAIN = http://quantum-server.yourdomain.com
+
+# CLIENT_HOST: Specifies the host of the application's 
+# client. It's the access point for the user interface.
+CLIENT_HOST = http://quantum.yourdomain.com
+
+# REGISTRATION_DISABLED: The value of the variable will indicate 
+# whether third parties can create accounts within the platform, that 
+# is, through the client application (webui) or through the API 
+# provided by the server. By default this option is "true" indicating 
+# that accounts cannot be created, so the system administrator creates 
+# their account as "admin" from the CLI provided.
+REGISTRATION_DISABLED = false
+
+# ...other variables that you can modify for the deployment of the 
+# application in docker, you should not worry about this, since they
+# have values ​​assigned by default (in docker-compose.yml).
+```
+
+When cloning the repository, inside the generated folder (root), you will discover the "docker-compose.yml" file, which will allow you to deploy both the backend and frontend servers using the command "docker-compose up -d --build ".
+```bash
+# First, you must clone the repository.
+git clone -b 1.0.5 https://github.com/rodyherrera/Quantum
+```
+After cloning the repository, we go inside the generated folder to run docker-compose.
+```bash
+docker-compose up -d --build 
+```
+When deploying to Docker, you will have three new containers, `1) The Quantum server`, `2) The web application` and `3) The MongoDB instance`. 
+
+By default, the backend server will run on port `80`. While the web application on `5050`. The database on `27020`. 
+
+You shouldn't worry about the ports, but in case you have conflicts with existing services, such as port 80, you can change it and make a reverse proxy. You must do this modification within the "docker-compose.yml", and well, it also applies to the other services.
+
+## In case you don't deploy in Docker
+When you deploy in Docker, you only have to modify a .env file, which, as mentioned in the corresponding section, is located in the root of the repository. 
+
+If you do NOT deploy in Docker, you must still adjust those environment variables, but now they are not centralized in a single file as in the case of Docker. Well, you must configure the environment variables found in "client/" and "server/".
+
+In addition, when you deploy in Docker, there are environment variables that are already configured, so the ones you have to adjust are only secret keys, however if you choose to deploy without Docker, you must adjust more variables such as: the URI of your MongoDB.
+
+Next, we will show you the content of `server/.env.example`, you must create a `server/.env` file where you establish the production values ​​of these environment variables that are documented.
 ```env
 # NODE_ENV: Defines the server execution environment. 
-NODE_ENV = development
+NODE_ENV = production
 
 # DOCKERS_CONTAINER_ALIASES: The content of the variable will indicate 
 # the value that will be concatenated at the beginning of each container 
@@ -75,7 +157,7 @@ DOCKER_APK_STARTER_PACKAGES = "git nodejs npm python3 py3-pip"
 
 # DOMAIN: Specifies the base domain of the server. This is the 
 # main access point for the application.
-DOMAIN = www.backend-domain.com
+DOMAIN = http://quantum-server.yourdomain.com
 # DOMAIN = http://127.0.0.1:80
 
 # SECRET_KEY: Secret key used for encrypting 
@@ -92,7 +174,7 @@ REGISTRATION_DISABLED = true
 
 # CLIENT_HOST: Specifies the host of the application's 
 # client. It's the access point for the user interface.
-CLIENT_HOST = www.frontend-domain.com
+CLIENT_HOST = http://quantum.yourdomain.com
 # CLIENT_HOST = http://127.0.0.1:3030
 
 # SERVER_PORT: The port on which the server 
@@ -107,12 +189,10 @@ SERVER_HOSTNAME = 0.0.0.0
 # and verifying the authenticity of user sessions.
 SESSION_SECRET = 
 
-# GITHUB_CLIENT_ID: Unique identifier 
-# provided by GitHub for OAuth integration.
+# GITHUB_CLIENT_ID: Unique identifier provided by GitHub for OAuth integration.
+# GITHUB_CLIENT_SECRET: Secret key provided by GitHub for OAuth integration.
+# https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/authenticating-to-the-rest-api-with-an-oauth-app#registering-your-app
 GITHUB_CLIENT_ID = 
-
-# GITHUB_CLIENT_SECRET: Secret key provided by 
-# GitHub for OAuth integration.
 GITHUB_CLIENT_SECRET = 
 
 # JWT_EXPIRATION_DAYS: Specifies the validity duration 
@@ -165,7 +245,7 @@ SMTP_AUTH_PASSWORD =
 # as errors, reports, among other things.
 WEBMASTER_MAIL = 
 ```
-In the same way, within the "client" directory, you will find the same ".env.example" and ".env" files, obviously with different variables, which you must also set.
+In the same way, you will find `client/.env.example`, you must create a `client/.env` file to deploy your web application, there are only two variables that you must adjust.
 ```bash
 # VITE_SERVER: Address where the 
 # Quantum backend is deployed.
@@ -176,36 +256,6 @@ VITE_SERVER = http://0.0.0.0:8000
 VITE_API_SUFFIX = /api/v1
 ```
 After establishing the environment variables for both the client and server applications, you will have what you need to deploy.
-
-## Obtaining GitHub Client Secret and Client ID
-To integrate your application with GitHub's API, you'll need to obtain a Client Secret and Client ID. Follow these detailed steps to acquire them:
-
-1. **Sign in to your GitHub account:** Go to [GitHub](https://github.com/) and sign in with your user credentials.
-2. **Access your account settings:** Click on your profile avatar in the top right corner and select "Settings" from the dropdown menu.
-3. **Navigate to the "Developer settings" section:** In the left sidebar, click on "Developer settings."
-4. **Create a new OAuth application:** Select "OAuth Apps" and click on the "New OAuth App" button.
-5. **Provide application information:** Please enter your app name, your home page URL, and return authorization URL. Please note that the "Home Page URL" must be the address where the server is hosted and cannot be local, that is, it must be accessible to third parties, for example: "http://82.208.22.71:5001 " or "quantum-server.mydomain.com". Likewise, the "Return Authorization URL" must contain the address where the server is hosted followed by the path of the API responsible for returning authorization from Github, for example: "http://82.208.22.71:5002/api/v1/github/callback/" or "https://quantum-server.mydomain.com/api/v1/github/callback/".
-6. **Register the application:** Click on the "Register application" button.
-7. **Copy the application credentials:** Once registered, GitHub will generate a Client ID and Client Secret. Copy these values and securely store them.
-8. **Utilize the credentials in your application:** Use the Client ID and Client Secret in your application's configuration to authenticate requests to GitHub's API.
-
-It is important that you do this step, otherwise NO ONE will simply be able to use your application, including you.
-
-## Deploying with Docker
-Before deploying to Docker, **make sure you have correctly configured the environment variables** associated with the client application as well as the backend server.
-
-When cloning the repository, inside the generated folder (root), you will discover the "docker-compose.yml" file, which will allow you to deploy both the backend and frontend servers using the command "docker-compose up -d --build ".
-```bash
-# First, you must clone the repository.
-git clone -b 1.0.5 https://github.com/rodyherrera/Quantum
-```
-After cloning the repository, we go inside the generated folder to run docker-compose.
-```bash
-docker-compose up -d --build 
-```
-After executing the command, Docker will deploy the frontend server (webui) and the backend.
-
-The `docker-compose.yml` file contains the **port configuration for exposure**. The **backend server** is exposed to the host network through port `80`, while the **frontend application (webui)** is accessible via port `3030`. Modifying these ports is as simple as editing the "docker-compose.yml" file.
 
 ## Using NGINX as a reverse proxy
 If you already have `NGINX` running on your server, **you will not be able to deploy the Quantum server on port 80**, since the port is already occupied, so you will have an error from Docker.
