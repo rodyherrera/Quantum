@@ -16,6 +16,7 @@ const Docker = require('dockerode');
 const ContainerLoggable = require('@services/containerLoggable');
 const docker = new Docker();
 const fs = require('fs').promises;
+const { ensureDirectoryExists } = require('@utilities/runtime');
 
 class DockerHandler extends ContainerLoggable{
     constructor({ storagePath, imageName, dockerName, logName, userId }){
@@ -131,7 +132,7 @@ class DockerHandler extends ContainerLoggable{
         try{
             const imageExists = await this.checkImageExists();
             if(!imageExists) await this.pullImage();
-            await this.ensureDirectoryExists(this.storagePath);
+            await ensureDirectoryExists(this.storagePath);
             const container = await this.createContainer();
             await container.start();
             return container;

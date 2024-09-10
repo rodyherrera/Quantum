@@ -17,6 +17,7 @@ const path = require('path');
 const util = require('util');
 const stat = util.promisify(fs.stat);
 const truncate = util.promisify(fs.truncate);
+const { ensureDirectoryExists } = require('@utilities/runtime');
 
 /**
  * Manages logs for a user's containers.
@@ -81,7 +82,7 @@ class ContainerLoggable{
                 global.logStreamStore[this.userId].end();
                 delete global.logStreamStore[this.userId];
             }
-            await this.ensureDirectoryExists(this.logDir);
+            await ensureDirectoryExists(this.logDir);
             const stream = fs.createWriteStream(this.logFile, { flags: 'a' });
             global.logStreamStore[this.userId] = stream;
             return stream;
@@ -112,23 +113,6 @@ class ContainerLoggable{
             if(stats.size > maxSize) await truncate(this.logFile, 0);
         }catch(error){
             this.criticalErrorHandler('checkLogFileStatus', error);
-        }
-    };
-
-    /**
-     * Ensures that the log directory exists. Creates it if not.
-     * @param {string} directoryPath - The path to the log directory.
-    */
-    async ensureDirectoryExists(directoryPath){
-        try{
-            await fs.promises.access(directoryPath);
-        }catch(error){
-            // Only handle directory not found error
-            if(error.code === 'ENOENT'){
-                await fs.promises.mkdir(directoryPath, { recursive: true });
-            }else{
-                throw error;
-            }
         }
     };
 

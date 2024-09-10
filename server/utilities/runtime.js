@@ -13,6 +13,7 @@
 ****/
 
 const axios = require('axios');
+const fs = require('fs');
 const _ = require('lodash');
 
 /**
@@ -28,6 +29,23 @@ exports.getPublicIPAddress = async () => {
     }catch{
         console.error('Error fetching IP address:', error);  
         return '127.0.0.1';
+    }
+};
+
+/**
+ * Ensures that the log directory exists. Creates it if not.
+ * @param {string} directoryPath - The path to the log directory.
+*/
+exports.ensureDirectoryExists = async (directoryPath) => {
+    try{
+        await fs.promises.access(directoryPath);
+    }catch(error){
+        // Only handle directory not found error
+        if(error.code === 'ENOENT'){
+            await fs.promises.mkdir(directoryPath, { recursive: true });
+        }else{
+            throw error;
+        }
     }
 };
 

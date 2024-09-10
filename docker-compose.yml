@@ -25,7 +25,7 @@ services:
       GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID}
       GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET}
       JWT_EXPIRATION_DAYS: ${JWT_EXPIRATION_DAYS:-7d}
-      CORS_ORIGIN: ${CORS_ORIGIN:-"*"}
+      CORS_ORIGIN: ${CORS_ORIGIN:-*}
       SERVER_PORT: ${SERVER_PORT:-8000}
       SERVER_HOST: ${SERVER_HOST:-0.0.0.0}
       PRODUCTION_DATABASE: ${PRODUCTION_DATABASE:-quantumcloud@production}
@@ -58,7 +58,7 @@ services:
       context: ./client
       dockerfile: Dockerfile
       args:
-        VITE_SERVER: ${VITE_SERVER:-http://quantum-server.yourdomain.com}
+        VITE_SERVER: ${VITE_SERVER:-https://quantum-server-dev.rodyherrera.com}
         VITE_API_SUFFIX: ${VITE_API_SUFFIX:-/api/v1}
     ports:
       # The port to which the web application 

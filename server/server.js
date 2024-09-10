@@ -47,6 +47,7 @@ const SERVER_HOST = process.env.SERVER_HOSTNAME || '0.0.0.0';
 process.on('uncaughtException', async (error) => {
     console.error('[Quantum Cloud]: Uncaught Exception:', error);
     await cleanHostEnvironment();
+    if(process.env.NODE_ENV !== 'production') return;
     console.log('[Quantum Cloud]: Restarting server...');
     await sendMail({
         subject: 'Critical runtime error, restarting server...',
