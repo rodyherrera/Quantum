@@ -1,4 +1,4 @@
-# Simplify Deployment with Our Cutting-Edge Open Source Platform 🚀
+# The scalable, hackable, open-source, and self-hostable alternative to Heroku/Netlify/Vercel/... 🚀
 <div>
 <a href="https://ko-fi.com/codewithrodi"> <img align="left" src="https://cdn.ko-fi.com/cdn/kofi3.png?v=3" height="33"   width="130" alt="Support Quantum!" /></a>
 </div>
