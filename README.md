@@ -132,6 +132,15 @@ By default, the backend server will run on port `80`. While the web application 
 
 You shouldn't worry about the ports, but in case you have conflicts with existing services, such as port 80, you can change it and make a reverse proxy. You must do this modification within the "docker-compose.yml", and well, it also applies to the other services.
 
+## Quantum CLI via Docker
+This is useful, as it will help you create `your administrator user`. 
+If you have already deployed to Docker, you can access the CLI via the following command:
+```bash
+docker exec -it quantum-server-1 npm run cli
+```
+After running it, if your container is active, you will be able to correctly access the available options.
+[You can learn more about the Quantum CLI here.](#the-quantum-cli)
+
 ## In case you don't deploy in Docker
 When you deploy in Docker, you only have to modify a .env file, which, as mentioned in the corresponding section, is located in the root of the repository. 
 
