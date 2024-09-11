@@ -23,15 +23,15 @@ passport.use(new GithubStrategy({
     clientSecret: process.env.GITHUB_CLIENT_SECRET!,
     callbackURL: `${process.env.DOMAIN}/api/v1/github/callback/`,
     scope: ['user', 'repo']
-},(accessToken:string,refreshToken:string,profile:any,cb:(err:any,user:any)=>void)=>{
-    return cb(null,{accessToken,profile,refreshToken});
+}, (accessToken: string, refreshToken: string, profile: any, cb: (err: any, user: any) => void) => {
+    return cb(null, { accessToken , profile,refreshToken });
 }));
 
-passport.serializeUser((user:any,cb:(err:any,identifier:any)=>void)=>{
+passport.serializeUser((user: any, cb: (err: any, identifier: any) => void) => {
     cb(null,user);
 });
 
-passport.deserializeUser((obj:any,cb:(err:any,user:any)=>void)=>{
+passport.deserializeUser((obj: any, cb:(err: any, user: any) => void) => {
     cb(null,obj);
 });
 
