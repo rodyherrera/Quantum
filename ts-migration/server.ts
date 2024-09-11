@@ -1,0 +1,111 @@
+/***
+ * Copyright (C) Rodolfo Herrera Hernandez. All rights reserved.
+ * Licensed under the MIT license. See LICENSE file in the project root
+ * for full license information.
+ *
+ * =+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
+ *
+ * For related information - https://github.com/rodyherrera/Quantum/
+ *
+ * All your applications, just in one place. 
+ *
+ * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+****/
+
+declare global {
+    namespace NodeJS {
+        interface Global {
+            logStreamStore: Record<string, unknown>;
+            userContainers: Record<string, unknown>;
+        }
+    }
+}
+
+/**
+ * Temporary global storage for log streams.
+ * @global
+ * @todo Replace with Redis or a similar tool for scalability in a later version.
+*/
+global.logStreamStore = {};
+
+/**
+ * Temporary storage for user container information.
+ * @global
+ * @todo Replace with a persistent solution (e.g., database) in a later version.
+*/
+global.userContainers = {};
+
+import { httpServer } from '@config/express';
+import { sendMail } from '@services/mailHandler';
+import { cleanHostEnvironment } from '@utilities/runtime';
+import mongoConnector from '@utilities/mongoConnector';
+import * as bootstrap from '@utilities/bootstrap';
+
+import '@config/ws';
+
+// Server configuration
+const SERVER_PORT: number = Number(process.env.SERVER_PORT) || 8000;
+const SERVER_HOST: string = process.env.SERVER_HOSTNAME || '0.0.0.0';
+
+/**
+ * Handles uncaught exceptions, cleans the environment, and restarts the server. 
+ * @param {Error} err - The uncaught exception.
+*/
+process.on('uncaughtException', async (error:Error) => {
+    console.error('[Quantum Cloud]: Uncaught Exception:', error);
+    await cleanHostEnvironment();
+    if(process.env.NODE_ENV !== 'production') return;
+    console.log('[Quantum Cloud]: Restarting server...');
+    await sendMail({
+        subject: 'Critical runtime error, restarting server...',
+        html: `A critical error has been registered in the execution of the platform server. This error cannot be ignored and continue executing instructions, so the server will be forcefully restarted to maintain the integrity of the platform and its hosted services. Keep in mind that the latter can get into a loop. We will leave you error information:\n${error}`
+    });
+    await bootstrap.restartServer();
+});
+
+/**
+ * Handles unhandledRejection and print in console.
+ * @param {String} reason - The unhandled rejection.
+*/
+process.on('unhandledRejection', (reason:any) => {
+    console.error('[Quantum Cloud]: Unhandled Promise Rejection, reason:', reason);
+});
+
+/**
+ * Handles SIGINT (Ctrl-C) for graceful shutdown.
+*/
+process.on('SIGINT', async () => {
+    console.log('[Quantum Cloud]: SIGINT signal received, shutting down...');
+    await cleanHostEnvironment();
+    await sendMail({
+        subject: 'Quantum and hosted services have stopped successfully.',
+        html: 'The server has safely completed execution. A certain signal has been received and all services hosted on the platform have been terminated. After sending this email, the server will be closed. See you later!'
+    });
+    process.exit(0);
+});
+
+// Starts the HTTP Server
+httpServer.listen(SERVER_PORT, SERVER_HOST, async () => {
+    try{
+        // Manages Nginx configuration for proxying
+        bootstrap.setupNginxReverseProxy();
+        // Ensures necessary environment variables exist
+        bootstrap.validateEnvironmentVariables();
+        // Establishes a connection to the MongoDB database
+        await mongoConnector();
+        console.log('[Quantum Cloud]: Docker containers and user applications will be started. This may take a few minutes...');
+        // Loads user-defined Docker containers
+        await bootstrap.loadUserContainers();
+        // Initializes user repositories (presumably for Git interaction)
+        await bootstrap.initializeRepositories();
+        // Email to WEBMASTER_MAIL to notify about the correct opening of the server.
+        await sendMail({
+            subject: 'The Quantum API is now accessible!',
+            html: 'Your instance has been successfully deployed within your server.'
+        });
+        console.log(`[Quantum Cloud]: Server running at http://${SERVER_HOST}:${SERVER_PORT}/.`);
+    }catch(error){
+        console.error('[Quantum Cloud]: Error during server initialization:', error);
+        process.exit(1);
+    }
+});

@@ -1,0 +1,24 @@
+{
+    "compilerOptions": {
+        "target": "ES6",
+        "module": "commonjs",
+        "strict": true,
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "forceConsistentCasingInFileNames": true,
+        "resolveJsonModule": true,
+        "outDir": "./dist",
+        "paths": {
+            "@models/*": ["./models/*"],
+            "@utilities/*": ["./utilities/*"],
+            "@routes/*": ["./routes/*"],
+            "@config/*": ["./config/*"],
+            "@controllers/*": ["./controllers/*"],
+            "@cli/*": ["./cli/*"],
+            "@middlewares/*": ["./middlewares/*"],
+            "@services/*": ["./services/*"]
+        }
+    },
+    "include": ["."],
+    "exclude": ["node_modules"]
+  }
