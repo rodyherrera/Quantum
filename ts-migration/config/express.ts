@@ -25,14 +25,14 @@ import globalErrorHandler from '@controllers/globalErrorHandler';
 
 const app = express();
 const httpServer = http.createServer(app);
-const io = new Server(httpServer, { cors: { origin:process.env.CORS_ORIGIN } });
+const io = new Server(httpServer, { cors: { origin: process.env.CORS_ORIGIN } });
 
 bootstrap.ensurePublicFolderExistence();
 
 bootstrap.configureApp({
     app,
-    suffix:'/api/v1/',
-    routes:[
+    suffix: '/api/v1/',
+    routes: [
         'github',
         'auth',
         'repository',
@@ -40,28 +40,28 @@ bootstrap.configureApp({
         'deployment',
         'server'
     ],
-    middlewares:[
+    middlewares: [
         session({
-            secret:process.env.SESSION_SECRET!,
-            resave:false,
-            saveUninitialized:true
+            secret: process.env.SESSION_SECRET!,
+            resave: false,
+            saveUninitialized: true
         }),
-        cors({ origin:process.env.CORS_ORIGIN, credentials:true }),
+        cors({ origin: process.env.CORS_ORIGIN, credentials: true }),
         bodyParser.json(),
-        bodyParser.urlencoded({extended:true}),
+        bodyParser.urlencoded({ extended: true }),
         passport.initialize(),
         passport.session(),
         express.static('public')
     ],
-    settings:{
-        deactivated:[
+    settings: {
+        deactivated: [
             'x-powered-by'
         ]
     }
 });
 
 app.all('*', (req: Request, res: Response) => {
-    if(req.path.startsWith('/api/v1/')){
+    if(req.path.startsWith('/api/v1/') || !process.env.CLIENT_HOST){
         return res.status(404).json({
             status: 'error',
             data: {
