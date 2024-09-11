@@ -12,9 +12,9 @@
  * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 ****/
 
-import mongoose from 'mongoose';
+import mongoose, { Document } from 'mongoose';
 
-interface IGithub {
+export interface IGithub extends Document {
     user: mongoose.Schema.Types.ObjectId;
     githubId: string;
     accessToken: string;
@@ -48,12 +48,12 @@ GithubSchema.index({ username: 'text' });
 
 GithubSchema.post('save', async function(this: IGithub){
     const { user, _id } = this;
-    await mongoose.model('User').findByIdAndUpdate(user,{ github:_id });
+    await mongoose.model('User').findByIdAndUpdate(user, { github: _id });
 }); 
 
 GithubSchema.post('findOneAndDelete', async function(this: IGithub){
     const { user } = this;
-    await mongoose.model('User').findByIdAndUpdate(user,{ $unset:{ github:1 } });
+    await mongoose.model('User').findByIdAndUpdate(user, { $unset: { github: 1 } });
 });
 
 const Github = mongoose.model<IGithub>('Github', GithubSchema);

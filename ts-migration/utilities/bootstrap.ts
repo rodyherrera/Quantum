@@ -12,8 +12,8 @@
  * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 ****/
 
-import Repository from '@models/repository';
-import User from '@models/user';
+import Repository, { IRepository } from '@models/repository';
+import User, { IUser } from '@models/user';
 import Github from '@services/github';
 import fs from 'fs';
 import path from 'path';
@@ -142,9 +142,10 @@ export const initializeRepositories = async (): Promise<void> => {
                 populate: { path: 'github', select: 'accessToken username' }
             });
         console.log(`[Quantum Cloud]: Found ${repositories.length} repositories.`);
-        await Promise.all(repositories.map(async (repository) => {
-            const repositoryHandler = new RepositoryHandler(repository, repository.user);
-            const github = new Github(repository.user, repository);
+        await Promise.all(repositories.map(async (repository: IRepository) => {
+            const user = repository.user as IUser;
+            const repositoryHandler = new RepositoryHandler(repository, user);
+            const github = new Github(user, repository);
             await repositoryHandler.start(github);
         }));
         await sendMail({

@@ -15,6 +15,7 @@
 import Deployment from '@models/deployment';
 import RuntimeError from '@utilities/runtimeError';
 import { catchAsync } from '@utilities/runtime';
+import { IUser } from '@models/user';
 import { Request, Response, NextFunction } from 'express';
 
 /**
@@ -26,7 +27,7 @@ import { Request, Response, NextFunction } from 'express';
  * @throws {RuntimeError} - If user is not admin and the deployment is not found or if it doesn't belong to the user. 
  */
 export const verifyDeploymentAccess = catchAsync(async (req:Request,res:Response,next:NextFunction) => {
-    const { user } = req;
+    const user = req.user as IUser;
     // Admins have access to all deployments
     if(user.role === 'admin') return next();
     const { id } = req.params;

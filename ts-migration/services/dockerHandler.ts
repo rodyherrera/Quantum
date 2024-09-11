@@ -104,7 +104,7 @@ class DockerHandler extends ContainerLoggable{
         try{
             await image.inspect();
             return true;
-        }catch(error){
+        }catch(error: any){
             if(error.statusCode === 404){
                 return false;
             }
@@ -119,7 +119,7 @@ class DockerHandler extends ContainerLoggable{
         try{
             console.log(`[Quantum Cloud]: Pulling "${this.imageName}"...`);
             await new Promise<void>((resolve, reject) => {
-                docker.pull(this.imageName, (error, stream) => {
+                docker.pull(this.imageName, (error: any, stream: NodeJS.ReadableStream) => {
                     if(error) reject(error);
                     else{
                         docker.modem.followProgress(stream, (progressError) => {
@@ -139,7 +139,7 @@ class DockerHandler extends ContainerLoggable{
      * Creates a new Docker container and starts it.
      * @returns {Promise<Container>} Returns a Docker container object.
      */
-    async createAndStartContainer(): Promise<Container>{
+    async createAndStartContainer(): Promise<Container | null>{
         try{
             const imageExists = await this.checkImageExists();
             if(!imageExists) await this.pullImage();
@@ -149,6 +149,7 @@ class DockerHandler extends ContainerLoggable{
             return container;
         }catch(error){
             console.log('[Quantum Cloud] CRITICAL ERROR (@dockerHandler - createAndStartContainer):', error);
+            return null;
         }
     }
 }

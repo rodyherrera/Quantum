@@ -12,9 +12,9 @@
  * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 ****/
 
-import mongoose from 'mongoose';
+import mongoose, { Document, Query } from 'mongoose';
 
-interface ICommit {
+interface ICommit{
     message?: string;
     author?: {
         name?: string;
@@ -23,11 +23,11 @@ interface ICommit {
     date?: Date;
 }
 
-interface IEnvironment {
+export interface IEnvironment{
     variables: Map<string, string>;
 }
 
-interface IDeployment {
+export interface IDeployment extends Document{
     user: mongoose.Schema.Types.ObjectId;
     githubDeploymentId: string;
     repository: mongoose.Schema.Types.ObjectId;
@@ -36,6 +36,7 @@ interface IDeployment {
     status: 'pending' | 'success' | 'stopped' | 'failure' | 'queued';
     url?: string;
     createdAt?: Date;
+    getFormattedEnvironment: () => string;
 }
 
 const DeploymentSchema = new mongoose.Schema<IDeployment>({
@@ -84,22 +85,22 @@ DeploymentSchema.methods.getFormattedEnvironment = function(){
     return formattedEnvironment.join(' ');
 };
 
-DeploymentSchema.post('findOneAndUpdate', async function(){
-    // DO IT FOR 'save' middleware TOO!!!!!!!
-    const updatedDoc = await this.model.findOne(this._conditions).select('environment repository');
-    const { variables } = updatedDoc.environment;
-    for(let [key, value] of variables){
-        key = key.toLowerCase();
-        if(!key.includes('port')) continue;
-        await mongoose.model('Repository')
-            .updateOne({ _id: updatedDoc.repository }, { port: value });
-        // first match, break "for" loop
-        break;
+DeploymentSchema.post<Query<IDeployment, IDeployment>>('findOneAndUpdate', async function(){
+    const updatedDoc = await this.model.findOne(this.getFilter()).select('environment repository');
+    if(updatedDoc){
+        const { variables } = updatedDoc.environment;
+        for(let [key, value] of variables){
+            key = key.toLowerCase();
+            if(!key.includes('port')) continue;
+            await mongoose.model('Repository')
+                .updateOne({ _id: updatedDoc.repository }, { port: value });
+            break;
+        }
     }
 });
 
-DeploymentSchema.post('findOneAndDelete', async function(){
-    const { user, repository, _id } = this;
+DeploymentSchema.post<Query<IDeployment, IDeployment>>('findOneAndDelete', async function(){
+    const { user, repository, _id } = this.getFilter();
 
     const userUpdatePromise = mongoose.model('User')
         .updateOne({ _id: user }, { $pull: { deployments: _id } }).lean().exec();

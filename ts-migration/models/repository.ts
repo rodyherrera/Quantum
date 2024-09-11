@@ -16,20 +16,23 @@ import mongoose, { Document, Model, Schema } from 'mongoose';
 import Github from '@services/github';
 import RepositoryHandler from '@services/repositoryHandler';
 import * as nginxHandler from '@services/nginxHandler';
+import { IUser } from '@models/user';
+import { IDeployment } from '@models/deployment';
 import { getPublicIPAddress } from '@utilities/runtime';
 import { v4 } from 'uuid';
 
-interface IRepository extends Document {
+export interface IRepository extends Document {
     alias: string;
+    _id: string | mongoose.Types.ObjectId;
     name: string;
-    webhookId?: string;
+    webhookId?: number;
     buildCommand?: string;
     installCommand?: string;
     startCommand?: string;
     rootDirectory?: string;
-    user: mongoose.Schema.Types.ObjectId;
+    user: mongoose.Schema.Types.ObjectId | IUser;
     url: string;
-    deployments: mongoose.Schema.Types.ObjectId[];
+    deployments: mongoose.Schema.Types.ObjectId[] | IDeployment[];
     domains: string[];
     port?: number;
     createdAt: Date;
@@ -115,12 +118,12 @@ const performCleanupTasks = async (deletedDoc: IRepository, repositoryUser: any,
 
 const deleteRepositoryHandler = async (deletedDoc: IRepository) => {
     const repositoryUser = await removeRepositoryReference(deletedDoc);
-    const deployments = await getAndDeleteDeployments(deletedDoc._id);
+    const deployments = await getAndDeleteDeployments(deletedDoc._id as mongoose.Types.ObjectId);
     await nginxHandler.removeDomainList(deletedDoc.domains);
     await performCleanupTasks(deletedDoc, repositoryUser, deployments);
 };
 
-const handleDomains = async (domains: string[], port: number | undefined, currentDomains: string[], userEmail: string) => {
+const handleDomains = async (domains: string[], port: number, currentDomains: string[], userEmail: string) => {
     const domainsToAdd = domains.filter((domain) => !currentDomains.includes(domain));
     const domainsToRemove = currentDomains.filter((domain) => !domains.includes(domain));
     const ipv4 = await getPublicIPAddress();
@@ -150,14 +153,14 @@ const getRepositoryData = async (_id: mongoose.Types.ObjectId) => {
         });
 };
 
-const createWebhook = async (github: Github, webhookEndpoint: string) => {
+const createWebhook = async (github: Github, webhookEndpoint: string): Promise<number> => {
     try{
-        const webhookId = await github.createWebhook(webhookEndpoint, process.env.SECRET_KEY);
-        return webhookId;
-    }catch(err){
+        const webhookId = await github.createWebhook(webhookEndpoint, process.env.SECRET_KEY || '');
+        return Number(webhookId);
+    }catch(err: any){
         if(err?.response?.data?.message !== 'Repository was archived so is read-only.')
             throw err;
-        return undefined;
+        return 0;
     }
 };
 
@@ -168,16 +171,22 @@ const handleUpdateCommands = async (context: any) => {
     const repositoryData = await getRepositoryData(_id);
     if(!repositoryData) return;
 
-    const { user, name, deployments } = repositoryData;
+    const { name, deployments, user } = repositoryData as {
+        name: string;
+        deployments: IDeployment[],
+        user: IUser;
+    };
 
     if(buildCommand || installCommand || startCommand || rootDirectory){
-        const document = { user, name, deployments, buildCommand, installCommand, startCommand, rootDirectory, _id };
+        const document = { user, name, deployments, buildCommand, installCommand, startCommand, rootDirectory, _id } as IRepository;
         const repositoryHandler = new RepositoryHandler(document, user);
         const githubHandler = new Github(user, document);
         repositoryHandler.start(githubHandler);
     }
     
-    if(domains?.length) await handleDomains(domains, port, repositoryData.domains, repositoryData.user.email);
+    if(domains?.length){
+        await handleDomains(domains, port, repositoryData.domains, (repositoryData.user as IUser).email);
+    }
 };
 
 RepositorySchema.methods.updateAliasIfNeeded = async function(){
@@ -217,7 +226,7 @@ RepositorySchema.pre('save', async function(next){
             await this.updateUserAndRepository(deployment);
         }
         next();
-    }catch(error){
+    }catch(error: any){
         return next(error);
     }
 });
@@ -227,7 +236,8 @@ RepositorySchema.post('findOneAndDelete', async function(deletedDoc: IRepository
 });
 
 RepositorySchema.pre('deleteMany', async function(){
-    const repositories = await this.model.find(this._conditions);
+    const conditions = this.getQuery();
+    const repositories = await this.model.find(conditions);
     await Promise.all(repositories.map(async (deletedDoc) => {
         await deleteRepositoryHandler(deletedDoc);
     }));
@@ -237,7 +247,7 @@ RepositorySchema.pre('findOneAndUpdate', async function(next){
     try{
         await handleUpdateCommands(this);
         next();
-    }catch (error){
+    }catch(error: any){
         next(error);
     }
 });

@@ -21,11 +21,11 @@ import RepositoryHandler from '@services/repositoryHandler';
 /**
  * Authenticates user based on provided token.
  * @param {Socket} socket - Socket.IO socket object.
- * @param {NextFunction} next - Socket.IO next function.
+ * @param {NextFunction} next - next function.
 */
 const userAuthentication = async (socket: Socket, next) => {
     const { token } = socket.handshake.auth;
-    if(!token)return next(new RuntimeError('Authentication::Token::Required'));
+    if(!token)return next(new RuntimeError('Authentication::Token::Required', 400));
     try{
         const user = await getUserByToken(token, next);
         socket.user = user;
@@ -38,7 +38,7 @@ const userAuthentication = async (socket: Socket, next) => {
 /**
  * Verifies user ownership of the requested repository.
  * @param {Socket} socket - Socket.IO socket object.
- * @param {NextFunction} next - Socket.IO next function.
+ * @param {NextFunction} next - next function.
 */
 const tokenOwnership = async (socket: Socket, next) => {
     const { repositoryAlias } = socket.handshake.query;
@@ -74,7 +74,7 @@ const repositoryShellHandler = async (socket: Socket) => {
 const cloudConsoleHandler = async (socket: Socket) => {
     try{
         const { user } = socket;
-        const container = global.userContainers[user._id];
+        const container = (global as any).userContainers[user._id];
         await container.executeInteractiveShell(socket);
     }catch(error){
         console.log('[Quantum Cloud]: Critical Error (@controllers/wsController - cloudConsoleHandler)', error);

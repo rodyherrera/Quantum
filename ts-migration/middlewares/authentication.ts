@@ -13,7 +13,7 @@
 ****/
 
 import jwt from 'jsonwebtoken';
-import User from '@models/user';
+import User, { IUser } from '@models/user';
 import RuntimeError from '@utilities/runtimeError';
 import { promisify } from 'util';
 import { catchAsync } from '@utilities/runtime';
@@ -28,16 +28,16 @@ import { Request, Response, NextFunction } from 'express';
  * @throws {RuntimeError} - If the user is not found or password has changed after 
  *                          the token was issued.
  */
-export const getUserByToken = async (token:string,next:NextFunction):Promise<typeof User> => {
+export const getUserByToken = async (token: string): Promise<IUser> => {
     const decodedToken = await promisify(jwt.verify)(token, process.env.SECRET_KEY!);
     // Retrieve the user from the database
     const freshUser = await User.findById(decodedToken.id);
     if(!freshUser){
-        return next(new RuntimeError('Authentication::User::NotFound',401));
+        throw new RuntimeError('Authentication::User::NotFound', 401);
     }
     // Check if the user's password has changed since the token was issued
-    if(await freshUser.isPasswordChangedAfterJWFWasIssued(decodedToken.iat)){
-        return next(new RuntimeError('Authentication::PasswordChanged',401));
+    if(freshUser.isPasswordChangedAfterJWFWasIssued(decodedToken.iat)){
+        throw new RuntimeError('Authentication::PasswordChanged', 401);
     }
     return freshUser;
 };
@@ -50,16 +50,16 @@ export const getUserByToken = async (token:string,next:NextFunction):Promise<typ
  * @param {NextFunction} next - Express next function to continue.
  * @throws {RuntimeError} - If no token provided or if authentication fails.
  */
-export const protect = catchAsync(async (req:Request,res:Response,next:NextFunction) => {
+export const protect = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     // 1. Retrieve token from the request headers
-    let token:string|undefined;
+    let token: string | undefined;
     if(req.headers.authorization&&req.headers.authorization.startsWith('Bearer')){
         token = req.headers.authorization.split(' ')[1];
     }else{
         return next(new RuntimeError('Authentication::Required',401));
     }
     // 2. Verify token and retrieve the user
-    const freshUser = await getUserByToken(token,next);
+    const freshUser = await getUserByToken(token);
     // 3. Attach the user to the request object for subsequent middleware to use
     req.user = freshUser;
     next();
@@ -71,10 +71,10 @@ export const protect = catchAsync(async (req:Request,res:Response,next:NextFunct
  * @param {...string} roles - The allowed roles for the route.
  * @returns {RequestHandler} - Express middleware function.
  */
-export const restrictTo = (...roles:string[]):((req:Request,res:Response,next:NextFunction) => void) => {
-    return (req:Request,res:Response,next:NextFunction) => {
+export const restrictTo = (...roles:string[]):((req: Request, res: Response, next: NextFunction) => void) => {
+    return (req: Request, res: Response, next: NextFunction) => {
         // Check if the user role matches any allowed roles
-        if(!roles.includes(req.user.role)){
+        if(!roles.includes((req.user as IUser).role)){
             return next(new RuntimeError('Authentication::Unauthorized',403));
         }
         next();

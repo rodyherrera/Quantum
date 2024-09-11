@@ -14,48 +14,37 @@
 
 import { Octokit } from '@octokit/rest';
 import { promisify } from 'util';
+import { exec as execCallback } from 'child_process';
+import { IRepository } from '@models/repository';
+import { IUser } from '@models/user';
+import { IGithub } from '@models/github';
 import simpleGit from 'simple-git';
 import RepositoryHandler from '@services/repositoryHandler';
-import Deployment from '@models/deployment';
+import Deployment, { IDeployment } from '@models/deployment';
 import RuntimeError from '@utilities/runtimeError';
-import { exec as execCallback } from 'child_process';
 import mongoose from 'mongoose';
 import fs from 'fs';
 
 const exec = promisify(execCallback);
 
-interface User {
-    _id: string;
-    github: {
-        accessToken: string;
-        username: string;
-    };
-}
-
-interface Repository {
-    _id: string;
-    name: string;
-    user: User;
-    deployments: Deployment[];
-    webhookId?: number;
-}
-
 /**
  *  This class is designed to interact with the GitHub API on behalf of a user,  
  *  handling repository-related actions within the Quantum Cloud platform.
  *
- * @param {User} user - The Quantum Cloud user object 
- * @param {Repository} repository - The Quantum Cloud repository object
+ * @param {IUser} user - The Quantum Cloud user object 
+ * @param {IRepository} repository - The Quantum Cloud repository object
 */
 class Github{
-    private user: User;
-    private repository: Repository;
+    private user: IUser;
+    private repository: IRepository;
+    private userGithub: IGithub;
     private octokit: Octokit;
 
-    constructor(user: User, repository: Repository){
+    constructor(user: IUser, repository: IRepository){
         this.user = user;
         this.repository = repository;
-        this.octokit = new Octokit({ auth: user.github.accessToken });
+        this.userGithub = user.github as IGithub;
+        this.octokit = new Octokit({ auth: this.userGithub.accessToken });
     }
 
     /**
@@ -84,11 +73,11 @@ class Github{
         const destinationPath = `/var/lib/quantum/${process.env.NODE_ENV}/containers/${this.user._id}/github-repos/${this.repository._id}`;
         try{
             const repositoryInfo = await this.octokit.repos.get({ 
-                owner: this.user.github.username, 
+                owner: this.userGithub.username, 
                 repo: this.repository.name 
             });
             const cloneEndpoint = repositoryInfo.data.private
-                ? repositoryInfo.data.clone_url.replace('https://', `https://${this.user.github.accessToken}@`)
+                ? repositoryInfo.data.clone_url.replace('https://', `https://${this.userGithub.accessToken}@`)
                 : repositoryInfo.data.clone_url;
             await exec(`git clone ${cloneEndpoint} ${destinationPath}`);
         }catch(error){
@@ -102,8 +91,8 @@ class Github{
      * @returns {Promise<Object>} - An object containing key-value pairs of environment variables. 
     */
     async readEnvironmentVariables(): Promise<Record<string, string>>{
-        let envFiles = await simpleGit(`/var/lib/quantum/${process.env.NODE_ENV}/containers/${this.user._id}/github-repos/${this.repository._id}`).raw(['ls-tree', 'HEAD', '-r', '--name-only']);
-        envFiles = envFiles.split('\n').filter(file => file.includes('.env'));
+        const files = await simpleGit(`/var/lib/quantum/${process.env.NODE_ENV}/containers/${this.user._id}/github-repos/${this.repository._id}`).raw(['ls-tree', 'HEAD', '-r', '--name-only']);
+        const envFiles = files.split('\n').filter(file => file.includes('.env'));
         const environmentVariables: Record<string, string> = {};
         for(const envFile of envFiles){
             const file = await simpleGit(`/var/lib/quantum/${process.env.NODE_ENV}/containers/${this.user._id}/github-repos/${this.repository._id}`).raw(['show', 'HEAD:' + envFile]);
@@ -126,7 +115,7 @@ class Github{
     */
     async getLatestCommit(): Promise<any>{
         const { data: commits } = await this.octokit.repos.listCommits({
-            owner: this.user.github.username,
+            owner: this.userGithub.username,
             repo: this.repository.name,
             per_page: 1,
             sha: 'main'
@@ -140,13 +129,14 @@ class Github{
      * @param {number} githubDeploymentId - The ID of the newly created GitHub deployment.
      * @returns {Promise<Deployment>} - The newly created Deployment object.
     */
-    async createNewDeployment(githubDeploymentId: number): Promise<Deployment>{
-        const repositoryHandler = new RepositoryHandler(this.repository, this.repository.user);
+    async createNewDeployment(githubDeploymentId: number): Promise<IDeployment>{
+        const repositoryHandler = new RepositoryHandler(this.repository, this.repository.user as IUser);
         repositoryHandler.removeFromRuntime();
         const environmentVariables = await this.readEnvironmentVariables();
-        const currentDeployment = this.repository.deployments.pop();
-        if(currentDeployment){
-            const { environment } = await Deployment.findById(currentDeployment._id);
+        const currentDeployment = this.repository.deployments.pop() as IDeployment;
+        const deployment = await Deployment.findById(currentDeployment._id);
+        if(deployment && deployment.environment){
+            const { environment } = deployment;
             for(const [key, value] of Object.entries(environment.variables)){
                 if(!(key in environmentVariables)){
                     continue;
@@ -179,12 +169,12 @@ class Github{
      * Updates the deployment status on GitHub (e.g., "success", "failure", "pending").
      *
      * @param {number} deploymentId - The ID of the deployment to update.
-     * @param {string} state - The new status (e.g., "in_progress", "success", "failure").
+     * @param {string} state - The new status (e.g., "pending", "success", "failure").
      * @returns {Promise<void>} - Resolves when the update is sent to GitHub.
     */
     async updateDeploymentStatus(deploymentId: number, state: string): Promise<void>{
         await this.octokit.repos.createDeploymentStatus({
-            owner: this.user.github.username,
+            owner: this.userGithub.username,
             repo: this.repository.name,
             deployment_id: deploymentId,
             state
@@ -198,8 +188,8 @@ class Github{
      * @throws {RuntimeError} - If the deployment creation fails on GitHub's side.
     */
     async createGithubDeployment(): Promise<number>{
-        const { data: { id: deploymentId } } = await this.octokit.repos.createDeployment({
-            owner: this.user.github.username,
+        const { data: { id: deploymentId } }: any = await this.octokit.repos.createDeployment({
+            owner: this.userGithub.username,
             repo: this.repository.name,
             ref: 'main',
             auto_merge: false,
@@ -218,7 +208,7 @@ class Github{
     */
     async getRepositoryDetails(): Promise<any>{
         const { data: repositoryDetails } = await this.octokit.repos.get({
-            owner: this.user.github.username,
+            owner: this.userGithub.username,
             repo: this.repository.name
         });
         return repositoryDetails;
@@ -273,7 +263,7 @@ class Github{
     async createWebhook(webhookUrl: string, webhookSecret: string): Promise<number | void>{
         try{
             const response = await this.octokit.repos.createWebhook({
-                owner: this.user.github.username,
+                owner: this.userGithub.username,
                 repo: this.repository.name,
                 name: 'web',
                 config: {
@@ -294,10 +284,10 @@ class Github{
             // hooks should not be registered for this, therefore this error should only be 
             // thrown when a repository that belongs to the authenticated user exceeds that limit.
             if(errorMessage === 'The "push" event cannot have more than 20 hooks'){
-                throw new RuntimeError('Github::Repository::Excess::Hooks');
+                throw new RuntimeError('Github::Repository::Excess::Hooks', 400);
             }
             // TODO: Maybe it would be useful here to notify the administrator by email?
-            throw new RuntimeError('Github::Webhook::Creation::Error');
+            throw new RuntimeError('Github::Webhook::Creation::Error', 500);
         }
     }
 
@@ -314,9 +304,9 @@ class Github{
         if(!this.repository.webhookId) return;
         try{
             const response = await this.octokit.repos.deleteWebhook({
-                owner: this.user.github.username,
+                owner: this.userGithub.username,
                 repo: this.repository.name,
-                hook_id: this.repository.webhookId
+                hook_id: Number(this.repository.webhookId)
             });
             return response;
         }catch(error){
@@ -332,7 +322,7 @@ class Github{
     */
     async getRepositoryDeployments(): Promise<any[]>{
         const { data: deployments } = await this.octokit.repos.listDeployments({
-            owner: this.user.github.username,
+            owner: this.userGithub.username,
             repo: this.repository.name
         });
         return deployments;
@@ -346,7 +336,7 @@ class Github{
     */
     async deleteRepositoryDeployment(deploymentId: number): Promise<void>{
         await this.octokit.repos.deleteDeployment({
-            owner: this.user.github.username,
+            owner: this.userGithub.username,
             repo: this.repository.name,
             deployment_id: deploymentId
         });
@@ -359,11 +349,11 @@ class Github{
      *
      * @returns {Promise<Deployment>} - The newly created Deployment object, representing the deployment record in the Quantum Cloud system.
     */
-    async deployRepository(): Promise<Deployment>{
+    async deployRepository(): Promise<IDeployment>{
         await this.cloneRepository();
         const githubDeploymentId = await this.createGithubDeployment();
         const newDeployment = await this.createNewDeployment(githubDeploymentId);
-        newDeployment.url = `https://github.com/${this.user.github.username}/${this.repository.name}/deployments/${githubDeploymentId}`;
+        newDeployment.url = `https://github.com/${this.userGithub.username}/${this.repository.name}/deployments/${githubDeploymentId}`;
         newDeployment.status = 'pending';
         await newDeployment.save();
         await this.updateDeploymentStatus(githubDeploymentId, 'in_progress');

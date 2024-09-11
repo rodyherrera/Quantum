@@ -14,32 +14,18 @@
 
 import Deployment from '@models/deployment';
 import ContainerLoggable from '@services/containerLoggable';
+import { IUser } from '@models/user';
 import { Socket } from 'socket.io';
-
-interface Repository {
-    _id: string;
-    rootDirectory: string;
-    buildCommand?: string;
-    installCommand?: string;
-    startCommand?: string;
-    deployments: string[];
-}
-
-interface User {
-    _id: string;
-}
-
-interface GithubUtility {
-    updateDeploymentStatus(deploymentId: string, status: string): Promise<void>;
-}
+import { IRepository } from '@models/repository';
 
 /**
  * This class manages interactions with a specific repository within the Quantum Cloud platform.  
  * It handles repository deployment, shell interactions, and error logging. 
 */
 class RepositoryHandler extends ContainerLoggable{
-    private repository: Repository;
-    private user: User;
+    private repository: IRepository;
+    private repositoryId: string;
+    private user: IUser;
     private workingDir: string;
 
     /**
@@ -48,9 +34,10 @@ class RepositoryHandler extends ContainerLoggable{
      * @param {Repository} repository - The Mongoose model object representing the repository.
      * @param {User} user - The Mongoose model object representing the user associated with the repository.
     */
-    constructor(repository: Repository, user: User){
-        super(repository._id, user._id);
+    constructor(repository: IRepository, user: IUser){
+        super(repository._id as string, user._id);
         this.repository = repository;
+        this.repositoryId = this.repository.id as string;
         this.user = user;
         this.workingDir = `/app/github-repos/${repository._id}${repository.rootDirectory}`;
     }
@@ -64,11 +51,11 @@ class RepositoryHandler extends ContainerLoggable{
     async stopAndRemoveShell(): Promise<void>{
         try{
             const userContainers = (global as any).userContainers[this.user._id];
-            if(userContainers && userContainers[this.repository._id]){
-                const shellStream = userContainers[this.repository._id];
+            if(userContainers && userContainers[this.repositoryId]){
+                const shellStream = userContainers[this.repositoryId];
                 shellStream.write('\x03');
                 await shellStream.end();
-                delete userContainers[this.repository._id];
+                delete userContainers[this.repositoryId];
             }
         }catch(error){
             this.criticalErrorHandler('stopAndRemoveShell', error);
@@ -83,8 +70,8 @@ class RepositoryHandler extends ContainerLoggable{
     async getOrCreateShell(): Promise<any>{
         try{
             const userContainers = (global as any).userContainers[this.user._id];
-            if(userContainers?.[this.repository._id]){
-                return userContainers[this.repository._id];
+            if(userContainers?.[this.repositoryId]){
+                return userContainers[this.repositoryId];
             }
             const exec = await userContainers.instance.exec({
                 Cmd: ['/bin/ash'],
@@ -95,7 +82,7 @@ class RepositoryHandler extends ContainerLoggable{
                 Tty: true
             });
             const stream = await exec.start({ hijack: true, stdin: true });
-            userContainers[this.repository._id] = stream;
+            userContainers[this.repositoryId] = stream;
             return stream;
         }catch(error){
             this.criticalErrorHandler('createShell', error);
@@ -109,7 +96,7 @@ class RepositoryHandler extends ContainerLoggable{
     */
     async removeFromRuntime(): Promise<void>{
         this.stopAndRemoveShell();
-        delete (global as any).userContainers[this.user._id][this.repository._id];
+        delete (global as any).userContainers[this.user._id][this.repositoryId];
     }
 
     /**
@@ -130,10 +117,10 @@ class RepositoryHandler extends ContainerLoggable{
     /**
      * Initiates the deployment process for the repository. Executes installation, build, and start commands within the repository's containerized environment.
      *
-     * @param {GithubUtility} githubUtility - An instance of the `Github` class to interact with the GitHub API. 
+     * @param {GithubUtility} An instance of the `Github` class to interact with the GitHub API. 
      * @returns {Promise<void>} - Resolves when the deployment process completes or an error occurs.
     */
-    async start(githubUtility: GithubUtility): Promise<void>{
+    async start(githubUtility: any): Promise<void>{
         try{
             const commands = this.getValidCommands();
             if(commands.length === 0) return;

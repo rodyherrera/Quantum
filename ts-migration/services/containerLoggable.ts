@@ -34,7 +34,7 @@ class ContainerLoggable{
     private logDir: string;
     private logFile: string;
     private userId: string;
-    private logStream: fs.WriteStream;
+    private logStream!: fs.WriteStream | null; 
 
     /**
      * Creates a new ContainerLoggable instance.
@@ -83,7 +83,7 @@ class ContainerLoggable{
      * Initializes the logger, creating the log stream if needed.
      * If a previous log stream exists for this user, it's closed.
      */
-    async createLogStream(): Promise<fs.WriteStream>{
+    async createLogStream(): Promise<fs.WriteStream | null>{
         try{
             if((global as any).logStreamStore[this.userId]){
                 (global as any).logStreamStore[this.userId].end();
@@ -95,6 +95,7 @@ class ContainerLoggable{
             return stream;
         }catch(error){
             this.criticalErrorHandler('createLogStream', error);
+            return null;
         }
     }
 
@@ -106,6 +107,7 @@ class ContainerLoggable{
      */
     async appendLog(data: string){
         await this.checkLogFileStatus();
+        if(!this.logStream) return;
         this.logStream.write(data);
     }
 
@@ -144,7 +146,7 @@ class ContainerLoggable{
      * @returns The cleaned log data.
      */
     cleanOutput(data: string): string{
-        return data.toString('utf8').replace(/[^ -~\n\r]+/g, '');
+        return data.toString().replace(/[^ -~\n\r]+/g, '');
     }
 
     criticalErrorHandler(operation: string, error: any){

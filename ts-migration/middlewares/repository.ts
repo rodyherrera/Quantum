@@ -16,6 +16,7 @@ import Repository from '@models/repository';
 import RuntimeError from '@utilities/runtimeError';
 import { catchAsync } from '@utilities/runtime';
 import { Request, Response, NextFunction } from 'express';
+import { IUser } from '@models/user';
 
 /**
  * Express middleware to check if a user has access to a repository.
@@ -26,7 +27,7 @@ import { Request, Response, NextFunction } from 'express';
  * @throws {RuntimeError} - If user is not admin, if the repository is not found, or if it doesn't belong to the user. 
 */
 export const verifyRepositoryAccess = catchAsync(async(req: Request,res: Response,next: NextFunction) => {
-    const { user } = req;
+    const user = req.user as IUser;
     // Admins have access to all repositories
     if(user.role === 'admin') return next();
     const { id } = req.params;

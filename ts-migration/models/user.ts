@@ -13,19 +13,21 @@
 ****/
 
 import mongoose, { Document, Schema, Model } from 'mongoose';
+import { IGithub } from '@models/github';
 import validator from 'validator';
 import bcrypt from 'bcryptjs';
 import UserContainer from '@services/userContainer';
 
-interface IUser extends Document {
+export interface IUser extends Document {
     username: string;
     repositories: mongoose.Types.ObjectId[];
     deployments: mongoose.Types.ObjectId[];
-    github: mongoose.Types.ObjectId;
+    github: mongoose.Types.ObjectId | IGithub;
     fullname: string;
     email: string;
     password: string;
-    passwordConfirm: string;
+    _id: string;
+    passwordConfirm: string | undefined;
     role: 'user' | 'admin';
     passwordChangedAt?: Date;
     passwordResetToken?: string;
@@ -67,7 +69,7 @@ const UserSchema: Schema<IUser> = new Schema({
     email: {
         type: String,
         required: [true, 'User::Email::Required'],
-        unique: [true, 'User::Email::Unique'],
+        unique: true,
         lowercase: true,
         trim: true,
         validate: [validator.isEmail, 'User::Email::Validate']
@@ -107,10 +109,12 @@ const UserSchema: Schema<IUser> = new Schema({
 UserSchema.index({ username: 'text', fullname: 'text', email: 'text' });
 
 UserSchema.pre('findOneAndDelete', async function(){
-    const user = this._conditions as IUser;
+    const conditions = this.getQuery();
+    const user = await mongoose.model('User').findOne(conditions);
+    if(!user) return;
     await mongoose.model('Repository').deleteMany({ user: user._id });
     await mongoose.model('Github').findOneAndDelete({ user: user._id });
-    const container = global.userContainers[user._id];
+    const container = (global as any).userContainers[user._id];
     container.remove().then().catch((error: Error) => {
         console.log(`[Quantum Cloud] CRITICAL ERROR (at @models/user - pre findOneAndDelete middleware): ${error}`)
     });
@@ -122,16 +126,16 @@ UserSchema.pre('save', async function(next){
         this.username = this.username.replace(/\s/g, '');
         this.password = await bcrypt.hash(this.password, 12);
         this.passwordConfirm = undefined;
-        if(this.isNew && global?.logStreamStore !== undefined){
+        if(this.isNew && (global as any)?.logStreamStore !== undefined){
             const container = new UserContainer(this);
             container.start().then().catch((error: Error) => {
                 console.log(`[Quantum Cloud] CRITICAL ERROR (at @models/user - pre save middleware): ${error}`)
             });
         }
         if(!this.isModified('password') || this.isNew) return next();
-        this.passwordChangedAt = Date.now() - 1000;
+        this.passwordChangedAt = new Date();
         next();
-    }catch(error){
+    }catch(error: any){
         next(error);
     }
 });
@@ -142,7 +146,7 @@ UserSchema.methods.isCorrectPassword = async function(candidatePassword: string,
 
 UserSchema.methods.isPasswordChangedAfterJWFWasIssued = function(JWTTimeStamp: number): boolean {
     if(this.passwordChangedAt){
-        const changedTimeStamp = parseInt(this.passwordChangedAt.getTime() / 1000, 10);
+        const changedTimeStamp = Math.floor(this.passwordChangedAt.getTime() / 1000);
         return JWTTimeStamp < changedTimeStamp;
     }
     return false;

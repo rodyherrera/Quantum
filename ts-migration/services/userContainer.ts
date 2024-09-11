@@ -48,7 +48,6 @@ class UserContainer extends DockerHandler{
             await this.removeContainer();
             // FOR FUTURE VERSIONS: Avoid storing containers globally (scalability)
             delete (global as any).userContainers[this.user._id];
-            console.log(`[Quantum Cloud]: Container ${this.dockerName} removed successfully.`);
         }catch(error){
             this.criticalErrorHandler('removeContainer', error);
         }
@@ -93,7 +92,7 @@ class UserContainer extends DockerHandler{
      * @param workDir - Path to the working directory (optional).
      * @returns The command output.
      */
-    async executeCommand(command: string, workDir: string = '/'): Promise<string>{
+    async executeCommand(command: string, workDir: string = '/'): Promise<string | null>{
         try{
             const exec = await this.instance.exec({
                 Cmd: ['/bin/ash', '-c', command],
@@ -106,6 +105,7 @@ class UserContainer extends DockerHandler{
             return await this.collectStreamOutput(stream);
         }catch(error){
             this.criticalErrorHandler('executeCommand', error);
+            return null;
         }
     }
 
