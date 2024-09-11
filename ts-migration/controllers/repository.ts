@@ -55,7 +55,9 @@ export const deleteRepository = RepositoryFactory.deleteOne();
 const getGithubRepositories = async (accessToken: string): Promise<any[]> => {
     const response = await axios.get(`https://api.github.com/user/repos`, {
         headers: { Authorization: `Bearer ${accessToken}` },
-        params: { visibility: 'all' }
+        // NOTE: The maximum number of repositories per page is 100. 
+        // In the future, add pagination, as it is not yet implemented.
+        params: { visibility: 'all', per_page: 100 }
     });
     return response.data;
 };
