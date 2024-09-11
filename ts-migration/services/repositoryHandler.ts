@@ -14,9 +14,9 @@
 
 import Deployment from '@models/deployment';
 import ContainerLoggable from '@services/containerLoggable';
-import { IUser } from '@types/models/user';
+import { IUser } from '@typings/models/user';
 import { Socket } from 'socket.io';
-import { IRepository } from '@types/models/repository';
+import { IRepository } from '@typings/models/repository';
 
 /**
  * This class manages interactions with a specific repository within the Quantum Cloud platform.  

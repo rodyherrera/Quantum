@@ -16,7 +16,7 @@ import fs from 'fs';
 import readline from 'readline';
 import util from 'util';
 import { exec } from 'child_process';
-import { DomainConfig } from '@types/services/nginxHandler';
+import { DomainConfig } from '@typings/services/nginxHandler';
 
 const execAsync = util.promisify(exec);
 

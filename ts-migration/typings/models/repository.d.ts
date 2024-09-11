@@ -1,6 +1,5 @@
 import mongoose, { Document } from 'mongoose';
-import { IUser } from '@types/models/user';
-import { IDeployment } from '@types/models/deployment';
+import { IUser } from './user';
 
 export interface IRepository extends Document{
     alias: string;
@@ -13,7 +12,7 @@ export interface IRepository extends Document{
     rootDirectory?: string;
     user: mongoose.Schema.Types.ObjectId | IUser;
     url: string;
-    deployments: mongoose.Schema.Types.ObjectId[] | IDeployment[];
+    deployments: mongoose.Types.ObjectId[],
     domains: string[];
     port?: number;
     createdAt: Date;

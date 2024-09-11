@@ -28,7 +28,7 @@ const getCPUUsageSnapshot = (): { idle: number, total: number } => {
     for(let i = 0; i < cpus.length; i++){
         const cpu = cpus[i];
         for(const type in cpu.times){
-            totalTick += cpu.times[type];
+            totalTick += (cpu.times as any)[type];
         }
         totalIdle += cpu.times.idle;
     }

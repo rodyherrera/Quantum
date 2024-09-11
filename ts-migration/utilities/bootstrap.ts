@@ -19,11 +19,11 @@ import fs from 'fs';
 import path from 'path';
 import UserContainer from '@services/userContainer';
 import RepositoryHandler from '@services/repositoryHandler';
-import { ConfigureAppParams } from '@types/utilities/bootstrap';
+import { ConfigureAppParams } from '@typings/utilities/bootstrap';
 import { spawn } from 'child_process';
 import { sendMail } from '@services/mailHandler';
-import { IUser } from '@types/models/user';
-import { IRepository } from '@types/models/repository';
+import { IUser } from '@typings/models/user';
+import { IRepository } from '@typings/models/repository';
 import * as nginxHandler from '@services/nginxHandler';
 
 /**

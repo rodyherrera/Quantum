@@ -10,22 +10,22 @@ import { Document, Model, PopulateOptions } from 'mongoose';
  * @property {string} [fields] - Fields to select.
  * @property {PopulateOptions} [populate] - Populate options for related documents.
  * @property {any} [key: string] - Any other query parameter.
-*/
-export interface RequestQueryString{
-    search?: string,
-    page?: string,
-    sort?: string,
-    limit?: string,
-    fields?: string,
-    populate?: PopulateOptions,
+ */
+export interface RequestQueryString {
+    search?: string;
+    page?: string;
+    sort?: string;
+    limit?: string;
+    fields?: string;
+    populate?: PopulateOptions;
     [key: string]: any;
-};
+}
 
 /**
  * Interface for the buffer object used to store query parameters.
  * @interface Buffer
- * @property {object} find - Find query object.
- * @property {any} sort - Sort order.
+ * @property {Record<string, any>} find - Find query object.
+ * @property {Record<string, any>} sort - Sort order.
  * @property {string} select - Selected fields.
  * @property {number} skip - Number of records to skip.
  * @property {number} limit - Number of records to return.
@@ -33,10 +33,10 @@ export interface RequestQueryString{
  * @property {number} skippedResults - Number of skipped records.
  * @property {number} page - Current page number.
  * @property {number} totalPages - Total number of pages.
-*/
-export interface Buffer{
-    find: object;
-    sort: any;
+ */
+export interface Buffer {
+    find: Record<string, any>;
+    sort: Record<string, any>;
     select: string;
     skip: number;
     limit: number;
@@ -44,7 +44,7 @@ export interface Buffer{
     skippedResults: number;
     page: number;
     totalPages: number;
-};
+}
 
 /**
  * Interface for the options passed to the APIFeatures class.
@@ -53,10 +53,10 @@ export interface Buffer{
  * @property {Model<Document>} model - Mongoose model.
  * @property {string[]} fields - Array of fields to include in the query.
  * @property {string|PopulateOptions|(string|PopulateOptions)[]} [populate] - Populate options for related documents.
-*/
-export interface Options{
-    requestQueryString: RequestQueryString,
+ */
+export interface Options {
+    requestQueryString: RequestQueryString;
     model: Model<Document>;
-    fields: string[],
+    fields: string[];
     populate?: string | PopulateOptions | (string | PopulateOptions)[] | null;
-};
+}

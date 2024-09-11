@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction, RequestHandler } from 'express';
 import { Document, Model } from 'mongoose';
 import { catchAsync, filterObject, checkIfSlugOrId } from '@utilities/runtime';
-import { HandlerFactoryOptions } from '@types/controllers/handlerFactory';
+import type { HandlerFactoryOptions } from '@typings/controllers/handlerFactory';
 import APIFeatures from '@utilities/apiFeatures';
 import RuntimeError from '@utilities/runtimeError';
 

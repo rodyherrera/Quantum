@@ -13,7 +13,7 @@
 ****/
 
 import nodemailer from 'nodemailer';
-import { EmailOptions } from '@types/services/emailHandler';
+import { EmailOptions } from '@typings/services/emailHandler';
 
 /**
  * Boolean flag indicating whether all the necessary SMTP environment 
