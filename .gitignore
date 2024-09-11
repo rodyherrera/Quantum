@@ -5,7 +5,3 @@ client/dist/
 server/node_modules/
 server/package-lock.json
 server/.env
-
-ts-migration/node_modules
-ts-migration/package-lock.json
-ts-migration/.env
