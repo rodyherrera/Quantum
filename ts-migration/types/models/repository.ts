@@ -1,6 +1,6 @@
 import mongoose, { Document } from 'mongoose';
-import { IUser } from '@types/models/User';
-import { IDeployment } from '@types/models/Deployment';
+import { IUser } from '@types/models/user';
+import { IDeployment } from '@types/models/deployment';
 
 export interface IRepository extends Document{
     alias: string;

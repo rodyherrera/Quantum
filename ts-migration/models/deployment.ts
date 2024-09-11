@@ -13,7 +13,7 @@
 ****/
 
 import mongoose, { Query } from 'mongoose';
-import { IDeployment } from '@types/models/Deployment';
+import { IDeployment } from '@types/models/deployment';
 
 const DeploymentSchema = new mongoose.Schema<IDeployment>({
     user: {

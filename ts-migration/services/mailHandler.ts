@@ -13,6 +13,7 @@
 ****/
 
 import nodemailer from 'nodemailer';
+import { EmailOptions } from '@types/services/emailHandler';
 
 /**
  * Boolean flag indicating whether all the necessary SMTP environment 
@@ -49,12 +50,6 @@ const transporter = nodemailer.createTransport({
     },
     tls: { rejectUnauthorized: false }
 });
-
-interface EmailOptions {
-    to?: string;
-    subject: string;
-    html: string;
-}
 
 /**
  * Asynchronously sends an email using the preconfigured Nodemailer transporter.

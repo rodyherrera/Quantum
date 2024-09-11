@@ -1,5 +1,5 @@
 import mongoose, { Document } from 'mongoose';
-import { IGithub } from '@types/models/Github';
+import { IGithub } from '@types/models/github';
 
 export interface IUser extends Document{
     _id: string;

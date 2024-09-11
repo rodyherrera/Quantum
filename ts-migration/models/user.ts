@@ -16,7 +16,7 @@ import mongoose, { Schema, Model } from 'mongoose';
 import validator from 'validator';
 import bcrypt from 'bcryptjs';
 import UserContainer from '@services/userContainer';
-import { IUser } from '@types/models/User';
+import { IUser } from '@types/models/user';
 
 const UserSchema: Schema<IUser> = new Schema({
     username: {

@@ -13,7 +13,7 @@
 ****/
 
 import mongoose from 'mongoose';
-import { IGithub } from '@types/models/Github';
+import { IGithub } from '@types/models/github';
 
 const GithubSchema = new mongoose.Schema<IGithub>({
     user: {

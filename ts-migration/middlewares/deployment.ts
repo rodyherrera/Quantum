@@ -15,7 +15,7 @@
 import Deployment from '@models/deployment';
 import RuntimeError from '@utilities/runtimeError';
 import { catchAsync } from '@utilities/runtime';
-import { IUser } from '@types/models/User';
+import { IUser } from '@types/models/user';
 import { Request, Response, NextFunction } from 'express';
 
 /**

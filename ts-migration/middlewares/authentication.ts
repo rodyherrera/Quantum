@@ -15,7 +15,7 @@
 import jwt from 'jsonwebtoken';
 import User from '@models/user';
 import RuntimeError from '@utilities/runtimeError';
-import { IUser } from '@types/models/User';
+import { IUser } from '@types/models/user';
 import { promisify } from 'util';
 import { catchAsync } from '@utilities/runtime';
 import { Request, Response, NextFunction } from 'express';

@@ -14,7 +14,7 @@
 
 import Deployment from '@models/deployment';
 import ContainerLoggable from '@services/containerLoggable';
-import { IUser } from '@types/models/User';
+import { IUser } from '@types/models/user';
 import { Socket } from 'socket.io';
 import { IRepository } from '@types/models/repository';
 

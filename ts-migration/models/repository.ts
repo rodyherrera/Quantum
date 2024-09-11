@@ -13,9 +13,9 @@
 ****/
 
 import mongoose, { Model, Schema } from 'mongoose';
-import { IDeployment } from '@types/models/Deployment';
-import { IRepository } from '@types/models/Repository';
-import { IUser } from '@types/models/User';
+import { IDeployment } from '@types/models/deployment';
+import { IRepository } from '@types/models/repository';
+import { IUser } from '@types/models/user';
 import { v4 } from 'uuid';
 import { getPublicIPAddress } from '@utilities/runtime';
 import Github from '@services/github';

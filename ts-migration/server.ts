@@ -12,15 +12,6 @@
  * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 ****/
 
-declare global {
-    namespace NodeJS {
-        interface Global {
-            logStreamStore: Record<string, unknown>;
-            userContainers: Record<string, unknown>;
-        }
-    }
-}
-
 /**
  * Temporary global storage for log streams.
  * @global

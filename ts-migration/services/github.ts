@@ -15,10 +15,10 @@
 import { Octokit } from '@octokit/rest';
 import { promisify } from 'util';
 import { exec as execCallback } from 'child_process';
-import { IRepository } from '@types/models/Repository';
-import { IUser } from '@types/models/User';
-import { IGithub } from '@types/models/Github';
-import { IDeployment } from '@types/models/Deployment';
+import { IRepository } from '@types/models/repository';
+import { IUser } from '@types/models/user';
+import { IGithub } from '@types/models/github';
+import { IDeployment } from '@types/models/deployment';
 import simpleGit from 'simple-git';
 import RepositoryHandler from '@services/repositoryHandler';
 import Deployment from '@models/deployment';

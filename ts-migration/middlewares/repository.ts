@@ -16,7 +16,7 @@ import Repository from '@models/repository';
 import RuntimeError from '@utilities/runtimeError';
 import { catchAsync } from '@utilities/runtime';
 import { Request, Response, NextFunction } from 'express';
-import { IUser } from '@types/models/User';
+import { IUser } from '@types/models/user';
 
 /**
  * Express middleware to check if a user has access to a repository.

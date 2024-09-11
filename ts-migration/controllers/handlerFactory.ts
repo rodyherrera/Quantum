@@ -1,19 +1,9 @@
 import { Request, Response, NextFunction, RequestHandler } from 'express';
 import { Document, Model } from 'mongoose';
 import { catchAsync, filterObject, checkIfSlugOrId } from '@utilities/runtime';
+import { HandlerFactoryOptions } from '@types/controllers/handlerFactory';
 import APIFeatures from '@utilities/apiFeatures';
 import RuntimeError from '@utilities/runtimeError';
-
-/**
- * Interface for the options passed to the HandlerFactory class.
- * @interface HandlerFactoryOptions
- * @property {Model<any>} model - The Mongoose model.
- * @property {string[]} [fields] - An array of fields to include in the query.
-*/
-interface HandlerFactoryOptions{
-    model: Model<any>;
-    fields?: string[];
-};
 
 /**
  * A class that provides reusable handlers for common CRUD operations.

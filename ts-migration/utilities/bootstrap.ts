@@ -19,19 +19,12 @@ import fs from 'fs';
 import path from 'path';
 import UserContainer from '@services/userContainer';
 import RepositoryHandler from '@services/repositoryHandler';
-import * as nginxHandler from '@services/nginxHandler';
-import { Application, RequestHandler } from 'express';
+import { ConfigureAppParams } from '@types/utilities/bootstrap';
 import { spawn } from 'child_process';
 import { sendMail } from '@services/mailHandler';
-import { IUser } from '@types/models/User';
-import { IRepository } from '@types/models/Repository';
-
-interface ConfigureAppParams{
-    app: Application;
-    routes: string[];
-    suffix: string;
-    middlewares: RequestHandler[];
-};
+import { IUser } from '@types/models/user';
+import { IRepository } from '@types/models/repository';
+import * as nginxHandler from '@services/nginxHandler';
 
 /**
  * Asynchronously sets up an Nginx reverse proxy configuration.

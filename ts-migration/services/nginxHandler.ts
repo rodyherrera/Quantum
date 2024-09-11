@@ -16,6 +16,7 @@ import fs from 'fs';
 import readline from 'readline';
 import util from 'util';
 import { exec } from 'child_process';
+import { DomainConfig } from '@types/services/nginxHandler';
 
 const execAsync = util.promisify(exec);
 
@@ -100,13 +101,6 @@ export const removeDomain = async(domain: string): Promise<void> => {
     fs.writeFileSync(NGINX_FILE, updatedConfig);
     await reloadNginx();
 };
-
-interface DomainConfig {
-    domain: string;
-    ipv4: string;
-    port: number;
-    useSSL?: boolean;
-}
 
 /**
  * Updates a domain's configuration in the Nginx file (removes old, adds new).

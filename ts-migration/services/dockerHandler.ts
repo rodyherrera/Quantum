@@ -16,15 +16,9 @@ import Docker from 'dockerode';
 import ContainerLoggable from '@services/containerLoggable';
 import fs from 'fs/promises';
 import { ensureDirectoryExists } from '@utilities/runtime';
+import { Container } from '@types/services/dockerHandler';
 
 const docker = new Docker();
-
-interface Container {
-    stop(): Promise<void>;
-    remove(options: { force: boolean }): Promise<void>;
-    inspect(): Promise<any>;
-    start(): Promise<void>;
-}
 
 class DockerHandler extends ContainerLoggable{
     private storagePath: string;
