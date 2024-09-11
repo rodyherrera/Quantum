@@ -9,6 +9,7 @@
         "resolveJsonModule": true,
         "outDir": "./dist",
         "paths": {
+            "@types/*": ["./types/*"],
             "@models/*": ["./models/*"],
             "@utilities/*": ["./utilities/*"],
             "@routes/*": ["./routes/*"],

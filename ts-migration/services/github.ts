@@ -15,12 +15,13 @@
 import { Octokit } from '@octokit/rest';
 import { promisify } from 'util';
 import { exec as execCallback } from 'child_process';
-import { IRepository } from '@models/repository';
-import { IUser } from '@models/user';
-import { IGithub } from '@models/github';
+import { IRepository } from '@types/models/Repository';
+import { IUser } from '@types/models/User';
+import { IGithub } from '@types/models/Github';
+import { IDeployment } from '@types/models/Deployment';
 import simpleGit from 'simple-git';
 import RepositoryHandler from '@services/repositoryHandler';
-import Deployment, { IDeployment } from '@models/deployment';
+import Deployment from '@models/deployment';
 import RuntimeError from '@utilities/runtimeError';
 import mongoose from 'mongoose';
 import fs from 'fs';

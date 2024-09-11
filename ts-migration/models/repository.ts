@@ -12,34 +12,15 @@
  * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 ****/
 
-import mongoose, { Document, Model, Schema } from 'mongoose';
+import mongoose, { Model, Schema } from 'mongoose';
+import { IDeployment } from '@types/models/Deployment';
+import { IRepository } from '@types/models/Repository';
+import { IUser } from '@types/models/User';
+import { v4 } from 'uuid';
+import { getPublicIPAddress } from '@utilities/runtime';
 import Github from '@services/github';
 import RepositoryHandler from '@services/repositoryHandler';
 import * as nginxHandler from '@services/nginxHandler';
-import { IUser } from '@models/user';
-import { IDeployment } from '@models/deployment';
-import { getPublicIPAddress } from '@utilities/runtime';
-import { v4 } from 'uuid';
-
-export interface IRepository extends Document {
-    alias: string;
-    _id: string | mongoose.Types.ObjectId;
-    name: string;
-    webhookId?: number;
-    buildCommand?: string;
-    installCommand?: string;
-    startCommand?: string;
-    rootDirectory?: string;
-    user: mongoose.Schema.Types.ObjectId | IUser;
-    url: string;
-    deployments: mongoose.Schema.Types.ObjectId[] | IDeployment[];
-    domains: string[];
-    port?: number;
-    createdAt: Date;
-    updateAliasIfNeeded(): Promise<void>;
-    getUserWithGithubData(): Promise<any>;
-    updateUserAndRepository(deployment: any): Promise<void>;
-}
 
 const RepositorySchema: Schema<IRepository> = new Schema({
     alias: {

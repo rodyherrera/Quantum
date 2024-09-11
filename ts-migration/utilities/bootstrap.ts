@@ -12,8 +12,8 @@
  * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 ****/
 
-import Repository, { IRepository } from '@models/repository';
-import User, { IUser } from '@models/user';
+import Repository from '@models/repository';
+import User from '@models/user';
 import Github from '@services/github';
 import fs from 'fs';
 import path from 'path';
@@ -23,6 +23,8 @@ import * as nginxHandler from '@services/nginxHandler';
 import { Application, RequestHandler } from 'express';
 import { spawn } from 'child_process';
 import { sendMail } from '@services/mailHandler';
+import { IUser } from '@types/models/User';
+import { IRepository } from '@types/models/Repository';
 
 interface ConfigureAppParams{
     app: Application;
