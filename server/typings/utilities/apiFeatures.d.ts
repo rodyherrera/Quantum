@@ -36,7 +36,7 @@ export interface RequestQueryString {
  */
 export interface Buffer {
     find: Record<string, any>;
-    sort: Record<string, any>;
+    sort: Record<string, any> | string;
     select: string;
     skip: number;
     limit: number;

@@ -37,7 +37,8 @@ router.delete('/repository/:repositoryName/:deploymentId',
 router.post('/repository/:repositoryAlias/actions/',
     deploymentController.repositoryOperations);
 
-router.route('/:id', deploymentMiddleware.verifyDeploymentAccess)
+router.use('/:id', deploymentMiddleware.verifyDeploymentAccess);
+router.route('/:id')
     .get(deploymentController.getDeployment)
     .patch(deploymentController.updateDeployment)
     .delete(deploymentController.deleteDeployment);

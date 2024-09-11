@@ -19,6 +19,7 @@ import { IRepository } from '@typings/models/repository';
 import { IUser } from '@typings/models/user';
 import { IGithub } from '@typings/models/github';
 import { IDeployment } from '@typings/models/deployment';
+import { DeploymentState } from '@typings/services/github';
 import simpleGit from 'simple-git';
 import RepositoryHandler from '@services/repositoryHandler';
 import Deployment from '@models/deployment';
@@ -134,7 +135,7 @@ class Github{
         const repositoryHandler = new RepositoryHandler(this.repository, this.repository.user as IUser);
         repositoryHandler.removeFromRuntime();
         const environmentVariables = await this.readEnvironmentVariables();
-        const currentDeployment = this.repository.deployments.pop() as IDeployment;
+        const currentDeployment = this.repository.deployments.pop();
         if(currentDeployment){
             const deployment = await Deployment.findById(currentDeployment._id);
             if(deployment && deployment.environment){
@@ -172,10 +173,10 @@ class Github{
      * Updates the deployment status on GitHub (e.g., "success", "failure", "pending").
      *
      * @param {number} deploymentId - The ID of the deployment to update.
-     * @param {string} state - The new status (e.g., "pending", "success", "failure").
+     * @param {string} DeploymentState - The new status (e.g., "pending", "success", "failure").
      * @returns {Promise<void>} - Resolves when the update is sent to GitHub.
     */
-    async updateDeploymentStatus(deploymentId: number, state: string): Promise<void>{
+    async updateDeploymentStatus(deploymentId: number, state: DeploymentState): Promise<void>{
         await this.octokit.repos.createDeploymentStatus({
             owner: this.userGithub.username,
             repo: this.repository.name,
