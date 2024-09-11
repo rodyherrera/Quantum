@@ -134,14 +134,16 @@ class Github{
         repositoryHandler.removeFromRuntime();
         const environmentVariables = await this.readEnvironmentVariables();
         const currentDeployment = this.repository.deployments.pop() as IDeployment;
-        const deployment = await Deployment.findById(currentDeployment._id);
-        if(deployment && deployment.environment){
-            const { environment } = deployment;
-            for(const [key, value] of Object.entries(environment.variables)){
-                if(!(key in environmentVariables)){
-                    continue;
+        if(currentDeployment){
+            const deployment = await Deployment.findById(currentDeployment._id);
+            if(deployment && deployment.environment){
+                const { environment } = deployment;
+                for(const [key, value] of Object.entries(environment.variables)){
+                    if(!(key in environmentVariables)){
+                        continue;
+                    }
+                    environmentVariables[key] = value;
                 }
-                environmentVariables[key] = value;
             }
         }
         const latestCommit = await this.getLatestCommit();

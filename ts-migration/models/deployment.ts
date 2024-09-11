@@ -33,6 +33,7 @@ export interface IDeployment extends Document{
     repository: mongoose.Schema.Types.ObjectId;
     environment: IEnvironment;
     commit: ICommit;
+    _id: string | mongoose.Types.ObjectId;
     status: 'pending' | 'success' | 'stopped' | 'failure' | 'queued';
     url?: string;
     createdAt?: Date;
