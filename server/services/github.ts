@@ -172,15 +172,15 @@ class Github{
     /**
      * Updates the deployment status on GitHub (e.g., "success", "failure", "pending").
      *
-     * @param {number} deploymentId - The ID of the deployment to update.
+     * @param {string} deploymentId - The ID of the deployment to update.
      * @param {string} DeploymentState - The new status (e.g., "pending", "success", "failure").
      * @returns {Promise<void>} - Resolves when the update is sent to GitHub.
     */
-    async updateDeploymentStatus(deploymentId: number, state: DeploymentState): Promise<void>{
+    async updateDeploymentStatus(deploymentId: string | number, state: DeploymentState): Promise<void>{
         await this.octokit.repos.createDeploymentStatus({
             owner: this.userGithub.username,
             repo: this.repository.name,
-            deployment_id: deploymentId,
+            deployment_id: deploymentId as number,
             state
         });   
     }
@@ -338,11 +338,11 @@ class Github{
      * @param {number} deploymentId - The ID of the deployment to delete.
      * @returns {Promise<void>} - Resolves if the deployment deletion is successful.
     */
-    async deleteRepositoryDeployment(deploymentId: number): Promise<void>{
+    async deleteRepositoryDeployment(deploymentId: string | number): Promise<void>{
         await this.octokit.repos.deleteDeployment({
             owner: this.userGithub.username,
             repo: this.repository.name,
-            deployment_id: deploymentId
+            deployment_id: deploymentId  as number
         });
     }
 

@@ -152,16 +152,12 @@ const handleUpdateCommands = async (context: any) => {
     const repositoryData = await getRepositoryData(_id);
     if(!repositoryData) return;
 
-    const { name, deployments, user } = repositoryData as {
-        name: string;
-        deployments: IDeployment[],
-        user: IUser;
-    };
+    const { name, deployments, user } = repositoryData;
 
     if(buildCommand || installCommand || startCommand || rootDirectory){
         const document = { user, name, deployments, buildCommand, installCommand, startCommand, rootDirectory, _id } as IRepository;
-        const repositoryHandler = new RepositoryHandler(document, user);
-        const githubHandler = new Github(user, document);
+        const repositoryHandler = new RepositoryHandler(document, user as IUser);
+        const githubHandler = new Github(user as IUser, document);
         repositoryHandler.start(githubHandler);
     }
     

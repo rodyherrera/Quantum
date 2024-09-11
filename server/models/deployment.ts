@@ -76,7 +76,7 @@ DeploymentSchema.post<Query<IDeployment, IDeployment>>('findOneAndUpdate', async
 });
 
 DeploymentSchema.post<Query<IDeployment, IDeployment>>('findOneAndDelete', async function(){
-    const { user, repository, _id } = this.getFilter();
+    const { user, repository, _id }: any = this.getFilter();
 
     const userUpdatePromise = mongoose.model('User')
         .updateOne({ _id: user }, { $pull: { deployments: _id } }).lean().exec();

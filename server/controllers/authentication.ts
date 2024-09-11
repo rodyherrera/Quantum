@@ -16,6 +16,7 @@ import jwt from 'jsonwebtoken';
 import User from '@models/user';
 import HandlerFactory from '@controllers/handlerFactory';
 import { catchAsync, filterObject } from '@utilities/runtime';
+import { IUser } from '@typings/models/user';
 
 const UserFactory = new HandlerFactory({
     model: User,
@@ -97,7 +98,7 @@ export const signUp = catchAsync(async (req: any, res: any, next: any): Promise<
  * @returns {Promise<void>}
  */
 export const updateMyPassword = catchAsync(async (req: any, res: any, next: any): Promise<void> => {
-    const requestedUser = await User.findById(req.user.id).select('+password').populate('github');
+    const requestedUser = await User.findById(req.user.id).select('+password').populate('github') as IUser;
     if(!(await requestedUser.isCorrectPassword(req.body.passwordCurrent, requestedUser.password))){
         return next(new Error('Authentication::Update::PasswordCurrentIncorrect'));
     }

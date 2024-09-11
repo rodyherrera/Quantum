@@ -15,6 +15,7 @@
 import passport from 'passport';
 import RuntimeError from '@utilities/runtimeError';
 import { Request, Response, NextFunction } from 'express';
+import { IUser } from '@typings/models/user';
 
 /**
  * Initiates the GitHub authentication process. Verifies the presence of a `userId`.
@@ -24,13 +25,13 @@ import { Request, Response, NextFunction } from 'express';
  * @param {NextFunction} next - Express next function.
  * @throws {RuntimeError} - If the 'userId' query parameter is missing.
 */
-export const authenticate = (req: Request,res: Response,next: NextFunction): void => {
+export const authenticate = (req: Request, res: Response, next: NextFunction): void => {
     if(!req.query.userId){
         return next(new RuntimeError('Github::Missing::UserId',400));
     }
     const userId = req.query.userId as string;
     req.session.userId = userId;
-    passport.authenticate('github',{ scope:['user','repo'] })(req,res,next);
+    passport.authenticate('github' ,{ scope: ['user', 'repo'] })(req, res, next);
 };
 
 /**
@@ -41,11 +42,11 @@ export const authenticate = (req: Request,res: Response,next: NextFunction): voi
  * @param {NextFunction} next - Express next function.
  * @throws {Error} - If the 'user' property doesn't exist on the request.
 */
-export const populateGithubAccount = async (req: Request,res: Response,next: NextFunction): Promise<void> => {
+export const populateGithubAccount = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     if(!req.user){
         throw new Error('Authentication middleware chain error: Missing user');
     }
-    req.user = await req.user.populate('github');
+    req.user = await (req.user as IUser).populate('github');
     next();
 };
 
@@ -57,11 +58,11 @@ export const populateGithubAccount = async (req: Request,res: Response,next: Nex
  * @param {NextFunction} next - Express next function.
  * @throws {Error} - If the 'user' property doesn't exist on the request.
 */
-export const populateRepositories = async (req: Request,res: Response,next: NextFunction): Promise<void> => {
+export const populateRepositories = async (req: Request, res: Response,next: NextFunction): Promise<void> => {
     if(!req.user){
         throw new Error('Authentication middleware chain error: Missing user');
     } 
-    req.user = await req.user.populate('repositories');
+    req.user = await (req.user as IUser).populate('repositories');
     next();
 };
 

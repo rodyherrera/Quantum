@@ -20,6 +20,8 @@ import Github from '@services/github';
 import RepositoryHandler from '@services/repositoryHandler';
 import { catchAsync } from '@utilities/runtime';
 import { Request, Response } from 'express';
+import { IDeployment } from '@typings/models/deployment';
+import { IRepository } from '@typings/models/repository';
 
 const DeploymentFactory = new HandlerFactory({
     model: Deployment,
@@ -55,7 +57,7 @@ const repositoryOperationHandler = async (repository: any, action: string) => {
     const repositoryHandler = new RepositoryHandler(repository, repository.user);
     const github = new Github(repository.user, repository);
     const currentDeploymentId = repository.deployments[0];
-    const currentDeployment = await Deployment.findById(currentDeploymentId);
+    const currentDeployment = await Deployment.findById(currentDeploymentId) as IDeployment;
     const { githubDeploymentId } = currentDeployment;
     if(!currentDeployment)
         throw new RuntimeError('Deployment::Not::Found', 404);
@@ -129,7 +131,7 @@ export const repositoryOperations = catchAsync(async (req: Request, res: Respons
 export const getRepositoryDeployments = catchAsync(async (req: Request, res: Response) => {
     const { user } = req as any;
     const { repositoryName } = req.params;
-    const github = new Github(user, { name: repositoryName });
+    const github = new Github(user, { name: repositoryName } as IRepository);
     const deployments = await github.getRepositoryDeployments();
     if(!deployments)
         throw new RuntimeError('Deployment::Not::Found', 404);
@@ -146,7 +148,7 @@ export const getRepositoryDeployments = catchAsync(async (req: Request, res: Res
 export const deleteGithubDeployment = catchAsync(async (req: Request, res: Response) => {
     const { user } = req as any;
     const { repositoryName, deploymentId } = req.params;
-    const github = new Github(user, { name: repositoryName });
+    const github = new Github(user, { name: repositoryName } as IRepository);
     await github.deleteRepositoryDeployment(deploymentId);
     const deployments = await github.getRepositoryDeployments();
     if(!deployments)
@@ -170,7 +172,7 @@ export const getActiveDeploymentEnvironment = catchAsync(async (req: Request, re
         .select('deployments')
         .populate('deployments');
     if(!repository)
-        throw new RuntimeError('Repository::Not::Found');
+        throw new RuntimeError('Repository::Not::Found', 404);
     const activeDeployment = repository.deployments.pop();
     const { environment, _id } = activeDeployment;
     res.status(200).json({ status: 'success', data: { ...environment, _id } });
