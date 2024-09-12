@@ -13,21 +13,19 @@
 ****/
 
 import Docker from 'dockerode';
-import ContainerLoggable from '@services/containerLoggable';
 import fs from 'fs/promises';
 import { ensureDirectoryExists } from '@utilities/runtime';
 import { Container } from '@typings/services/dockerHandler';
 
 const docker = new Docker();
 
-class DockerHandler extends ContainerLoggable{
+class DockerHandler{
     private storagePath: string;
     private imageName: string;
     private dockerName: string;
 
     constructor({ storagePath, imageName, dockerName, logName, userId }: 
         { storagePath: string; imageName: string; dockerName: string; logName: string; userId: string }){
-        super(logName, userId);
         this.storagePath = storagePath;
         this.imageName = imageName;
         this.dockerName = this.formatDockerName(dockerName);

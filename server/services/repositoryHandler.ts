@@ -13,7 +13,7 @@
 ****/
 
 import Deployment from '@models/deployment';
-import ContainerLoggable from '@services/containerLoggable';
+import { setupSocketEvents, createLogStream } from '@services/containerLoggable';
 import { IUser } from '@typings/models/user';
 import { Socket } from 'socket.io';
 import { IRepository } from '@typings/models/repository';
@@ -22,7 +22,7 @@ import { IRepository } from '@typings/models/repository';
  * This class manages interactions with a specific repository within the Quantum Cloud platform.  
  * It handles repository deployment, shell interactions, and error logging. 
 */
-class RepositoryHandler extends ContainerLoggable{
+class RepositoryHandler{
     private repository: IRepository;
     private repositoryId: string;
     private user: IUser;
@@ -35,7 +35,6 @@ class RepositoryHandler extends ContainerLoggable{
      * @param {User} user - The Mongoose model object representing the user associated with the repository.
     */
     constructor(repository: IRepository, user: IUser){
-        super(repository._id as string, user._id);
         this.repository = repository;
         this.repositoryId = this.repository.id as string;
         this.user = user;
@@ -58,7 +57,7 @@ class RepositoryHandler extends ContainerLoggable{
                 delete userContainers[this.repositoryId];
             }
         }catch(error){
-            this.criticalErrorHandler('stopAndRemoveShell', error);
+            //this.criticalErrorHandler('stopAndRemoveShell', error);
         }
     }
     
@@ -68,6 +67,7 @@ class RepositoryHandler extends ContainerLoggable{
      * @returns {Promise<Object>} - A stream object representing the interactive shell.
     */
     async getOrCreateShell(): Promise<any>{
+        await createLogStream(this.repositoryId, this.user._id.toString());
         try{
             const userContainers = (global as any).userContainers[this.user._id];
             if(userContainers?.[this.repositoryId]){
@@ -81,11 +81,9 @@ class RepositoryHandler extends ContainerLoggable{
                 WorkingDir: this.workingDir,
                 Tty: true
             });
-            const stream = await exec.start({ hijack: true, stdin: true });
-            userContainers[this.repositoryId] = stream;
-            return stream;
+            return exec;
         }catch(error){
-            this.criticalErrorHandler('createShell', error);
+            //this.criticalErrorHandler('createShell', error);
         }
     }
 
@@ -111,7 +109,7 @@ class RepositoryHandler extends ContainerLoggable{
             await new Promise(resolve => setTimeout(resolve, 500));
         }
         const repositoryShell = await this.getOrCreateShell();
-        this.setupSocketEvents(socket, repositoryShell);
+        setupSocketEvents(socket, this.repositoryId, this.user._id.toString(), repositoryShell);
     }
 
     /**

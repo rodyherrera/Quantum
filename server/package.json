@@ -46,6 +46,7 @@
         "@types/passport": "^1.0.16",
         "@types/passport-github": "^1.1.12",
         "@types/uuid": "^10.0.0",
-        "@types/validator": "^13.12.1"
+        "@types/validator": "^13.12.1",
+        "typedoc": "^0.26.7"
     }
 }

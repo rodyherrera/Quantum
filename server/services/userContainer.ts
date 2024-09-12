@@ -14,13 +14,16 @@
 
 import DockerHandler from '@services/dockerHandler';
 import path from 'path';
+import { IUser } from '@typings/models/user';
+import { Socket } from 'socket.io';
+import { createLogStream, setupSocketEvents, appendLog } from '@services/containerLoggable';
 
 /**
  * Represents a user container within Quantum Cloud
  * Manages operations related to its life cycle and interaction.
  */
 class UserContainer extends DockerHandler{
-    private user: any;
+    private user: IUser;
     private instance: any;
 
     /**
@@ -28,7 +31,7 @@ class UserContainer extends DockerHandler{
      * 
      * @param user - The user object associated with the container.
      */
-    constructor(user: any){
+    constructor(user: IUser){
         super({
             storagePath: path.join('/var/lib/quantum', process.env.NODE_ENV as string, 'containers', user._id.toString()),
             imageName: 'alpine:latest',
@@ -92,7 +95,7 @@ class UserContainer extends DockerHandler{
      * @param workDir - Path to the working directory (optional).
      * @returns The command output.
      */
-    async executeCommand(command: string, workDir: string = '/'): Promise<string | null>{
+    async executeCommand(command: string, workDir: string = '/'): Promise<void>{
         try{
             const exec = await this.instance.exec({
                 Cmd: ['/bin/ash', '-c', command],
@@ -102,10 +105,9 @@ class UserContainer extends DockerHandler{
                 Tty: true
             });
             const stream = await exec.start();
-            return await this.collectStreamOutput(stream);
+            await this.collectStreamOutput(stream);
         }catch(error){
             this.criticalErrorHandler('executeCommand', error);
-            return null;
         }
     }
 
@@ -115,15 +117,9 @@ class UserContainer extends DockerHandler{
      * @param stream - The execution stream. 
      * @returns The collected output
      */
-    async collectStreamOutput(stream: any): Promise<string>{
-        return new Promise((resolve, reject) => {
-            let output = '';
-            stream.on('data', (data: any) => {
-                data = this.cleanOutput(data);
-                output += data;
-                this.appendLog(data);
-            });
-            stream.on('end', () => resolve(output));
+    async collectStreamOutput(stream: any): Promise<void>{
+        return new Promise(async (resolve, reject) => {
+            stream.on('end', resolve);
             stream.on('error', (error: any) => reject(error));
         });
     }
@@ -133,7 +129,7 @@ class UserContainer extends DockerHandler{
      * @param socket 
      * @param workDir Home directory
      */
-    async executeInteractiveShell(socket: any, workDir: string = '/app'){
+    async executeInteractiveShell(socket: Socket, workDir: string = '/app'){
         try{
             const exec = await this.instance.exec({
                 Cmd: ['/bin/ash'],
@@ -143,8 +139,9 @@ class UserContainer extends DockerHandler{
                 WorkingDir: workDir,
                 Tty: true
             });
-            const stream = await exec.start({ hijack: true, stdin: true });
-            this.setupSocketEvents(socket, stream);
+            const id = this.user._id.toString();
+            await createLogStream(id, id);
+            setupSocketEvents(socket, id, id, exec);
         }catch(error){
             this.criticalErrorHandler('executeInteractiveShell', error);
         }
