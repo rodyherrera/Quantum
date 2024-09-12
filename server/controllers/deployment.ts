@@ -22,6 +22,7 @@ import { catchAsync } from '@utilities/helpers';
 import { Request, Response } from 'express';
 import { IDeployment } from '@typings/models/deployment';
 import { IRepository } from '@typings/models/repository';
+import { ActiveDeploymentEnvironment, ActiveDeploymentRepositoryDocument } from '@typings/controllers/deployment';
 
 const DeploymentFactory = new HandlerFactory({
     model: Deployment,
@@ -170,10 +171,13 @@ export const getActiveDeploymentEnvironment = catchAsync(async (req: Request, re
     const repository = await Repository
         .findOne({ alias: repositoryAlias, user: user._id })
         .select('deployments')
-        .populate('deployments');
+        .populate<ActiveDeploymentRepositoryDocument>({
+            path: 'deployments',
+            select: '_id environment'
+        });
     if(!repository)
         throw new RuntimeError('Repository::Not::Found', 404);
-    const activeDeployment = repository.deployments.pop();
+    const activeDeployment = repository.deployments.pop() as ActiveDeploymentEnvironment;
     const { environment, _id } = activeDeployment;
     res.status(200).json({ status: 'success', data: { ...environment, _id } });
 });

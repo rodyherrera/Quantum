@@ -84,7 +84,7 @@ export const configureApp = async ({ app, routes, suffix, middlewares }: Configu
         });
         await Promise.all(routePromises);
     }catch(error){
-        logger.error(' -> Error setting up the application routes:', error);
+        logger.error(' -> Error setting up the application routes: ' + error);
     }
 };
 
@@ -106,9 +106,9 @@ export const restartServer = async (): Promise<void> => {
 */
 export const loadUserContainers = async (): Promise<void> => {
     try{
-        logger.info(': Loading users docker containers...');
+        logger.info('Loading users docker containers...');
         const users = await User.find().select('_id');
-        logger.info(`: Found ${users.length} users.`);
+        logger.info(`Found ${users.length} users.`);
         await Promise.all(users.map(async (user) => {
             const container = new UserContainer(user);
             await container.start();
