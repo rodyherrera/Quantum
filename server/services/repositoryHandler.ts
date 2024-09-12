@@ -13,6 +13,7 @@
 ****/
 
 import Deployment from '@models/deployment';
+import logger from '@utilities/logger';
 import { setupSocketEvents, createLogStream } from '@services/logManager';
 import { IUser } from '@typings/models/user';
 import { Socket } from 'socket.io';
@@ -133,7 +134,7 @@ class RepositoryHandler{
             deployment.status = 'success';
             await deployment.save();
         }catch(error){
-            console.log(error);
+            logger.info(error);
         }
     }
 
@@ -180,7 +181,7 @@ class RepositoryHandler{
      * @param {Error} error - The error object.
     */
     handleCriticalError(method: string, error: Error): void{
-        console.log(`[Quantum Cloud] CRITICAL ERROR (at @services/repositoryHandler - ${method}):`, error);
+        logger.info(` CRITICAL ERROR (at @services/repositoryHandler - ${method}):`, error);
         throw error;
     }
 }

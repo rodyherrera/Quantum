@@ -97,7 +97,7 @@ UserSchema.pre('findOneAndDelete', async function(){
     await mongoose.model('Github').findOneAndDelete({ user: user._id });
     const container = (global as any).userContainers[user._id];
     container.remove().then().catch((error: Error) => {
-        console.log(`[Quantum Cloud] CRITICAL ERROR (at @models/user - pre findOneAndDelete middleware): ${error}`)
+        logger.info(` CRITICAL ERROR (at @models/user - pre findOneAndDelete middleware): ${error}`)
     });
 });
 
@@ -110,7 +110,7 @@ UserSchema.pre('save', async function(next){
         if(this.isNew && (global as any)?.logStreamStore !== undefined){
             const container = new UserContainer(this);
             container.start().then().catch((error: Error) => {
-                console.log(`[Quantum Cloud] CRITICAL ERROR (at @models/user - pre save middleware): ${error}`)
+                logger.info(` CRITICAL ERROR (at @models/user - pre save middleware): ${error}`)
             });
         }
         if(!this.isModified('password') || this.isNew) return next();

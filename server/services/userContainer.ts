@@ -134,7 +134,7 @@ class UserContainer extends DockerHandler{
     }
 
     criticalErrorHandler(operation: string, error: any){
-        console.error(`[Quantum Cloud] CRITICAL ERROR (at @services/userContainer - ${operation}):`, error);
+        logger.error(` CRITICAL ERROR (at @services/userContainer - ${operation}):`, error);
         throw error;
     }
 }

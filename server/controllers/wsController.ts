@@ -17,6 +17,7 @@ import { getUserByToken } from '@middlewares/authentication';
 import RuntimeError from '@utilities/runtimeError';
 import Repository from '@models/repository';
 import RepositoryHandler from '@services/repositoryHandler';
+import logger from '@utilities/logger';
 
 /**
  * Authenticates user based on provided token.
@@ -63,7 +64,7 @@ const repositoryShellHandler = async (socket: Socket) => {
         const repositoryHandler = new RepositoryHandler(repository, user);
         await repositoryHandler.executeInteractiveShell(socket);
     }catch(error){
-        console.log('[Quantum Cloud]: Critical Error (@controllers/wsController - repositoryShellHandler)', error);
+        logger.info('Critical Error (@controllers/wsController - repositoryShellHandler)', error);
     }
 };
 
@@ -77,7 +78,7 @@ const cloudConsoleHandler = async (socket: Socket) => {
         const container = (global as any).userContainers[user._id];
         await container.executeInteractiveShell(socket);
     }catch(error){
-        console.log('[Quantum Cloud]: Critical Error (@controllers/wsController - cloudConsoleHandler)', error);
+        logger.info('Critical Error (@controllers/wsController - cloudConsoleHandler)', error);
     }
 };
 
@@ -88,7 +89,7 @@ export default (io: any) => {
         if(action === 'Repository::Shell'){
             await tokenOwnership(socket, (error) => {
                 if(error){
-                    console.log('[Quantum Cloud]: Critical Error (@controllers/wsController)', error);
+                    logger.info('Critical Error (@controllers/wsController)', error);
                 }
                 else repositoryShellHandler(socket);
             });

@@ -68,7 +68,7 @@ export const sendEmail = async({ to = process.env.WEBMASTER_MAIL, subject, html 
             html
         });
     }catch(error){
-        console.error('[Quantum Cloud] (at @services/sendEmail - sendMail):', error);
+        logger.error(' (at @services/sendEmail - sendMail):', error);
     }
 };
 

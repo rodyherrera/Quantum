@@ -54,7 +54,7 @@ export const removeDomainList = async(domains: string[]): Promise<void> => {
         try{
             await removeDomain(domain);
         }catch(error){
-            console.error(`[Quantum Cloud]: Error removing domain '${domain}':`, error);
+            logger.error(`: Error removing domain '${domain}':`, error);
         }
     }));
 };
@@ -94,7 +94,7 @@ export const removeDomain = async(domain: string): Promise<void> => {
     const startIndex = currentConfig.indexOf(startPattern);
     const endIndex = currentConfig.indexOf(endPattern, startIndex) + endPattern.length;
     if(startIndex === -1 || endIndex === -1){
-        console.error(`[Quantum Cloud]: Domain '${domain}' not found in NGINX configuration.`);
+        logger.error(`: Domain '${domain}' not found in NGINX configuration.`);
         return;
     }
     const updatedConfig = currentConfig.substring(endIndex) + currentConfig.substring(0, startIndex);
@@ -183,7 +183,7 @@ ${sslTemplate}
         fs.writeFileSync(NGINX_FILE, currentConfig + template);
         await reloadNginx();
     }catch(error){
-        console.error('[Quantum Cloud]: Error adding domain configuration ->', error);
+        logger.error(': Error adding domain configuration ->', error);
         throw error;
     }
 };
@@ -199,15 +199,15 @@ export const generateSSLCert = async(domain: string, email: string): Promise<voi
     const certPath = `/etc/letsencrypt/live/${domain}/fullchain.pem`;
     // Check if SSL certificate already exists
     if(fs.existsSync(certPath)){
-        console.log(`[Quantum Cloud]: SSL Certificate already exists for ${domain}.`);
+        logger.info(`: SSL Certificate already exists for ${domain}.`);
         return;
     }
     const command = `certbot certonly --webroot -w ${__dirname}/../public -d ${domain} --agree-tos --email ${email} --non-interactive`;
     try{
         await execAsync(command);
-        console.log(`[Quantum Cloud]: SSL certificate generated successfully for ${domain}`);
+        logger.info(`: SSL certificate generated successfully for ${domain}`);
     }catch(error){
-        console.error(`[Quantum Cloud]: Error generating SSL certificate: ${error}`);
+        logger.error(`: Error generating SSL certificate: ${error}`);
         // Re-throw to propagate the error
         throw error;
     }

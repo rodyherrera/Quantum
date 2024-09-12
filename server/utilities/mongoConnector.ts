@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import logger from '@utilities/logger';
 
 /**
  * Establishes a connection to the appropriate MongoDB database based on the environment.
@@ -16,7 +17,7 @@ const mongoConnector = async (): Promise<void> => {
     const databaseName = NODE_ENV === 'production'? PRODUCTION_DATABASE : DEVELOPMENT_DATABASE;
     const uri = `${MONGO_URI}/${databaseName}`;
 
-    console.log(`[Quantum Cloud] -> Connecting to MongoDB (${databaseName})...`);
+    logger.info(` -> Connecting to MongoDB (${databaseName})...`);
 
     mongoose.set('strictQuery',false);
     mongoose.set('strictPopulate',false);
@@ -35,9 +36,9 @@ const mongoConnector = async (): Promise<void> => {
 
     try{
         await mongoose.connect(uri,options);
-        console.log(`[Quantum Cloud] -> Connected to MongoDB (${databaseName})!`);
+        logger.info(` -> Connected to MongoDB (${databaseName})!`);
     }catch(error){
-        console.error('[Quantum Cloud] -> Error connecting to MongoDB:',error);
+        logger.error(' -> Error connecting to MongoDB:',error);
     }
 };
 

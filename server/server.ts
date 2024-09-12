@@ -28,6 +28,7 @@ global.userContainers = {};
 
 import { httpServer } from '@config/express';
 import { cleanHostEnvironment } from '@utilities/helpers';
+import logger from '@utilities/logger';
 import sendMail from '@services/sendEmail';
 import mongoConnector from '@utilities/mongoConnector';
 import * as bootstrap from '@utilities/bootstrap';
@@ -43,10 +44,10 @@ const SERVER_HOST: string = process.env.SERVER_HOSTNAME || '0.0.0.0';
  * @param {Error} err - The uncaught exception.
 */
 process.on('uncaughtException', async (error:Error) => {
-    console.error('[Quantum Cloud]: Uncaught Exception:', error);
+    logger.error(': Uncaught Exception:', error);
     await cleanHostEnvironment();
     if(process.env.NODE_ENV !== 'production') return;
-    console.log('[Quantum Cloud]: Restarting server...');
+    logger.info('Restarting server...');
     await sendMail({
         subject: 'Critical runtime error, restarting server...',
         html: `A critical error has been registered in the execution of the platform server. This error cannot be ignored and continue executing instructions, so the server will be forcefully restarted to maintain the integrity of the platform and its hosted services. Keep in mind that the latter can get into a loop. We will leave you error information:\n${error}`
@@ -59,15 +60,15 @@ process.on('uncaughtException', async (error:Error) => {
  * @param {String} reason - The unhandled rejection.
 */
 process.on('unhandledRejection', (reason:any) => {
-    console.error('[Quantum Cloud]: Unhandled Promise Rejection, reason:', reason);
+    logger.error(': Unhandled Promise Rejection, reason:', reason);
 });
 
 /**
  * Handles SIGINT (Ctrl-C) for graceful shutdown.
 */
 process.on('SIGINT', async () => {
-    console.log('[Quantum Cloud]: SIGINT signal received, shutting down...');
-    //await cleanHostEnvironment();
+    logger.info('SIGINT signal received, shutting down...');
+    // await cleanHostEnvironment();
     await sendMail({
         subject: 'Quantum and hosted services have stopped successfully.',
         html: 'The server has safely completed execution. A certain signal has been received and all services hosted on the platform have been terminated. After sending this email, the server will be closed. See you later!'
@@ -84,7 +85,7 @@ httpServer.listen(SERVER_PORT, SERVER_HOST, async () => {
         bootstrap.validateEnvironmentVariables();
         // Establishes a connection to the MongoDB database
         await mongoConnector();
-        console.log('[Quantum Cloud]: Docker containers and user applications will be started. This may take a few minutes...');
+        logger.info('Docker containers and user applications will be started. This may take a few minutes...');
         // Loads user-defined Docker containers
         await bootstrap.loadUserContainers();
         // Initializes user repositories (presumably for Git interaction)
@@ -94,9 +95,9 @@ httpServer.listen(SERVER_PORT, SERVER_HOST, async () => {
             subject: 'The Quantum API is now accessible!',
             html: 'Your instance has been successfully deployed within your server.'
         });
-        console.log(`[Quantum Cloud]: Server running at http://${SERVER_HOST}:${SERVER_PORT}/.`);
+        logger.info(`: Server running at http://${SERVER_HOST}:${SERVER_PORT}/.`);
     }catch(error){
-        console.error('[Quantum Cloud]: Error during server initialization:', error);
+        logger.error(': Error during server initialization:', error);
         process.exit(1);
     }
 });

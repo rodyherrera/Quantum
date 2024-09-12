@@ -21,6 +21,7 @@ import { IGithub } from '@typings/models/github';
 import { IDeployment } from '@typings/models/deployment';
 import { DeploymentState } from '@typings/services/github';
 import simpleGit from 'simple-git';
+import logger from '@utilities/logger';
 import RepositoryHandler from '@services/repositoryHandler';
 import Deployment from '@models/deployment';
 import RuntimeError from '@utilities/runtimeError';
@@ -62,7 +63,7 @@ class Github{
             if(logPath) await fs.promises.rm(logPath);
             await fs.promises.rm(directoryPath, { recursive: true });
         }catch(error){
-            console.error('[Quantum Cloud]: CRITCAL ERROR -> Deletion failed:', (error as Error).message);
+            logger.error(': CRITCAL ERROR -> Deletion failed:', (error as Error).message);
         }
     }
     
@@ -83,7 +84,7 @@ class Github{
                 : repositoryInfo.data.clone_url;
             await exec(`git clone ${cloneEndpoint} ${destinationPath}`);
         }catch(error){
-            console.error('[Quantum Cloud]: CRITICAL ERROR -> Cloning failed:', (error as Error).message);
+            logger.error(': CRITICAL ERROR -> Cloning failed:', (error as Error).message);
         }
     }
 
@@ -314,7 +315,7 @@ class Github{
             });
             return response;
         }catch(error){
-            console.error('[Quantum Cloud]: Error deleting webhook:', (error as Error).message);
+            logger.error(': Error deleting webhook:', (error as Error).message);
             throw error;
         }
     }

@@ -13,6 +13,7 @@
 ****/
 
 import axios from 'axios';
+import logger from '@utilities/logger';
 import fs from 'fs';
 import _ from 'lodash';
 
@@ -27,7 +28,7 @@ export const getPublicIPAddress = async (): Promise<string> => {
         const { data } = await axios.get('https://api.ipify.org/');
         return data;
     }catch(error){
-        console.error('Error fetching IP address:',error);  
+        logger.error('Error fetching IP address:',error);  
         return '127.0.0.1';
     }
 };
@@ -53,15 +54,15 @@ export const ensureDirectoryExists = async (directoryPath: string): Promise<void
  * Initiates a graceful shutdown of the Quantum Cloud server by stopping all active user containers.
  */
 export const cleanHostEnvironment = async (): Promise<void> => {
-    console.log('[Quantum Cloud]: Cleaning up the host environment, shutting down user containers...');
+    logger.info(': Cleaning up the host environment, shutting down user containers...');
     const { userContainers } = global as any;
     const totalContainers = Object.keys(userContainers).length;
-    console.log(`[Quantum Cloud]: ${totalContainers} active docker instances were detected in the runtime.`);
+    logger.info(`: ${totalContainers} active docker instances were detected in the runtime.`);
     for(const userId in userContainers){
         const container = userContainers[userId];
         await container.instance.stop();
     }
-    console.log('[Quantum Cloud]: Containers shut down successfully, safely shutting down the server...');
+    logger.info(': Containers shut down successfully, safely shutting down the server...');
 };
 
 /**

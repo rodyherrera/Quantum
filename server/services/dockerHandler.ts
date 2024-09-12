@@ -16,6 +16,7 @@ import Docker from 'dockerode';
 import fs from 'fs/promises';
 import { ensureDirectoryExists } from '@utilities/helpers';
 import { Container } from '@typings/services/dockerHandler';
+import logger from '@utilities/logger';
 
 const docker = new Docker();
 
@@ -42,7 +43,7 @@ class DockerHandler{
             await existingContainer.remove({ force: true });
             await fs.rm(this.storagePath, { recursive: true });
         }catch(error){
-            console.log('[Quantum Cloud] CRITICAL ERROR (@dockerHandler - remove):', error);
+            logger.info('CRITICAL ERROR (@dockerHandler - remove):', error);
         }
     }
 
@@ -109,7 +110,7 @@ class DockerHandler{
      */
     async pullImage(){
         try{
-            console.log(`[Quantum Cloud]: Pulling "${this.imageName}"...`);
+            logger.info(`: Pulling "${this.imageName}"...`);
             await new Promise<void>((resolve, reject) => {
                 docker.pull(this.imageName, (error: any, stream: NodeJS.ReadableStream) => {
                     if(error) reject(error);
@@ -121,9 +122,9 @@ class DockerHandler{
                     }
                 });
             });
-            console.log(`[Quantum Cloud]: Image "${this.imageName}" downloaded.`);
+            logger.info(`: Image "${this.imageName}" downloaded.`);
         }catch(error){
-            console.log('[Quantum Cloud] CRITICAL ERROR (@dockerHandler - pullImage):', error);
+            logger.info(' CRITICAL ERROR (@dockerHandler - pullImage):', error);
         }
     }
 
@@ -140,7 +141,7 @@ class DockerHandler{
             await container.start();
             return container;
         }catch(error){
-            console.log('[Quantum Cloud] CRITICAL ERROR (@dockerHandler - createAndStartContainer):', error);
+            logger.info(' CRITICAL ERROR (@dockerHandler - createAndStartContainer):', error);
             return null;
         }
     }

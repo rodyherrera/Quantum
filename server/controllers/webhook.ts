@@ -85,7 +85,7 @@ export const webhook = async (req: Request, res: Response) => {
         await repositoryHandler.start(github);
         res.status(200).json({ status: 'success' });
     }catch(error: any){
-        console.error('[Quantum Cloud] Critical Error (at @controllers/webhook):', error.message);
+        logger.error(' Critical Error (at @controllers/webhook):', error.message);
         res.status(500).json({ status: 'error' });
     }
 };
