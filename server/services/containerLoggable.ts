@@ -13,24 +13,24 @@ const logs: Map<string, fs.WriteStream> = new Map();
 const sockets: Map<string, Socket> = new Map();
 const shells: Map<string, Duplex> = new Map();
 
-const getLogDir = (userId: string): string => {
-    return path.join('/var/lib/quantum', process.env.NODE_ENV as string, 'containers', userId, 'logs');
+const getLogDir = (id: string): string => {
+    return path.join('/var/lib/quantum', process.env.NODE_ENV as string, 'containers', id, 'logs');
 };
 
-const getLogFile = (logName: string, userId: string): string => {
-    const logDir = getLogDir(userId);
+const getLogFile = (logName: string, id: string): string => {
+    const logDir = getLogDir(id);
     const logFile = path.join(logDir, `${logName}.log`);
     return logFile;
 }
 
-export const createLogStream = async (logName: string, userId: string): Promise<fs.WriteStream | null> => {
+export const createLogStream = async (logName: string, id: string): Promise<fs.WriteStream | null> => {
     try{
-        removeLogStream(userId);
-        const logDir = getLogDir(userId);
+        removeLogStream(id);
+        const logDir = getLogDir(id);
         await ensureDirectoryExists(logDir);
-        const logFile = getLogFile(logName, userId);
+        const logFile = getLogFile(logName, id);
         const stream = fs.createWriteStream(logFile, { flags: 'a' });
-        logs.set(userId, stream);
+        logs.set(id, stream);
         return stream;
     }catch(error: any){
         criticalErrorHandler('createLogStream', error);
@@ -38,29 +38,29 @@ export const createLogStream = async (logName: string, userId: string): Promise<
     }
 }
 
-const removeLogStream = (userId: string): void => {
-    const stream = logs.get(userId);
+const removeLogStream = (id: string): void => {
+    const stream = logs.get(id);
     if(stream){
         stream.end();
-        logs.delete(userId);
+        logs.delete(id);
     }
 };
 
-export const setupSocketEvents = async (socket: Socket, logName: string, userId: string, exec: Exec): Promise<void> => {
+export const setupSocketEvents = async (socket: Socket, logName: string, id: string, exec: Exec): Promise<void> => {
     try{
-        const logHistory = await getLog(logName, userId);
-        let shell = shells.get(userId);
+        const logHistory = await getLog(logName, id);
+        let shell = shells.get(id);
         if(!shell){
             shell = await exec.start({ hijack: true, stdin: true });
-            shells.set(userId, shell);
+            shells.set(id, shell);
         }
         const handleShellData = (chunk: Buffer) => {
             const data = chunk.toString('utf8');
-            appendLog(logName, userId, data);
+            appendLog(logName, id, data);
             socket.emit('response', data);
         };
-        sockets.set(userId, socket);
-        socket.on('disconnect', () => handleDisconnect(userId, socket, shell, handleShellData));
+        sockets.set(socket.id, socket);
+        socket.on('disconnect', () => handleDisconnect(id, socket, shell, handleShellData));
         socket.emit('history', logHistory);
         socket.on('command', (command: string) => {
             shell?.write(`${command}\n`);
@@ -71,23 +71,23 @@ export const setupSocketEvents = async (socket: Socket, logName: string, userId:
     }
 }
 
-const handleDisconnect = (userId: string, socket: Socket, shell: Duplex | undefined, dataHandler: (chunk: Buffer) => void): void => {
+const handleDisconnect = (id: string, socket: Socket, shell: Duplex | undefined, dataHandler: (chunk: Buffer) => void): void => {
     socket.disconnect(true);
     shell?.off('data', dataHandler);
-    sockets.delete(userId);
-    removeLogStream(userId);
+    sockets.delete(id);
+    removeLogStream(id);
 }
 
-export const appendLog = async (logName: string, userId: string, data: string): Promise<void> => {
-    await checkLogFileStatus(logName, userId);
-    const stream = logs.get(userId);
+export const appendLog = async (logName: string, id: string, data: string): Promise<void> => {
+    await checkLogFileStatus(logName, id);
+    const stream = logs.get(id);
     if(!stream) return;
     stream.write(data);
 }
 
-const checkLogFileStatus = async (logName: string, userId: string): Promise<void> => {
+const checkLogFileStatus = async (logName: string, id: string): Promise<void> => {
     try{
-        const logFile = getLogFile(logName, userId);
+        const logFile = getLogFile(logName, id);
         const stats = await stat(logFile);
         const maxSize = Number(process.env.LOG_PATH_MAX_SIZE) * 1024;
         if(stats.size > maxSize){
@@ -98,14 +98,14 @@ const checkLogFileStatus = async (logName: string, userId: string): Promise<void
     }
 }
 
-const getLog = async (logName: string, userId: string): Promise<string> => {
+const getLog = async (logName: string, id: string): Promise<string> => {
     try{
-        const logFile = getLogFile(logName, userId);
+        const logFile = getLogFile(logName, id);
         if(!fs.existsSync(logFile)) return '';
         const content = await fs.promises.readFile(logFile, 'utf-8');
         return content;
     }catch(error){
-        console.error('[Quantum Cloud] (at @services/userContainer - getLog):', error);
+        console.error('[Quantum Cloud] (at @services/containerLoggable - getLog):', error);
         return '';
     }
 }

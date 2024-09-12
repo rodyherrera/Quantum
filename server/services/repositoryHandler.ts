@@ -67,7 +67,7 @@ class RepositoryHandler{
      * @returns {Promise<Object>} - A stream object representing the interactive shell.
     */
     async getOrCreateShell(): Promise<any>{
-        await createLogStream(this.repositoryId, this.user._id.toString());
+        await createLogStream(this.repositoryId, this.repositoryId);
         try{
             const userContainers = (global as any).userContainers[this.user._id];
             if(userContainers?.[this.repositoryId]){
@@ -109,7 +109,7 @@ class RepositoryHandler{
             await new Promise(resolve => setTimeout(resolve, 500));
         }
         const repositoryShell = await this.getOrCreateShell();
-        setupSocketEvents(socket, this.repositoryId, this.user._id.toString(), repositoryShell);
+        setupSocketEvents(socket, this.repositoryId, this.repositoryId, repositoryShell);
     }
 
     /**
