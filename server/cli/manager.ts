@@ -12,10 +12,12 @@
  * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 ****/
 
-require('../aliases');
-const prompts = require('prompts');
-const mongoConnector = require('@utilities/mongoConnector');
-const actions = require('@cli/actions');
+import prompts from 'prompts';
+import mongoConnector from '@utilities/mongoConnector';
+import actions from '@cli/actions';
+import dotenv from 'dotenv';
+
+dotenv.config({ path: './.env' });
 
 (async () => {
     await mongoConnector();

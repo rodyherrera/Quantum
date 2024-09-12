@@ -12,10 +12,10 @@
  * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 ****/
 
-const prompts = require('prompts');
-const User = require('@models/user');
+import prompts from 'prompts';
+import User from '@models/user';
 
-const createUser = async () => {
+const createUser = async (): Promise<any> => {
     const data = await prompts([
         { type: 'text', name: 'username', message: 'Username' },
         { type: 'text', name: 'fullname', message: 'Your fullname' },
@@ -36,4 +36,4 @@ const createUser = async () => {
     console.log('[Quantum Manager]: User created ->', newUser);
 };
 
-module.exports = createUser;
+export default createUser;

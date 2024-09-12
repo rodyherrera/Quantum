@@ -12,12 +12,12 @@
  * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 ****/
 
-const prompts = require('prompts');
-const mongoose = require('mongoose');
-const fs = require('fs');
-const path = require('path');
+import prompts from 'prompts';
+import mongoose from 'mongoose';
+import fs from 'fs';
+import path from 'path';
 
-const dropDatabase = async () => {
+const dropDatabase = async (): Promise<any> => {
     const { confirm } = await prompts({
         type: 'confirm', 
         name: 'confirm', 
@@ -29,7 +29,7 @@ const dropDatabase = async () => {
         return;
     }
     await mongoose.connection.dropDatabase();
-    const quantumDir = path.join('/var/lib/quantum', process.env.NODE_ENV);
+    const quantumDir = path.join('/var/lib/quantum', process.env.NODE_ENV || 'development');
     console.log('[Quantum Manager]: The database has been deleted successfully.');
     console.log(`[Quantum Manager]: Tried to delete the "${quantumDir}" directory that contains .logs files and downloaded repositories...`);
     fs.rm(quantumDir, { recursive: true }, () => {
@@ -37,4 +37,4 @@ const dropDatabase = async () => {
     });
 };
 
-module.exports = dropDatabase;
+export default dropDatabase;

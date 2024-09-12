@@ -1,7 +1,7 @@
-const Docker = require('dockerode');
+import Docker from 'dockerode';
 const docker = new Docker();
 
-exports.filterAvailableContainers = async (activeOnly = false) => {
+export const filterAvailableContainers = async (activeOnly: boolean = false): Promise<any[]> => {
     const containers = await docker.listContainers({ all: !activeOnly });
     if(process.env.DOCKERS_CONTAINER_ALIASES){
         const aliases = process.env.DOCKERS_CONTAINER_ALIASES.split(',');
@@ -16,5 +16,3 @@ exports.filterAvailableContainers = async (activeOnly = false) => {
     }
     return activeOnly ? containers.filter((containerInfo) => containerInfo.State === 'running') : containers;
 };
-
-module.exports = exports;

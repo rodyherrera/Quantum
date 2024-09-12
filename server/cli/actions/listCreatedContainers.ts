@@ -1,4 +1,4 @@
-const { filterAvailableContainers } = require('@cli/utilities/docker');
+import { filterAvailableContainers } from '@cli/utilities/docker';
 
 const listCreatedContainers = async () => {
     const availableContainers = await filterAvailableContainers();
@@ -7,4 +7,4 @@ const listCreatedContainers = async () => {
     });
 };
 
-module.exports = listCreatedContainers;
+export default listCreatedContainers;

@@ -12,16 +12,16 @@
  * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 ****/
 
-const createUser = require('@cli/actions/createUser');
-const dropDatabase = require('@cli/actions/dropDatabase');
-const listActiveContainers = require('@cli/actions/listActiveContainers');
-const listCreatedContainers = require('@cli/actions/listCreatedContainers');
+import createUser from '@cli/actions/createUser';
+import dropDatabase from '@cli/actions/dropDatabase';
+import listActiveContainers from '@cli/actions/listActiveContainers';
+import listCreatedContainers from '@cli/actions/listCreatedContainers';
 
 const actions = {
     createUser,
-    listActiveContainers,
     dropDatabase,
-    listCreatedContainers
+    listCreatedContainers,
+    listActiveContainers
 };
 
-module.exports = actions;
+export default actions;
