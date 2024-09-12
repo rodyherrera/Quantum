@@ -10,20 +10,40 @@ import { Exec } from 'dockerode';
 const stat = util.promisify(fs.stat);
 const truncate = util.promisify(fs.truncate);
 
+/** Map to store active log write streams */
 export const logs: Map<string, fs.WriteStream> = new Map();
+/** Map to store active socket connections */
 export const sockets: Map<string, Socket> = new Map();
+/** Map to store active shell connections */
 export const shells: Map<string, Duplex> = new Map();
 
+/**
+ * Generates the log directory path for a given container ID
+ * @param id - The container ID
+ * @returns The full path to the log directory
+*/
 const getLogDir = (id: string): string => {
     return path.join('/var/lib/quantum', process.env.NODE_ENV as string, 'containers', id, 'logs');
 };
 
+/**
+ * Generates the full path for a log file
+ * @param logName - The name of the log file
+ * @param id - The container ID
+ * @returns The full path to the log file
+*/
 const getLogFile = (logName: string, id: string): string => {
     const logDir = getLogDir(id);
     const logFile = path.join(logDir, `${logName}.log`);
     return logFile;
 }
 
+/**
+ * Creates a new log stream for a given container
+ * @param logName - The name of the log file
+ * @param id - The container ID
+ * @returns A Promise that resolves to the created WriteStream, or null if an error occurs
+*/
 export const createLogStream = async (logName: string, id: string): Promise<fs.WriteStream | null> => {
     try{
         removeLogStream(id);
@@ -39,6 +59,10 @@ export const createLogStream = async (logName: string, id: string): Promise<fs.W
     }
 }
 
+/**
+ * Removes an existing log stream for a given container
+ * @param id - The container ID
+*/
 const removeLogStream = (id: string): void => {
     const stream = logs.get(id);
     if(stream){
@@ -47,6 +71,13 @@ const removeLogStream = (id: string): void => {
     }
 };
 
+/**
+ * Sets up socket events for a container
+ * @param socket - The socket instance
+ * @param logName - The name of the log file
+ * @param id - The container ID
+ * @param exec - The Dockerode exec instance
+*/
 export const setupSocketEvents = async (socket: Socket, logName: string, id: string, exec: Exec): Promise<void> => {
     try{
         const logHistory = await getLog(logName, id);
@@ -72,6 +103,13 @@ export const setupSocketEvents = async (socket: Socket, logName: string, id: str
     }
 }
 
+/**
+ * Handles the disconnection of a socket
+ * @param id - The container ID
+ * @param socket - The socket instance
+ * @param shell - The shell instance
+ * @param dataHandler - The data handler function
+*/
 const handleDisconnect = (id: string, socket: Socket, shell: Duplex | undefined, dataHandler: (chunk: Buffer) => void): void => {
     socket.disconnect(true);
     shell?.off('data', dataHandler);
@@ -79,6 +117,12 @@ const handleDisconnect = (id: string, socket: Socket, shell: Duplex | undefined,
     removeLogStream(id);
 }
 
+/**
+ * Appends data to a log file
+ * @param logName - The name of the log file
+ * @param id - The container ID
+ * @param data - The data to append
+*/
 export const appendLog = async (logName: string, id: string, data: string): Promise<void> => {
     await checkLogFileStatus(logName, id);
     const stream = logs.get(id);
@@ -86,6 +130,11 @@ export const appendLog = async (logName: string, id: string, data: string): Prom
     stream.write(data);
 }
 
+/**
+ * Checks the status of a log file and truncates it if it exceeds the maximum size
+ * @param logName - The name of the log file
+ * @param id - The container ID
+*/
 const checkLogFileStatus = async (logName: string, id: string): Promise<void> => {
     try{
         const logFile = getLogFile(logName, id);
@@ -99,6 +148,12 @@ const checkLogFileStatus = async (logName: string, id: string): Promise<void> =>
     }
 }
 
+/**
+ * Retrieves the content of a log file
+ * @param logName - The name of the log file
+ * @param id - The container ID
+ * @returns A Promise that resolves to the content of the log file
+*/
 const getLog = async (logName: string, id: string): Promise<string> => {
     try{
         const logFile = getLogFile(logName, id);
@@ -111,6 +166,11 @@ const getLog = async (logName: string, id: string): Promise<string> => {
     }
 }
 
+/**
+ * Handles critical errors by logging them and throwing the error
+ * @param operation - The name of the operation where the error occurred
+ * @param error - The error object
+*/
 const criticalErrorHandler = (operation: string, error: any): void => {
     logger.error(`CRITICAL ERROR (at @services/logManager - ${operation}):`, error);
     throw error;
