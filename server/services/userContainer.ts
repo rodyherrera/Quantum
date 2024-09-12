@@ -102,26 +102,12 @@ class UserContainer extends DockerHandler{
                 AttachStdout: true,
                 WorkingDir: workDir,
                 AttachStderr: true,
-                Tty: true
+                Tty: false
             });
-            const stream = await exec.start();
-            await this.collectStreamOutput(stream);
+            await exec.start();
         }catch(error){
             this.criticalErrorHandler('executeCommand', error);
         }
-    }
-
-    /**
-     * Collects and cleans the output of a container execution stream.
-     * 
-     * @param stream - The execution stream. 
-     * @returns The collected output
-     */
-    async collectStreamOutput(stream: any): Promise<void>{
-        return new Promise(async (resolve, reject) => {
-            stream.on('end', resolve);
-            stream.on('error', (error: any) => reject(error));
-        });
     }
 
     /**

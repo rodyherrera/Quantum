@@ -40,9 +40,10 @@ export const createLogStream = async (logName: string, userId: string): Promise<
 
 const removeLogStream = (userId: string): void => {
     const stream = logs.get(userId);
-    if(!stream) return;
-    stream.end();
-    logs.delete(userId);
+    if(stream){
+        stream.end();
+        logs.delete(userId);
+    }
 };
 
 export const setupSocketEvents = async (socket: Socket, logName: string, userId: string, exec: Exec): Promise<void> => {
