@@ -58,7 +58,7 @@ const transporter = nodemailer.createTransport({
  * @returns {Promise<void>} A promise that resolves when the email is sent.
  * @throws {Error} If there's an error during the sending process.
 */
-export const sendMail = async({ to = process.env.WEBMASTER_MAIL, subject, html }: EmailOptions): Promise<void> => {
+export const sendEmail = async({ to = process.env.WEBMASTER_MAIL, subject, html }: EmailOptions): Promise<void> => {
     if(!IS_SMTP_DEFINED) return;
     try{
         await transporter.sendMail({
@@ -68,8 +68,8 @@ export const sendMail = async({ to = process.env.WEBMASTER_MAIL, subject, html }
             html
         });
     }catch(error){
-        console.error('[Quantum Cloud] (at @services/mailHandler - sendMail):', error);
+        console.error('[Quantum Cloud] (at @services/sendEmail - sendMail):', error);
     }
 };
 
-export default { sendMail };
+export default sendEmail;

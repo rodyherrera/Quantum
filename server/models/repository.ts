@@ -17,10 +17,10 @@ import { IDeployment } from '@typings/models/deployment';
 import { IRepository } from '@typings/models/repository';
 import { IUser } from '@typings/models/user';
 import { v4 } from 'uuid';
-import { getPublicIPAddress } from '@utilities/runtime';
+import { getPublicIPAddress } from '@utilities/helpers';
 import Github from '@services/github';
 import RepositoryHandler from '@services/repositoryHandler';
-import * as nginxHandler from '@services/nginxHandler';
+import * as nginxHandler from '@services/nginx';
 
 const RepositorySchema: Schema<IRepository> = new Schema({
     alias: {

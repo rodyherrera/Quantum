@@ -14,7 +14,7 @@
 
 import Deployment from '@models/deployment';
 import RuntimeError from '@utilities/runtimeError';
-import { catchAsync } from '@utilities/runtime';
+import { catchAsync } from '@utilities/helpers';
 import { IUser } from '@typings/models/user';
 import { Request, Response, NextFunction } from 'express';
 

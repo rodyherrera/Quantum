@@ -16,7 +16,7 @@ import DockerHandler from '@services/dockerHandler';
 import path from 'path';
 import { IUser } from '@typings/models/user';
 import { Socket } from 'socket.io';
-import { createLogStream, setupSocketEvents } from '@services/containerLoggable';
+import { createLogStream, setupSocketEvents } from '@services/logManager';
 
 /**
  * Represents a user container within Quantum Cloud

@@ -13,7 +13,7 @@
 ****/
 
 import Deployment from '@models/deployment';
-import { setupSocketEvents, createLogStream } from '@services/containerLoggable';
+import { setupSocketEvents, createLogStream } from '@services/logManager';
 import { IUser } from '@typings/models/user';
 import { Socket } from 'socket.io';
 import { IRepository } from '@typings/models/repository';

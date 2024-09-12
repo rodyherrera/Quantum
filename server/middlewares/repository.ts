@@ -14,7 +14,7 @@
 
 import Repository from '@models/repository';
 import RuntimeError from '@utilities/runtimeError';
-import { catchAsync } from '@utilities/runtime';
+import { catchAsync } from '@utilities/helpers';
 import { Request, Response, NextFunction } from 'express';
 import { IUser } from '@typings/models/user';
 

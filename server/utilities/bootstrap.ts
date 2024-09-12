@@ -19,12 +19,12 @@ import fs from 'fs';
 import path from 'path';
 import UserContainer from '@services/userContainer';
 import RepositoryHandler from '@services/repositoryHandler';
+import sendMail from '@services/sendEmail';
 import { ConfigureAppParams } from '@typings/utilities/bootstrap';
 import { spawn } from 'child_process';
-import { sendMail } from '@services/mailHandler';
 import { IUser } from '@typings/models/user';
 import { IRepository } from '@typings/models/repository';
-import * as nginxHandler from '@services/nginxHandler';
+import * as nginxHandler from '@services/nginx';
 
 /**
  * Asynchronously sets up an Nginx reverse proxy configuration.

@@ -17,7 +17,7 @@ import User from '@models/user';
 import RuntimeError from '@utilities/runtimeError';
 import { IUser } from '@typings/models/user';
 import { promisify } from 'util';
-import { catchAsync } from '@utilities/runtime';
+import { catchAsync } from '@utilities/helpers';
 import { Request, Response, NextFunction } from 'express';
 
 /**

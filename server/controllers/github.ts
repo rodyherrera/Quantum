@@ -12,7 +12,7 @@
  * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 ****/
 
-import { catchAsync } from '@utilities/runtime';
+import { catchAsync } from '@utilities/helpers';
 import Github from '@models/github';
 import HandlerFactory from '@controllers/handlerFactory';
 import { Request, Response } from 'express';

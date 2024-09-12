@@ -27,8 +27,8 @@ global.logStreamStore = {};
 global.userContainers = {};
 
 import { httpServer } from '@config/express';
-import { sendMail } from '@services/mailHandler';
-import { cleanHostEnvironment } from '@utilities/runtime';
+import { cleanHostEnvironment } from '@utilities/helpers';
+import sendMail from '@services/sendEmail';
 import mongoConnector from '@utilities/mongoConnector';
 import * as bootstrap from '@utilities/bootstrap';
 

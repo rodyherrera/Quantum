@@ -14,7 +14,7 @@
 
 import Docker from 'dockerode';
 import fs from 'fs/promises';
-import { ensureDirectoryExists } from '@utilities/runtime';
+import { ensureDirectoryExists } from '@utilities/helpers';
 import { Container } from '@typings/services/dockerHandler';
 
 const docker = new Docker();

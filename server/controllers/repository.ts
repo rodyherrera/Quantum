@@ -20,7 +20,7 @@ import HandlerFactory from '@controllers/handlerFactory';
 import Deployment from '@models/deployment';
 import Github from '@services/github';
 import RuntimeError from '@utilities/runtimeError';
-import { catchAsync } from '@utilities/runtime';
+import { catchAsync } from '@utilities/helpers';
 import { Request, Response, NextFunction } from 'express';
 
 const RepositoryFactory = new HandlerFactory({

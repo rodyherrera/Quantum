@@ -15,7 +15,7 @@
 import jwt from 'jsonwebtoken';
 import User from '@models/user';
 import HandlerFactory from '@controllers/handlerFactory';
-import { catchAsync, filterObject } from '@utilities/runtime';
+import { catchAsync, filterObject } from '@utilities/helpers';
 import { IUser } from '@typings/models/user';
 
 const UserFactory = new HandlerFactory({

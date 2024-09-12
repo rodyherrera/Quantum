@@ -1,7 +1,7 @@
 import { Document, Model, PopulateOptions } from 'mongoose';
-import { filterObject } from '@utilities/runtime';
-import RuntimeError from '@utilities/runtimeError';
+import { filterObject } from '@utilities/helpers';
 import { RequestQueryString, Buffer, Options } from '@typings/utilities/apiFeatures';
+import RuntimeError from '@utilities/runtimeError';
 import _ from 'lodash';
 
 /**

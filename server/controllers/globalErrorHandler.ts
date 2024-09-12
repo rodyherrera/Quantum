@@ -13,7 +13,7 @@
 ****/
 
 import RuntimeError from '@utilities/runtimeError';
-import { sendMail } from '@services/mailHandler';
+import sendMail from '@services/sendEmail';
 import { Request, Response, NextFunction } from 'express';
 
 /**

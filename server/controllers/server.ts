@@ -14,7 +14,7 @@
 
 import os from 'os';
 import { Request, Response } from 'express';
-import { catchAsync } from '@utilities/runtime';
+import { catchAsync } from '@utilities/helpers';
 
 /**
  * Calculates a single measurement of CPU usage statistics.

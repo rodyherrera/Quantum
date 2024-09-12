@@ -18,7 +18,7 @@ import HandlerFactory from '@controllers/handlerFactory';
 import RuntimeError from '@utilities/runtimeError';
 import Github from '@services/github';
 import RepositoryHandler from '@services/repositoryHandler';
-import { catchAsync } from '@utilities/runtime';
+import { catchAsync } from '@utilities/helpers';
 import { Request, Response } from 'express';
 import { IDeployment } from '@typings/models/deployment';
 import { IRepository } from '@typings/models/repository';
