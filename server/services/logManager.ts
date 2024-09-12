@@ -10,9 +10,9 @@ import { Exec } from 'dockerode';
 const stat = util.promisify(fs.stat);
 const truncate = util.promisify(fs.truncate);
 
-const logs: Map<string, fs.WriteStream> = new Map();
-const sockets: Map<string, Socket> = new Map();
-const shells: Map<string, Duplex> = new Map();
+export const logs: Map<string, fs.WriteStream> = new Map();
+export const sockets: Map<string, Socket> = new Map();
+export const shells: Map<string, Duplex> = new Map();
 
 const getLogDir = (id: string): string => {
     return path.join('/var/lib/quantum', process.env.NODE_ENV as string, 'containers', id, 'logs');

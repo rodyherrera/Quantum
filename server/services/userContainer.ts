@@ -25,7 +25,7 @@ import { createLogStream, setupSocketEvents } from '@services/logManager';
  */
 class UserContainer extends DockerHandler{
     private user: IUser;
-    private instance: any;
+    public instance: any;
 
     /**
      * Creates a new UserContainer instance.
@@ -50,26 +50,19 @@ class UserContainer extends DockerHandler{
     async remove(){
         try{
             await this.removeContainer();
-            // FOR FUTURE VERSIONS: Avoid storing containers globally (scalability)
-            delete (global as any).userContainers[this.user._id];
         }catch(error){
             this.criticalErrorHandler('removeContainer', error);
         }
     }
 
-    /**
-     * Starts or creates the user's container and installs necessary packages.
-     */
-    async start(){
+    async start(installPkgs: boolean = true){
         try{
             const existingContainer = await this.getExistingContainer();
             this.instance = existingContainer;
-            (global as any).userContainers[this.user._id] = this;
-            await this.installPackages();
+            if(installPkgs) await this.installPackages();
         }catch(error: any){
             if(error.statusCode === 404){
                 this.instance = await this.createAndStartContainer();
-                (global as any).userContainers[this.user._id] = this;
                 await this.installPackages();
             }else{
                 this.criticalErrorHandler('startContainer', error);
@@ -98,6 +91,7 @@ class UserContainer extends DockerHandler{
      */
     async executeCommand(command: string, workDir: string = '/'): Promise<void>{
         try{
+            await this.start(false);
             const exec = await this.instance.exec({
                 Cmd: ['/bin/ash', '-c', command],
                 AttachStdout: true,
@@ -118,6 +112,7 @@ class UserContainer extends DockerHandler{
      */
     async executeInteractiveShell(socket: Socket, workDir: string = '/app'){
         try{
+            await this.start(false);
             const exec = await this.instance.exec({
                 Cmd: ['/bin/ash'],
                 AttachStdout: true,
@@ -135,7 +130,7 @@ class UserContainer extends DockerHandler{
     }
 
     criticalErrorHandler(operation: string, error: any){
-        logger.error(`CRITICAL ERROR (at @services/userContainer - ${operation}):`, error);
+        logger.error(`CRITICAL ERROR (at @services/userContainer - ${operation}): ` + error);
         throw error;
     }
 }

@@ -12,20 +12,6 @@
  * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 ****/
 
-/**
- * Temporary global storage for log streams.
- * @global
- * @todo Replace with Redis or a similar tool for scalability in a later version.
-*/
-global.logStreamStore = {};
-
-/**
- * Temporary storage for user container information.
- * @global
- * @todo Replace with a persistent solution (e.g., database) in a later version.
-*/
-global.userContainers = {};
-
 import { httpServer } from '@config/express';
 import { cleanHostEnvironment } from '@utilities/helpers';
 import logger from '@utilities/logger';

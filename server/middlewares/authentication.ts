@@ -15,10 +15,11 @@
 import jwt from 'jsonwebtoken';
 import User from '@models/user';
 import RuntimeError from '@utilities/runtimeError';
+import { IDecodedToken } from '@typings/middlewares/authentication';
 import { IUser } from '@typings/models/user';
-import { promisify } from 'util';
 import { catchAsync } from '@utilities/helpers';
 import { Request, Response, NextFunction } from 'express';
+import logger from '@utilities/logger';
 
 /**
  * Extracts and verifies a JWT token from the Authorization header, then retrieves
@@ -30,7 +31,11 @@ import { Request, Response, NextFunction } from 'express';
  *                          the token was issued.
  */
 export const getUserByToken = async (token: string): Promise<IUser> => {
-    const decodedToken = await promisify(jwt.verify)(token, process.env.SECRET_KEY!);
+    if(!process.env.SECRET_KEY){
+        logger.error('process.env.SECRET_KEY is empty!');
+        throw new RuntimeError('Authentication::SecretKey::Empty', 500);
+    }
+    const decodedToken = jwt.verify(token, process.env.SECRET_KEY) as IDecodedToken;
     // Retrieve the user from the database
     const freshUser = await User.findById(decodedToken.id);
     if(!freshUser){

@@ -4,7 +4,7 @@
     "description": "🚀 Self-hosted open source alternative to Vercel, Heroku and Netlify. All your applications, just in one place. Develop and deploy with your favorite tools and continuous deployment with Github.",
     "scripts": {
         "start": "npx tsx server.ts",
-        "cli": "npx tsx cli/manager.ts"
+        "cli": "IS_CLI=true npx tsx cli/manager.ts"
     },
     "dependencies": {
         "@octokit/rest": "^20.0.2",

@@ -17,7 +17,9 @@ import logger from '@utilities/logger';
 import { setupSocketEvents, createLogStream } from '@services/logManager';
 import { IUser } from '@typings/models/user';
 import { Socket } from 'socket.io';
+import { shells } from '@services/logManager';
 import { IRepository } from '@typings/models/repository';
+import UserContainer from './userContainer';
 
 /**
  * This class manages interactions with a specific repository within the Quantum Cloud platform.  
@@ -43,38 +45,18 @@ class RepositoryHandler{
     }
 
     /**
-     * Stops and removes the interactive shell associated with the repository.
-     * Used during cleanup or when the container is no longer needed.
-     *
-     * @returns {Promise<void>}
-    */
-    async stopAndRemoveShell(): Promise<void>{
-        try{
-            const userContainers = (global as any).userContainers[this.user._id];
-            if(userContainers && userContainers[this.repositoryId]){
-                const shellStream = userContainers[this.repositoryId];
-                shellStream.write('\x03');
-                await shellStream.end();
-                delete userContainers[this.repositoryId];
-            }
-        }catch(error){
-            logger.error(error);
-        }
-    }
-    
-    /**
      * Retrieves an existing interactive shell for the repository, or creates a new one if necessary.
      *
      * @returns {Promise<Object>} - A stream object representing the interactive shell.
     */
     async getOrCreateShell(): Promise<any>{
-        await createLogStream(this.repositoryId, this.repositoryId);
         try{
-            const userContainers = (global as any).userContainers[this.user._id];
-            if(userContainers?.[this.repositoryId]){
-                return userContainers[this.repositoryId];
-            }
-            const exec = await userContainers.instance.exec({
+            const shell = shells.get(this.repositoryId);
+            if(shell) return shell;
+            await createLogStream(this.repositoryId, this.repositoryId);
+            const userContainer = new UserContainer(this.user);
+            await userContainer.start();
+            const exec = await userContainer.instance.exec({
                 Cmd: ['/bin/ash'],
                 AttachStdout: true,
                 AttachStderr: true,
@@ -94,8 +76,16 @@ class RepositoryHandler{
      * @returns {Promise<void>}
     */
     async removeFromRuntime(): Promise<void>{
-        this.stopAndRemoveShell();
-        delete (global as any).userContainers[this.user._id][this.repositoryId];
+        try{
+            const shell = shells.get(this.repositoryId);
+            if(shell){
+                shell.write('\x03');
+                shell.end();
+            }
+            shells.delete(this.repositoryId);
+        }catch(error){
+            logger.error(error);
+        }
     }
 
     /**
@@ -106,9 +96,6 @@ class RepositoryHandler{
      * @returns {Promise<void>}
     */
     async executeInteractiveShell(socket: Socket): Promise<void>{
-        while(!(global as any).userContainers[this.user._id]?.instance){
-            await new Promise(resolve => setTimeout(resolve, 500));
-        }
         const repositoryShell = await this.getOrCreateShell();
         setupSocketEvents(socket, this.repositoryId, this.repositoryId, repositoryShell);
     }

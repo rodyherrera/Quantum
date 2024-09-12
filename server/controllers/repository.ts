@@ -22,6 +22,9 @@ import Github from '@services/github';
 import RuntimeError from '@utilities/runtimeError';
 import { catchAsync } from '@utilities/helpers';
 import { Request, Response, NextFunction } from 'express';
+import { IUser } from '@typings/models/user';
+import { IRepository } from '@typings/models/repository';
+import { IGithub } from '@typings/models/github';
 
 const RepositoryFactory = new HandlerFactory({
     model: Repository,
@@ -82,9 +85,10 @@ const filterRepositories = (githubRepositories: any[], userRepositories: any[]):
  * @param {Response} res - Express response object
 */
 export const getMyGithubRepositories = catchAsync(async (req: Request, res: Response) => {
-    const { accessToken } = req.user.github;
+    const user = req.user as IUser;
+    const { accessToken } = user.github as IGithub;
     const githubRepositories = await getGithubRepositories(accessToken);
-    const sanitizedRepositories = filterRepositories(githubRepositories, req.user.repositories);
+    const sanitizedRepositories = filterRepositories(githubRepositories, user.repositories);
     res.status(200).json({ status: 'success', data: sanitizedRepositories });
 });
 
@@ -95,17 +99,18 @@ export const getMyGithubRepositories = catchAsync(async (req: Request, res: Resp
  * @param {Response} res - Express response object 
 */
 export const getMyRepositories = catchAsync(async (req: Request, res: Response) => {
-    const repositories = await Repository.find({ user: req.user._id }).lean();
+    const user = req.user as IUser;
+    const repositories: IRepository[] = await Repository.find({ user });
     for(const repository of repositories){
         const activeDeploymentId = repository.deployments[0];
-        if(!activeDeploymentId)continue;
+        if(!activeDeploymentId) continue;
         const deployment = await Deployment.findById(activeDeploymentId).select('status');
-        repository.activeDeployment = deployment;
+        if(deployment) repository.activeDeployment = deployment;
     }
     const repositoriesWithInfo = await Promise.all(repositories.map(async (repository) => {
-        const github = new Github(req.user, repository);
+        const github = new Github(user, repository);
         const repositoryInfo = await github.getRepositoryInfo();
-        if(!repositoryInfo)return null;
+        if(!repositoryInfo) return null;
         return { ...repository, ...repositoryInfo };
     }));
     const filteredRepositoriesWithInfo = repositoriesWithInfo.filter(repo => repo !== null);
@@ -120,7 +125,9 @@ export const getMyRepositories = catchAsync(async (req: Request, res: Response) 
 */
 const getRequestedPath = (req: Request): string => {
     const route = req.params.route || '';
-    const basePath = path.join('/var/lib/quantum', process.env.NODE_ENV, `/containers/${req.user._id}/github-repos/`, req.params.id);
+    const env = process.env.NODE_ENV || 'development';
+    const user = req.user as IUser;
+    const basePath = path.join('/var/lib/quantum', env, `/containers/${user}/github-repos/`, req.params.id);
     return path.join(basePath, route);
 };
 

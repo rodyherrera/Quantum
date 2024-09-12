@@ -96,7 +96,7 @@ UserSchema.pre('findOneAndDelete', async function(){
     if(!user) return;
     await mongoose.model('Repository').deleteMany({ user: user._id });
     await mongoose.model('Github').findOneAndDelete({ user: user._id });
-    const container = (global as any).userContainers[user._id];
+    const container = new UserContainer(user);
     container.remove().then().catch((error: Error) => {
         logger.error(`CRITICAL ERROR (at @models/user - pre findOneAndDelete middleware): ${error}`)
     });
@@ -108,7 +108,7 @@ UserSchema.pre('save', async function(next){
         this.username = this.username.replace(/\s/g, '');
         this.password = await bcrypt.hash(this.password, 12);
         this.passwordConfirm = undefined;
-        if(this.isNew && (global as any)?.logStreamStore !== undefined){
+        if(this.isNew && !process.env.IS_CLI){
             const container = new UserContainer(this);
             container.start().then().catch((error: Error) => {
                 logger.error(`CRITICAL ERROR (at @models/user - pre save middleware): ${error}`)

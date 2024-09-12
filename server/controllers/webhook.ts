@@ -19,6 +19,7 @@ import Github from '@services/github';
 import RepositoryHandler from '@services/repositoryHandler';
 import mongoose from 'mongoose';
 import logger from '@utilities/logger';
+import { shells } from '@services/logManager';
 import { Request, Response } from 'express';
 import { IUser } from '@typings/models/user';
 import { IRepository } from '@typings/models/repository';
@@ -60,9 +61,12 @@ export const webhook = async (req: Request, res: Response) => {
         const github = new Github(repositoryUser, requestedRepository);
 
         // 4. Stop Existing Container (if any)
-        const shellStream = global.userContainers[repositoryUser._id][requestedRepository._id as string];
+        const shell = shells.get(repositoryId);
         // Send Control-C for graceful termination
-        if(shellStream)shellStream.write('\x03');
+        if(shell){
+            shell.write('\x03');
+            shell.end();
+        }
 
         // 5. Clean Up Old Deployment Artifacts
         await Github.deleteLogAndDirectory('', `/var/lib/quantum/${process.env.NODE_ENV}/containers/${repositoryUser._id}/github-repos/${requestedRepository._id}/`);

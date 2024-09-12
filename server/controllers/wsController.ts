@@ -12,38 +12,29 @@
  * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 ****/
 
-import { Socket } from 'socket.io';
 import { getUserByToken } from '@middlewares/authentication';
+import { ISocket, WsNextFunction } from '@typings/controllers/wsController';
+import UserContainer from '@services/userContainer';
 import RuntimeError from '@utilities/runtimeError';
 import Repository from '@models/repository';
 import RepositoryHandler from '@services/repositoryHandler';
 import logger from '@utilities/logger';
 
-/**
- * Authenticates user based on provided token.
- * @param {Socket} socket - Socket.IO socket object.
- * @param {NextFunction} next - next function.
-*/
-const userAuthentication = async (socket: Socket, next) => {
+const userAuthentication = async (socket: ISocket, next: WsNextFunction) => {
     const { token } = socket.handshake.auth;
     if(!token)return next(new RuntimeError('Authentication::Token::Required', 400));
     try{
-        const user = await getUserByToken(token, next);
+        const user = await getUserByToken(token);
         socket.user = user;
         next();
-    }catch(error){
+    }catch(error: any){
         next(error);
     }
 };
 
-/**
- * Verifies user ownership of the requested repository.
- * @param {Socket} socket - Socket.IO socket object.
- * @param {NextFunction} next - next function.
-*/
-const tokenOwnership = async (socket: Socket, next) => {
+const tokenOwnership = async (socket: ISocket, next: WsNextFunction) => {
     const { repositoryAlias } = socket.handshake.query;
-    if(!repositoryAlias)return next(new RuntimeError('Repository::Name::Required', 400));
+    if(!repositoryAlias) return next(new RuntimeError('Repository::Name::Required', 400));
     try{
         const repository = await Repository.findOne({ alias: repositoryAlias, user: socket.user._id });
         if(!repository)return next(new RuntimeError('Repository::Not::Found', 404));
@@ -54,11 +45,7 @@ const tokenOwnership = async (socket: Socket, next) => {
     }
 };
 
-/**
- * Handles repository interactive shell connections.
- * @param {Socket} socket - Socket.IO socket object.
-*/
-const repositoryShellHandler = async (socket: Socket) => {
+const repositoryShellHandler = async (socket: ISocket) => {
     try{
         const { repository, user } = socket;
         const repositoryHandler = new RepositoryHandler(repository, user);
@@ -68,14 +55,10 @@ const repositoryShellHandler = async (socket: Socket) => {
     }
 };
 
-/**
- * Handles cloud console connections.
- * @param {Socket} socket - Socket.IO socket object.
-*/
-const cloudConsoleHandler = async (socket: Socket) => {
+const cloudConsoleHandler = async (socket: ISocket) => {
     try{
         const { user } = socket;
-        const container = (global as any).userContainers[user._id];
+        const container = new UserContainer(user);
         await container.executeInteractiveShell(socket);
     }catch(error){
         logger.error('Critical Error (@controllers/wsController - cloudConsoleHandler)', error);
@@ -84,10 +67,10 @@ const cloudConsoleHandler = async (socket: Socket) => {
 
 export default (io: any) => {
     io.use(userAuthentication);
-    io.on('connection', async (socket: Socket) => {
+    io.on('connection', async (socket: ISocket) => {
         const { action } = socket.handshake.query;
         if(action === 'Repository::Shell'){
-            await tokenOwnership(socket, (error) => {
+            await tokenOwnership(socket, async (error): Promise<void> => {
                 if(error){
                     logger.error('Critical Error (@controllers/wsController)', error);
                 }
