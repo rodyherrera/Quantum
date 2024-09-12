@@ -13,12 +13,12 @@
 ****/
 
 import mongoose, { Model, Schema } from 'mongoose';
-import { IDeployment } from '@typings/models/deployment';
 import { IRepository } from '@typings/models/repository';
 import { IUser } from '@typings/models/user';
 import { v4 } from 'uuid';
 import { getPublicIPAddress } from '@utilities/helpers';
 import Github from '@services/github';
+import logger from '@utilities/logger';
 import RepositoryHandler from '@services/repositoryHandler';
 import * as nginxHandler from '@services/nginx';
 
@@ -116,7 +116,7 @@ const handleDomains = async (domains: string[], port: number, currentDomains: st
             await nginxHandler.generateSSLCert(trimmedDomain, userEmail);
             await nginxHandler.updateDomain({ domain: trimmedDomain, port, ipv4, useSSL: true });
         }catch(error){
-            logger.error(`: Error processing domain (add) '${trimmedDomain}':`, error);
+            logger.error(`Error processing domain (add) '${trimmedDomain}':`, error);
         }
     }));
 

@@ -95,7 +95,7 @@ export const restartServer = async (): Promise<void> => {
     // "stdio: 'inherit'" -> Inherit standard flows from the main process.
     const childProcess = spawn('npm', ['run', 'start'], { stdio: 'inherit' });
     childProcess.on('close', (code) => {
-        logger.info(`: Server process exited with code ${code}.`);
+        logger.info(`Server process exited with code ${code}.`);
     });
 };
 
@@ -118,7 +118,7 @@ export const loadUserContainers = async (): Promise<void> => {
             html: 'The containers of all users registered on the platform were successfully mounted on the host.'
         });
     }catch(error){
-        logger.info(' CRITICAL ERROR (at @utilities/bootstrap - loadUserContainers):', error);
+        logger.error('CRITICAL ERROR (at @utilities/bootstrap - loadUserContainers):', error);
     }
 };
 
@@ -129,15 +129,15 @@ export const loadUserContainers = async (): Promise<void> => {
 */
 export const initializeRepositories = async (): Promise<void> => {
     try{
-        logger.info(': Initializing the repositories loaded on the platform...');
-        logger.info(': This is a one time process, after this, the repositories will be loaded on demand.');
+        logger.info('Initializing the repositories loaded on the platform...');
+        logger.info('This is a one time process, after this, the repositories will be loaded on demand.');
         const repositories = await Repository.find()
             .populate({
                 path: 'user',
                 select: 'username',
                 populate: { path: 'github', select: 'accessToken username' }
             });
-        logger.info(`: Found ${repositories.length} repositories.`);
+        logger.info(`Found ${repositories.length} repositories.`);
         await Promise.all(repositories.map(async (repository: IRepository) => {
             const user = repository.user as IUser;
             const repositoryHandler = new RepositoryHandler(repository, user);
@@ -148,9 +148,9 @@ export const initializeRepositories = async (): Promise<void> => {
             subject: 'All repositories accessible now!',
             html: 'The repositories were correctly initialized, within a few minutes if not now, they should be accessible to everyone.'
         });
-        logger.info(': All repositories were initialized.');
+        logger.info('All repositories were initialized.');
     }catch(error){
-        logger.info(' CRITICAL ERROR (at @utilities/bootstrap - initializeRepositories):', error);
+        logger.error('CRITICAL ERROR (at @utilities/bootstrap - initializeRepositories):', error);
     }
 };
 
@@ -186,16 +186,16 @@ export const validateEnvironmentVariables = (): void => {
         if(!(variable.name in process.env)){
             missingVariables.push(variable.name);
         }else if(variable.validation && !variable.validation.test(process.env[variable.name]!)){
-            logger.error(`: ${variable.errorMessage}`);
+            logger.error(`${variable.errorMessage}`);
             process.exit(1);
         }
     });
     
     if(missingVariables.length > 0){
-        logger.error(': The following environment variables are missing:');
+        logger.error('The following environment variables are missing:');
         logger.error(missingVariables.join(', '));
         process.exit(1);
     }
 
-    logger.info(': All environment variables are present and valid. Continuing with the server initialization.');
+    logger.info('All environment variables are present and valid. Continuing with the server initialization.');
 };

@@ -14,6 +14,7 @@
 
 import DockerHandler from '@services/dockerHandler';
 import path from 'path';
+import logger from '@utilities/logger';
 import { IUser } from '@typings/models/user';
 import { Socket } from 'socket.io';
 import { createLogStream, setupSocketEvents } from '@services/logManager';
@@ -134,7 +135,7 @@ class UserContainer extends DockerHandler{
     }
 
     criticalErrorHandler(operation: string, error: any){
-        logger.error(` CRITICAL ERROR (at @services/userContainer - ${operation}):`, error);
+        logger.error(`CRITICAL ERROR (at @services/userContainer - ${operation}):`, error);
         throw error;
     }
 }

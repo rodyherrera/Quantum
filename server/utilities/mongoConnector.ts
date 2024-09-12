@@ -19,26 +19,26 @@ const mongoConnector = async (): Promise<void> => {
 
     logger.info(` -> Connecting to MongoDB (${databaseName})...`);
 
-    mongoose.set('strictQuery',false);
-    mongoose.set('strictPopulate',false);
+    mongoose.set('strictQuery', false);
+    mongoose.set('strictPopulate', false);
 
     const options = {
-        maxPoolSize:10,
-        autoIndex:NODE_ENV !== 'production',
-        connectTimeoutMS:10000,
-        socketTimeoutMS:45000,
-        authSource:MONGO_AUTH_SOURCE,
-        appName:'quantum-cloud',
-        serverSelectionTimeoutMS:5000,
-        maxIdleTimeMS:30000,
-        retryWrites:true
+        maxPoolSize: 10,
+        autoIndex: NODE_ENV !== 'production',
+        connectTimeoutMS: 10000,
+        socketTimeoutMS: 45000,
+        authSource: MONGO_AUTH_SOURCE,
+        appName: 'quantum-cloud',
+        serverSelectionTimeoutMS: 5000,
+        maxIdleTimeMS: 30000,
+        retryWrites: true
     };
 
     try{
-        await mongoose.connect(uri,options);
+        await mongoose.connect(uri, options);
         logger.info(` -> Connected to MongoDB (${databaseName})!`);
     }catch(error){
-        logger.error(' -> Error connecting to MongoDB:',error);
+        logger.fatal(' -> Error connecting to MongoDB:', error);
     }
 };
 

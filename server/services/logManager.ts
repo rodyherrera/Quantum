@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import util from 'util';
+import logger from '@utilities/logger';
 import { ensureDirectoryExists } from '@utilities/helpers';
 import { Socket } from 'socket.io';
 import { Duplex } from 'stream';
@@ -105,12 +106,12 @@ const getLog = async (logName: string, id: string): Promise<string> => {
         const content = await fs.promises.readFile(logFile, 'utf-8');
         return content;
     }catch(error){
-        logger.error(' (at @services/logManager - getLog):', error);
+        logger.error('(at @services/logManager - getLog):', error);
         return '';
     }
 }
 
 const criticalErrorHandler = (operation: string, error: any): void => {
-    logger.error(` CRITICAL ERROR (at @services/logManager - ${operation}):`, error);
+    logger.error(`CRITICAL ERROR (at @services/logManager - ${operation}):`, error);
     throw error;
 }

@@ -18,6 +18,7 @@ import RuntimeError from '@utilities/runtimeError';
 import Github from '@services/github';
 import RepositoryHandler from '@services/repositoryHandler';
 import mongoose from 'mongoose';
+import logger from '@utilities/logger';
 import { Request, Response } from 'express';
 import { IUser } from '@typings/models/user';
 import { IRepository } from '@typings/models/repository';

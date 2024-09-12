@@ -78,7 +78,7 @@ const cloudConsoleHandler = async (socket: Socket) => {
         const container = (global as any).userContainers[user._id];
         await container.executeInteractiveShell(socket);
     }catch(error){
-        logger.info('Critical Error (@controllers/wsController - cloudConsoleHandler)', error);
+        logger.error('Critical Error (@controllers/wsController - cloudConsoleHandler)', error);
     }
 };
 
@@ -89,7 +89,7 @@ export default (io: any) => {
         if(action === 'Repository::Shell'){
             await tokenOwnership(socket, (error) => {
                 if(error){
-                    logger.info('Critical Error (@controllers/wsController)', error);
+                    logger.error('Critical Error (@controllers/wsController)', error);
                 }
                 else repositoryShellHandler(socket);
             });

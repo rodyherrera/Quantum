@@ -15,6 +15,7 @@
 import fs from 'fs';
 import readline from 'readline';
 import util from 'util';
+import logger from '@utilities/logger';
 import { exec } from 'child_process';
 import { DomainConfig } from '@typings/services/nginxHandler';
 
@@ -54,7 +55,7 @@ export const removeDomainList = async(domains: string[]): Promise<void> => {
         try{
             await removeDomain(domain);
         }catch(error){
-            logger.error(`: Error removing domain '${domain}':`, error);
+            logger.error(`Error removing domain '${domain}':`, error);
         }
     }));
 };
@@ -183,7 +184,7 @@ ${sslTemplate}
         fs.writeFileSync(NGINX_FILE, currentConfig + template);
         await reloadNginx();
     }catch(error){
-        logger.error(': Error adding domain configuration ->', error);
+        logger.error('Error adding domain configuration ->', error);
         throw error;
     }
 };
@@ -205,9 +206,9 @@ export const generateSSLCert = async(domain: string, email: string): Promise<voi
     const command = `certbot certonly --webroot -w ${__dirname}/../public -d ${domain} --agree-tos --email ${email} --non-interactive`;
     try{
         await execAsync(command);
-        logger.info(`: SSL certificate generated successfully for ${domain}`);
+        logger.info(`SSL certificate generated successfully for ${domain}`);
     }catch(error){
-        logger.error(`: Error generating SSL certificate: ${error}`);
+        logger.error(`Error generating SSL certificate: ${error}`);
         // Re-throw to propagate the error
         throw error;
     }

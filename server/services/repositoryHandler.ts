@@ -58,7 +58,7 @@ class RepositoryHandler{
                 delete userContainers[this.repositoryId];
             }
         }catch(error){
-            //this.criticalErrorHandler('stopAndRemoveShell', error);
+            logger.error(error);
         }
     }
     
@@ -84,7 +84,7 @@ class RepositoryHandler{
             });
             return exec;
         }catch(error){
-            //this.criticalErrorHandler('createShell', error);
+            logger.error(error);
         }
     }
 
@@ -134,7 +134,7 @@ class RepositoryHandler{
             deployment.status = 'success';
             await deployment.save();
         }catch(error){
-            logger.info(error);
+            logger.error(error);
         }
     }
 
@@ -181,7 +181,7 @@ class RepositoryHandler{
      * @param {Error} error - The error object.
     */
     handleCriticalError(method: string, error: Error): void{
-        logger.info(` CRITICAL ERROR (at @services/repositoryHandler - ${method}):`, error);
+        logger.error(` CRITICAL ERROR (at @services/repositoryHandler - ${method}):`, error);
         throw error;
     }
 }

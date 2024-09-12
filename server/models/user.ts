@@ -15,6 +15,7 @@
 import mongoose, { Schema, Model } from 'mongoose';
 import validator from 'validator';
 import bcrypt from 'bcryptjs';
+import logger from '@utilities/logger';
 import UserContainer from '@services/userContainer';
 import { IUser } from '@typings/models/user';
 
@@ -97,7 +98,7 @@ UserSchema.pre('findOneAndDelete', async function(){
     await mongoose.model('Github').findOneAndDelete({ user: user._id });
     const container = (global as any).userContainers[user._id];
     container.remove().then().catch((error: Error) => {
-        logger.info(` CRITICAL ERROR (at @models/user - pre findOneAndDelete middleware): ${error}`)
+        logger.error(`CRITICAL ERROR (at @models/user - pre findOneAndDelete middleware): ${error}`)
     });
 });
 
@@ -110,7 +111,7 @@ UserSchema.pre('save', async function(next){
         if(this.isNew && (global as any)?.logStreamStore !== undefined){
             const container = new UserContainer(this);
             container.start().then().catch((error: Error) => {
-                logger.info(` CRITICAL ERROR (at @models/user - pre save middleware): ${error}`)
+                logger.error(`CRITICAL ERROR (at @models/user - pre save middleware): ${error}`)
             });
         }
         if(!this.isModified('password') || this.isNew) return next();

@@ -13,6 +13,7 @@
 ****/
 
 import nodemailer from 'nodemailer';
+import logger from '@utilities/logger';
 import { EmailOptions } from '@typings/services/emailHandler';
 
 /**
@@ -68,7 +69,7 @@ export const sendEmail = async({ to = process.env.WEBMASTER_MAIL, subject, html 
             html
         });
     }catch(error){
-        logger.error(' (at @services/sendEmail - sendMail):', error);
+        logger.error('(at @services/sendEmail - sendMail):', error);
     }
 };
 

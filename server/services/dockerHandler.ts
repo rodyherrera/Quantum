@@ -43,7 +43,7 @@ class DockerHandler{
             await existingContainer.remove({ force: true });
             await fs.rm(this.storagePath, { recursive: true });
         }catch(error){
-            logger.info('CRITICAL ERROR (@dockerHandler - remove):', error);
+            logger.error('CRITICAL ERROR (@dockerHandler - remove):', error);
         }
     }
 
@@ -122,9 +122,9 @@ class DockerHandler{
                     }
                 });
             });
-            logger.info(`: Image "${this.imageName}" downloaded.`);
+            logger.info(`Image "${this.imageName}" downloaded.`);
         }catch(error){
-            logger.info(' CRITICAL ERROR (@dockerHandler - pullImage):', error);
+            logger.error('CRITICAL ERROR (@dockerHandler - pullImage):', error);
         }
     }
 
@@ -141,7 +141,7 @@ class DockerHandler{
             await container.start();
             return container;
         }catch(error){
-            logger.info(' CRITICAL ERROR (@dockerHandler - createAndStartContainer):', error);
+            logger.error('CRITICAL ERROR (@dockerHandler - createAndStartContainer):', error);
             return null;
         }
     }
