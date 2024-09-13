@@ -50,10 +50,10 @@ class RepositoryHandler{
      * @returns {Promise<Object>} - A stream object representing the interactive shell.
     */
     async getOrCreateShell(): Promise<any>{
+        await createLogStream(this.repositoryId, this.repositoryId);
         try{
             const shell = shells.get(this.repositoryId);
             if(shell) return shell;
-            await createLogStream(this.repositoryId, this.repositoryId);
             const userContainer = new UserContainer(this.user);
             await userContainer.start();
             if(!userContainer.instance) return;
