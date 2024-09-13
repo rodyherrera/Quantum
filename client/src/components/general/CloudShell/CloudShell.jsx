@@ -1,122 +1,105 @@
-/***
- * Copyright (C) Rodolfo Herrera Hernandez. All rights reserved.
- * Licensed under the MIT license. See LICENSE file in the project root
- * for full license information.
- *
- * =+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
- *
- * For related information - https://github.com/rodyherrera/Quantum/
- *
- * All your applications, just in one place. 
- *
- * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-****/
-
 import React, { useEffect, useRef, useState } from 'react';
-import { Terminal } from 'xterm';
-import { FitAddon } from 'xterm-addon-fit';
-import { BsTerminal } from 'react-icons/bs';
-import { PiDotsSixBold } from 'react-icons/pi';
-import { getCurrentUserToken } from '@services/authentication/localStorageService';
+import { Terminal } from '@xterm/xterm';
+import { FitAddon } from '@xterm/addon-fit';
+import useWebSocket from '@hooks/useWebSocket';
+import ResizableInAxisY from '@components/general/ResizableInAxisY';
+import './CloudShell.css';
+
+
 import { VscGithubAlt } from 'react-icons/vsc';
 import { BiBookAlt } from 'react-icons/bi';
 import { AiOutlineClose } from 'react-icons/ai';
 import { CircularProgress } from '@mui/material';
+import { BsTerminal } from 'react-icons/bs';
+import { PiDotsSixBold } from 'react-icons/pi';
 import { useDispatch } from 'react-redux';
-import { io } from 'socket.io-client';
 import { setIsCloudConsoleEnabled } from '@services/core/slice';
-import useWindowSize from '@hooks/useWindowSize';
-import ResizableInAxisY from '@components/general/ResizableInAxisY';
-import './CloudShell.css';
 
-const CloudShell = () => {
-    const cloudShellContainerRef = useRef(null);
-    const cloudShellHeaderRef = useRef(null);
-    const dragIconContainerRef = useRef(null);
-    const terminalRef = useRef(null);
+
+const CloudConsole = () => {
+    const [socket, isConnected] = useWebSocket('Cloud::Console');
+    const termInputValueRef = useRef('');
+    const xtermRef = useRef(null);
+    const termContainerRef = useRef(null);
     const fitAddonRef = useRef(null);
-    const headerRef = useRef(null);
+
+
     const dispatch = useDispatch();
-    const { width } = useWindowSize();
-    const [xterm, setXterm] = useState(null);
-    const [socket, setSocket] = useState(null);
-    const [isLoading, setIsLoading] = useState(true);
-    
+
+
+    // This function will be used to handle the 'history' event that sends past 
+    // interactions of the user with the terminal (log) and the 'response' event 
+    // that server sends the response to commands that are sent.
+    const onResponse = (data) => {
+        xtermRef.current.write(data);
+    }
+
+    const onKey = ({ domEvent, key }) => {
+        const { keyCode } = domEvent;
+        if(keyCode === 13){
+            socket.emit('command', termInputValueRef.current.trim());
+            termInputValueRef.current = '';
+            xtermRef.current.write('\r\n');
+        }else if(keyCode === 8){
+            // Backspace 
+            if(!termInputValueRef.current.length) return;
+            termInputValueRef.current = termInputValueRef.current.slice(0, -1);
+            xtermRef.current.write('\b \b');
+        }else{
+            // If this block is executed, it is assumed that the 
+            // user is typing in the terminal. Therefore, we write about it.
+            if(key.length === 1){
+                termInputValueRef.current += key;
+                xtermRef.current.write(key);
+            }
+        }
+    };
+
+    const createTerm = () => {
+        xtermRef.current = new Terminal({
+            cursorBlink: true,
+            convertEol: true,
+            fontFamily: 'monospace',
+            fontSize: 14,
+            cols: 128,
+            cursorStyle: 'bar',
+            theme: {
+                foreground: '#ffffff',
+                background: '#000000'
+            }
+        });
+        fitAddonRef.current = new FitAddon();
+        xtermRef.current.loadAddon(fitAddonRef.current);
+        xtermRef.current.open(termContainerRef.current);
+        xtermRef.current.onKey(onKey);
+        fitAddonRef.current.fit();
+    }
+
+    useEffect(() => {
+        if(isConnected){
+            createTerm();
+            socket.on('response', onResponse);
+            socket.on('history', onResponse);
+            return () => {
+                socket.off('response', onResponse);
+                socket.off('history', onResponse);
+                xtermRef.current.dispose();
+            }
+        }
+    }, [isConnected]);
+
+
+
     const headerIcons = [
         [VscGithubAlt, () => window.open('https://github.com/rodyherrera/Quantum/')],
         [BiBookAlt, () => window.open('https://github.com/rodyherrera/Quantum/')],
         [AiOutlineClose, () => dispatch(setIsCloudConsoleEnabled(false))]
     ];
 
-    useEffect(() => {
-        const term = new Terminal();
-        const fitAddon = new FitAddon();
-        term.loadAddon(fitAddon);
-        term.open(terminalRef.current);
-        fitAddonRef.current = fitAddon;
-        fitAddon.fit();
-        setXterm(term);
-        const headerEl = document.querySelector('#QuantumCloud-ROOT > .Header');
-        headerRef.current = headerEl;
-        return () => {
-            setSocket(null);
-            setXterm(null);
-            setIsLoading(true);
-            fitAddonRef.current = null;
-            term.dispose();
-            fitAddon.dispose();
-        };
-    }, []);
-
-    useEffect(() => {
-        if(!xterm) return;
-        const authToken = getCurrentUserToken();
-        const newSocket = io(import.meta.env.VITE_SERVER, {
-            transports: ['websocket'],
-            auth: { token: authToken },
-            query: { action: 'Cloud::Console' }
-        });
-        setSocket(newSocket);
-        return () => {
-            newSocket.disconnect();
-        };
-    }, [xterm]);
-
-    useEffect(() => {
-        if(!socket || !xterm) return;
-        let commandBuffer = '';
-        
-        xterm.onKey(({ key, domEvent }) => {
-            if(domEvent.keyCode === 13){
-                socket.emit('command', commandBuffer);
-                commandBuffer = '';
-                xterm.write('\r\n');
-            }else if (domEvent.keyCode === 8){
-                if(!commandBuffer.length) return;
-                commandBuffer = commandBuffer.slice(0, -1);
-                xterm.write('\b \b');
-            }else if (domEvent.key === 'ArrowUp' || domEvent.key === 'ArrowDown' || domEvent.key === 'ArrowLeft' || domEvent.key === 'ArrowRight'){
-                // Not yet implemented.
-            }else{
-                commandBuffer += key;
-                xterm.write(key);
-            }
-        });
-
-        socket.on('history', (history) => {
-            setIsLoading(false);
-            xterm.write(history);
-        });
-        socket.on('response', (response) => {
-            xterm.write(response)
-        });
-    }, [socket, xterm]);
-
-    useEffect(() => {
-        if(fitAddonRef.current){
-            fitAddonRef.current.fit();
-        }
-    }, [width]);
+    const cloudShellHeaderRef = useRef(null);
+    const dragIconContainerRef = useRef(null);
+    const cloudShellContainerRef = useRef(null);
+    const headerRef = useRef(null);
 
     return (
         <ResizableInAxisY
@@ -124,10 +107,10 @@ const CloudShell = () => {
             triggerNodeRef={dragIconContainerRef}
             initialHeight={300}
             maxHeight={headerRef}
-            minHeight={cloudShellHeaderRef}
             callback={() => {
                 fitAddonRef.current.fit();
             }}
+            minHeight={cloudShellHeaderRef}
         >
             <aside className='Cloud-Shell-Container' ref={cloudShellContainerRef}>
                 <article className='Cloud-Shell-Header-Container' ref={cloudShellHeaderRef}>
@@ -157,17 +140,17 @@ const CloudShell = () => {
                 </article>
 
                 <article className='Cloud-Shell-Body-Container'>
-                    {isLoading && (
+                    {!isConnected && (
                         <div className='Cloud-Shell-Loading-Container'>
                             <CircularProgress className='Circular-Progress' />
                         </div>
                     )}
 
-                    <div ref={terminalRef} />
+                    <div className='Cloud-Shell-Terminal-Container' ref={termContainerRef} />
                 </article>
             </aside>
         </ResizableInAxisY>
     );
 };
 
-export default CloudShell;
+export default CloudConsole;

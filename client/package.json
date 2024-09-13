@@ -16,6 +16,8 @@
     "@react-three/fiber": "^8.15.13",
     "@reduxjs/toolkit": "^2.0.1",
     "@uiw/react-textarea-code-editor": "^3.0.2",
+    "@xterm/addon-fit": "^0.10.0",
+    "@xterm/xterm": "^5.5.0",
     "axios": "^1.6.2",
     "framer-motion": "^11.0.3",
     "gsap": "^3.12.5",

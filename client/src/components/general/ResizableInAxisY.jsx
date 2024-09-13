@@ -65,7 +65,7 @@ const ResizableInAxisY = ({
             const maxHeight = window.innerHeight - headerEl.clientHeight;
             const { minHeight } = sanitizeHeightLimits();
             if(newNodeHeight > maxHeight || newNodeHeight < minHeight) return;
-            callback();
+            callback(newNodeHeight);
             setNodeHeight(newNodeHeight);
         };
 
@@ -89,7 +89,7 @@ const ResizableInAxisY = ({
             ){
                 return;
             }
-            callback();
+            callback(newNodeHeight);
             setNodeHeight(newNodeHeight);
         };
 
