@@ -50,10 +50,7 @@
     position: relative;
     flex: 1; 
     overflow: auto; 
-    background-color: #fff; 
-}
-
-.Cloud-Shell-Body-Container{
+    background-color: #000; 
     height: 100%;
 }
 
