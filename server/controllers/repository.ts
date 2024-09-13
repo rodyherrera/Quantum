@@ -100,7 +100,7 @@ export const getMyGithubRepositories = catchAsync(async (req: Request, res: Resp
 */
 export const getMyRepositories = catchAsync(async (req: Request, res: Response) => {
     const user = req.user as IUser;
-    const repositories: IRepository[] = await Repository.find({ user });
+    const repositories: IRepository[] = await Repository.find({ user }).lean();
     for(const repository of repositories){
         const activeDeploymentId = repository.deployments[0];
         if(!activeDeploymentId) continue;
@@ -111,7 +111,7 @@ export const getMyRepositories = catchAsync(async (req: Request, res: Response) 
         const github = new Github(user, repository);
         const repositoryInfo = await github.getRepositoryInfo();
         if(!repositoryInfo) return null;
-        return { ...repository, ...repositoryInfo };
+        return { ...repositoryInfo, ...repository };
     }));
     const filteredRepositoriesWithInfo = repositoriesWithInfo.filter(repo => repo !== null);
     res.status(200).json({ status: 'success', data: filteredRepositoriesWithInfo });
