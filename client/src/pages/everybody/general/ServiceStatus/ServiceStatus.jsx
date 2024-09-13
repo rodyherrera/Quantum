@@ -18,8 +18,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getServerHealth } from '@services/core/operations';
 import { FaCheckCircle } from 'react-icons/fa';
 import { gsap } from 'gsap';
-import Button from '@components/general/Button';
-import AnimatedMain from '@components/general/AnimatedMain';
+import Button from '@components/atoms/Button';
+import AnimatedMain from '@components/atoms/AnimatedMain';
 import './ServiceStatus.css';
 
 const ServiceStatus = () => {

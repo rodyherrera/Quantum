@@ -13,8 +13,8 @@
 ****/
 
 import React, { useRef, useEffect } from 'react';
-import PolicyArticle from '@components/legal/PolicyArticle';
-import AnimatedMain from '@components/general/AnimatedMain';
+import PolicyArticle from '@components/molecules/PolicyArticle';
+import AnimatedMain from '@components/atoms/AnimatedMain';
 import { gsap } from 'gsap';
 import './PrivacyPolicy.css';
 

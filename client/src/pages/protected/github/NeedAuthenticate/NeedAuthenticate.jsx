@@ -18,8 +18,8 @@ import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { authenticate } from '@services/github/operations';
 import { CircularProgress } from '@mui/material';
-import Button from '@components/general/Button';
-import AnimatedMain from '@components/general/AnimatedMain';
+import Button from '@components/atoms/Button';
+import AnimatedMain from '@components/atoms/AnimatedMain';
 import './NeedAuthenticate.css';
 
 const NeedAuthenticate = () => {

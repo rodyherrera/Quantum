@@ -13,9 +13,9 @@
 ****/
 
 import React from 'react';
-import MinimalForm from '@components/general/MinimalForm';
-import AuthSignInRelatedSections from '@components/authentication/AuthSignInRelatedSections';
-import WhenCreatingAccount from '@components/authentication/WhenCreatingAccount';
+import MinimalForm from '@components/organisms/MinimalForm';
+import AuthSignInRelatedSections from '@components/molecules/AuthSignInRelatedSections';
+import WhenCreatingAccount from '@components/organisms/WhenCreatingAccount';
 import { useSelector, useDispatch } from 'react-redux';
 import { signUp } from '@services/authentication/operations';
 import './SignUp.css';

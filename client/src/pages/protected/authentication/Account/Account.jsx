@@ -13,11 +13,11 @@
 ****/
 
 import React, { useEffect } from 'react';
-import MinimalForm from '@components/general/MinimalForm'
+import MinimalForm from '@components/organisms/MinimalForm'
 import { getMyProfile, updateMyProfile } from '@services/authentication/operations';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import AuthenticatedUserRelatedSections from '@components/authentication/AuthenticatedUserRelatedSections'
+import AuthenticatedUserRelatedSections from '@components/organisms/AuthenticatedUserRelatedSections'
 import './Account.css';
 
 // Implement Skeleton for data loading, for now 

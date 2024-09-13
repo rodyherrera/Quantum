@@ -14,6 +14,7 @@ const useRemoteTerminal = ({ termContainerRef, query }) => {
     // interactions of the user with the terminal (log) and the 'response' event 
     // that server sends the response to commands that are sent.
     const onResponse = (data) => {
+        console.log('data', data);
         xtermRef.current.write(data);
     }
 

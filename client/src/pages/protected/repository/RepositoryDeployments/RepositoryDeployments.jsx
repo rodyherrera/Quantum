@@ -16,9 +16,9 @@ import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { gsap } from 'gsap';
 import { useDispatch, useSelector } from 'react-redux';
-import DeploymentItem from '@components/deployment/DeploymentItem';
-import DataRenderer from '@components/general/DataRenderer';
-import RelatedRepositorySections from '@components/repository/RelatedRepositorySections';
+import DeploymentItem from '@components/organisms/DeploymentItem';
+import DataRenderer from '@components/organisms/DataRenderer';
+import RelatedRepositorySections from '@components/molecules/RelatedRepositorySections';
 import * as deploymentOperations from '@services/deployment/operations';
 import './RepositoryDeployments.css';
 

@@ -16,9 +16,9 @@ import React, { useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { CircularProgress } from '@mui/material';
 import useWindowSize from '@hooks/useWindowSize';
-import RelatedRepositorySections from '@components/repository/RelatedRepositorySections';
-import Breadcrumbs from '@components/general/Breadcrumbs';
-import AnimatedMain from '@components/general/AnimatedMain'
+import RelatedRepositorySections from '@components/molecules/RelatedRepositorySections';
+import Breadcrumbs from '@components/molecules/Breadcrumbs';
+import AnimatedMain from '@components/atoms/AnimatedMain'
 import useRemoteTerminal from '@hooks/useRemoteTerminal';
 import './Shell.css';
 

@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
-import MinimalForm from '@components/general/MinimalForm';
-import RelatedRepositorySections from '@components/repository/RelatedRepositorySections';
+import MinimalForm from '@components/organisms/MinimalForm';
+import RelatedRepositorySections from '@components/molecules/RelatedRepositorySections';
 import { useSelector, useDispatch } from 'react-redux';
 import { updateRepository } from '@services/repository/operations';
 import { useNavigate } from 'react-router-dom';

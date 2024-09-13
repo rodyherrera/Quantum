@@ -16,11 +16,10 @@ import React, { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { formatDate } from '@utilities/runtime';
-import { gsap } from 'gsap';
-import FileExplorer from '@components/repository/FileExplorer';
-import Breadcrumbs from '@components/general/Breadcrumbs';
-import AnimatedMain from '@components/general/AnimatedMain';
-import RelatedRepositorySections from '@components/repository/RelatedRepositorySections';
+import FileExplorer from '@components/organisms/FileExplorer';
+import Breadcrumbs from '@components/molecules/Breadcrumbs';
+import AnimatedMain from '@components/atoms/AnimatedMain';
+import RelatedRepositorySections from '@components/molecules/RelatedRepositorySections';
 import './Storage.css';
 
 const Storage = () => {

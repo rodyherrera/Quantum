@@ -13,8 +13,8 @@
 ****/
 
 import React from 'react';
-import MinimalForm from '@components/general/MinimalForm';
-import AuthenticatedUserRelatedSections from '@components/authentication/AuthenticatedUserRelatedSections'
+import MinimalForm from '@components/organisms/MinimalForm';
+import AuthenticatedUserRelatedSections from '@components/organisms/AuthenticatedUserRelatedSections'
 import { updateMyPassword } from '@services/authentication/operations';
 import { useSelector, useDispatch } from 'react-redux'; 
 import { useNavigate } from 'react-router-dom';

@@ -13,9 +13,9 @@
 ****/
 
 import React, { useEffect, useRef } from 'react';
-import Project from '@components/dashboard/Project';
-import Button from '@components/general/Button';
-import DataRenderer from '@components/general/DataRenderer';
+import Project from '@components/organisms/Project';
+import Button from '@components/atoms/Button';
+import DataRenderer from '@components/organisms/DataRenderer';
 import { useSelector, useDispatch } from 'react-redux';
 import { getRepositories } from '@services/repository/operations';
 import { HiPlus } from 'react-icons/hi';

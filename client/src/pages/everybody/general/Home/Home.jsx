@@ -18,11 +18,11 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { HiOutlineArrowRight } from 'react-icons/hi';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import WelcomeSection from '@components/general/WelcomeSection';
-import Button from '@components/general/Button';
-import AnimatedMain from '@components/general/AnimatedMain';
-import DashedContainer from '@components/general/DashedContainer';
-import CircleContainedText from '@components/general/CircleContainedText';
+import WelcomeSection from '@components/molecules/WelcomeSection';
+import Button from '@components/atoms/Button';
+import AnimatedMain from '@components/atoms/AnimatedMain';
+import DashedContainer from '@components/atoms/DashedContainer';
+import CircleContainedText from '@components/atoms/CircleContainedText';
 import './Home.css';
 
 gsap.registerPlugin(ScrollTrigger);

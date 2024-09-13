@@ -13,8 +13,8 @@
 ****/
 
 import React from 'react';
-import MinimalForm from '@components/general/MinimalForm';
-import AuthSignInRelatedSections from '@components/authentication/AuthSignInRelatedSections';
+import MinimalForm from '@components/organisms/MinimalForm';
+import AuthSignInRelatedSections from '@components/molecules/AuthSignInRelatedSections';
 import { signIn } from '@services/authentication/operations';
 import { useSelector, useDispatch } from 'react-redux';
 import './SignIn.css';

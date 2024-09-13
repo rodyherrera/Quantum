@@ -17,9 +17,9 @@ import { getMyGithubRepositories, createRepository } from '@services/repository/
 import { useSelector, useDispatch } from 'react-redux';
 import { gsap } from 'gsap';
 import { useNavigate } from 'react-router-dom';
-import DataRenderer from '@components/general/DataRenderer';
-import RepositoryBasicItem from '@components/repository/RepositoryBasicItem';
-import RelatedRepositorySections from '@components/repository/RelatedRepositorySections';
+import DataRenderer from '@components/organisms/DataRenderer';
+import RepositoryBasicItem from '@components/atoms/RepositoryBasicItem';
+import RelatedRepositorySections from '@components/molecules/RelatedRepositorySections';
 import './CreateRepository.css';
 
 const CreateRepository = () => {

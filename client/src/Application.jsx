@@ -14,8 +14,8 @@
 
 import React, { useEffect } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
-import Layout from '@components/general/Layout';
-import ProtectedRoute from '@components/authentication/ProtectedRoute';
+import Layout from '@components/organisms/Layout';
+import ProtectedRoute from '@components/organisms/ProtectedRoute';
 import pages from '@pages';
 
 const Application = () => {
