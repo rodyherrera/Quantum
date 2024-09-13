@@ -127,7 +127,7 @@ const getRequestedPath = (req: Request): string => {
     const route = req.params.route || '';
     const env = process.env.NODE_ENV || 'development';
     const user = req.user as IUser;
-    const basePath = path.join('/var/lib/quantum', env, `/containers/${user}/github-repos/`, req.params.id);
+    const basePath = path.join('/var/lib/quantum', env, `/containers/${user._id}/github-repos/`, req.params.id);
     return path.join(basePath, route);
 };
 
