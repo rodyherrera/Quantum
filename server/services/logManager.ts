@@ -83,7 +83,7 @@ export const setupSocketEvents = async (socket: Socket, logName: string, id: str
         const logHistory = await getLog(logName, id);
         let shell = shells.get(id);
         if(!shell){
-            shell = await exec.start({ hijack: true, stdin: true });
+            shell = await exec.start({ Tty: true, stdin: true, hijack: true });
             shells.set(id, shell);
         }
         const handleShellData = (chunk: Buffer) => {

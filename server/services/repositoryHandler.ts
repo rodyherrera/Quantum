@@ -56,8 +56,9 @@ class RepositoryHandler{
             await createLogStream(this.repositoryId, this.repositoryId);
             const userContainer = new UserContainer(this.user);
             await userContainer.start();
+            if(!userContainer.instance) return;
             const exec = await userContainer.instance.exec({
-                Cmd: ['/bin/ash'],
+                Cmd: ['/bin/sh'],
                 AttachStdout: true,
                 AttachStderr: true,
                 AttachStdin: true,

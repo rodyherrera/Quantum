@@ -17,6 +17,7 @@ import fs from 'fs/promises';
 import { ensureDirectoryExists } from '@utilities/helpers';
 import { Container } from '@typings/services/dockerHandler';
 import logger from '@utilities/logger';
+import Dockerode from 'dockerode';
 
 const docker = new Docker();
 
@@ -25,8 +26,8 @@ class DockerHandler{
     private imageName: string;
     private dockerName: string;
 
-    constructor({ storagePath, imageName, dockerName, logName, userId }: 
-        { storagePath: string; imageName: string; dockerName: string; logName: string; userId: string }){
+    constructor({ storagePath, imageName, dockerName }: 
+        { storagePath: string; imageName: string; dockerName: string; }){
         this.storagePath = storagePath;
         this.imageName = imageName;
         this.dockerName = this.formatDockerName(dockerName);
@@ -51,7 +52,7 @@ class DockerHandler{
      * Gets an existing instance of the container, if applicable.
      * @returns {Promise<Container>} Returns a Docker container object.
      */
-    async getExistingContainer(): Promise<Container>{
+    async getExistingContainer(): Promise<Dockerode.Container>{
         const existingContainer = docker.getContainer(this.dockerName);
         const { State } = await existingContainer.inspect();
         if(!State.Running) await existingContainer.start();
@@ -72,7 +73,7 @@ class DockerHandler{
      * Creates a new Docker container instance.
      * @returns {Promise<Container>} Returns a Docker container object.
      */
-    async createContainer(): Promise<Container>{
+    async createContainer(): Promise<Dockerode.Container>{
         return docker.createContainer({
             Image: this.imageName,
             name: this.dockerName,
@@ -132,7 +133,7 @@ class DockerHandler{
      * Creates a new Docker container and starts it.
      * @returns {Promise<Container>} Returns a Docker container object.
      */
-    async createAndStartContainer(): Promise<Container | null>{
+    async createAndStartContainer(): Promise<Dockerode.Container | null>{
         try{
             const imageExists = await this.checkImageExists();
             if(!imageExists) await this.pullImage();

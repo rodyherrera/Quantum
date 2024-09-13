@@ -18,6 +18,7 @@ import logger from '@utilities/logger';
 import { IUser } from '@typings/models/user';
 import { Socket } from 'socket.io';
 import { createLogStream, setupSocketEvents } from '@services/logManager';
+import Dockerode from 'dockerode';
 
 /**
  * Represents a user container within Quantum Cloud
@@ -25,7 +26,7 @@ import { createLogStream, setupSocketEvents } from '@services/logManager';
  */
 class UserContainer extends DockerHandler{
     private user: IUser;
-    public instance: any;
+    public instance: Dockerode.Container | null;
 
     /**
      * Creates a new UserContainer instance.
@@ -36,9 +37,7 @@ class UserContainer extends DockerHandler{
         super({
             storagePath: path.join('/var/lib/quantum', process.env.NODE_ENV as string, 'containers', user._id.toString()),
             imageName: 'alpine:latest',
-            dockerName: user._id.toString(),
-            logName: user._id,
-            userId: user._id
+            dockerName: user._id.toString()
         });
         this.user = user;
         this.instance = null;
@@ -92,6 +91,7 @@ class UserContainer extends DockerHandler{
     async executeCommand(command: string, workDir: string = '/'): Promise<void>{
         try{
             await this.start(false);
+            if(!this.instance) return;
             const exec = await this.instance.exec({
                 Cmd: ['/bin/ash', '-c', command],
                 AttachStdout: true,
@@ -99,7 +99,7 @@ class UserContainer extends DockerHandler{
                 AttachStderr: true,
                 Tty: false
             });
-            await exec.start();
+            exec.start({ stdin: true, hijack: true });
         }catch(error){
             this.criticalErrorHandler('executeCommand', error);
         }
@@ -113,8 +113,9 @@ class UserContainer extends DockerHandler{
     async executeInteractiveShell(socket: Socket, workDir: string = '/app'){
         try{
             await this.start(false);
+            if(!this.instance) return;
             const exec = await this.instance.exec({
-                Cmd: ['/bin/ash'],
+                Cmd: ['/bin/sh'],
                 AttachStdout: true,
                 AttachStderr: true,
                 AttachStdin: true,

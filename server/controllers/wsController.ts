@@ -68,6 +68,7 @@ const cloudConsoleHandler = async (socket: ISocket) => {
 export default (io: any) => {
     io.use(userAuthentication);
     io.on('connection', async (socket: ISocket) => {
+        socket.emit('connected');
         const { action } = socket.handshake.query;
         if(action === 'Repository::Shell'){
             await tokenOwnership(socket, async (error): Promise<void> => {

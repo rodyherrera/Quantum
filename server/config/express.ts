@@ -46,7 +46,7 @@ bootstrap.configureApp({
             resave: false,
             saveUninitialized: true
         }),
-        cors({ origin: process.env.CORS_ORIGIN, credentials: true }),
+        cors({ origin: process.env.CORS_ORIGIN }),
         bodyParser.json(),
         bodyParser.urlencoded({ extended: true }),
         passport.initialize(),
