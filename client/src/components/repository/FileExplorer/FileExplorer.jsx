@@ -93,7 +93,9 @@ const FileExplorer = ({ repositoryId }) => {
                         value={selectedRepositoryFile.content}
                         onChange={(e) => dispatch(setSelectedRepositoryFile({ name: selectedRepositoryFile.name, content: e.target.value }))}
                         padding={16}
-                        style={{ backgroundColor: '#161616' }}
+                        style={{ 
+                            backgroundColor: '#161616'
+                        }}
                         showLineNumbers={false}
                         language={getFileExtension(selectedRepositoryFile.name)}
                         text={selectedRepositoryFile.content}

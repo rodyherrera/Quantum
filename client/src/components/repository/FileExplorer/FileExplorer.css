@@ -33,6 +33,19 @@
     gap: .5rem;
 }
 
+.w-tc-editor{
+    --color-fg-default: #e5e9ed;
+    --color-canvas-subtle: #1d242d;
+    --color-prettylights-syntax-comment: #a3adb9;
+    --color-prettylights-syntax-entity-tag: #9effa8;
+    --color-prettylights-syntax-entity: #e6c4ff;
+    --color-prettylights-syntax-sublimelinter-gutter-mark: #5c656d;
+    --color-prettylights-syntax-constant: #9dcfff;
+    --color-prettylights-syntax-string: #c3e6ff;
+    --color-prettylights-syntax-keyword: #ff9990;
+    --color-prettylights-syntax-markup-bold: #e5e9ed;
+}
+
 .File-Explorer-Code-Block-Container{
     font-family: monospace;
     background-color: #161616;
