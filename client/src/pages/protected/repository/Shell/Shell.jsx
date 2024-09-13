@@ -12,97 +12,27 @@
  * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 ****/
 
-import React, { useState, useEffect, useRef } from 'react';
-import { Terminal } from 'xterm';
-import { FitAddon } from 'xterm-addon-fit';
-import { io } from 'socket.io-client';
-import { getCurrentUserToken } from '@services/authentication/localStorageService';
+import React, { useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { CircularProgress } from '@mui/material';
-import AnimatedMain from '@components/general/AnimatedMain'
-import Breadcrumbs from '@components/general/Breadcrumbs';
 import useWindowSize from '@hooks/useWindowSize';
 import RelatedRepositorySections from '@components/repository/RelatedRepositorySections';
-import 'xterm/css/xterm.css';
+import Breadcrumbs from '@components/general/Breadcrumbs';
+import AnimatedMain from '@components/general/AnimatedMain'
+import useRemoteTerminal from '@hooks/useRemoteTerminal';
 import './Shell.css';
 
 const Shell = () => {
-    const terminalRef = useRef(null);
-    const fitAddonRef = useRef(null);
+    const termContainerRef = useRef(null);
     const { width } = useWindowSize();
     const { repositoryAlias } = useParams();
-    const [xterm, setXterm] = useState(null);
-    const [socket, setSocket] = useState(null);
-    const [isLoading, setIsLoading] = useState(true);
+    const { isConnected, fitAddonRef } = useRemoteTerminal({ 
+        termContainerRef, query: { repositoryAlias, action: 'Repository::Shell' } });
 
     useEffect(() => {
         if(!fitAddonRef.current) return;
         fitAddonRef.current.fit();
     }, [width]);
-
-    useEffect(() => {
-        if(!xterm) return;
-        const authToken = getCurrentUserToken();
-        console.log('Connecting');
-        const newSocket = io(import.meta.env.VITE_SERVER, {
-            transports: ['websocket'],
-            auth: { token: authToken },
-            query: { repositoryAlias, action: 'Repository::Shell' }
-        });
-        setSocket(newSocket);
-        return () => {
-            newSocket.disconnect();
-        };
-    }, [xterm]);
-
-    useEffect(() => {
-        if(!socket || !xterm) return;
-        let commandBuffer = '';
-
-        xterm.onKey(({ key, domEvent }) => {
-            if(domEvent.keyCode === 13){
-                socket.emit('command', commandBuffer);
-                commandBuffer = '';
-                xterm.write('\r\n');
-            }else if (domEvent.keyCode === 8){
-                if(!commandBuffer.length) return;
-                commandBuffer = commandBuffer.slice(0, -1);
-                xterm.write('\b \b');
-            }else if (domEvent.key === 'ArrowUp' || domEvent.key === 'ArrowDown' || domEvent.key === 'ArrowLeft' || domEvent.key === 'ArrowRight'){
-                // Not yet implemented.
-            }else{
-                commandBuffer += key;
-                xterm.write(key);
-            }
-        });
-
-        socket.on('history', (history) => {
-            setIsLoading(false);
-            xterm.write(history);
-        });
-        socket.on('response', (response) => {
-            xterm.write(response)
-        });
-    }, [socket, xterm]);
-
-    useEffect(() => {
-        const term = new Terminal();
-        const fitAddon = new FitAddon();
-        term.loadAddon(fitAddon);
-        term.open(terminalRef.current);
-        fitAddonRef.current = fitAddon;
-        fitAddon.fit();
-        setXterm(term);
-
-        return () => {
-            setSocket(null);
-            setXterm(null);
-            setIsLoading(true);
-            fitAddonRef.current = null;
-            term.dispose();
-            fitAddon.dispose();
-        };
-    }, []);
 
     return (
         <AnimatedMain id='Repository-Shell-Main' className='Binary-View-Container'>
@@ -125,13 +55,13 @@ const Shell = () => {
 
                 <article id='Repository-Shell-Body-Container'>
                     <div id='Repository-Shell'>
-                        {(isLoading) && (
+                        {(!isConnected) && (
                             <aside id='Socket-Connection-Loading-Container'>
                                 <CircularProgress className='Circular-Progress' />
                             </aside>
                         )}
 
-                        <div ref={terminalRef} />
+                        <div className='Terminal-Container' ref={termContainerRef} />
                     </div>
                 </article>
             </section>

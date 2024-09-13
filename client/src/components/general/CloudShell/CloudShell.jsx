@@ -10,11 +10,12 @@ import { PiDotsSixBold } from 'react-icons/pi';
 import { useDispatch } from 'react-redux';
 import { setIsCloudConsoleEnabled } from '@services/core/slice';
 import './CloudShell.css';
+import '@xterm/xterm/css/xterm.css';
 
 const CloudConsole = () => {
     const termContainerRef = useRef(null);
     const dispatch = useDispatch();
-    const { isConnected, fitAddonRef } = useRemoteTerminal({ termContainerRef });
+    const { isConnected, fitAddonRef } = useRemoteTerminal({ termContainerRef, query: { action: 'Cloud::Console' } });
 
     const headerIcons = [
         [VscGithubAlt, () => window.open('https://github.com/rodyherrera/Quantum/')],

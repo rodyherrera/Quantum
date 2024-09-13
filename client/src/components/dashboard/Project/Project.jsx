@@ -31,6 +31,7 @@ const Project = ({ repository, ...props }) => {
         }
         props?.onClick?.();
     };
+
     useEffect(() => {
         const projectContainers = document.querySelectorAll('.Project-Container');
         projectContainers.forEach((container, index) => {
@@ -43,7 +44,7 @@ const Project = ({ repository, ...props }) => {
                 ease: 'power2.out',
             });
         });
-
+        console.log(repository)
         const body = projectRef.current.querySelector('.Project-Body-Container');
         const footer = projectRef.current.querySelector('.Project-Footer-Container');
         gsap.fromTo([body, footer], {

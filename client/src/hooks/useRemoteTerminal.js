@@ -3,8 +3,8 @@ import { Terminal } from '@xterm/xterm';
 import { FitAddon } from '@xterm/addon-fit'
 import { useEffect, useRef } from 'react';
 
-const useRemoteTerminal = ({ termContainerRef }) => {
-    const [socket, isConnected] = useWebSocket('Cloud::Console');
+const useRemoteTerminal = ({ termContainerRef, query }) => {
+    const [socket, isConnected] = useWebSocket({ query });
     const xtermRef = useRef(null);
     const termInputValueRef = useRef('');
     const fitAddonRef = useRef(null);

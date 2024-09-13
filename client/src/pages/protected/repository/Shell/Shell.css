@@ -16,6 +16,10 @@
     height: 87%;
 }
 
+.Terminal-Container{
+    height: 100%;
+}
+
 #Repository-Shell-Main .Binary-View-Left-Container{
     display: flex;
     flex-direction: column;

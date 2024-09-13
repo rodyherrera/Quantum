@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
 import { getCurrentUserToken } from '@services/authentication/localStorageService';
 
-const useWebSocket = (action) => {
+const useWebSocket = ({ query }) => {
     const [socket, setSocket] = useState(null);
     const [isConnected, setIsConnected] = useState(false);
 
@@ -15,7 +15,7 @@ const useWebSocket = (action) => {
         const newSocket = io(import.meta.env.VITE_SERVER, {
             transports: ['websocket'],
             auth: { token: authToken },
-            query: { action }
+            query
         });
         newSocket.on('connected', onConnected);
         setSocket(newSocket);
