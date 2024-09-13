@@ -42,7 +42,7 @@ const useRemoteTerminal = ({ termContainerRef, query }) => {
             cursorBlink: true,
             convertEol: true,
             fontFamily: 'monospace',
-            fontSize: 14,
+            fontSize: (window.innerWidth > 768 ? 14 : 8),
             cols: 128,
             cursorStyle: 'bar',
             theme: {

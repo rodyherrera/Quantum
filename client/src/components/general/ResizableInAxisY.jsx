@@ -13,6 +13,7 @@
 ****/
 
 import { useEffect, useState } from 'react';
+import { useLockBodyScroll, useToggle } from 'react-use';
 
 const ResizableInAxisY = ({
     initialHeight,
@@ -24,20 +25,8 @@ const ResizableInAxisY = ({
     children
 }) => {
     const [nodeHeight, setNodeHeight] = useState(initialHeight);
-
-    const setOverflowToParentNodes = (overflow, overscrollBehavior) => {
-        const setOverflow = (elementId) => {
-            const element = document.getElementById(elementId);
-            if(element){
-                element.style.overflow = overflow;
-                if(overscrollBehavior){
-                    element.style.overscrollBehavior = overscrollBehavior;
-                }
-            }
-        };
-        setOverflow('QuantumCloud-ROOT');
-        setOverflow('QuauntumCloud-Body');
-    };
+    const [locked, toggleLocked] = useToggle(false)
+    useLockBodyScroll(locked);
 
     useEffect(() => {
         if(containerRef.current){
@@ -54,7 +43,7 @@ const ResizableInAxisY = ({
         };
 
         const handleTouchEnd = () => {
-            setOverflowToParentNodes('scroll', 'auto');
+            toggleLocked(false);
             document.removeEventListener('touchend', handleTouchEnd);
             document.removeEventListener('touchmove', handleTouchMove);
         };
@@ -70,12 +59,13 @@ const ResizableInAxisY = ({
         };
 
         const handleTouchStart = () => {
-            setOverflowToParentNodes('hidden', 'none');
+            toggleLocked(true);
             document.addEventListener('touchend', handleTouchEnd);
             document.addEventListener('touchmove', handleTouchMove);
         };
 
         const handleMouseUp = () => {
+            document.querySelector('body').style.userSelect = 'unset';
             document.removeEventListener('mouseup', handleMouseUp);
             document.removeEventListener('mousemove', handleMouseMove);
         };
@@ -94,6 +84,7 @@ const ResizableInAxisY = ({
         };
 
         const handleOnMouseDown = () => {
+            document.querySelector('body').style.userSelect = 'none';
             document.addEventListener('mouseup', handleMouseUp);
             document.addEventListener('mousemove', handleMouseMove);
         };
@@ -104,7 +95,6 @@ const ResizableInAxisY = ({
         }
 
         return () => {
-            setOverflowToParentNodes('scroll', 'auto');
             document.removeEventListener('mouseup', handleMouseUp);
             document.removeEventListener('mousemove', handleMouseMove);
             document.removeEventListener('touchend', handleTouchEnd);

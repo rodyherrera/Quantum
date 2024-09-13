@@ -115,11 +115,17 @@
 }
 
 @media screen and (max-width: 768px){
-    .Cloud-Shell-Header-Container{
-        padding: 1rem;
+    .Cloud-Shell-Header-Left-Title,
+    .Cloud-Shell-Header-Left-Subtitle{
+        display: none;
     }
 
-    .Cloud-Shell-Container{
-        bottom: 8.8%;
+    .Cloud-Shell-Header-Left-Icon-Container{
+        font-size: .95rem;
+    }
+    
+    .Cloud-Shell-Header-Container{
+        padding: 1rem;
+        height: 40px;
     }
 }
