@@ -10,7 +10,6 @@ import { PiDotsSixBold } from 'react-icons/pi';
 import { useDispatch } from 'react-redux';
 import { setIsCloudConsoleEnabled } from '@services/core/slice';
 import './CloudShell.css';
-import '@xterm/xterm/css/xterm.css';
 
 const CloudConsole = () => {
     const termContainerRef = useRef(null);

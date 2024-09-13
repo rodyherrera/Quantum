@@ -2,6 +2,7 @@ import useWebSocket from '@hooks/useWebSocket';
 import { Terminal } from '@xterm/xterm';
 import { FitAddon } from '@xterm/addon-fit'
 import { useEffect, useRef } from 'react';
+import '@xterm/xterm/css/xterm.css';
 
 const useRemoteTerminal = ({ termContainerRef, query }) => {
     const [socket, isConnected] = useWebSocket({ query });

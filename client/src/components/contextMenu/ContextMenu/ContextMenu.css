@@ -17,10 +17,10 @@
     width: 150px;
     overflow-y: scroll;
     max-height: 200px;
-    z-index: 100;
+    z-index: 1000;
     background-color: #F5F5F5;
-    box-shadow: -2px 0px 14px 0px #cbcbcb;
-    right: 0;
+    border: 1px solid #c6c6c6;
+    right: 1rem;
     top: 2rem;
     border-radius: .2rem;
 }
@@ -28,4 +28,10 @@
 .Context-Menu-Options{
     display: flex;
     flex-direction: column;
+}
+
+@media screen and (max-width: 768px){
+    .Context-Menu-Container{
+        left: unset !important;
+    }
 }
