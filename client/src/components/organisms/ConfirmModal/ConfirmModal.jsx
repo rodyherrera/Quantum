@@ -12,7 +12,7 @@
  * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 ****/
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import ReactDOM from 'react-dom';
 import ConfirmModalHeader from '@components/molecules/ConfirmModalHeader';
 import ConfirmModalBody from '@components/molecules/ConfirmModalBody';
@@ -65,7 +65,7 @@ const ConfirmModal = ({
         hideConfirmModal(confirmHandler);
     };
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         if(!isActive) return;
         gsap.fromTo(confirmModalRef.current, { 
             opacity: 0, 

@@ -12,7 +12,7 @@
  * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 ****/
 
-import React, { useEffect } from 'react';
+import React, { useLayoutEffect } from 'react';
 import { CircularProgress } from '@mui/material';
 import { gsap } from 'gsap';
 import Button from '@components/atoms/Button';
@@ -37,34 +37,16 @@ const DataRenderer = ({
     ...props
 }) => {
 
-    useEffect(() => {
-        gsap.fromTo('.Data-Renderer-Main', {
-            y: 20
-        }, { 
-            duration: 0.8, 
-            y: 0, 
-            ease: 'Power2.easeOut' 
-        });
-
-        gsap.fromTo(['.Data-Renderer-Header-Container', '.Data-Renderer-Body-Container'], {
-            y: 10
-        }, {
-            duration: 0.5, 
-            y: 0, 
-            ease: 'Power2.easeOut',
-            // Small delay between header and body animations 
-            stagger: 0.1 
-        });
+    useLayoutEffect(() => {
+        gsap.fromTo('.Data-Renderer-Main', { y: 20 }, {  duration: 0.8,  y: 0, ease: 'Power2.easeOut' });
+        gsap.fromTo(
+            ['.Data-Renderer-Header-Container', '.Data-Renderer-Body-Container'], 
+            { y: 10 }, { duration: 0.5, y: 0, ease: 'Power2.easeOut', stagger: 0.1 });
     }, []);
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         if(isLoading || isOperationLoading){
-            gsap.fromTo('.Data-Renderer-Loading-Container', {
-                opacity: 0
-            }, { 
-                duration: 0.4, 
-                opacity: 1
-            });
+            gsap.fromTo('.Data-Renderer-Loading-Container', { opacity: 0 }, { duration: 0.4, opacity: 1 });
         }
     }, [isLoading, isOperationLoading, error, data]);
 
@@ -92,7 +74,7 @@ const DataRenderer = ({
                 </article>
 
                 <article className='Data-Renderer-Body-Container'>
-                    {isLoading || isOperationLoading ? (
+                    {(isLoading || isOperationLoading) ? (
                         <div className='Data-Renderer-Loading-Container'>
                             <CircularProgress className='Circular-Progress' />
                             {(isOperationLoading && operationLoadingMessage) && (
