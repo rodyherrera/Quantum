@@ -42,11 +42,13 @@ export const createDockerContainer = catchAsync(async (req: Request, res: Respon
     const dockerContainerId = dockerContainer._id.toString();
     // userContainerPath duplicated code @services/userContainer.ts 
     const userContainerPath = path.join('/var/lib/quantum', process.env.NODE_ENV as string, 'containers', user._id.toString());
+    const containerStoragePath = path.join(userContainerPath, 'docker-containers', slugify(name) + '-' + dockerContainerId);
     const dockerHandler = new DockerHandler({
         imageName: image,
-        storagePath: path.join(userContainerPath, 'docker-containers', slugify(name) + '-' + dockerContainerId),
+        storagePath: containerStoragePath,
         dockerName: dockerContainerId
     });
+    await DockerContainer.updateOne({ id: dockerContainerId }, { storagePath: containerStoragePath });
     await dockerHandler.createAndStartContainer();
     res.status(200).json({ status: 'success', data: dockerHandler });
 });
