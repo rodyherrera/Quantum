@@ -12,35 +12,20 @@
  * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 ****/
 
-import React, { useEffect, useRef } from 'react';
+import React, { useLayoutEffect, useRef } from 'react';
 import Project from '@components/organisms/Project';
 import Button from '@components/atoms/Button';
+import useUserRepositories from '@hooks/useUserRepositories';
 import DataRenderer from '@components/organisms/DataRenderer';
-import { useSelector, useDispatch } from 'react-redux';
-import { getRepositories } from '@services/repository/operations';
 import { HiPlus } from 'react-icons/hi';
-import { setRepositories, setIsLoading } from '@services/repository/slice';
 import { gsap } from 'gsap';
 import './Dashboard.css';
 
 const Dashboard = () => {
-    const dispatch = useDispatch();
-    const { repositories, isLoading, isOperationLoading, error } = useSelector(state => state.repository);
+    const { repositories, isLoading, isOperationLoading, error } = useUserRepositories();
     const createRepoBtnRef = useRef(null);
 
-    useEffect(() => {
-        dispatch(getRepositories());
-        const intervalId = setInterval(() => {
-            dispatch(getRepositories(false));
-        }, 15000);
-        return () => {
-            clearInterval(intervalId);
-            dispatch(setRepositories([]));
-            dispatch(setIsLoading(true));
-        };
-    }, [dispatch]);
-
-    useEffect(() => {
+    useLayoutEffect(() => {
         if(isLoading) return;
         gsap.fromTo(createRepoBtnRef.current, { 
             opacity: 0, 
