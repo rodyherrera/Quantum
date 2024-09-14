@@ -47,6 +47,8 @@ const DockerContainerSchema = new Schema({
     timestamps: true
 });
 
+DockerContainerSchema.index({ user: 1, name: 1 }, { unique: true });
+
 const DockerContainer = mongoose.model('DockerContainer', DockerContainerSchema);
 
 export default DockerContainer;
