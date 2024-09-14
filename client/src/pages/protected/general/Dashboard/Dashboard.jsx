@@ -16,13 +16,16 @@ import React, { useLayoutEffect, useRef } from 'react';
 import Project from '@components/organisms/Project';
 import Button from '@components/atoms/Button';
 import useUserRepositories from '@hooks/useUserRepositories';
+import useUserDockerContainers from '@hooks/useUserDockerContainers';
 import DataRenderer from '@components/organisms/DataRenderer';
+import DockerContainer from '@components/organisms/DockerContainer';
 import { HiPlus } from 'react-icons/hi';
 import { gsap } from 'gsap';
 import './Dashboard.css';
 
 const Dashboard = () => {
     const { repositories, isLoading, isOperationLoading, error } = useUserRepositories();
+    const { dockerContainers } = useUserDockerContainers();
     const createRepoBtnRef = useRef(null);
 
     useLayoutEffect(() => {
@@ -70,9 +73,13 @@ const Dashboard = () => {
         >
             <div id='Dashboard-Projects-Container'>
                 {repositories.map((repository, index) => (
-                    <Project 
-                        key={index} 
-                        repository={repository} />
+                    <Project key={index} repository={repository} />
+                ))}
+            </div>
+
+            <div id='Dashboard-Docker-Container'>
+                {dockerContainers.map((container, index) => (
+                    <DockerContainer container={container} key={index} />
                 ))}
             </div>
         </DataRenderer>
