@@ -25,3 +25,8 @@ export const getMyDockerContainers = ServerAPI.register({
     path: '/me/',
     method: 'GET'
 });
+
+export const createDockerContainer = ServerAPI.register({
+    path: '/',
+    method: 'POST'
+});

@@ -16,9 +16,11 @@ import github from './github';
 import repository from './repository';
 import general from './general';
 import authentication from './authentication';
+import dockerContainer from './dockerContainer';
 
 const pages = {
     github,
+    dockerContainer,
     repository,
     general,
     authentication

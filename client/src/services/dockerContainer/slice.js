@@ -17,6 +17,7 @@ import { createSlice } from '@reduxjs/toolkit';
 const state = {
     error: null,
     isLoading: true,
+    isOperationLoading: false,
     dockerContainers: []
 };
 
@@ -30,6 +31,9 @@ const dockerContainerSlice = createSlice({
         setDockerContainers: (state, action) => {
             state.dockerContainers = action.payload;
         },
+        setIsOperationLoading: (state, action) => {
+            state.isOperationLoading = action.payload;
+        },
         setError: (state, action) => {
             state.error = action.payload;
         }
@@ -37,6 +41,7 @@ const dockerContainerSlice = createSlice({
 });
 
 export const {
+    setIsOperationLoading,
     setError,
     setIsLoading,
     setDockerContainers

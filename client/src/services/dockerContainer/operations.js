@@ -24,3 +24,15 @@ export const getMyDockerContainers = () => async (dispatch) => {
         loaderState: dockerContainerSlice.setIsLoading
     });
 };
+
+export const createDockerContainer = (body, navigate) => async (dispatch) => {
+    const operation = new OperationHandler(dockerContainerSlice, dispatch);
+    operation.on('response', () => {
+        navigate('/dashboard/');
+    });
+    operation.use({
+        api: dockerContainerService.createDockerContainer,
+        loaderState: dockerContainerSlice.setIsOperationLoading,
+        query: { body }
+    });
+};
