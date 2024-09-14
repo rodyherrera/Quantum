@@ -20,7 +20,6 @@
         "lodash": "^4.17.21",
         "module-alias": "^2.2.3",
         "mongoose": "^8.0.3",
-        "mongoose-partial-search": "^1.0.6",
         "nodemailer": "^6.9.13",
         "passport": "^0.7.0",
         "passport-github": "^1.1.0",

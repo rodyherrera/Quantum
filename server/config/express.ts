@@ -38,7 +38,8 @@ bootstrap.configureApp({
         'repository',
         'webhook',
         'deployment',
-        'server'
+        'server',
+        'dockerContainer'
     ],
     middlewares: [
         session({

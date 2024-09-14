@@ -15,7 +15,6 @@
 import Docker from 'dockerode';
 import fs from 'fs/promises';
 import { ensureDirectoryExists } from '@utilities/helpers';
-import { Container } from '@typings/services/dockerHandler';
 import logger from '@utilities/logger';
 import Dockerode from 'dockerode';
 
@@ -31,6 +30,20 @@ class DockerHandler{
         this.storagePath = storagePath;
         this.imageName = imageName;
         this.dockerName = this.formatDockerName(dockerName);
+    }
+
+    async initializeContainer(){
+        try{
+            const container = await this.getExistingContainer();
+            return container;
+        }catch(error: any){
+            if(error.statusCode === 404){
+                const container = await this.createAndStartContainer();
+                return container;
+            }else{
+                logger.error('Could not handle Docker container startup request: ' + error);
+            }
+        }
     }
 
     /**
@@ -80,7 +93,7 @@ class DockerHandler{
             Tty: true,
             OpenStdin: true,
             StdinOnce: true,
-            Cmd: ['/bin/ash'],
+            Cmd: ['/bin/sh'],
             HostConfig: {
                 Binds: [`${this.storagePath}:/app:rw`],
                 NetworkMode: 'host',
@@ -89,12 +102,8 @@ class DockerHandler{
         });
     }
 
-    /**
-     * Checks if a Docker image exists locally.
-     * @returns {Promise<boolean>} Returns true if the image exists, false otherwise.
-     */
-    async checkImageExists(): Promise<boolean>{
-        const image = docker.getImage(this.imageName);
+    static async checkImageExists(imageName: string): Promise<boolean>{
+        const image = docker.getImage(imageName);
         try{
             await image.inspect();
             return true;
@@ -111,7 +120,7 @@ class DockerHandler{
      */
     async pullImage(){
         try{
-            logger.info(`: Pulling "${this.imageName}"...`);
+            logger.info(`Pulling "${this.imageName}"...`);
             await new Promise<void>((resolve, reject) => {
                 docker.pull(this.imageName, (error: any, stream: NodeJS.ReadableStream) => {
                     if(error) reject(error);
@@ -135,7 +144,7 @@ class DockerHandler{
      */
     async createAndStartContainer(): Promise<Dockerode.Container | null>{
         try{
-            const imageExists = await this.checkImageExists();
+            const imageExists = await DockerHandler.checkImageExists(this.imageName);
             if(!imageExists) await this.pullImage();
             await ensureDirectoryExists(this.storagePath);
             const container = await this.createContainer();

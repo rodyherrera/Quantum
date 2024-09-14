@@ -55,18 +55,12 @@ class UserContainer extends DockerHandler{
     }
 
     async start(installPkgs: boolean = true){
-        try{
-            const existingContainer = await this.getExistingContainer();
-            this.instance = existingContainer;
-            if(installPkgs) await this.installPackages();
-        }catch(error: any){
-            if(error.statusCode === 404){
-                this.instance = await this.createAndStartContainer();
-                await this.installPackages();
-            }else{
-                this.criticalErrorHandler('startContainer', error);
-            }
+        const container = await this.initializeContainer();
+        if(!container){
+            throw new Error("Unable to start the user's container.")
         }
+        this.instance = container;
+        if(installPkgs) await this.installPackages();
     }
     
     /**
