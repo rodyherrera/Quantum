@@ -2,6 +2,7 @@ import DockerContainer from '@models/dockerContainer';
 import DockerHandler from '@services/dockerHandler';
 import RuntimeError from '@utilities/runtimeError';
 import path from 'path';
+import slugify from 'slugify';
 import HandlerFactory from '@controllers/handlerFactory';
 import { catchAsync } from '@utilities/helpers';
 import { NextFunction, Request, Response } from 'express';
@@ -39,11 +40,15 @@ export const createDockerContainer = catchAsync(async (req: Request, res: Respon
     const user = req.user as IUser;
     const dockerContainer = await DockerContainer.create({ name, image, user });
     const dockerContainerId = dockerContainer._id.toString();
+    // userContainerPath duplicated code @services/userContainer.ts 
+    const userContainerPath = path.join('/var/lib/quantum', process.env.NODE_ENV as string, 'containers', user._id.toString());
+    const containerStoragePath = path.join(userContainerPath, 'docker-containers', slugify(name) + '-' + dockerContainerId);
     const dockerHandler = new DockerHandler({
         imageName: image,
-        storagePath: path.join('/var/lib/quantum', process.env.NODE_ENV as string, 'containers', dockerContainerId),
+        storagePath: containerStoragePath,
         dockerName: dockerContainerId
     });
+    await DockerContainer.updateOne({ id: dockerContainerId }, { storagePath: containerStoragePath });
     await dockerHandler.createAndStartContainer();
     res.status(200).json({ status: 'success', data: dockerHandler });
 });

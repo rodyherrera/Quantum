@@ -6,6 +6,9 @@ const DockerContainerSchema = new Schema({
         ref: 'User',
         required: [true, 'DockerContainer::User::Required']
     },
+    storagePath: {
+        type: String
+    },
     image: {
         type: String,
         required: [true, 'DockerContainer::Image::Required']
@@ -19,14 +22,6 @@ const DockerContainerSchema = new Schema({
         type: Map,
         of: Number,
         default: {}
-    },
-    volumeMounts: {
-        type: [String],
-        default: []
-    },
-    networks: {
-        type: [String],
-        default: []
     },
     startedAt: {
         type: Date,
@@ -46,6 +41,8 @@ const DockerContainerSchema = new Schema({
 }, {
     timestamps: true
 });
+
+DockerContainerSchema.index({ user: 1, name: 1 }, { unique: true });
 
 const DockerContainer = mongoose.model('DockerContainer', DockerContainerSchema);
 
