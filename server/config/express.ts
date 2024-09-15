@@ -34,6 +34,8 @@ bootstrap.configureApp({
     suffix: '/api/v1/',
     routes: [
         'github',
+        'dockerImage',
+        'dockerNetwork',
         'auth',
         'repository',
         'webhook',
