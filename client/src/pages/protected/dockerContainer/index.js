@@ -1,7 +1,9 @@
 import CreateDockerContainer from './CreateDockerContainer';
+import Shell from './Shell';
 
 const pages = {
-    CreateDockerContainer
+    CreateDockerContainer,
+    Shell
 };
 
 export default pages;
