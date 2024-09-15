@@ -16,8 +16,10 @@ import { getUserByToken } from '@middlewares/authentication';
 import { ISocket, WsNextFunction } from '@typings/controllers/wsController';
 import UserContainer from '@services/userContainer';
 import RuntimeError from '@utilities/runtimeError';
+import DockerHandler from '@services/dockerHandler';
 import Repository from '@models/repository';
 import RepositoryHandler from '@services/repositoryHandler';
+import DockerContainer from '@models/dockerContainer';
 import logger from '@utilities/logger';
 
 const userAuthentication = async (socket: ISocket, next: WsNextFunction) => {
@@ -55,6 +57,25 @@ const repositoryShellHandler = async (socket: ISocket) => {
     }
 };
 
+const dockerContainerShellHandler = async (socket: ISocket) => {
+    try{
+        const { dockerId } = socket.handshake.query;
+        const dockerContainer = await DockerContainer.findById(dockerId);
+        if(!dockerContainer || !dockerId){
+            // handle next function
+            return;
+        }
+        const dockerHandler = new DockerHandler({
+            storagePath: dockerContainer.storagePath || '',
+            dockerName: dockerContainer.name,
+            imageName: dockerContainer.image
+        });
+        dockerHandler.startSocketShell(socket, dockerId as string, '/');
+    }catch(error){
+        logger.info('Critical Error (@controllers/wsController - dockerContainerShellHandler)', error);
+    }
+};
+
 const cloudConsoleHandler = async (socket: ISocket) => {
     try{
         const { user } = socket;
@@ -79,6 +100,9 @@ export default (io: any) => {
             });
         }else if(action === 'Cloud::Console'){
             cloudConsoleHandler(socket);
+        }else if(action === 'DockerContainer::Shell'){
+            // TOOD: verify ownership
+            dockerContainerShellHandler(socket);
         }else{
             socket.disconnect();
         }

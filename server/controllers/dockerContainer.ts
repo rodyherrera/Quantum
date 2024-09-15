@@ -48,7 +48,8 @@ export const createDockerContainer = catchAsync(async (req: Request, res: Respon
         storagePath: containerStoragePath,
         dockerName: dockerContainerId
     });
-    await DockerContainer.updateOne({ id: dockerContainerId }, { storagePath: containerStoragePath });
+    console.log(containerStoragePath);
+    await DockerContainer.updateOne({ _id: dockerContainerId }, { storagePath: containerStoragePath });
     await dockerHandler.createAndStartContainer();
     res.status(200).json({ status: 'success', data: dockerHandler });
 });

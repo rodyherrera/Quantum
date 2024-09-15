@@ -108,7 +108,6 @@ class UserContainer extends DockerHandler{
         try{
             await this.start(false);
             if(!this.instance) return;
-            console.log(workDir);
             const exec = await this.instance.exec({
                 Cmd: ['/bin/sh'],
                 AttachStdout: true,

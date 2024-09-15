@@ -14,7 +14,9 @@
 
 import Docker from 'dockerode';
 import fs from 'fs/promises';
+import { Socket } from 'socket.io';
 import { ensureDirectoryExists } from '@utilities/helpers';
+import { createLogStream, setupSocketEvents } from '@services/logManager';
 import logger from '@utilities/logger';
 import Dockerode from 'dockerode';
 
@@ -43,6 +45,28 @@ class DockerHandler{
             }else{
                 logger.error('Could not handle Docker container startup request: ' + error);
             }
+        }
+    }
+
+    // DUPLICATED CODE @services/userContainer.ts
+    async startSocketShell(socket: Socket, id: string, workDir: string = '/app'){
+        try{
+            const container = await this.initializeContainer();
+            if(!container) return;
+            const exec = await container.exec({
+                Cmd: ['/bin/sh'],
+                AttachStdout: true,
+                AttachStderr: true,
+                AttachStdin: true,
+                WorkingDir: workDir,
+                Tty: true
+            });
+            // check for refactor (id, id)
+            await createLogStream(id, id);
+            // same 
+            setupSocketEvents(socket, id, id, exec);
+        }catch(error){
+            logger.info('CRITICAL ERROR (at @services/dockerHandler - startSocketShell): ' + error);
         }
     }
 
@@ -151,7 +175,7 @@ class DockerHandler{
             await container.start();
             return container;
         }catch(error){
-            logger.error('CRITICAL ERROR (@dockerHandler - createAndStartContainer):', error);
+            logger.error('CRITICAL ERROR (@dockerHandler - createAndStartContainer): ' + error);
             return null;
         }
     }
