@@ -16,13 +16,13 @@ import OperationHandler from '@utilities/operationHandler';
 import * as dockerImageSlice from '@services/dockerImage/slice';
 import * as dockerImageService from '@services/dockerImage/service'
 
-export const createDockerContainer = (body, navigate) => async (dispatch) => {
+export const createDockerImage = (body, navigate) => async (dispatch) => {
     const operation = new OperationHandler(dockerImageSlice, dispatch);
     operation.on('response', () => {
         navigate('/dashboard/');
     });
     operation.use({
-        api: dockerImageService.createDockerContainer,
+        api: dockerImageService.createDockerImage,
         loaderState: dockerImageSlice.setIsOperationLoading,
         query: { body }
     });

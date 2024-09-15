@@ -1,17 +1,17 @@
 import React from 'react';
 import MinimalForm from '@components/organisms/MinimalForm';
-import { createDockerContainer } from '@services/dockerContainer/operations';
+import { createDockerImage } from '@services/dockerImage/operations';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import './CreateDockerContainer.css';
+import './CreateDockerImage.css';
 
-const CreateDockerContainer = () => {
+const CreateDockerImage = () => {
     const { error, isOperationLoading } = useSelector((state) => state.dockerContainer);
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
     const handleFormSubmit = (formValues) => {
-        dispatch(createDockerContainer(formValues, navigate));
+        dispatch(createDockerImage(formValues, navigate));
     };
 
     return (
@@ -27,18 +27,19 @@ const CreateDockerContainer = () => {
                 {
                     type: 'text',
                     name: 'name',
-                    placeholder: 'My Docker Container',
-                    helperText: 'Enter a name for your container. The one you want.'
+                    placeholder: 'Image Name (e.g., alpine)',
+                    helperText: 'Enter the name of the Docker image you want to use. This could be a base image like "alpine" or a custom image.'
                 },
                 {
                     type: 'text',
-                    name: 'image',
-                    placeholder: 'Container Image',
-                    helperText: 'For example "alpine:latest", in case you want to create a container that runs Alpine.'
+                    name: 'tag',
+                    value: 'latest',
+                    placeholder: 'Tag (e.g., latest)',
+                    helperText: 'Specify the image tag. If unsure, use "latest" to pull the most recent version of the image.'
                 }
             ]}
         />
-    );
+    )
 };
 
-export default CreateDockerContainer;
+export default CreateDockerImage;
