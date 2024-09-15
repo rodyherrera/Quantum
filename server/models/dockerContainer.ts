@@ -11,12 +11,13 @@ const DockerContainerSchema = new Schema({
         ref: 'DockerNetwork',
         required: [true, 'DockerContainer::Network::Required']
     },
+    image: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'DockerImage',
+        required: [true, 'DockerContainer::Image::Required'],
+    },
     storagePath: {
         type: String
-    },
-    image: {
-        type: String,
-        required: [true, 'DockerContainer::Image::Required']
     },
     status: {
         type: String,
