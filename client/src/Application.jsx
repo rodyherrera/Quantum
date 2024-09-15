@@ -45,6 +45,7 @@ const Application = () => {
                     <Route path='/github/need-authenticate/' element={<pages.protected.github.NeedAuthenticate />} />
 
                     <Route path='/docker-container/create/' element={<pages.protected.dockerContainer.CreateDockerContainer />} />
+                    <Route path='/docker-container/:dockerId/shell/' element={<pages.protected.dockerContainer.Shell />} />
 
                     <Route path='/repository/create/' element={<pages.protected.repository.CreateRepository />} />
                     <Route path='/repository/:repositoryAlias/storage/' element={<pages.protected.repository.Storage />} />
