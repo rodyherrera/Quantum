@@ -24,11 +24,6 @@ const DockerContainerSchema = new Schema({
         enum: ['created', 'running', 'stopped', 'paused', 'exited'],
         default: 'created'
     },
-    ports: {
-        type: Map,
-        of: Number,
-        default: {}
-    },
     startedAt: {
         type: Date,
     },
