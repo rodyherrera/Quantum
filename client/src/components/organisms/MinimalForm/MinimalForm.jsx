@@ -17,6 +17,7 @@ import Input from '@components/atoms/Input';
 import Button from '@components/atoms/Button';
 import Breadcrumbs from '@components/molecules/Breadcrumbs';
 import AnimatedMain from '@components/atoms/AnimatedMain'
+import Select from '@components/atoms/Select';
 import { gsap } from 'gsap';
 import { BiErrorCircle } from 'react-icons/bi';
 import { BsArrowRight } from 'react-icons/bs';
@@ -67,7 +68,7 @@ const MinimalForm = ({
             ease: 'Back.easeOut(1.2)'
         });
         return () => {
-            setFormValues(formInputs.map(input => ({ [input.name]: '' })));
+            setFormValues(formInputs.map(input => ({ [input.name]: input.type === 'select' ? [] : '' })));
         }
     }, []);
 
@@ -121,16 +122,30 @@ const MinimalForm = ({
 
                 <div className='Minimal-Form-Body-Container'>
                     {[...formInputs].map((input, index) => (
-                        <Input 
-                            key={index}
-                            type={input.type}
-                            value={formValues[input.name]}
-                            ref={(el) => inputRefs.current[index] = el}
-                            onKeyPress={keyPressHandler}
-                            onChange={(e) => setFormValues({ ...formValues, [input.name]: e.target.value })}
-                            name={input.name}
-                            helperText={input.helperText}
-                            placeholder={input.placeholder} />
+                        input.type === 'select' ? (
+                            <Select 
+                                key={index}
+                                type={input.type}
+                                value={formValues[input.name]}
+                                options={input.options}
+                                ref={(el) => inputRefs.current[index] = el}
+                                onKeyPress={keyPressHandler}
+                                onSelect={(value) => setFormValues({ ...formValues, [input.name]: [...formValues[input.name], value] })}
+                                name={input.name}
+                                helperText={input.helperText}
+                                placeholder={input.placeholder} />
+                        ) : (
+                            <Input 
+                                key={index}
+                                type={input.type}
+                                value={formValues[input.name]}
+                                ref={(el) => inputRefs.current[index] = el}
+                                onKeyPress={keyPressHandler}
+                                onChange={(e) => setFormValues({ ...formValues, [input.name]: e.target.value })}
+                                name={input.name}
+                                helperText={input.helperText}
+                                placeholder={input.placeholder} />
+                        )
                     ))}
                 </div>
 
