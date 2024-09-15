@@ -3,14 +3,14 @@ import mongoose, { Schema } from 'mongoose';
 const DockerNetworkSchema = new Schema({
     name: {
         type: String,
-        required: [true, 'Network::Name::Required'],
+        required: [true, 'DockerNetwork::Name::Required'],
         unique: true,
     },
     driver: {
         type: String,
         enum: ['bridge', 'host', 'overlay', 'none'],
         default: 'bridge',
-        required: [true, 'Network::Bridge::Required']
+        required: [true, 'DockerNetwork::Bridge::Required']
     },
     containers: [{
         type: mongoose.Schema.Types.ObjectId,

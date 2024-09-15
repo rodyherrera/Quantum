@@ -6,6 +6,11 @@ const DockerContainerSchema = new Schema({
         ref: 'User',
         required: [true, 'DockerContainer::User::Required']
     },
+    network: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'DockerNetwork',
+        required: [true, 'DockerContainer::Network::Required']
+    },
     storagePath: {
         type: String
     },
