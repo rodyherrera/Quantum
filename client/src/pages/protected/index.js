@@ -18,10 +18,12 @@ import general from './general';
 import authentication from './authentication';
 import dockerContainer from './dockerContainer';
 import dockerImage from './dockerImage';
+import dockerNetwork from './dockerNetwork';
 
 const pages = {
     github,
     dockerContainer,
+    dockerNetwork,
     dockerImage,
     repository,
     general,

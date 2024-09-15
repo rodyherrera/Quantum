@@ -1,17 +1,17 @@
 import React from 'react';
 import MinimalForm from '@components/organisms/MinimalForm';
-import { createDockerImage } from '@services/dockerImage/operations';
+import { createDockerNetwork } from '@services/dockerNetwork/operations';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import './CreateDockerImage.css';
+import './CreateDockerNetwork.css';
 
-const CreateDockerImage = () => {
+const CreateDockerNetwork = () => {
     const { error, isOperationLoading } = useSelector((state) => state.dockerContainer);
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
     const handleFormSubmit = (formValues) => {
-        dispatch(createDockerImage(formValues, navigate));
+        dispatch(createDockerNetwork(formValues, navigate));
     };
 
     return (
@@ -27,19 +27,24 @@ const CreateDockerImage = () => {
                 {
                     type: 'text',
                     name: 'name',
-                    placeholder: 'Image Name (e.g., alpine)',
-                    helperText: 'Enter the name of the Docker image you want to use. This could be a base image like "alpine" or a custom image.'
+                    placeholder: 'Network Name (e.g., my_custom_network)',
+                    helperText: 'Enter a unique name for the Docker network. This name will be used to reference the network in Docker commands.'
                 },
                 {
                     type: 'text',
-                    name: 'tag',
-                    value: 'latest',
-                    placeholder: 'Tag (e.g., latest)',
-                    helperText: 'Specify the image tag. If unsure, use "latest" to pull the most recent version of the image.'
+                    name: 'driver',
+                    placeholder: 'Select a network driver',
+                    helperText: 'Choose the type of driver for the network. Options: bridge, host, overlay, or none. Default is "bridge".'
+                },
+                {
+                    type: 'text',
+                    name: 'containers',
+                    placeholder: 'Select containers to connect',
+                    helperText: 'Select the containers you want to connect to this network. You can choose one or more containers.'
                 }
             ]}
         />
     );
 };
 
-export default CreateDockerImage;
+export default CreateDockerNetwork;

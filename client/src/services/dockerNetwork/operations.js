@@ -16,13 +16,13 @@ import OperationHandler from '@utilities/operationHandler';
 import * as dockerNetworkSlice from '@services/dockerNetwork/slice';
 import * as dockerNetworkService from '@services/dockerNetwork/service'
 
-export const createDockerContainer = (body, navigate) => async (dispatch) => {
+export const createDockerNetwork = (body, navigate) => async (dispatch) => {
     const operation = new OperationHandler(dockerNetworkSlice, dispatch);
     operation.on('response', () => {
         navigate('/dashboard/');
     });
     operation.use({
-        api: dockerNetworkService.createDockerContainer,
+        api: dockerNetworkService.createDockerNetwork,
         loaderState: dockerNetworkSlice.setIsOperationLoading,
         query: { body }
     });
