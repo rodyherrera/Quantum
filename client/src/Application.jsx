@@ -47,6 +47,10 @@ const Application = () => {
                     <Route path='/docker-container/create/' element={<pages.protected.dockerContainer.CreateDockerContainer />} />
                     <Route path='/docker-container/:dockerId/shell/' element={<pages.protected.dockerContainer.Shell />} />
 
+                    <Route path='/docker-image/create/' element={<pages.protected.dockerImage.CreateDockerImage />} />
+
+                    <Route path='/docker-network/create/' element={<pages.protected.dockerNetwork.CreateDockerNetwork />} />
+
                     <Route path='/repository/create/' element={<pages.protected.repository.CreateRepository />} />
                     <Route path='/repository/:repositoryAlias/storage/' element={<pages.protected.repository.Storage />} />
                     <Route path='/repository/:repositoryAlias/deployments/' element={<pages.protected.repository.RepositoryDeployments />} />

@@ -1,0 +1,86 @@
+.Select-Container{
+    position: relative;
+    height: auto;
+    display: flex;
+    width: 100%;
+    margin-bottom: .5rem;
+    outline: 1px solid #272727;
+    border-radius: .25rem;
+}
+
+.Select-Container-Wrapper{
+    width: 80%;
+}
+  
+.Select-Input{
+    position: relative;
+    width: 100%;
+    padding: .6rem 1rem;
+    outline: none;
+    border: none;
+    font-size: .8rem;
+    cursor: pointer;
+}
+
+.Select-Icon{
+    position: absolute;
+    right: 5%;
+    opacity: .8;
+    top: 50%;
+    transform: translateY(-50%) rotate(-90deg);
+    font-size: 25px;
+    display: flex;
+    padding-top: 5px;
+    transition: transform .2s ease;
+    pointer-events: none;
+}
+
+.Select-Icon.Active{
+    transform: translateY(-50%) rotate(-0deg);
+}
+
+.Select-Options{
+    position: absolute;
+    width: 100%;
+    border-radius: .25rem;
+    z-index: 200;
+    max-height: 150px;
+    background-color: #FFFFFF;
+    overflow-y: scroll;
+    top: 100%;
+    transform: translateY(0);
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(3px);
+    visibility: hidden;
+    opacity: 0;
+    border: 1px solid #86868b;
+    transition: 0.3s ease;
+}
+
+.Select-Options.Active{
+    visibility: visible;
+    opacity: 1;
+    transform: translateY(5%);
+}
+
+.Select-Option{
+    list-style: none;
+    font-size: .8rem;
+    text-transform: capitalize;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    width: 100%;
+    padding: .5rem 1rem;
+    cursor: pointer;
+}
+
+.Select-Option:hover{
+    background-color: #dadada;
+}
+
+@media screen and (max-width: 768px){
+    .Select-Container-Wrapper{
+        width: 100%;
+    }
+}

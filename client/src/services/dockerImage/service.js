@@ -12,22 +12,16 @@
  * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 ****/
 
-import github from './github';
-import repository from './repository';
-import general from './general';
-import authentication from './authentication';
-import dockerContainer from './dockerContainer';
-import dockerImage from './dockerImage';
-import dockerNetwork from './dockerNetwork';
+import APIRequestBuilder from '@utilities/apiRequestBuilder';
 
-const pages = {
-    github,
-    dockerContainer,
-    dockerNetwork,
-    dockerImage,
-    repository,
-    general,
-    authentication
-};
+/**
+ * @constant ServerAPI
+ * @description Represents the base endpoint for server-related API requests.
+ * @type {APIRequestBuilder} An instance of the APIRequestBuilder utility.
+*/
+export const ServerAPI = new APIRequestBuilder('/docker-image');
 
-export default pages;
+export const createDockerImage = ServerAPI.register({
+    path: '/',
+    method: 'POST'
+});
