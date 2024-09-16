@@ -1,5 +1,5 @@
 import mongoose, { Schema } from 'mongoose';
-import DockerNetworkService from '@services/dockerNetwork';
+import DockerNetworkService from '@services/docker/network';
 
 const DockerNetworkSchema = new Schema({
     name: {

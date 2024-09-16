@@ -17,7 +17,7 @@ import fs from 'fs/promises';
 import { Socket } from 'socket.io';
 import { ensureDirectoryExists } from '@utilities/helpers';
 import { createLogStream, setupSocketEvents } from '@services/logManager';
-import { pullImage, isImageAvailable } from '@services/dockerImage';
+import { pullImage } from '@services/docker/image';
 import logger from '@utilities/logger';
 import Dockerode from 'dockerode';
 

@@ -12,7 +12,7 @@
  * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 ****/
 
-import DockerHandler from '@services/dockerHandler';
+import DockerHandler from '@services/docker/container';
 import path from 'path';
 import logger from '@utilities/logger';
 import { IUser } from '@typings/models/user';

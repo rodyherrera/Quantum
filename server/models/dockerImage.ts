@@ -1,5 +1,5 @@
 import mongoose, { Schema } from 'mongoose';
-import { getImageSize, pullImage } from '@services/dockerImage';
+import { getImageSize, pullImage } from '@services/docker/image';
 
 const DockerImageSchema = new Schema({
     name: {

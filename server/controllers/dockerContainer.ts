@@ -1,5 +1,5 @@
 import DockerContainer from '@models/dockerContainer';
-import DockerHandler from '@services/dockerHandler';
+import DockerHandler from '@services/docker/container';
 import RuntimeError from '@utilities/runtimeError';
 import path from 'path';
 import slugify from 'slugify';

@@ -16,7 +16,7 @@ import { getUserByToken } from '@middlewares/authentication';
 import { ISocket, WsNextFunction } from '@typings/controllers/wsController';
 import UserContainer from '@services/userContainer';
 import RuntimeError from '@utilities/runtimeError';
-import DockerHandler from '@services/dockerHandler';
+import DockerHandler from '@services/docker/container';
 import Repository from '@models/repository';
 import RepositoryHandler from '@services/repositoryHandler';
 import DockerContainer from '@models/dockerContainer';
