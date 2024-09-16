@@ -46,7 +46,7 @@ process.on('uncaughtException', async (error:Error) => {
  * @param {String} reason - The unhandled rejection.
 */
 process.on('unhandledRejection', (reason:any) => {
-    logger.error(': Unhandled Promise Rejection, reason:', reason);
+    logger.error('Unhandled Promise Rejection, reason: ' + reason);
 });
 
 /**

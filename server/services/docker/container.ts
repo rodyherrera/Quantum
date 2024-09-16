@@ -27,10 +27,12 @@ class DockerHandler{
     private storagePath: string;
     private imageName: string;
     private dockerName: string;
+    private imageTag: string;
 
-    constructor({ storagePath, imageName, dockerName }: 
-        { storagePath: string; imageName: string; dockerName: string; }){
+    constructor({ storagePath, imageName, dockerName, imageTag = 'latest' }: 
+        { storagePath: string; imageName: string; dockerName: string; imageTag: string }){
         this.storagePath = storagePath;
+        this.imageTag = imageTag;
         this.imageName = imageName;
         this.dockerName = this.formatDockerName(dockerName);
     }
@@ -113,7 +115,7 @@ class DockerHandler{
      */
     async createContainer(): Promise<Dockerode.Container>{
         return docker.createContainer({
-            Image: this.imageName,
+            Image: this.imageName + ':' + this.imageTag,
             name: this.dockerName,
             Tty: true,
             OpenStdin: true,
@@ -135,7 +137,7 @@ class DockerHandler{
         try{
             // The image pull method does not download the image every 
             // time it is called. If it is already installed, it will return.
-            await pullImage(this.imageName);
+            await pullImage(this.imageName, this.imageTag);;
             await ensureDirectoryExists(this.storagePath);
             const container = await this.createContainer();
             await container.start();

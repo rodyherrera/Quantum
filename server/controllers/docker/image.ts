@@ -1,4 +1,4 @@
-import DockerImage from '@models/dockerImage';
+import DockerImage from '@models/docker/image';
 import HandlerFactory from '@controllers/common/handlerFactory';
 
 const DockerImageFactory = new HandlerFactory({

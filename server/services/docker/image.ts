@@ -3,8 +3,9 @@ import Dockerode, { Image } from 'dockerode';
 
 const docker = new Dockerode();
 
-export const isImageAvailable = async (imageName: string): Promise<boolean> => {
-    const image = docker.getImage(imageName);
+export const isImageAvailable = async (imageName: string, tag: string = 'latest'): Promise<boolean> => {
+    const fullImageName = `${imageName}:${tag}`;
+    const image = docker.getImage(fullImageName);
     try{
         await image.inspect();
         return true;
@@ -27,7 +28,7 @@ export const getImageSize = async (imageName: string, tag: string) => {
 export const pullImage = async (imageName: string, tag: string = 'latest'): Promise<void> => {
     try{
         const fullImageName = `${imageName}:${tag}`;
-        const isAvailable = await isImageAvailable(fullImageName);
+        const isAvailable = await isImageAvailable(imageName, tag);
         if(isAvailable) return;
 
         logger.info(`Pulling "${fullImageName}"...`);
