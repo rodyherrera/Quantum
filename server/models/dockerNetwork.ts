@@ -1,10 +1,16 @@
 import mongoose, { Schema } from 'mongoose';
+import DockerNetworkService from '@services/dockerNetwork';
 
 const DockerNetworkSchema = new Schema({
     name: {
         type: String,
         required: [true, 'DockerNetwork::Name::Required'],
         unique: true,
+    },
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: [true, 'DockerNetwork::User::Required']
     },
     driver: {
         type: String,
@@ -18,6 +24,20 @@ const DockerNetworkSchema = new Schema({
     }]
 }, {
     timestamps: true
+});
+
+DockerNetworkSchema.pre('save', async function(next){
+    if(!this.isNew){
+        return next();
+    }
+    try{
+        const userId = this.user.toString();
+        const network = new DockerNetworkService(userId);
+        await network.create(this.name, this.driver);
+        next();
+    }catch(error: any){
+        next(error);
+    }
 });
 
 const DockerNetwork = mongoose.model('DockerNetwork', DockerNetworkSchema);

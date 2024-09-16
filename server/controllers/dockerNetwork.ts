@@ -6,6 +6,7 @@ const DockerNetworkFactory = new HandlerFactory({
     fields: [
         'name',
         'driver',
+        'user',
         'containers'
     ]
 });
