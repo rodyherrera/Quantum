@@ -163,6 +163,7 @@ export const validateEnvironmentVariables = (): void => {
         { name: 'NODE_ENV', validation: /^(development|production)$/i, errorMessage: 'NODE_ENV must be one of "development", "production", or "test".' },
         { name: 'DOCKERS_CONTAINER_ALIASES' },
         { name: 'DOCKER_APK_STARTER_PACKAGES' },
+        { name: 'DOCKERS_NETWORK_ALIASES' },
         { name: 'DOMAIN', validation: /^http(s)?:\/\/\S+$/, errorMessage: 'DOMAIN must be a valid URL starting with "http://" or "https://"' },
         { name: 'SECRET_KEY' },
         { name: 'REGISTRATION_DISABLED', validation: /^(true|false)$/i, errorMessage: 'REGISTRATION_DISABLED must be either "true" or "false".' },

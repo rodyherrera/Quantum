@@ -15,8 +15,9 @@ services:
       - "80:80"
     environment:
       NODE_ENV: ${NODE_ENV:-production}
-      DOCKERS_CONTAINER_ALIASES: Quantum-Container
-      DOCKER_APK_STARTER_PACKAGES: "git nodejs npm python3 py3-pip"
+      DOCKERS_CONTAINER_ALIASES: ${DOCKERS_CONTAINER_ALIASES:-Quantum-Container}
+      DOCKERS_NETWORK_ALIASES: ${DOCKERS_NETWORK_ALIASES:-Quantum-Network}
+      DOCKER_APK_STARTER_PACKAGES: ${DOCKER_APK_STARTER_PACKAGES:-"git nodejs npm python3 py3-pip"}
       DOMAIN: ${DOMAIN:-http://quantum-server.yourdomain.com}
       SECRET_KEY: ${SECRET_KEY}
       LOG_LEVEL: ${LOG_LEVEL:-"info"}
@@ -33,7 +34,7 @@ services:
       DEVELOPMENT_DATABASE: ${DEVELOPMENT_DATABASE:-quantumcloud@development}
       LOG_PATH_MAX_SIZE: ${LOG_PATH_MAX_SIZE:-250}
       MONGO_URI: mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@mongodb:27020
-      MONGO_AUTH_SOURCE: admin
+      MONGO_AUTH_SOURCE: ${MONGO_AUTH_SOURCE:-admin}
       SMTP_HOST: ${SMTP_HOST}
       SMTP_PORT: ${SMTP_PORT}
       SMTP_AUTH_USER: ${SMTP_AUTH_USER}

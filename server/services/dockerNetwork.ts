@@ -11,7 +11,7 @@ class DockerNetwork{
 
     async create(name: string, driver: string){
         try{
-            const networkName = `${this.userId}-${name}`;
+            const networkName = `${process.env.DOCKERS_NETWORK_ALISES}-${this.userId}-${name}`;
             await this.docker.createNetwork({
                 Name: networkName,
                 Driver: driver,
