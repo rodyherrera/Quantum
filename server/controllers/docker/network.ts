@@ -1,5 +1,5 @@
-import DockerNetwork from '@models/dockerNetwork';
-import HandlerFactory from '@controllers/handlerFactory';
+import DockerNetwork from '@models/docker/network';
+import HandlerFactory from '@controllers/common/handlerFactory';
 
 const DockerNetworkFactory = new HandlerFactory({
     model: DockerNetwork,

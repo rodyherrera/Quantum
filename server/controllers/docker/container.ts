@@ -1,9 +1,9 @@
-import DockerContainer from '@models/dockerContainer';
+import DockerContainer from '@models/docker/container';
 import DockerHandler from '@services/docker/container';
 import RuntimeError from '@utilities/runtimeError';
 import path from 'path';
 import slugify from 'slugify';
-import HandlerFactory from '@controllers/handlerFactory';
+import HandlerFactory from '@controllers/common/handlerFactory';
 import { catchAsync } from '@utilities/helpers';
 import { NextFunction, Request, Response } from 'express';
 import { IUser } from '@typings/models/user';

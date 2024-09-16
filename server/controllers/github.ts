@@ -14,7 +14,7 @@
 
 import { catchAsync } from '@utilities/helpers';
 import Github from '@models/github';
-import HandlerFactory from '@controllers/handlerFactory';
+import HandlerFactory from '@controllers/common/handlerFactory';
 import { Request, Response } from 'express';
 
 const GithubFactory = new HandlerFactory({

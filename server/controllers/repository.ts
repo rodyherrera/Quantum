@@ -16,7 +16,7 @@ import axios from 'axios';
 import fs from 'fs';
 import path from 'path';
 import Repository from '@models/repository';
-import HandlerFactory from '@controllers/handlerFactory';
+import HandlerFactory from '@controllers/common/handlerFactory';
 import Deployment from '@models/deployment';
 import Github from '@services/github';
 import RuntimeError from '@utilities/runtimeError';

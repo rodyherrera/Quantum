@@ -19,7 +19,7 @@ import RuntimeError from '@utilities/runtimeError';
 import DockerHandler from '@services/docker/container';
 import Repository from '@models/repository';
 import RepositoryHandler from '@services/repositoryHandler';
-import DockerContainer from '@models/dockerContainer';
+import DockerContainer from '@models/docker/container';
 import logger from '@utilities/logger';
 
 const userAuthentication = async (socket: ISocket, next: WsNextFunction) => {

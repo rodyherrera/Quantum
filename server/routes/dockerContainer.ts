@@ -1,5 +1,5 @@
 import express from 'express';
-import * as dockerContainerController from '@controllers/dockerContainer';
+import * as dockerContainerController from '@controllers/docker/container';
 import * as authMiddleware from '@middlewares/authentication';
 
 const router = express.Router();

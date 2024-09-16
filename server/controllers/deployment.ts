@@ -14,7 +14,7 @@
 
 import Deployment from '@models/deployment';
 import Repository from '@models/repository';
-import HandlerFactory from '@controllers/handlerFactory';
+import HandlerFactory from '@controllers/common/handlerFactory';
 import RuntimeError from '@utilities/runtimeError';
 import Github from '@services/github';
 import RepositoryHandler from '@services/repositoryHandler';

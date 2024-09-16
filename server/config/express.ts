@@ -21,7 +21,7 @@ import { Server } from 'socket.io';
 
 import passport from '@config/passport';
 import * as bootstrap from '@utilities/bootstrap';
-import globalErrorHandler from '@controllers/globalErrorHandler';
+import globalErrorHandler from '@controllers/common/globalErrorHandler';
 
 const app = express();
 const httpServer = http.createServer(app);

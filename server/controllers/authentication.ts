@@ -14,7 +14,7 @@
 
 import jwt from 'jsonwebtoken';
 import User from '@models/user';
-import HandlerFactory from '@controllers/handlerFactory';
+import HandlerFactory from '@controllers/common/handlerFactory';
 import { catchAsync, filterObject } from '@utilities/helpers';
 import { IUser } from '@typings/models/user';
 

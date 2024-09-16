@@ -1,5 +1,5 @@
 import express from 'express';
-import * as dockerImageController from '@controllers/dockerImage';
+import * as dockerImageController from '@controllers/docker/image';
 import * as authMiddleware from '@middlewares/authentication';
 
 const router = express.Router();
