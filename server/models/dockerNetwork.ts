@@ -40,6 +40,13 @@ DockerNetworkSchema.pre('save', async function(next){
     }
 });
 
+DockerNetworkSchema.post('findOneAndDelete', async function(doc){
+    console.log(doc);
+    const userId = doc.user.toString();
+    const network = new DockerNetworkService(userId);
+    await network.remove(doc.name);
+});
+
 const DockerNetwork = mongoose.model('DockerNetwork', DockerNetworkSchema);
 
 export default DockerNetwork;
