@@ -6,6 +6,8 @@ import slugify from 'slugify';
 import DockerImage from '@models/docker/image';
 import DockerNetwork from '@models/docker/network';
 import HandlerFactory from '@controllers/common/handlerFactory';
+import { IDockerImage } from '@typings/models/docker/image';
+import { IDockerNetwork } from '@typings/models/docker/network';
 import { IRequestDockerImage, IRequestDockerNetwork } from '@typings/controllers/docker/container';
 import { isImageAvailable } from '@services/docker/image';
 import { catchAsync } from '@utilities/helpers';
@@ -32,7 +34,11 @@ const configureContainerStorage = (userId: string, name: string, containerId: st
     return containerStoragePath;
 };
 
-const findOrCreateImage = async (image: string | IRequestDockerImage, userId: string, next: NextFunction) => {
+const findOrCreateImage = async (
+    image: string | IRequestDockerImage, 
+    userId: string, 
+    next: NextFunction
+): Promise<IDockerImage | null> => {
     let containerImage = null;
     if(typeof image === 'string'){
         containerImage = await DockerImage.findById(image).select('_id');
@@ -48,7 +54,11 @@ const findOrCreateImage = async (image: string | IRequestDockerImage, userId: st
     return containerImage;
 };
 
-const findOrCreateNetwork = async (network: string | IRequestDockerNetwork, userId: string, next: NextFunction) => {
+const findOrCreateNetwork = async (
+    network: string | IRequestDockerNetwork, 
+    userId: string, 
+    next: NextFunction
+): Promise<IDockerNetwork | null> => {
     let containerNetwork = null;
     if(typeof network === 'string'){
         containerNetwork = await DockerNetwork.findById(network).select('_id');
@@ -79,10 +89,7 @@ export const createDockerContainer = catchAsync(async (req: Request, res: Respon
     const userId = user._id.toString();
     
     const containerImage = await findOrCreateImage(image, userId, next);
-    if(!containerImage) return;
-    
     const containerNetwork = await findOrCreateNetwork(network, userId, next);
-    if(!containerNetwork) return;
 
     const container = await DockerContainer.create({ 
         name, user: userId, image: containerImage, network: containerNetwork });
