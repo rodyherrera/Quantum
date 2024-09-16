@@ -1,5 +1,5 @@
 import mongoose, { Schema } from 'mongoose';
-import DockerNetworkService from '@services/docker/network';
+import { createNetwork, removeNetwork } from '@services/docker/network';
 
 const DockerNetworkSchema = new Schema({
     name: {
@@ -32,8 +32,7 @@ DockerNetworkSchema.pre('save', async function(next){
     }
     try{
         const userId = this.user.toString();
-        const network = new DockerNetworkService(userId);
-        await network.create(this.name, this.driver);
+        await createNetwork(userId, this.name, this.driver);
         next();
     }catch(error: any){
         next(error);
@@ -43,8 +42,7 @@ DockerNetworkSchema.pre('save', async function(next){
 DockerNetworkSchema.post('findOneAndDelete', async function(doc){
     console.log(doc);
     const userId = doc.user.toString();
-    const network = new DockerNetworkService(userId);
-    await network.remove(doc.name);
+    await removeNetwork(userId, doc.name);
 });
 
 const DockerNetwork = mongoose.model('DockerNetwork', DockerNetworkSchema);

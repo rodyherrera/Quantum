@@ -3,41 +3,32 @@ import Dockerode, { Network } from 'dockerode';
 
 const docker = new Dockerode();
 
-class DockerNetwork{
-    private userId: string;
-    
-    constructor(userId: string){
-        this.userId = userId;
-    }
+const getNetworkName = (userId: string, name: string): string => {
+    const { DOCKERS_NETWORK_ALIASES } = process.env;
+    return `${DOCKERS_NETWORK_ALIASES}-${userId}-${name}`;
+}
 
-    getNetworkName(name: string): string{
-        const { DOCKERS_NETWORK_ALIASES } = process.env;
-        return `${DOCKERS_NETWORK_ALIASES}-${this.userId}-${name}`;
-    }
-
-    async create(name: string, driver: string): Promise<void>{
-        try{
-            const networkName = this.getNetworkName(name);
-            await docker.createNetwork({
-                Name: networkName,
-                Driver: driver,
-                CheckDuplicate: true,
-                Attachable: true
-            });
-        }catch(error){
-            logger.error('Error when trying to create docker network: ' + error);
-        }
-    }
-
-    async remove(name: string): Promise<void>{
-        try{
-            const networkName = this.getNetworkName(name);
-            const network = new Network(docker.modem, networkName);
-            await network.remove();
-        }catch(error){
-            logger.error('Error when trying to delete docker network: ' + error);
-        }
+export const createNetwork = async (userId: string, name: string, driver: string): Promise<void> => {
+    try{
+        const networkName = getNetworkName(userId, name);
+        await docker.createNetwork({
+            Name: networkName,
+            Driver: driver,
+            CheckDuplicate: true,
+            Attachable: true
+        });
+    }catch(error){
+        logger.error('Error when trying to create docker network: ' + error);
     }
 }
 
-export default DockerNetwork;
+
+export const removeNetwork = async (userId: string, name: string): Promise<void> => {
+    try{
+        const networkName = getNetworkName(userId, name);
+        const network = new Network(docker.modem, networkName);
+        await network.remove();
+    }catch(error){
+        logger.error('Error when trying to delete docker network: ' + error);
+    }
+}
