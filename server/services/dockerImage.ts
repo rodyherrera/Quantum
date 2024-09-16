@@ -3,7 +3,6 @@ import Dockerode, { Image } from 'dockerode';
 
 const docker = new Dockerode();
 
-// duplicated code @services/dockerHandler.ts
 export const isImageAvailable = async (imageName: string): Promise<boolean> => {
     const image = docker.getImage(imageName);
     try{

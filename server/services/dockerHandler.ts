@@ -17,6 +17,7 @@ import fs from 'fs/promises';
 import { Socket } from 'socket.io';
 import { ensureDirectoryExists } from '@utilities/helpers';
 import { createLogStream, setupSocketEvents } from '@services/logManager';
+import { pullImage, isImageAvailable } from '@services/dockerImage';
 import logger from '@utilities/logger';
 import Dockerode from 'dockerode';
 
@@ -126,50 +127,15 @@ class DockerHandler{
         });
     }
 
-    static async checkImageExists(imageName: string): Promise<boolean>{
-        const image = docker.getImage(imageName);
-        try{
-            await image.inspect();
-            return true;
-        }catch(error: any){
-            if(error.statusCode === 404){
-                return false;
-            }
-            throw error;
-        }
-    }
-
-    /**
-     * Pulls a Docker image from a remote repository.
-     */
-    async pullImage(){
-        try{
-            logger.info(`Pulling "${this.imageName}"...`);
-            await new Promise<void>((resolve, reject) => {
-                docker.pull(this.imageName, (error: any, stream: NodeJS.ReadableStream) => {
-                    if(error) reject(error);
-                    else{
-                        docker.modem.followProgress(stream, (progressError) => {
-                            if(progressError) reject(progressError);
-                            else resolve();
-                        });
-                    }
-                });
-            });
-            logger.info(`Image "${this.imageName}" downloaded.`);
-        }catch(error){
-            logger.error('CRITICAL ERROR (@dockerHandler - pullImage):', error);
-        }
-    }
-
     /**
      * Creates a new Docker container and starts it.
      * @returns {Promise<Container>} Returns a Docker container object.
      */
     async createAndStartContainer(): Promise<Dockerode.Container | null>{
         try{
-            const imageExists = await DockerHandler.checkImageExists(this.imageName);
-            if(!imageExists) await this.pullImage();
+            // The image pull method does not download the image every 
+            // time it is called. If it is already installed, it will return.
+            await pullImage(this.imageName);
             await ensureDirectoryExists(this.storagePath);
             const container = await this.createContainer();
             await container.start();
