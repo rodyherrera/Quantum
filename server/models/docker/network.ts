@@ -1,7 +1,8 @@
-import mongoose, { Schema } from 'mongoose';
+import mongoose, { Schema, Model } from 'mongoose';
+import { IDockerNetwork } from '@typings/models/docker/network';
 import { createNetwork, removeNetwork } from '@services/docker/network';
 
-const DockerNetworkSchema = new Schema({
+const DockerNetworkSchema: Schema<IDockerNetwork> = new Schema({
     name: {
         type: String,
         required: [true, 'DockerNetwork::Name::Required'],
@@ -45,6 +46,6 @@ DockerNetworkSchema.post('findOneAndDelete', async function(doc){
     await removeNetwork(userId, doc.name);
 });
 
-const DockerNetwork = mongoose.model('DockerNetwork', DockerNetworkSchema);
+const DockerNetwork: Model<IDockerNetwork> = mongoose.model('DockerNetwork', DockerNetworkSchema);
 
 export default DockerNetwork;
