@@ -1,6 +1,7 @@
-import mongoose, { Schema } from 'mongoose';
+import mongoose, { Schema, Model } from 'mongoose';
+import { IDockerContainer } from '@typings/models/docker/container';
 
-const DockerContainerSchema = new Schema({
+const DockerContainerSchema: Schema<IDockerContainer> = new Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
@@ -52,6 +53,6 @@ DockerContainerSchema.pre('save', async function(next){
     }
 });
 
-const DockerContainer = mongoose.model('DockerContainer', DockerContainerSchema);
+const DockerContainer: Model<IDockerContainer> = mongoose.model('DockerContainer', DockerContainerSchema);
 
 export default DockerContainer;
