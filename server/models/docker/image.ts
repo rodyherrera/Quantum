@@ -1,7 +1,8 @@
-import mongoose, { Schema } from 'mongoose';
+import mongoose, { Schema, Model } from 'mongoose';
 import { getImageSize, pullImage } from '@services/docker/image';
+import { IDockerImage } from '@typings/models/docker/image';
 
-const DockerImageSchema = new Schema({
+const DockerImageSchema: Schema<IDockerImage> = new Schema({
     name: {
         type: String,
         required: [true, 'Image::Name::Required']
@@ -36,6 +37,6 @@ DockerImageSchema.pre('save', async function(next){
     next();
 });
 
-const DockerImage = mongoose.model('DockerImage', DockerImageSchema);
+const DockerImage: Model<IDockerImage> = mongoose.model('DockerImage', DockerImageSchema);
 
 export default DockerImage;
