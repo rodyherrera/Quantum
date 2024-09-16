@@ -1,8 +1,9 @@
 import logger from '@utilities/logger';
 import Dockerode, { Network } from 'dockerode';
 
+const docker = new Dockerode();
+
 class DockerNetwork{
-    public docker: Dockerode = new Dockerode();
     private userId: string;
     
     constructor(userId: string){
@@ -17,7 +18,7 @@ class DockerNetwork{
     async create(name: string, driver: string): Promise<void>{
         try{
             const networkName = this.getNetworkName(name);
-            await this.docker.createNetwork({
+            await docker.createNetwork({
                 Name: networkName,
                 Driver: driver,
                 CheckDuplicate: true,
@@ -31,7 +32,7 @@ class DockerNetwork{
     async remove(name: string): Promise<void>{
         try{
             const networkName = this.getNetworkName(name);
-            const network = new Network(this.docker.modem, networkName);
+            const network = new Network(docker.modem, networkName);
             await network.remove();
         }catch(error){
             logger.error('Error when trying to delete docker network: ' + error);

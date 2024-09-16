@@ -6,7 +6,8 @@ const DockerImageFactory = new HandlerFactory({
     fields: [
         'name',
         'tag',
-        'containers'
+        'containers',
+        'user'
     ]
 });
 
