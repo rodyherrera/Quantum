@@ -1,5 +1,5 @@
 import logger from '@utilities/logger';
-import Dockerode, { Image } from 'dockerode';
+import Dockerode from 'dockerode';
 
 const docker = new Dockerode();
 

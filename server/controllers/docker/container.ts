@@ -6,6 +6,7 @@ import slugify from 'slugify';
 import DockerImage from '@models/docker/image';
 import DockerNetwork from '@models/docker/network';
 import HandlerFactory from '@controllers/common/handlerFactory';
+import { getNetworkName } from '@services/docker/network';
 import { IDockerImage } from '@typings/models/docker/image';
 import { IDockerNetwork } from '@typings/models/docker/network';
 import { IRequestDockerImage, IRequestDockerNetwork } from '@typings/controllers/docker/container';
@@ -44,6 +45,7 @@ const findOrCreateImage = async (
         containerImage = await DockerImage.findById(image).select('_id');
     }
     if(!containerImage){
+        console.log(image, userId);
         const { name, tag } = image as IRequestDockerImage;
         if(!isImageAvailable(name, tag)){
             next(new RuntimeError('DockerContainer::CreateDocker::ImageNotFound', 404));
@@ -63,6 +65,7 @@ const findOrCreateNetwork = async (
     if(typeof network === 'string'){
         containerNetwork = await DockerNetwork.findById(network).select('_id');
     }
+    console.log(containerNetwork);
     if(!containerNetwork){
         const { driver, name } = network as IRequestDockerNetwork;
         if(!driver || !name){
@@ -90,6 +93,9 @@ export const createDockerContainer = catchAsync(async (req: Request, res: Respon
     
     const containerImage = await findOrCreateImage(image, userId, next);
     const containerNetwork = await findOrCreateNetwork(network, userId, next);
+    if(!containerNetwork || !containerImage){
+        return next(new RuntimeError('DockerContainer::CreateDocker::ImageOrNetworkError', 500));
+    }
 
     const container = await DockerContainer.create({ 
         name, user: userId, image: containerImage, network: containerNetwork });
@@ -97,14 +103,16 @@ export const createDockerContainer = catchAsync(async (req: Request, res: Respon
         
     const containerStoragePath = configureContainerStorage(userId, name, containerId);
     const dockerHandler = new DockerHandler({
-        imageName: image.name,
-        imageTag: image.tag,
+        imageName: containerImage.name,
+        imageTag: containerImage.tag,
         storagePath: containerStoragePath,
         dockerName: containerId
     });
 
     await DockerContainer.updateOne({ _id: containerId }, { storagePath: containerStoragePath });
-    await dockerHandler.createAndStartContainer();
+
+    const networkName = getNetworkName(user._id, containerNetwork.name);
+    await dockerHandler.createAndStartContainer(networkName);
 
     res.status(200).json({ status: 'success', data: dockerHandler });
 });

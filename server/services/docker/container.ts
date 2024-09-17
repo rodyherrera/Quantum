@@ -113,7 +113,8 @@ class DockerHandler{
      * Creates a new Docker container instance.
      * @returns {Promise<Container>} Returns a Docker container object.
      */
-    async createContainer(): Promise<Dockerode.Container>{
+    async createContainer(networkMode = 'host'): Promise<Dockerode.Container>{
+        console.log(networkMode);
         return docker.createContainer({
             Image: this.imageName + ':' + this.imageTag,
             name: this.dockerName,
@@ -123,8 +124,8 @@ class DockerHandler{
             Cmd: ['/bin/sh'],
             HostConfig: {
                 Binds: [`${this.storagePath}:/app:rw`],
-                NetworkMode: 'host',
-                RestartPolicy: { Name: 'no' }
+                NetworkMode: networkMode,
+                RestartPolicy: { Name: 'always' }
             }
         });
     }
@@ -133,13 +134,13 @@ class DockerHandler{
      * Creates a new Docker container and starts it.
      * @returns {Promise<Container>} Returns a Docker container object.
      */
-    async createAndStartContainer(): Promise<Dockerode.Container | null>{
+    async createAndStartContainer(networkMode = 'Quantum-Network-66e476942a01b96cc3febaab-net2wo2rk-name22221111'): Promise<Dockerode.Container | null>{
         try{
             // The image pull method does not download the image every 
             // time it is called. If it is already installed, it will return.
-            await pullImage(this.imageName, this.imageTag);;
+            await pullImage(this.imageName, this.imageTag);
             await ensureDirectoryExists(this.storagePath);
-            const container = await this.createContainer();
+            const container = await this.createContainer(networkMode);
             await container.start();
             return container;
         }catch(error){

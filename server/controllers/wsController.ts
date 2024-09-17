@@ -14,6 +14,7 @@
 
 import { getUserByToken } from '@middlewares/authentication';
 import { ISocket, WsNextFunction } from '@typings/controllers/wsController';
+import { IDockerContainer } from '@typings/models/docker/container';
 import UserContainer from '@services/userContainer';
 import RuntimeError from '@utilities/runtimeError';
 import DockerHandler from '@services/docker/container';
@@ -60,7 +61,12 @@ const repositoryShellHandler = async (socket: ISocket) => {
 const dockerContainerShellHandler = async (socket: ISocket) => {
     try{
         const { dockerId } = socket.handshake.query;
-        const dockerContainer = await DockerContainer.findById(dockerId);
+        const dockerContainer = await DockerContainer
+            .findById(dockerId)
+            .populate({
+                path: 'image',
+                select: 'name tag'
+            });
         if(!dockerContainer || !dockerId){
             // handle next function
             return;
@@ -68,7 +74,8 @@ const dockerContainerShellHandler = async (socket: ISocket) => {
         const dockerHandler = new DockerHandler({
             storagePath: dockerContainer.storagePath || '',
             dockerName: dockerContainer.name,
-            imageName: dockerContainer.image
+            imageName: dockerContainer.image.name,
+            imageTag: dockerContainer.image.tag
         });
         dockerHandler.startSocketShell(socket, dockerId as string, '/');
     }catch(error){
