@@ -1,9 +1,11 @@
 import mongoose, { Document } from 'mongoose';
 import { IGithub } from './github';
+import { IDockerContainer } from './docker/container';
 
 export interface IUser extends Document{
     _id: string;
     username: string;
+    container: mongoose.Schema.Types.ObjectId | IDockerContainer;
     repositories: mongoose.Types.ObjectId[];
     deployments: mongoose.Types.ObjectId[];
     github: mongoose.Types.ObjectId | IGithub;

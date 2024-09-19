@@ -3,7 +3,7 @@ import Dockerode, { Network } from 'dockerode';
 
 const docker = new Dockerode();
 
-export const getNetworkName = (userId: string, name: string): string => {
+export const getSystemNetworkName = (userId: string, name: string): string => {
     const { DOCKERS_NETWORK_ALIASES } = process.env;
     return `${DOCKERS_NETWORK_ALIASES}-${userId}-${name}`;
 }
@@ -18,8 +18,8 @@ export const randomIPv4Subnet = (): string => {
 
 export const createNetwork = async (userId: string, name: string, driver: string, subnet: string): Promise<void> => {
     try{
-        const networkName = getNetworkName(userId, name);
-        console.log(await docker.createNetwork({
+        const networkName = getSystemNetworkName(userId, name);
+        await docker.createNetwork({
             Name: networkName,
             Driver: driver,
             CheckDuplicate: true,
@@ -27,7 +27,7 @@ export const createNetwork = async (userId: string, name: string, driver: string
             IPAM: {
                 Config: [{ Subnet: subnet }]
             }
-        }));
+        });
     }catch(error){
         logger.error('Error when trying to create docker network: ' + error);
     }
@@ -35,7 +35,7 @@ export const createNetwork = async (userId: string, name: string, driver: string
 
 export const removeNetwork = async (userId: string, name: string): Promise<void> => {
     try{
-        const networkName = getNetworkName(userId, name);
+        const networkName = getSystemNetworkName(userId, name);
         const network = new Network(docker.modem, networkName);
         await network.remove();
     }catch(error){

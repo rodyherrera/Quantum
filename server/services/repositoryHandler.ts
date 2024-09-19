@@ -54,7 +54,8 @@ class RepositoryHandler{
         try{
             const shell = shells.get(this.repositoryId);
             if(shell) return shell;
-            const userContainer = new UserContainer(this.user);
+            const populatedUser = await this.user.populate('container');
+            const userContainer = new UserContainer(populatedUser);
             await userContainer.start();
             if(!userContainer.instance) return;
             const exec = await userContainer.instance.exec({

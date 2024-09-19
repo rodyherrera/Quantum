@@ -107,9 +107,10 @@ export const restartServer = async (): Promise<void> => {
 export const loadUserContainers = async (): Promise<void> => {
     try{
         logger.info('Loading users docker containers...');
-        const users = await User.find().select('_id');
+        const users = await User.find().populate('container');
         logger.info(`Found ${users.length} users.`);
         await Promise.all(users.map(async (user) => {
+            console.log('Creating UserContainer instance', user);
             const container = new UserContainer(user);
             await container.start();
         }));
@@ -118,7 +119,7 @@ export const loadUserContainers = async (): Promise<void> => {
             html: 'The containers of all users registered on the platform were successfully mounted on the host.'
         });
     }catch(error){
-        logger.error('CRITICAL ERROR (at @utilities/bootstrap - loadUserContainers):', error);
+        logger.error('CRITICAL ERROR (at @utilities/bootstrap - loadUserContainers): ' + error);
     }
 };
 

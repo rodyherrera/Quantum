@@ -14,10 +14,9 @@
 
 import { getUserByToken } from '@middlewares/authentication';
 import { ISocket, WsNextFunction } from '@typings/controllers/wsController';
-import { IDockerContainer } from '@typings/models/docker/container';
 import UserContainer from '@services/userContainer';
 import RuntimeError from '@utilities/runtimeError';
-import DockerHandler from '@services/docker/container';
+import DockerContainerService from '@services/docker/container';
 import Repository from '@models/repository';
 import RepositoryHandler from '@services/repositoryHandler';
 import DockerContainer from '@models/docker/container';
@@ -25,7 +24,7 @@ import logger from '@utilities/logger';
 
 const userAuthentication = async (socket: ISocket, next: WsNextFunction) => {
     const { token } = socket.handshake.auth;
-    if(!token)return next(new RuntimeError('Authentication::Token::Required', 400));
+    if(!token) return next(new RuntimeError('Authentication::Token::Required', 400));
     try{
         const user = await getUserByToken(token);
         socket.user = user;
@@ -61,23 +60,13 @@ const repositoryShellHandler = async (socket: ISocket) => {
 const dockerContainerShellHandler = async (socket: ISocket) => {
     try{
         const { dockerId } = socket.handshake.query;
-        const dockerContainer = await DockerContainer
-            .findById(dockerId)
-            .populate({
-                path: 'image',
-                select: 'name tag'
-            });
+        const dockerContainer = await DockerContainer.findById(dockerId);
         if(!dockerContainer || !dockerId){
             // handle next function
             return;
         }
-        const dockerHandler = new DockerHandler({
-            storagePath: dockerContainer.storagePath || '',
-            dockerName: dockerContainer.name,
-            imageName: dockerContainer.image.name,
-            imageTag: dockerContainer.image.tag
-        });
-        dockerHandler.startSocketShell(socket, dockerId as string, '/');
+        const dockerHandler = new DockerContainerService(dockerContainer);
+        dockerHandler.startSocketShell(socket, '/');
     }catch(error){
         logger.info('Critical Error (@controllers/wsController - dockerContainerShellHandler)', error);
     }
@@ -86,7 +75,8 @@ const dockerContainerShellHandler = async (socket: ISocket) => {
 const cloudConsoleHandler = async (socket: ISocket) => {
     try{
         const { user } = socket;
-        const container = new UserContainer(user);
+        const populatedUser = await user.populate('container');
+        const container = new UserContainer(populatedUser);
         await container.executeInteractiveShell(socket);
     }catch(error){
         logger.error('Critical Error (@controllers/wsController - cloudConsoleHandler)', error);

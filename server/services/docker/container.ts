@@ -1,40 +1,28 @@
-/***
- * Copyright (C) Rodolfo Herrera Hernandez. All rights reserved.
- * Licensed under the MIT license. See LICENSE file in the project root
- * for full license information.
- *
- * =+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
- *
- * For related information - https://github.com/rodyherrera/Quantum/
- *
- * All your applications, just in one place. 
- *
- * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-****/
-
-import Docker from 'dockerode';
+import Dockerode from 'dockerode';
 import fs from 'fs/promises';
 import { Socket } from 'socket.io';
 import { ensureDirectoryExists } from '@utilities/helpers';
 import { createLogStream, setupSocketEvents } from '@services/logManager';
 import { pullImage } from '@services/docker/image';
+import { IDockerContainer } from '@typings/models/docker/container';
+import DockerImage from '@models/docker/image';
 import logger from '@utilities/logger';
-import Dockerode from 'dockerode';
+import DockerNetwork from '@models/docker/network';
+import { getSystemNetworkName } from './network';
+import { IDockerImage } from '@typings/models/docker/image';
+import { IDockerNetwork } from '@typings/models/docker/network';
 
-const docker = new Docker();
+const docker = new Dockerode();
 
-class DockerHandler{
-    private storagePath: string;
-    private imageName: string;
-    private dockerName: string;
-    private imageTag: string;
+class DockerContainer{
+    private container: IDockerContainer;
+    private dockerImage: IDockerImage | null;
+    private dockerNetwork: IDockerNetwork | null;
 
-    constructor({ storagePath, imageName, dockerName, imageTag = 'latest' }: 
-        { storagePath: string; imageName: string; dockerName: string; imageTag: string }){
-        this.storagePath = storagePath;
-        this.imageTag = imageTag;
-        this.imageName = imageName;
-        this.dockerName = this.formatDockerName(dockerName);
+    constructor(container: IDockerContainer){
+        this.container = container;
+        this.dockerImage = null;
+        this.dockerNetwork = null;
     }
 
     async initializeContainer(){
@@ -51,8 +39,7 @@ class DockerHandler{
         }
     }
 
-    // DUPLICATED CODE @services/userContainer.ts
-    async startSocketShell(socket: Socket, id: string, workDir: string = '/app'){
+    async startSocketShell(socket: Socket, workDir: string = '/app'){
         try{
             const container = await this.initializeContainer();
             if(!container) return;
@@ -64,83 +51,95 @@ class DockerHandler{
                 WorkingDir: workDir,
                 Tty: true
             });
-            // check for refactor (id, id)
+            const id = this.container._id.toString();
             await createLogStream(id, id);
-            // same 
             setupSocketEvents(socket, id, id, exec);
         }catch(error){
             logger.info('CRITICAL ERROR (at @services/dockerHandler - startSocketShell): ' + error);
         }
     }
 
-    /**
-     * Removes the container and its associated storage.
-     */
-    async removeContainer(){
-        try{
-            const existingContainer = docker.getContainer(this.dockerName);
-            if(!existingContainer) return;
-            await existingContainer.stop();
-            await existingContainer.remove({ force: true });
-            await fs.rm(this.storagePath, { recursive: true });
-        }catch(error){
-            logger.error('CRITICAL ERROR (@dockerHandler - remove):', error);
+    getSystemDockerName(): string{
+        if(!this.container.name){
+            throw Error('The docker container does not have a name.');
         }
-    }
-
-    /**
-     * Gets an existing instance of the container, if applicable.
-     * @returns {Promise<Container>} Returns a Docker container object.
-     */
-    async getExistingContainer(): Promise<Dockerode.Container>{
-        const existingContainer = docker.getContainer(this.dockerName);
-        const { State } = await existingContainer.inspect();
-        if(!State.Running) await existingContainer.start();
-        return existingContainer;
-    }
-
-    /**
-     * Formats a docker name, replacing special characters for compatibility.
-     * @param {string} name - The original docker name to format.
-     * @returns {string} - The formatted docker name.
-     */
-    formatDockerName(name: string): string{
-        const formattedName = name.replace(/[^a-zA-Z0-9_.-]/g, '_');
+        const formattedName = this.container.name.replace(/[^a-zA-Z0-9_.-]/g, '_');
         return `${process.env.DOCKERS_CONTAINER_ALIASES}-${formattedName}`;
     }
 
-    /**
-     * Creates a new Docker container instance.
-     * @returns {Promise<Container>} Returns a Docker container object.
-     */
-    async createContainer(networkMode = 'host'): Promise<Dockerode.Container>{
-        console.log(networkMode);
-        return docker.createContainer({
-            Image: this.imageName + ':' + this.imageTag,
-            name: this.dockerName,
+    getDockerStoragePath(): string{
+        if(!this.container.storagePath){
+            throw Error('The container does not have a storage directory.');
+        }
+        return this.container.storagePath;
+    }
+
+    async removeContainer(){
+        try{
+            const container = docker.getContainer(this.getSystemDockerName());
+            if(!container) return;
+            await container.stop();
+            await container.remove({ force: true });
+            await fs.rm(this.getDockerStoragePath(), { recursive: true });
+        }catch(error){
+            logger.error('CRITICAL ERROR (@dockerHandler - remove): ' + error);
+        }
+    }
+
+    async getExistingContainer(): Promise<Dockerode.Container>{
+        const container = docker.getContainer(this.getSystemDockerName());
+        const { State } = await container.inspect();
+        if(!State.Running) await container.start();
+        return container;
+    }
+
+    async getDockerImage(): Promise<IDockerImage>{
+        if(this.dockerImage) return this.dockerImage;
+        const dockerImage = await DockerImage.findById(this.container.image).select('name tag');
+        if(dockerImage === null){
+            throw Error("Can't create a container that does not have any images configured.");
+        }
+        return dockerImage;
+    }
+
+    async getDockerNetwork(): Promise<IDockerNetwork>{
+        if(this.dockerNetwork) return this.dockerNetwork;
+
+        let dockerNetwork = await DockerNetwork.findById(this.container.network).select('name');
+        if(dockerNetwork === null){
+            throw Error('Trying to create a container that does not have any network configured yet.');
+        }
+        return dockerNetwork;
+    }
+
+    async createContainer(): Promise<Dockerode.Container>{
+        const dockerImage = await this.getDockerImage();
+        const dockerNetwork = await this.getDockerNetwork();
+        const networkName = getSystemNetworkName(this.container.user.toString(), dockerNetwork.name);
+        const dockerName = this.getSystemDockerName();
+        const options = {
+            Image: `${dockerImage.name}:${dockerImage.tag}`,
+            name: dockerName,
             Tty: true,
             OpenStdin: true,
             StdinOnce: true,
             Cmd: ['/bin/sh'],
             HostConfig: {
-                Binds: [`${this.storagePath}:/app:rw`],
-                NetworkMode: networkMode,
+                Binds: [`${this.getDockerStoragePath()}:/app:rw`],
+                NetworkMode: networkName,
                 RestartPolicy: { Name: 'always' }
             }
-        });
+        };
+        const container = await docker.createContainer(options);
+        return container;
     }
 
-    /**
-     * Creates a new Docker container and starts it.
-     * @returns {Promise<Container>} Returns a Docker container object.
-     */
-    async createAndStartContainer(networkMode = 'Quantum-Network-66e476942a01b96cc3febaab-net2wo2rk-name22221111'): Promise<Dockerode.Container | null>{
+    async createAndStartContainer(): Promise<Dockerode.Container | null>{
         try{
-            // The image pull method does not download the image every 
-            // time it is called. If it is already installed, it will return.
-            await pullImage(this.imageName, this.imageTag);
-            await ensureDirectoryExists(this.storagePath);
-            const container = await this.createContainer(networkMode);
+            const dockerImage = await this.getDockerImage();
+            await pullImage(dockerImage.name, dockerImage.tag);
+            await ensureDirectoryExists(this.getDockerStoragePath());
+            const container = await this.createContainer();
             await container.start();
             return container;
         }catch(error){
@@ -150,4 +149,4 @@ class DockerHandler{
     }
 }
 
-export default DockerHandler;
+export default DockerContainer;

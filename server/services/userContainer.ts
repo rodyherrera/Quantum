@@ -12,19 +12,19 @@
  * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 ****/
 
-import DockerHandler from '@services/docker/container';
-import path from 'path';
+import DockerContainerService from '@services/docker/container';
 import logger from '@utilities/logger';
 import { IUser } from '@typings/models/user';
 import { Socket } from 'socket.io';
 import { createLogStream, setupSocketEvents } from '@services/logManager';
 import Dockerode from 'dockerode';
+import { IDockerContainer } from '@typings/models/docker/container';
 
 /**
  * Represents a user container within Quantum Cloud
  * Manages operations related to its life cycle and interaction.
  */
-class UserContainer extends DockerHandler{
+class UserContainer extends DockerContainerService{
     private user: IUser;
     public instance: Dockerode.Container | null;
 
@@ -34,11 +34,8 @@ class UserContainer extends DockerHandler{
      * @param user - The user object associated with the container.
      */
     constructor(user: IUser){
-        super({
-            storagePath: path.join('/var/lib/quantum', process.env.NODE_ENV as string, 'containers', user._id.toString()),
-            imageName: 'alpine:latest',
-            dockerName: user._id.toString()
-        });
+        const container = user.container as IDockerContainer;
+        super(container);
         this.user = user;
         this.instance = null;
     }
