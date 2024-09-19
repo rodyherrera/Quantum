@@ -1,7 +1,13 @@
 import mongoose, { Schema, Model } from 'mongoose';
 import { IDockerContainer } from '@typings/models/docker/container';
+import { getContainerStoragePath } from '@services/docker/container';
+import DockerContainerService from '@services/docker/container';
 
 const DockerContainerSchema: Schema<IDockerContainer> = new Schema({
+    isUserContainer: {
+        type: Boolean,
+        default: false
+    },
     user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
@@ -45,6 +51,19 @@ const DockerContainerSchema: Schema<IDockerContainer> = new Schema({
 });
 
 DockerContainerSchema.index({ user: 1, name: 1 }, { unique: true });
+
+DockerContainerSchema.pre('save', async function(next){
+    const containerId = this._id.toString();
+    const userId = this.user.toString();
+    const { containerStoragePath, userContainerPath } = getContainerStoragePath(userId, containerId, userId);
+    this.storagePath = this.isUserContainer ? userContainerPath : containerStoragePath;
+    next();
+});
+
+DockerContainerSchema.post('save', async function(doc){
+    const containerService = new DockerContainerService(doc);
+    await containerService.createAndStartContainer();
+});
 
 const DockerContainer: Model<IDockerContainer> = mongoose.model('DockerContainer', DockerContainerSchema);
 

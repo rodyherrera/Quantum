@@ -20,9 +20,8 @@ import UserContainer from '@services/userContainer';
 import DockerImage from '@models/docker/image';
 import DockerNetwork from '@models/docker/network';
 import DockerContainer from '@models/docker/container';
-import DockerContainerService from '@services/docker/container';
-import path from 'path';
 import { IUser } from '@typings/models/user';
+import { IDockerContainer } from '@typings/models/docker/container';
 
 const UserSchema: Schema<IUser> = new Schema({
     username: {
@@ -111,45 +110,28 @@ UserSchema.pre('findOneAndDelete', async function(){
     });
 });
 
+const createUserContainer = async (userId: string): Promise<IDockerContainer> => {
+    const image = await DockerImage.create({ name: 'alpine', tag: 'latest', user: userId });
+    const network = await DockerNetwork.create({ user: userId, driver: 'bridge', name: userId });
+    const container = await DockerContainer.create({
+        name: userId,
+        user: userId,
+        image: image._id,
+        network: network._id,
+        isUserContainer: true
+    });
+    return container;
+};
+
 UserSchema.pre('save', async function(next){
     try{
-        if(this.isNew){
-            const userId = this._id.toString();
-            const containerImage = await DockerImage.create({
-                name: 'alpine',
-                tag: 'latest',
-                user: userId
-            });
-            const containerNetwork = await DockerNetwork.create({
-                user: userId,
-                driver: 'bridge',
-                name: userId
-            });
-            const container = await DockerContainer.create({
-                name: userId,
-                user: userId,
-                image: containerImage._id,
-                network: containerNetwork._id
-            });
-            const containerId = container._id.toString();
-            // duplicated code
-            const containerStoragePath = path.join('/var/lib/quantum', process.env.NODE_ENV as string, 'containers', userId);
-            await DockerContainer.updateOne({ _id: containerId }, { storagePath: containerStoragePath });
-            container.storagePath = containerStoragePath;
-            this.container = container;
-            const containerService = new DockerContainerService(container);
-            await containerService.createAndStartContainer();
-        }
         if(!this.isModified('password')) return next();
         this.username = this.username.replace(/\s/g, '');
         this.password = await bcrypt.hash(this.password, 12);
         this.passwordConfirm = undefined;
-        /*if(this.isNew && !process.env.IS_CLI){
-            const container = new UserContainer(this);
-            container.start().then().catch((error: Error) => {
-                logger.error(`CRITICAL ERROR (at @models/user - pre save middleware): ${error}`)
-            });
-        }*/
+        if(this.isNew){
+            this.container = await createUserContainer(this._id.toString());
+        }
         if(!this.isModified('password') || this.isNew) return next();
         this.passwordChangedAt = new Date();
         next();

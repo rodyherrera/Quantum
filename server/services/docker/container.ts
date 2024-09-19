@@ -7,12 +7,24 @@ import { pullImage } from '@services/docker/image';
 import { IDockerContainer } from '@typings/models/docker/container';
 import DockerImage from '@models/docker/image';
 import logger from '@utilities/logger';
+import path from 'path';
+import slugify from 'slugify';
 import DockerNetwork from '@models/docker/network';
 import { getSystemNetworkName } from './network';
 import { IDockerImage } from '@typings/models/docker/image';
 import { IDockerNetwork } from '@typings/models/docker/network';
 
 const docker = new Dockerode();
+
+export const getContainerStoragePath = (
+    userId: string, 
+    containerId: string, 
+    name: string
+): { userContainerPath: string, containerStoragePath: string } => {
+    const userContainerPath = path.join('/var/lib/quantum', process.env.NODE_ENV as string, 'containers', userId);
+    const containerStoragePath = path.join(userContainerPath, 'docker-containers', `${slugify(name)}-${containerId}`);
+    return { userContainerPath, containerStoragePath };
+}
 
 class DockerContainer{
     private container: IDockerContainer;

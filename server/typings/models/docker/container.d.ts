@@ -10,6 +10,7 @@ export interface IDockerContainer extends Document{
     network: mongoose.Schema.Types.ObjectId,
     image: mongoose.Schema.Types.ObjectId,
     storagePath?: string,
+    isUserContainer: boolean;
     environment: IDockerContainerEnvironment;
     status: string,
     startedAt?: Date,
