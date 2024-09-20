@@ -16,12 +16,10 @@ const DockerNetworkFactory = new HandlerFactory({
 
 export const getDockerNetworks = DockerNetworkFactory.getAll();
 export const getDockerNetwork = DockerNetworkFactory.getOne();
-export const createDockerNetwork = DockerNetworkFactory.createOne((req: Request, query: any) => {
-    query.user = req.user;
-    return query;
-});
 export const updateDockerNetwork = DockerNetworkFactory.updateOne();
 export const deleteDockerNetwork = DockerNetworkFactory.deleteOne();
+
+export const createDockerNetwork = DockerNetworkFactory.createOne();
 
 // TODO: refactor user ownership operations in handlerFactory by verifyn user in req.user 
 // and add a query or something for verify admin request or user req

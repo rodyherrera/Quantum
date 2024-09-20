@@ -10,3 +10,11 @@ export interface HandlerFactoryOptions{
     model: Model<any>;
     fields?: string[];
 };
+
+
+export type MiddlewareFunction = (req: Request, data: any) => Promise<any>;
+
+export interface HandlerFactoryMiddleware{
+    pre?: MiddlewareFunction[];
+    post?: MiddlewareFunction[];
+}
