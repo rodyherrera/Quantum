@@ -80,8 +80,9 @@ class DockerContainer{
                 Tty: true
             });
             const id = this.container._id.toString();
-            await createLogStream(id, id);
-            setupSocketEvents(socket, id, id, exec);
+            // TODO: check for storagePath usage
+            await createLogStream(id, this.container.user.toString());
+            setupSocketEvents(socket, id, this.container.user.toString(), exec);
         }catch(error){
             logger.info('CRITICAL ERROR (at @services/dockerHandler - startSocketShell): ' + error);
         }
