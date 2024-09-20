@@ -18,6 +18,16 @@ const Select = ({ options, containerProps = {}, inputProps = {}, placeholder, he
         setIsOpenSelect(!isOpenSelect);
     };
 
+    const handleOptionClick = (value, item) => {
+        if(inputRef.current){
+            inputRef.current.value = item;
+        }
+        if(onSelect){
+            onSelect(value);
+        }
+        setIsOpenSelect(false);  
+    };
+
     return (
         <div className='Select-Container-Wrapper'>
             <div className='Select-Container' {...containerProps}>
@@ -27,10 +37,9 @@ const Select = ({ options, containerProps = {}, inputProps = {}, placeholder, he
                     placeholder={placeholder}
                     className='Select-Input'
                     onClick={handleOpenSelect}
-                    onBlur={() => setIsOpenSelect(false)}
                     {...inputProps}
                 />
-                <span className={(isOpenSelect) ? 'Select-Icon Active' : 'Select-Icon'}>
+                <span className={isOpenSelect ? 'Select-Icon Active' : 'Select-Icon'}>
                     <MdKeyboardArrowDown />
                 </span>
             </div>
@@ -47,13 +56,7 @@ const Select = ({ options, containerProps = {}, inputProps = {}, placeholder, he
                     {options.map(([value, item], index) => (
                         <li 
                             className='Select-Option'
-                            onClick={() => {
-                                inputRef.current.value = item;
-                                if(onSelect) {
-                                    onSelect(value);
-                                }
-                                setIsOpenSelect(false);
-                            }}
+                            onClick={() => handleOptionClick(value, item)}
                             key={index}
                         >
                             {item}

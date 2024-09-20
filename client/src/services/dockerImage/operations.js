@@ -27,3 +27,12 @@ export const createDockerImage = (body, navigate) => async (dispatch) => {
         query: { body }
     });
 };
+
+export const getMyDockerImages = () => async (dispatch) => {
+    const operation = new OperationHandler(dockerImageSlice, dispatch);
+    operation.use({
+        api: dockerImageService.getMyDockerImages,
+        responseState: dockerImageSlice.setDockerImages,
+        loaderState: dockerImageSlice.setIsLoading
+    });
+};

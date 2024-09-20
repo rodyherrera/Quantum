@@ -27,3 +27,12 @@ export const createDockerNetwork = (body, navigate) => async (dispatch) => {
         query: { body }
     });
 };
+
+export const getMyDockerNetworks = () => (dispatch) => {
+    const operation = new OperationHandler(dockerNetworkSlice, dispatch);
+    operation.use({
+        api: dockerNetworkService.getMyDockerNetworks,
+        responseState: dockerNetworkSlice.setDockerNetworks,
+        loaderState: dockerNetworkSlice.setIsLoading 
+    });
+};

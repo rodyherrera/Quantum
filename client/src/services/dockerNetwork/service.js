@@ -25,3 +25,8 @@ export const createDockerNetwork = ServerAPI.register({
     path: '/',
     method: 'POST'
 });
+
+export const getMyDockerNetworks = ServerAPI.register({
+    path: '/me/',
+    method: 'GET'
+})

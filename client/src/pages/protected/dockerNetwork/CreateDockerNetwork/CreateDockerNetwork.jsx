@@ -37,7 +37,6 @@ const CreateDockerNetwork = () => {
                     name: 'driver',
                     options: [
                         ['bridge', 'bridge'], 
-                        ['host', 'host'], 
                         ['overlay', 'overlay'], 
                         ['none', 'none']
                     ],

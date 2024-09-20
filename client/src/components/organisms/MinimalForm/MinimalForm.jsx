@@ -38,7 +38,7 @@ const MinimalForm = ({
 }) => {
     const [formValues, setFormValues] = useState(
         formInputs.map(input => ({ [input.name]: input?.value || '' })).reduce((acc, cur) => ({ ...acc, ...cur }), {}));
-    
+   
     // Array to hold input refs
     const inputRefs = useRef([]); 
 
@@ -130,7 +130,10 @@ const MinimalForm = ({
                                 options={input.options}
                                 ref={(el) => inputRefs.current[index] = el}
                                 onKeyPress={keyPressHandler}
-                                onSelect={(value) => setFormValues({ ...formValues, [input.name]: [...formValues[input.name], value] })}
+                                onSelect={(value) => {
+                                    const newValue = input.multiSelect ? [...formValues[input.name], value] : value;
+                                    setFormValues({ ...formValues, [input.name]: newValue });
+                                }}
                                 name={input.name}
                                 helperText={input.helperText}
                                 placeholder={input.placeholder} />

@@ -29,7 +29,7 @@ const dockerNetworkSlice = createSlice({
             state.isLoading = action.payload;
         },
         setDockerNetworks: (state, action) => {
-            state.dockerImages = action.payload;
+            state.dockerNetworks = action.payload;
         },
         setIsOperationLoading: (state, action) => {
             state.isOperationLoading = action.payload;

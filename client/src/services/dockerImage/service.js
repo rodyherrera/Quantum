@@ -25,3 +25,8 @@ export const createDockerImage = ServerAPI.register({
     path: '/',
     method: 'POST'
 });
+
+export const getMyDockerImages = ServerAPI.register({
+    path: '/me/',
+    method: 'GET'
+});
