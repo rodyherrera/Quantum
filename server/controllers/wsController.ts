@@ -91,7 +91,7 @@ export default (io: any) => {
         if(action === 'Repository::Shell'){
             await tokenOwnership(socket, async (error): Promise<void> => {
                 if(error){
-                    logger.error('Critical Error (@controllers/wsController)', error);
+                    logger.error('Critical Error (@controllers/wsController): ' + error);
                 }
                 else repositoryShellHandler(socket);
             });

@@ -110,7 +110,6 @@ export const loadUserContainers = async (): Promise<void> => {
         const users = await User.find().populate('container');
         logger.info(`Found ${users.length} users.`);
         await Promise.all(users.map(async (user) => {
-            console.log('Creating UserContainer instance', user);
             const container = new UserContainer(user);
             await container.start();
         }));
