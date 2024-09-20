@@ -5,6 +5,7 @@ import * as authMiddleware from '@middlewares/authentication';
 const router = express.Router();
 
 router.use(authMiddleware.protect);
+router.get('/me/', dockerImageController.getMyDockersImage);
 router.post('/', dockerImageController.createDockerImage);
 
 router.use(authMiddleware.restrictTo('admin'));

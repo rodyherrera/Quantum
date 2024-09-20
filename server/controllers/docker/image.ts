@@ -16,3 +16,10 @@ export const getDockerImage = DockerImageFactory.getOne();
 export const createDockerImage = DockerImageFactory.createOne();
 export const updateDockerImage = DockerImageFactory.updateOne();
 export const deleteDockerImage = DockerImageFactory.deleteOne();
+
+export const getMyDockersImage = DockerImageFactory.getAll({
+    pre: [(req, query) => {
+        query.user = req.user;
+        return query;
+    }]
+});
