@@ -64,9 +64,9 @@ class HandlerFactory{
      * @method createOne
      * @returns {RequestHandler} - The Express request handler.
     */
-    createOne = (): RequestHandler => catchAsync(async (req: Request, res: Response) => {
+    createOne = (callback = (data) => data): RequestHandler => catchAsync(async (req: Request, res: Response) => {
         const queryFilter = filterObject(req.body, ...this.fields);
-        const databaseRecord = await this.model.create(queryFilter);
+        const databaseRecord = await this.model.create(callback(req, queryFilter));
         res.status(201).json({
             status: 'success',
             data: databaseRecord

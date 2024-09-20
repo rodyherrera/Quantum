@@ -40,7 +40,7 @@ DockerNetworkSchema.pre('save', async function(next){
     }
     try{
         this.subnet = randomIPv4Subnet();
-        const userId = this.user.toString();
+        const userId = this.user._id.toString();
         this.dockerNetworkName = getSystemNetworkName(userId, this.name);
         await createNetwork(this.dockerNetworkName, this.driver, this.subnet);
         next();

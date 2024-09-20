@@ -30,7 +30,7 @@ const SERVER_HOST: string = process.env.SERVER_HOSTNAME || '0.0.0.0';
  * @param {Error} err - The uncaught exception.
 */
 process.on('uncaughtException', async (error:Error) => {
-    logger.error(': Uncaught Exception:', error);
+    logger.error('Uncaught Exception:' + error);
     await cleanHostEnvironment();
     if(process.env.NODE_ENV !== 'production') return;
     logger.info('Restarting server...');
