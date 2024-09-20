@@ -1,12 +1,14 @@
 import mongoose, { Schema, Model } from 'mongoose';
 import { IDockerContainer } from '@typings/models/docker/container';
-import { getContainerStoragePath } from '@services/docker/container';
-import DockerContainerService from '@services/docker/container';
+import DockerContainerService, { getContainerStoragePath, getSystemDockerName } from '@services/docker/container';
 
 const DockerContainerSchema: Schema<IDockerContainer> = new Schema({
     isUserContainer: {
         type: Boolean,
         default: false
+    },
+    dockerContainerName: {
+        type: String
     },
     user: {
         type: mongoose.Schema.Types.ObjectId,
@@ -44,7 +46,7 @@ const DockerContainerSchema: Schema<IDockerContainer> = new Schema({
     },
     name: {
         type: String,
-        default: ''
+        required: [true, 'DockerContainer::Name::Required']
     }
 }, {
     timestamps: true
@@ -56,6 +58,7 @@ DockerContainerSchema.pre('save', async function(next){
     const containerId = this._id.toString();
     const userId = this.user.toString();
     const { containerStoragePath, userContainerPath } = getContainerStoragePath(userId, containerId, userId);
+    this.dockerContainerName = getSystemDockerName(this.name);
     this.storagePath = this.isUserContainer ? userContainerPath : containerStoragePath;
     next();
 });

@@ -7,6 +7,7 @@ export interface IDockerNetwork{
     name: string,
     subnet: string,
     driver: string,
+    dockerNetworkName: string,
     createdAt: Date,
     updatedAt: Date
 }

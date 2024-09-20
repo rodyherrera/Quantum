@@ -15,8 +15,6 @@ services:
       - "80:80"
     environment:
       NODE_ENV: ${NODE_ENV:-production}
-      DOCKERS_CONTAINER_ALIASES: ${DOCKERS_CONTAINER_ALIASES:-Quantum-Container}
-      DOCKERS_NETWORK_ALIASES: ${DOCKERS_NETWORK_ALIASES:-Quantum-Network}
       DOCKER_APK_STARTER_PACKAGES: ${DOCKER_APK_STARTER_PACKAGES:-"git nodejs npm python3 py3-pip"}
       DOMAIN: ${DOMAIN:-http://quantum-server.yourdomain.com}
       SECRET_KEY: ${SECRET_KEY}

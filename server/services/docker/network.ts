@@ -4,8 +4,7 @@ import Dockerode, { Network } from 'dockerode';
 const docker = new Dockerode();
 
 export const getSystemNetworkName = (userId: string, name: string): string => {
-    const { DOCKERS_NETWORK_ALIASES } = process.env;
-    return `${DOCKERS_NETWORK_ALIASES}-${userId}-${name}`;
+    return `quantum-network-${process.env.NODE_ENV}-${userId}-${name}`;
 }
 
 export const randomIPv4Subnet = (): string => {
@@ -16,9 +15,8 @@ export const randomIPv4Subnet = (): string => {
     return `${octet1}.${octet2}.${octet3}.0/24`;
 }
 
-export const createNetwork = async (userId: string, name: string, driver: string, subnet: string): Promise<void> => {
+export const createNetwork = async (networkName: string, driver: string, subnet: string): Promise<void> => {
     try{
-        const networkName = getSystemNetworkName(userId, name);
         await docker.createNetwork({
             Name: networkName,
             Driver: driver,
@@ -33,9 +31,8 @@ export const createNetwork = async (userId: string, name: string, driver: string
     }
 }
 
-export const removeNetwork = async (userId: string, name: string): Promise<void> => {
+export const removeNetwork = async (networkName: string): Promise<void> => {
     try{
-        const networkName = getSystemNetworkName(userId, name);
         const network = new Network(docker.modem, networkName);
         await network.remove();
     }catch(error){

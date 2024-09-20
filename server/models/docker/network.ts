@@ -1,12 +1,15 @@
 import mongoose, { Schema, Model } from 'mongoose';
 import { IDockerNetwork } from '@typings/models/docker/network';
-import { createNetwork, removeNetwork, randomIPv4Subnet } from '@services/docker/network';
+import { createNetwork, removeNetwork, randomIPv4Subnet, getSystemNetworkName } from '@services/docker/network';
 
 const DockerNetworkSchema: Schema<IDockerNetwork> = new Schema({
     name: {
         type: String,
         required: [true, 'DockerNetwork::Name::Required'],
         unique: true,
+    },
+    dockerNetworkName: {
+        type: String
     },
     subnet: {
         type: String,
@@ -38,7 +41,8 @@ DockerNetworkSchema.pre('save', async function(next){
     try{
         this.subnet = randomIPv4Subnet();
         const userId = this.user.toString();
-        await createNetwork(userId, this.name, this.driver, this.subnet);
+        this.dockerNetworkName = getSystemNetworkName(userId, this.name);
+        await createNetwork(this.dockerNetworkName, this.driver, this.subnet);
         next();
     }catch(error: any){
         next(error);
@@ -46,8 +50,7 @@ DockerNetworkSchema.pre('save', async function(next){
 });
 
 DockerNetworkSchema.post('findOneAndDelete', async function(doc){
-    const userId = doc.user.toString();
-    await removeNetwork(userId, doc.name);
+    await removeNetwork(doc.dockerNetworkName);
 });
 
 const DockerNetwork: Model<IDockerNetwork> = mongoose.model('DockerNetwork', DockerNetworkSchema);

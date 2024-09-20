@@ -35,7 +35,12 @@ export const createUserContainer =  async (userId: string): Promise<IDockerConta
         isUserContainer: true
     });
     return container;
-};
+}
+
+export const getSystemDockerName = (name: string): string => {
+    const formattedName = name.replace(/[^a-zA-Z0-9_.-]/g, '_');
+    return `quantum-container-${process.env.NODE_ENV}-${formattedName}`;
+}
 
 class DockerContainer{
     private container: IDockerContainer;
@@ -82,14 +87,6 @@ class DockerContainer{
         }
     }
 
-    getSystemDockerName(): string{
-        if(!this.container.name){
-            throw Error('The docker container does not have a name.');
-        }
-        const formattedName = this.container.name.replace(/[^a-zA-Z0-9_.-]/g, '_');
-        return `${process.env.DOCKERS_CONTAINER_ALIASES}-${formattedName}`;
-    }
-
     getDockerStoragePath(): string{
         if(!this.container.storagePath){
             throw Error('The container does not have a storage directory.');
@@ -99,7 +96,7 @@ class DockerContainer{
 
     async removeContainer(){
         try{
-            const container = docker.getContainer(this.getSystemDockerName());
+            const container = docker.getContainer(this.container.dockerContainerName);
             if(!container) return;
             await container.stop();
             await container.remove({ force: true });
@@ -110,7 +107,7 @@ class DockerContainer{
     }
 
     async getExistingContainer(): Promise<Dockerode.Container>{
-        const container = docker.getContainer(this.getSystemDockerName());
+        const container = docker.getContainer(this.container.dockerContainerName);
         const { State } = await container.inspect();
         if(!State.Running) await container.start();
         return container;
@@ -139,10 +136,9 @@ class DockerContainer{
         const dockerImage = await this.getDockerImage();
         const dockerNetwork = await this.getDockerNetwork();
         const networkName = getSystemNetworkName(this.container.user.toString(), dockerNetwork.name);
-        const dockerName = this.getSystemDockerName();
         const options = {
             Image: `${dockerImage.name}:${dockerImage.tag}`,
-            name: dockerName,
+            name: this.container.dockerContainerName,
             Tty: true,
             OpenStdin: true,
             StdinOnce: true,
