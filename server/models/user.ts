@@ -17,11 +17,8 @@ import validator from 'validator';
 import bcrypt from 'bcryptjs';
 import logger from '@utilities/logger';
 import UserContainer from '@services/userContainer';
-import DockerImage from '@models/docker/image';
-import DockerNetwork from '@models/docker/network';
-import DockerContainer from '@models/docker/container';
+import { createUserContainer } from '@services/docker/container';
 import { IUser } from '@typings/models/user';
-import { IDockerContainer } from '@typings/models/docker/container';
 
 const UserSchema: Schema<IUser> = new Schema({
     username: {
@@ -110,30 +107,41 @@ UserSchema.pre('findOneAndDelete', async function(){
     });
 });
 
-const createUserContainer = async (userId: string): Promise<IDockerContainer> => {
-    const image = await DockerImage.create({ name: 'alpine', tag: 'latest', user: userId });
-    const network = await DockerNetwork.create({ user: userId, driver: 'bridge', name: userId });
-    const container = await DockerContainer.create({
-        name: userId,
-        user: userId,
-        image: image._id,
-        network: network._id,
-        isUserContainer: true
-    });
-    return container;
-};
+/**
+ * Remove all whitespace from a string.
+ * @param {string} str - The string to process.
+ * @returns {string} - The string without whitespace.
+*/
+const removeWhitespace = (str: string): string => {
+    return str.replace(/\s/g, '');
+}
+
+/**
+ * Hash a password using bcrypt.
+ * @param {string} password - The password to hash.
+ * @returns {Promise<string>} - The hashed password.
+ */
+const hashPassword = async (password: string): Promise<string> => {
+    const saltRounds = 12;
+    return await bcrypt.hash(password, saltRounds);
+}
 
 UserSchema.pre('save', async function(next){
     try{
         if(!this.isModified('password')) return next();
-        this.username = this.username.replace(/\s/g, '');
-        this.password = await bcrypt.hash(this.password, 12);
+        this.username = removeWhitespace(this.username);
+        this.password = await hashPassword(this.password);
         this.passwordConfirm = undefined;
+
         if(this.isNew){
             this.container = await createUserContainer(this._id.toString());
         }
-        if(!this.isModified('password') || this.isNew) return next();
-        this.passwordChangedAt = new Date();
+        
+        // Set the passwordChangedAt field if the password was 
+        // modified and it's not a new document
+        if(this.isModified('password') && !this.isNew){
+            this.passwordChangedAt = new Date();
+        }
         next();
     }catch(error: any){
         next(error);

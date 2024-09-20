@@ -1,18 +1,19 @@
 import Dockerode from 'dockerode';
 import fs from 'fs/promises';
+import path from 'path';
+import slugify from 'slugify';
 import { Socket } from 'socket.io';
 import { ensureDirectoryExists } from '@utilities/helpers';
 import { createLogStream, setupSocketEvents } from '@services/logManager';
 import { pullImage } from '@services/docker/image';
 import { IDockerContainer } from '@typings/models/docker/container';
-import DockerImage from '@models/docker/image';
-import logger from '@utilities/logger';
-import path from 'path';
-import slugify from 'slugify';
-import DockerNetwork from '@models/docker/network';
-import { getSystemNetworkName } from './network';
 import { IDockerImage } from '@typings/models/docker/image';
 import { IDockerNetwork } from '@typings/models/docker/network';
+import { getSystemNetworkName } from '@services/docker/network';
+import DockerImage from '@models/docker/image';
+import logger from '@utilities/logger';
+import DockerContainerModel from '@models/docker/container';
+import DockerNetwork from '@models/docker/network';
 
 const docker = new Dockerode();
 
@@ -25,6 +26,19 @@ export const getContainerStoragePath = (
     const containerStoragePath = path.join(userContainerPath, 'docker-containers', `${slugify(name)}-${containerId}`);
     return { userContainerPath, containerStoragePath };
 }
+
+export const createUserContainer =  async (userId: string): Promise<IDockerContainer> => {
+    const image = await DockerImage.create({ name: 'alpine', tag: 'latest', user: userId });
+    const network = await DockerNetwork.create({ user: userId, driver: 'bridge', name: userId });
+    const container = await DockerContainerModel.create({
+        name: userId,
+        user: userId,
+        image: image._id,
+        network: network._id,
+        isUserContainer: true
+    });
+    return container;
+};
 
 class DockerContainer{
     private container: IDockerContainer;
