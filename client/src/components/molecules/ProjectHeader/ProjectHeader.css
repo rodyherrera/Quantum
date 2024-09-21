@@ -12,14 +12,6 @@
  * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 ****/
 
-@keyframes Project-Image-Animation{
-    0%{ border-radius: 50%; }
-    25%{ border-radius: 45% 48% 46% 37%; }
-    50%{ border-radius: 36% 45% 44% 48%; }
-    75%{ border-radius: 30% 40% 46% 40%; }
-    100%{ border-radius: 50%; }
-}
-
 .Project-Header-Container{
     display: flex;
     flex-wrap: wrap;
@@ -28,25 +20,6 @@
     align-items: flex-start;
     width: 100%;
     gap: 1rem;
-}
-
-.Project-Image{
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    background-color: #F5F5F5;
-}
-
-.Project-Image-Container{
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background-color: #000000;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    will-change: transform;
-    animation: Project-Image-Animation 5s infinite;
 }
 
 .Project-Title{

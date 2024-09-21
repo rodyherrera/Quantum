@@ -23,7 +23,7 @@
     flex-direction: column;
     width: 380px;
     position: relative;
-    border: 1px solid #272727;
+    border: 1px solid #c5c5c5;
     border-radius: .5rem;
     transition: .5s;
 }

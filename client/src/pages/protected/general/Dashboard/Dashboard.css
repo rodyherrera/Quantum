@@ -28,6 +28,12 @@
     width: 100%;
 }
 
+#Dashboard-Main .Data-Renderer-Body-Container{
+    overflow-y: unset;
+    display: flex;
+    gap: .5rem;
+}
+
 #Dashboard-Main .Binary-View-Right-Container{
     display: none;
 }
