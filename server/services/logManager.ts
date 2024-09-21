@@ -48,7 +48,6 @@ export const createLogStream = async (logName: string, id: string): Promise<fs.W
     try{
         removeLogStream(id);
         const logDir = getLogDir(id);
-        console.log(logDir, logName,id)
         await ensureDirectoryExists(logDir);
         const logFile = getLogFile(logName, id);
         const stream = fs.createWriteStream(logFile, { flags: 'a' });

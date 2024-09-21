@@ -3,9 +3,10 @@ import RuntimeError from '@utilities/runtimeError';
 import DockerImage from '@models/docker/image';
 import DockerNetwork from '@models/docker/network';
 import HandlerFactory from '@controllers/common/handlerFactory';
+import mongoose from 'mongoose';
 import { IDockerImage } from '@typings/models/docker/image';
 import { IDockerNetwork } from '@typings/models/docker/network';
-import { IRequestDockerImage, IRequestDockerNetwork } from '@typings/controllers/docker/container';
+import { IRequestDockerImage } from '@typings/controllers/docker/container';
 import { isImageAvailable } from '@services/docker/image';
 import { catchAsync } from '@utilities/helpers';
 import { NextFunction, Request, Response } from 'express';
@@ -31,7 +32,7 @@ const findOrCreateImage = async (
     next: NextFunction
 ): Promise<IDockerImage | null> => {
     let containerImage = null;
-    if(typeof image === 'string'){
+    if(mongoose.isValidObjectId(image)){
         containerImage = await DockerImage.findById(image).select('_id');
     }
     if(!containerImage){
@@ -46,21 +47,19 @@ const findOrCreateImage = async (
 };
 
 const findOrCreateNetwork = async (
-    network: string | IRequestDockerNetwork, 
-    userId: string, 
-    next: NextFunction
+    network: string, 
+    userId: string,
 ): Promise<IDockerNetwork | null> => {
     let containerNetwork = null;
-    if(typeof network === 'string'){
+    if(mongoose.isValidObjectId(network)){
         containerNetwork = await DockerNetwork.findById(network).select('_id');
     }
     if(!containerNetwork){
-        const { driver, name } = network as IRequestDockerNetwork;
-        if(!driver || !name){
-            next(new RuntimeError('DockerContainer::CreateDocker::MissingParams', 400));
-            return null;
-        }
-        containerNetwork = await DockerNetwork.create({ user: userId, driver, name });
+        containerNetwork = await DockerNetwork.create({ 
+            user: userId,
+            driver: 'bridge', 
+            name: network 
+        });
     }
     return containerNetwork;
 };
@@ -80,7 +79,7 @@ export const createDockerContainer = catchAsync(async (req: Request, res: Respon
     const userId = user._id.toString();
     
     const containerImage = await findOrCreateImage(image, userId, next);
-    const containerNetwork = await findOrCreateNetwork(network, userId, next);
+    const containerNetwork = await findOrCreateNetwork(network, userId);
     if(!containerNetwork || !containerImage){
         return next(new RuntimeError('DockerContainer::CreateDocker::ImageOrNetworkError', 500));
     }

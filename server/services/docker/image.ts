@@ -48,6 +48,6 @@ export const pullImage = async (imageName: string, tag: string = 'latest'): Prom
 
         logger.info(`Image "${fullImageName}" downloaded.`);
     }catch(error){
-        logger.error('CRITICAL ERROR (@dockerHandler - pullImage):', error);
+        logger.error('CRITICAL ERROR (@dockerHandler - pullImage): '+ error);
     }
 }

@@ -26,6 +26,8 @@ const DockerImageSchema: Schema<IDockerImage> = new Schema({
     timestamps: true
 });
 
+DockerImageSchema.index({ name: 1, tag: 1, user: 1 }, { unique: true });
+
 DockerImageSchema.pre('save', async function(next){
     if(!this.isNew){
         next();
