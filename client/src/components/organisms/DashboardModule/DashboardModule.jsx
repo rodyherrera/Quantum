@@ -1,6 +1,7 @@
 import React from 'react';
 import { GoArrowUpRight } from 'react-icons/go';
 import { GoArrowUpLeft } from "react-icons/go";
+import { useNavigate } from 'react-router-dom';
 import './DashboardModule.css';
 
 const DashboardModule = ({
@@ -8,9 +9,12 @@ const DashboardModule = ({
     title,
     total,
     results,
+    createLink,
     RenderComponent,
     alias = 'document(s)'
 }) => {
+    const navigate = useNavigate();
+
     return (
         <div className='Dashboard-Module-Container'>
             <div className='Dashboard-Module-Header-Container'>
@@ -21,7 +25,7 @@ const DashboardModule = ({
                     <h3 className='Dashboard-Module-Header-Title'>{title}</h3>
                 </div>
                 <div className='Dashboard-Module-Header-Right-Container'>
-                    <div className='Dashboard-Module-Create-New-Container'>
+                    <div className='Dashboard-Module-Create-New-Container' onClick={() => navigate(createLink)}>
                         <h3 className='Dashboard-Module-Create-New-Title'>Create New</h3>
                         <i className='Dashboard-Module-Create-New-Icon-Container'>
                             <GoArrowUpRight />

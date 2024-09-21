@@ -1,5 +1,5 @@
 .Dashboard-Module-Container{
-    width: 50%;
+    width: 100%;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -115,9 +115,5 @@
     .Dashboard-Module-Header-Icon-Container{
         padding: .7rem;
         font-size: .8rem;
-    }
-
-    .Dashboard-Module-Container{
-        width: 100%;
     }
 }

@@ -12,16 +12,19 @@
  * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 ****/
 
-import React, { useLayoutEffect, useRef } from 'react';
+import React, { useEffect, useLayoutEffect, useRef } from 'react';
 import Project from '@components/organisms/Project';
 import { FiGithub } from 'react-icons/fi';
 import { IoLogoDocker } from 'react-icons/io5';
+import { getMyDockerNetworks } from '@services/dockerNetwork/operations';
+import { getMyDockerImages } from '@services/dockerImage/operations';
 import DashboardModule from '@components/organisms/DashboardModule';
 import Button from '@components/atoms/Button';
 import useUserRepositories from '@hooks/useUserRepositories';
 import useUserDockerContainers from '@hooks/useUserDockerContainers';
 import DataRenderer from '@components/organisms/DataRenderer';
 import DockerContainer from '@components/organisms/DockerContainer';
+import { useDispatch, useSelector } from 'react-redux';
 import { HiPlus } from 'react-icons/hi';
 import { gsap } from 'gsap';
 import './Dashboard.css';
@@ -29,7 +32,15 @@ import './Dashboard.css';
 const Dashboard = () => {
     const { repositories, isLoading, isOperationLoading, error } = useUserRepositories();
     const { dockerContainers } = useUserDockerContainers();
+    const { dockerNetworks } = useSelector((state) => state.dockerNetwork);
+    const { dockerImages } = useSelector((state) => state.dockerImage);
     const createRepoBtnRef = useRef(null);
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        dispatch(getMyDockerNetworks());
+        dispatch(getMyDockerImages());
+    }, []);
 
     useLayoutEffect(() => {
         if(isLoading) return;
@@ -77,6 +88,7 @@ const Dashboard = () => {
             <DashboardModule
                 title='Your Github Repositories'
                 Icon={FiGithub}
+                createLink='/repository/create/'
                 alias='repositorie(s)'
                 total={5}
                 results={1}
@@ -93,11 +105,48 @@ const Dashboard = () => {
                 title='Docker Containers'
                 Icon={IoLogoDocker}
                 alias='container(s)'
+                createLink='/docker-container/create/'
                 total={5}
                 results={1}
                 RenderComponent={() => (
                     <div id='Dashboard-Dockers-Container'>
                         {dockerContainers.map((container, index) => (
+                            <div className='Docker-Container' key={index}>
+                                <h3 className='Docker-Container-Name'>{container.name}</h3>
+                            </div>
+                        ))}
+                    </div>
+                )}
+            />
+
+            <DashboardModule
+                title='Docker Networks'
+                createLink='/docker-network/create/'
+                Icon={IoLogoDocker}
+                alias='network(s)'
+                total={5}
+                results={1}
+                RenderComponent={() => (
+                    <div id='Dashboard-Dockers-Networks'>
+                        {dockerNetworks.map((container, index) => (
+                            <div className='Docker-Container' key={index}>
+                                <h3 className='Docker-Container-Name'>{container.name}</h3>
+                            </div>
+                        ))}
+                    </div>
+                )}
+            />
+
+            <DashboardModule
+                title='Docker Images'
+                Icon={IoLogoDocker}
+                alias='image(s)'
+                createLink='/docker-image/create/'
+                total={5}
+                results={1}
+                RenderComponent={() => (
+                    <div id='Dashboard-Dockers-Images'>
+                        {dockerImages.map((container, index) => (
                             <div className='Docker-Container' key={index}>
                                 <h3 className='Docker-Container-Name'>{container.name}</h3>
                             </div>

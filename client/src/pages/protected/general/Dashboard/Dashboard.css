@@ -30,8 +30,9 @@
 
 #Dashboard-Main .Data-Renderer-Body-Container{
     overflow-y: unset;
-    display: flex;
-    gap: .5rem;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); 
+    gap: 2rem;
 }
 
 #Dashboard-Main .Binary-View-Right-Container{
@@ -40,8 +41,8 @@
 
 @media screen and (max-width: 768px){
     #Dashboard-Main .Data-Renderer-Body-Container{
-        flex-direction: column;
         gap: 2rem;
+        grid-template-columns: repeat(1, 1fr); 
     }
 
     #Dashboard-Projects-Container{
