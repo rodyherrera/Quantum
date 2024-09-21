@@ -98,3 +98,26 @@
     background-color: #e0e0e0;
     border-radius: 50%;
 }
+
+@media screen and (max-width: 768px){
+    .Dashboard-Module-Header-Title{
+        font-size: .9rem;
+    }
+
+    .Dashboard-Module-Header-Left-Container{
+        gap: .5rem;
+    }
+
+    .Dashboard-Module-Bottom-Results{
+        font-size: .8rem;
+    }
+
+    .Dashboard-Module-Header-Icon-Container{
+        padding: .7rem;
+        font-size: .8rem;
+    }
+
+    .Dashboard-Module-Container{
+        width: 100%;
+    }
+}

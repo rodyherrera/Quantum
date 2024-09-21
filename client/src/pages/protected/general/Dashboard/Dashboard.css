@@ -39,6 +39,11 @@
 }
 
 @media screen and (max-width: 768px){
+    #Dashboard-Main .Data-Renderer-Body-Container{
+        flex-direction: column;
+        gap: 2rem;
+    }
+
     #Dashboard-Projects-Container{
         overflow: hidden;
         padding-bottom: 0;

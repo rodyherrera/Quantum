@@ -40,7 +40,7 @@ const DashboardModule = ({
                     <h3 className='Dashboard-Module-Bottom-Results-View-All-Title'>View All</h3>
                 </div>
                 <div className='Dashboard-Module-Bottom-Results-Container'>
-                    <p className='Dashboard-Module-Bottom-Results'>Showing {results} {alias} out of a total of {total}.</p>
+                    <p className='Dashboard-Module-Bottom-Results'>Displaying {results} of {total} {alias}.</p>
                 </div>
             </div>
         </div>
