@@ -4,6 +4,7 @@ import useUserDockerContainers from '@hooks/useUserDockerContainers';
 import { createDockerNetwork } from '@services/dockerNetwork/operations';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import CreateDockerNetworkImage from '@images/CreateDockerNetwork.jpeg';
 import './CreateDockerNetwork.css';
 
 const CreateDockerNetwork = () => {
@@ -21,34 +22,31 @@ const CreateDockerNetwork = () => {
             error={error}
             isLoading={isOperationLoading}
             submitButtonTitle='Create Container'
+            variant='Form-Image'
+            formImage={CreateDockerNetworkImage}
+            breadcrumbsItems={[
+                { title: 'Home', to: '/' },
+                { title: 'Dashboard', to: '/dashboard/' },
+                { title: 'Networks', to: '/dashboard/' },
+                { title: 'Create Network', to: '/docker-network/create/' }
+            ]}
             handleFormSubmit={handleFormSubmit}
-            headerTitle='Creating Docker Container'
-            headerSubtitle='It will be in the blink of an eye.'
+            headerTitle='Create a Docker Network'
+            headerSubtitle='Establish a network that enables communication between your Docker containers.'
             RightContainerComponent={() => {}}
             formInputs={[
                 {
                     type: 'text',
                     name: 'name',
-                    placeholder: 'Network Name (e.g., my_custom_network)',
-                    helperText: 'Enter a unique name for the Docker network. This name will be used to reference the network in Docker commands.'
-                },
-                {
-                    type: 'select',
-                    name: 'driver',
-                    options: [
-                        ['bridge', 'bridge'], 
-                        ['overlay', 'overlay'], 
-                        ['none', 'none']
-                    ],
-                    placeholder: 'Select a network driver',
-                    helperText: 'Choose the type of driver for the network. Options: bridge, host, overlay, or none. Default is "bridge".'
+                    placeholder: 'Enter a network name (e.g., my_custom_network)',
+                    helperText: 'Provide a unique name for your Docker network. This name will be used to reference the network in Docker commands and configurations.'
                 },
                 {
                     type: 'select',
                     name: 'containers',
                     options: dockerContainers.map(({ name, _id }) => [_id, name]),
-                    placeholder: 'Select containers to connect',
-                    helperText: 'Select the containers you want to connect to this network. You can choose one or more containers.'
+                    placeholder: 'Choose containers to connect',
+                    helperText: 'Select the containers you wish to connect to this network. You can choose one or multiple containers from the list.'
                 }
             ]}
         />

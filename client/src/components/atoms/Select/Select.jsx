@@ -51,6 +51,7 @@ const Select = forwardRef(({
 
     const onChangeHandler = (e) => {
         setSearchTerm(e.target.value);
+        onSelect(e.target.value);
     };
 
     const handleOptionClick = (value, item) => {

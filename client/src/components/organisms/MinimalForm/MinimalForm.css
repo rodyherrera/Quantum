@@ -141,11 +141,33 @@
     font-size: 2.8rem;
 }
 
+.Form-Image-Mobile-Container{
+    display: none;
+}
+
 @media screen and (max-width: 768px){
     .Minimal-Form-Container{
         height: unset !important;
         padding: 1rem;
         flex-direction: column;
+    }
+
+    .Form-Image-Mobile-Container{
+        display: block;
+        position: absolute;
+        top: 0;
+        width: 100%;
+        left: 0;
+        z-index: -1;
+        height: 100%;
+    }
+
+    .Form-Image-Mobile{
+        width: 100%;
+        height: 100%;
+        filter: grayscale(1);
+        object-position: top;
+        object-fit: cover;
     }
 
     .Minimal-Form-Left-Container,
@@ -156,7 +178,7 @@
     }
 
     .Minimal-Form-Right-Container{
-        padding: 1rem 0;
+        display: none;
     }
 
     .Minimal-Form-Container.Form-Image .Minimal-Form-Header-Container{
@@ -181,7 +203,7 @@
         opacity: 1;
     }
 
-    .Minimal-Form-Container.Form-Image .Minimal-Form-Right-Container::before{
+    .Minimal-Form-Container.Form-Image .Form-Image-Mobile-Container::before{
         background: linear-gradient(to top, black, transparent);
         content: '';
         width: 100%;
@@ -192,10 +214,11 @@
         height: 100%;
     }
 
-    .Minimal-Form-Container.Form-Image .Minimal-Form-Right-Container::after{
+    .Minimal-Form-Container.Form-Image .Form-Image-Mobile-Container::after{
         background: linear-gradient(to bottom, #1f1f1f, transparent);
         content: '';
         width: 100%;
+        left: 0;
         position: absolute;
         bottom: 0;
         display: block;
@@ -209,10 +232,22 @@
     
     .Minimal-Form-Container.Form-Image .Minimal-Form-Left-Container{
         justify-content: flex-start;
+        gap: 1rem;
+        padding: 0;
     }
 
-    .Minimal-Form-Container.Form-Image .Minimal-Form-Left-Container{
-        padding: 2rem 1rem;
+    .Minimal-Form-Container.Form-Image .Minimal-Form-Header-Container{
+        position: relative;
+        z-index: 100;
+        padding: 2.5rem 1rem;
+    }
+
+    .Minimal-Form-Container.Form-Image .Minimal-Form-Body-Container{
+        padding: 1px 1rem;
+    }
+
+    .Minimal-Form-Container.Form-Image .Minimal-Form-Footer-Container{
+        padding: 0 1rem 1rem;
     }
 
     .Minimal-Form-Container.Form-Image .Minimal-Form-Footer-Container .Button{

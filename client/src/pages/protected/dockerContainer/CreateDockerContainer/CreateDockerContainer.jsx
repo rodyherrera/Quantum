@@ -22,6 +22,11 @@ const CreateDockerContainer = () => {
     }, []);
 
     const handleFormSubmit = (formValues) => {
+        if(formValues?.image?.search(':') !== -1){
+            // e.g { image: 'alpine:latest' }
+            const [ name, tag ] = formValues.image.split(':');
+            formValues.image = { name, tag};
+        }
         dispatch(createDockerContainer(formValues, navigate));
     };
 
@@ -52,15 +57,15 @@ const CreateDockerContainer = () => {
                     'type': 'select',
                     'name': 'image',
                     'options': dockerImages.map(({ name, size, tag, _id }) => [_id, `${name}:${tag} ${humanFileSize(size)}`]),
-                    'placeholder': 'Select or create a new container image',
-                    'helperText': 'Select an existing Docker image or enter a new one, e.g., \'alpine:latest\' to use the latest version of Alpine.'
+                    'placeholder': 'Select or create a new container image e.g., "alpine:latest"',
+                    'helperText': 'Select an existing Docker image or enter a new one, e.g., "alpine:latest" to use the latest version of Alpine.'
                 },
                 {
                     'type': 'select',
                     'name': 'network',
                     'options': dockerNetworks.map(({ name, driver, subnet, _id }) => [_id, `${name} (${subnet}) (${driver})`]),
-                    'placeholder': 'Select or create a new network',
-                    'helperText': 'Select an existing Docker network or enter a new one, e.g., \'my-custom-network\' to create a new network.'
+                    'placeholder': 'Select or create a new network eg., "my-custom-network"',
+                    'helperText': 'Select an existing Docker network or enter a new one, e.g., "my-custom-network" to create a new network.'
                 }
             ]}
         />

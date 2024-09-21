@@ -97,6 +97,11 @@ const MinimalForm = ({
         >
             <div className='Minimal-Form-Left-Container'>
                 <div className='Minimal-Form-Header-Container'>
+                    {formImage !== null && (
+                        <figure className='Form-Image-Mobile-Container'>
+                            <img className='Form-Image-Mobile' src={formImage} />
+                        </figure>
+                    )}
                     {breadcrumbsItems && (
                         <Breadcrumbs items={breadcrumbsItems} />
                     )}
