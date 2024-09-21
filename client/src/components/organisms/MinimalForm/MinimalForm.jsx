@@ -29,9 +29,11 @@ const MinimalForm = ({
     headerSubtitle,
     HeaderComponent = null,
     error,
+    variant = '',
     formInputs,
     submitButtonTitle,
     handleFormSubmit,
+    formImage = null,
     RightContainerComponent = null,
     breadcrumbsItems = null,
     isLoading = false
@@ -88,7 +90,7 @@ const MinimalForm = ({
 
     return (
         <AnimatedMain 
-            className='Minimal-Form-Container'
+            className={'Minimal-Form-Container '.concat(variant)}
             style={{
                 ...((formInputs.length >= 3) && ({ height: 'unset' }))
             }}
@@ -162,6 +164,11 @@ const MinimalForm = ({
             </div>
 
             <div className='Minimal-Form-Right-Container'>
+                {formImage !== null && (
+                    <figure className='Form-Image-Container'>
+                        <img className='Form-Image' src={formImage} />
+                    </figure>
+                )}
                 {RightContainerComponent && <RightContainerComponent />}
             </div>
         </AnimatedMain>

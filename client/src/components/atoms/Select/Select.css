@@ -8,10 +8,6 @@
     border-radius: .25rem;
 }
 
-.Select-Container-Wrapper{
-    width: 80%;
-}
-  
 .Select-Input{
     position: relative;
     width: 100%;
@@ -49,12 +45,18 @@
     overflow-y: scroll;
     top: 100%;
     transform: translateY(0);
-    background: rgba(255, 255, 255, 0.7);
+    background: rgba(255, 255, 255, .8);
     backdrop-filter: blur(3px);
     visibility: hidden;
     opacity: 0;
     border: 1px solid #86868b;
     transition: 0.3s ease;
+}
+
+.Select-Empty-Records-Message{
+    text-align: center;
+    font-size: .9rem;
+    padding: .5rem 0;
 }
 
 .Select-Options.Active{

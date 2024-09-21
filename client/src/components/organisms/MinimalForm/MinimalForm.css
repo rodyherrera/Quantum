@@ -15,16 +15,58 @@
 .Minimal-Form-Container{
     padding: 1rem 2rem;
     opacity: 1;
-    height: calc(100% - 139px);
+    height: calc(100% - 110px) !important;
     display: flex;
+    overflow: hidden;
     justify-content: space-between;
+}
+
+.Minimal-Form-Container.Form-Image .Minimal-Form-Header-Container{
+    gap: 0;
+}
+
+.Form-Image-Container{
+    width: 100%;
+    height: 100%;
+}
+
+.Form-Image{
+    width: 100%;
+    filter: grayscale(1);
+    object-position: top;
+    height: 100%;
+    object-fit: cover;
+}
+
+.Minimal-Form-Container.Form-Image .Minimal-Form-Body-Container{
+    overflow-y: scroll;
+}
+
+.Minimal-Form-Container.Form-Image .Minimal-Form-Footer-Container .Button{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    border-radius: 0;
+}
+
+.Minimal-Form-Container.Form-Image,
+.Minimal-Form-Container.Form-Image .Minimal-Form-Right-Container{
+    padding: 0;
+}
+
+.Minimal-Form-Container.Form-Image{
+    align-items: center;
+}
+
+.Minimal-Form-Container.Form-Image .Minimal-Form-Left-Container{
+    padding: 2rem;
 }
 
 .Minimal-Form-Left-Container{
     gap: 2rem;
     justify-content: center;
     height: 100%;
-    width: 60%;
+    width: 50%;
 }
 
 .Minimal-Form-Title-Container,
@@ -69,7 +111,7 @@
 
 .Minimal-Form-Right-Container{
     padding: 2rem;
-    width: 40%;
+    width: 50%;
 }
 
 .Minimal-Form-Body-Container{
@@ -86,20 +128,39 @@
     height: 20px !important;
 }
 
+.Minimal-Form-Container.Form-Image .Minimal-Form-Body-Container{
+    max-width: 80%;
+}
+
+.Minimal-Form-Container.Form-Image .Minimal-Form-Subtitle{
+    font-size: 1.1rem;
+    max-width: 80%;
+}
+
+.Minimal-Form-Container.Form-Image .Minimal-Form-Title{
+    font-size: 2.8rem;
+}
+
 @media screen and (max-width: 768px){
     .Minimal-Form-Container{
-        height: unset;
+        height: unset !important;
         padding: 1rem;
         flex-direction: column;
     }
 
     .Minimal-Form-Left-Container,
+    .Minimal-Form-Container.Form-Image .Minimal-Form-Body-Container,
     .Minimal-Form-Right-Container{
         width: 100%;
+        max-width: unset;
     }
 
     .Minimal-Form-Right-Container{
         padding: 1rem 0;
+    }
+
+    .Minimal-Form-Container.Form-Image .Minimal-Form-Header-Container{
+        gap: .5rem;
     }
 
     .Minimal-Form-Error-Container{
@@ -109,13 +170,69 @@
     .Minimal-Form-Body-Container{
         padding: 1px;
         max-width: 100%;
+        margin-top: 1rem;
     }
 
-    .Minimal-Form-Title{
+    .Minimal-Form-Container.Form-Image .Minimal-Form-Right-Container{
+        position: absolute;
+        top: 0;
+        height: 220px;
+        z-index: -1;
+        opacity: 1;
+    }
+
+    .Minimal-Form-Container.Form-Image .Minimal-Form-Right-Container::before{
+        background: linear-gradient(to top, black, transparent);
+        content: '';
+        width: 100%;
+        position: absolute;
+        top: 0;
+        display: block;
+        z-index: 200;
+        height: 100%;
+    }
+
+    .Minimal-Form-Container.Form-Image .Minimal-Form-Right-Container::after{
+        background: linear-gradient(to bottom, #1f1f1f, transparent);
+        content: '';
+        width: 100%;
+        position: absolute;
+        bottom: 0;
+        display: block;
+        z-index: 200;
+        height: 100%;
+    }
+
+    .Minimal-Form-Container.Form-Image .Breadcrumbs-Container *{
+        color: #FFF !important;
+    }
+    
+    .Minimal-Form-Container.Form-Image .Minimal-Form-Left-Container{
+        justify-content: flex-start;
+    }
+
+    .Minimal-Form-Container.Form-Image .Minimal-Form-Left-Container{
+        padding: 2rem 1rem;
+    }
+
+    .Minimal-Form-Container.Form-Image .Minimal-Form-Footer-Container .Button{
+        position: unset;
+        border-radius: 3rem;
+    }
+    
+    .Minimal-Form-Title-Container{
+        gap: .5rem;
+    }
+
+    .Minimal-Form-Title,
+    .Minimal-Form-Container.Form-Image .Minimal-Form-Title{
         font-size: 2rem;
+        color: white;
     }
 
-    .Minimal-Form-Subtitle{
+    .Minimal-Form-Subtitle,
+    .Minimal-Form-Container.Form-Image .Minimal-Form-Subtitle{
         font-size: 1rem;
+        color: white;
     }
 }

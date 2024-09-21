@@ -12,7 +12,7 @@
  * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 ****/
 
-import React, { forwardRef, useEffect } from 'react';
+import React, { forwardRef } from 'react';
 import './Input.css';
 
 const Input = forwardRef(({ helperText, endIcon = null, ...props }, ref) => {

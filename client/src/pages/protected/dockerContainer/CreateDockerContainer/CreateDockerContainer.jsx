@@ -6,6 +6,7 @@ import { getMyDockerImages } from '@services/dockerImage/operations';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { humanFileSize } from '@utilities/runtime';
+import CreateDockerContainerImage from '@images/CreateDockerContainer.jpeg';
 import './CreateDockerContainer.css';
 
 const CreateDockerContainer = () => {
@@ -28,31 +29,38 @@ const CreateDockerContainer = () => {
         <MinimalForm
             error={error}
             isLoading={isOperationLoading}
+            variant='Form-Image'
+            formImage={CreateDockerContainerImage}
+            breadcrumbsItems={[
+                { title: 'Home', to: '/' },
+                { title: 'Dashboard', to: '/dashboard/' },
+                { title: 'Containers', to: '/dashboard/' },
+                { title: 'Create Container', to: '/docker-container/create/' }
+            ]}
             submitButtonTitle='Create Container'
             handleFormSubmit={handleFormSubmit}
-            headerTitle='Creating Docker Container'
-            headerSubtitle='It will be in the blink of an eye.'
-            RightContainerComponent={() => {}}
+            headerTitle='Creating a new Docker Container'
+            headerSubtitle='You are just one step away from creating your instance to start interacting with it.'
             formInputs={[
                 {
-                    type: 'text',
-                    name: 'name',
-                    placeholder: 'My Docker Container',
-                    helperText: 'Enter a name for your container. The one you want.'
+                    'type': 'text',
+                    'name': 'name',
+                    'placeholder': 'e.g., my-docker-container',
+                    'helperText': 'Enter a unique name for your Docker container. This name will be used to identify your container.'
                 },
                 {
-                    type: 'select',
-                    name: 'image',
-                    options: dockerImages.map(({ name, size, tag, _id }) => [_id, `${name}:${tag} ${humanFileSize(size)}`]),
-                    placeholder: 'Container Image',
-                    helperText: 'For example "alpine:latest", in case you want to create a container that runs Alpine.'
+                    'type': 'select',
+                    'name': 'image',
+                    'options': dockerImages.map(({ name, size, tag, _id }) => [_id, `${name}:${tag} ${humanFileSize(size)}`]),
+                    'placeholder': 'Select or create a new container image',
+                    'helperText': 'Select an existing Docker image or enter a new one, e.g., \'alpine:latest\' to use the latest version of Alpine.'
                 },
                 {
-                    type: 'select',
-                    name: 'network',
-                    options: dockerNetworks.map(({ name, driver, subnet, _id }) => [_id, `${name} (${subnet}) (${driver})`]),
-                    placeholder: 'Container Network',
-                    helperText: 'Container Network'
+                    'type': 'select',
+                    'name': 'network',
+                    'options': dockerNetworks.map(({ name, driver, subnet, _id }) => [_id, `${name} (${subnet}) (${driver})`]),
+                    'placeholder': 'Select or create a new network',
+                    'helperText': 'Select an existing Docker network or enter a new one, e.g., \'my-custom-network\' to create a new network.'
                 }
             ]}
         />
