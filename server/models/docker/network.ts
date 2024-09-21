@@ -22,9 +22,12 @@ const DockerNetworkSchema: Schema<IDockerNetwork> = new Schema({
     },
     driver: {
         type: String,
-        enum: ['bridge', 'host', 'overlay', 'none'],
+        // By default it is bridge and, from the frontend, you cannot choose what 
+        // type of network. This is because the overlay is with docker swarm. And, 
+        // Quantum still does not allow connections between multiple servers. Still.
+        enum: ['bridge', 'overlay', 'none'],
         default: 'bridge',
-        required: [true, 'DockerNetwork::Bridge::Required']
+        required: [true, 'DockerNetwork::Driver::Required']
     },
     containers: [{
         type: mongoose.Schema.Types.ObjectId,
@@ -33,6 +36,8 @@ const DockerNetworkSchema: Schema<IDockerNetwork> = new Schema({
 }, {
     timestamps: true
 });
+
+DockerNetworkSchema.index({ user: 1, name: 1 }, { unique: true });
 
 DockerNetworkSchema.pre('save', async function(next){
     if(!this.isNew){
