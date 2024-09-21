@@ -21,7 +21,7 @@ const CreateDockerNetwork = () => {
         <MinimalForm
             error={error}
             isLoading={isOperationLoading}
-            submitButtonTitle='Create Container'
+            submitButtonTitle='Create Network'
             variant='Form-Image'
             formImage={CreateDockerNetworkImage}
             breadcrumbsItems={[
