@@ -45,22 +45,8 @@ const DockerContainerSchema: Schema<IDockerContainer> = new Schema({
         default: {}
     },
     portBindings: [{
-        internalPort: {
-            type: Number,
-            required: [true, 'DockerContainer::PortBindings::InternalPort::Required'],
-            min: 1,
-            max: 65535
-        },
-        protocol: {
-            type: String,
-            enum: ['tcp', 'udp'],
-            default: 'tcp'
-        },
-        externalPort: {
-            type: Number,
-            min: 1,
-            max: 65535
-        }
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'PortBindings'
     }],
     name: {
         type: String,
