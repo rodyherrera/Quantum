@@ -39,6 +39,7 @@ bootstrap.configureApp({
         'auth',
         'repository',
         'webhook',
+        'portBinding',
         'deployment',
         'server',
         'dockerContainer'
