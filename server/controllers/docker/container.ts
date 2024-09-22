@@ -8,7 +8,7 @@ import { IDockerImage } from '@typings/models/docker/image';
 import { IDockerNetwork } from '@typings/models/docker/network';
 import { IRequestDockerImage } from '@typings/controllers/docker/container';
 import { isImageAvailable } from '@services/docker/image';
-import { catchAsync } from '@utilities/helpers';
+import { catchAsync, findRandomAvailablePort } from '@utilities/helpers';
 import { NextFunction, Request, Response } from 'express';
 import { IUser } from '@typings/models/user';
 
@@ -17,9 +17,8 @@ const DockerContainerFactory = new HandlerFactory({
     fields: [
         'user',
         'image',
+        'portBindings',
         'status',
-        'ports',
-        'volumeMounts',
         'networks',
         'environment',
         'name'
@@ -68,6 +67,20 @@ export const getMyDockerContainers = catchAsync(async (req: Request, res: Respon
     const user = req.user as IUser;
     const containers = await DockerContainer.find({ user: user._id });
     res.status(200).json({ status: 'success', data: containers });
+});
+
+// verify ownership!!!!!
+export const updateDockerContainer = DockerContainerFactory.updateOne();
+
+export const randomAvailablePort = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const port = await findRandomAvailablePort();
+    if(port === -1){
+        // "ManyFailedAttempts" comes from the fact that, if the function finds that 
+        // a port is busy, it will try another 9 times to look for a free one. 
+        // If all attempts fail (10), it will return -1.
+        return next(new RuntimeError('DockerContainer::RandomAvailablePort::ManyFailedAttempts', 500));
+    }
+    res.status(200).json({ status: 'success', data: port });
 });
 
 export const createDockerContainer = catchAsync(async (req: Request, res: Response, next: NextFunction) => {

@@ -44,6 +44,24 @@ const DockerContainerSchema: Schema<IDockerContainer> = new Schema({
         of: String,
         default: {}
     },
+    portBindings: [{
+        internalPort: {
+            type: Number,
+            required: [true, 'DockerContainer::PortBindings::InternalPort::Required'],
+            min: 1,
+            max: 65535
+        },
+        protocol: {
+            type: String,
+            enum: ['tcp', 'udp'],
+            default: 'tcp'
+        },
+        externalPort: {
+            type: Number,
+            min: 1,
+            max: 65535
+        }
+    }],
     name: {
         type: String,
         required: [true, 'DockerContainer::Name::Required']
@@ -60,12 +78,12 @@ DockerContainerSchema.pre('save', async function(next){
     const { containerStoragePath, userContainerPath } = getContainerStoragePath(userId, containerId, userId);
     this.dockerContainerName = getSystemDockerName(this.name);
     this.storagePath = this.isUserContainer ? userContainerPath : containerStoragePath;
+    const containerService = new DockerContainerService(this);
+    if(this.isNew){
+        await containerService.createAndStartContainer();
+        //console.log('is new', await containerService.getIpAddress());
+    }
     next();
-});
-
-DockerContainerSchema.post('save', async function(doc){
-    const containerService = new DockerContainerService(doc);
-    await containerService.createAndStartContainer();
 });
 
 const DockerContainer: Model<IDockerContainer> = mongoose.model('DockerContainer', DockerContainerSchema);

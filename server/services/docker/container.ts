@@ -6,7 +6,7 @@ import { Socket } from 'socket.io';
 import { ensureDirectoryExists } from '@utilities/helpers';
 import { createLogStream, setupSocketEvents } from '@services/logManager';
 import { pullImage } from '@services/docker/image';
-import { IDockerContainer } from '@typings/models/docker/container';
+import { IDockerContainer, IDockerContainerPortBindings } from '@typings/models/docker/container';
 import { IDockerImage } from '@typings/models/docker/image';
 import { IDockerNetwork } from '@typings/models/docker/network';
 import { getSystemNetworkName } from '@services/docker/network';
@@ -51,6 +51,13 @@ class DockerContainer{
         this.container = container;
         this.dockerImage = null;
         this.dockerNetwork = null;
+    }
+
+    async getIpAddress(): Promise<string>{
+        const container =  await this.getExistingContainer();
+        const data = await container.inspect();
+        const { IPAddress } = data.NetworkSettings;
+        return IPAddress;
     }
 
     async initializeContainer(){

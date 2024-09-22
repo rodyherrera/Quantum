@@ -15,7 +15,36 @@
 import axios from 'axios';
 import logger from '@utilities/logger';
 import fs from 'fs';
+import net from 'net';
 import _ from 'lodash';
+
+const getRandomPort = (): number => {
+    const MAX_PORT = 65535;
+    const MIN_PORT = 10240;
+    return Math.floor(Math.random() * (MAX_PORT - MIN_PORT + 1)) + MIN_PORT;
+}
+
+export const findRandomAvailablePort = async (): Promise<number> => {
+    for(let attempt = 0; attempt < 10; attempt++){
+        const port = getRandomPort();
+        const server = net.createServer();
+        // Try to use the port to check availability.
+        const isAvailable = await new Promise<boolean>((resolve, reject) => {
+            server.once('error', (err: NodeJS.ErrnoException) => {
+                if(err.code === 'EADDRINUSE'){
+                    resolve(false);
+                }else{
+                    reject(err);
+                }
+            });
+            server.listen(port, () => {
+                server.close(() => resolve(true));
+            });
+        });
+        if(isAvailable) return port;
+    }
+    return -1;
+}
 
 /**
  * Retrieves the user's public IP address using the ipify.org service.

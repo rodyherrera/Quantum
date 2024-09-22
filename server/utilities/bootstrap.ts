@@ -21,6 +21,8 @@ import UserContainer from '@services/userContainer';
 import RepositoryHandler from '@services/repositoryHandler';
 import sendMail from '@services/sendEmail';
 import logger from '@utilities/logger';
+import DockerContainer from '@models/docker/container';
+import { startProxyServer } from '@services/proxyServer';
 import { ConfigureAppParams } from '@typings/utilities/bootstrap';
 import { spawn } from 'child_process';
 import { IUser } from '@typings/models/user';
@@ -113,6 +115,7 @@ export const loadUserContainers = async (): Promise<void> => {
             const container = new UserContainer(user);
             await container.start();
         }));
+        startProxyServer('107.100.61.3', 23326, 3000, 'tcp');
         await sendMail({
             subject: "Let's gooo, user containers loaded correctly!",
             html: 'The containers of all users registered on the platform were successfully mounted on the host.'
