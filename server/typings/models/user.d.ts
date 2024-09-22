@@ -8,6 +8,9 @@ export interface IUser extends Document{
     container: mongoose.Schema.Types.ObjectId | IDockerContainer;
     repositories: mongoose.Types.ObjectId[];
     deployments: mongoose.Types.ObjectId[];
+    dockerContainers: mongoose.Types.ObjectId[];
+    dockerImages: mongoose.Types.ObjectId[];
+    dockerNetworks: mongoose.Types.ObjectId[];
     github: mongoose.Types.ObjectId | IGithub;
     fullname: string;
     email: string;

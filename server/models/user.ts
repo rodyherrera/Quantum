@@ -30,6 +30,18 @@ const UserSchema: Schema<IUser> = new Schema({
         lowercase: true,
         trim: true
     },
+    dockerContainers: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'DockerContainer'
+    }],
+    dockerNetworks: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'DockerNetwork'
+    }],
+    dockerImages: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'DockerImage'
+    }],
     container: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'DockerContainer'

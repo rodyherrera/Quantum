@@ -4,7 +4,13 @@ import { IPortBinding } from '@typings/models/portBinding';
 const PortBindingSchema: Schema<IPortBinding> = new Schema({
     container: {
         type: mongoose.Schema.Types.ObjectId,
+        required: [true, 'PortBinding::Container::Required'],
         ref: 'DockerContainer'
+    },
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: [true, 'PortBinding::User::Required'],
+        ref: 'User'
     },
     internalPort: {
         type: Number,
@@ -19,6 +25,7 @@ const PortBindingSchema: Schema<IPortBinding> = new Schema({
     },
     externalPort: {
         type: Number,
+        required: [true, 'PortBinding::ExternalPort::Required'],
         unique: true,
         min: 1,
         max: 65535
