@@ -15,10 +15,13 @@
 .Minimal-Form-Container{
     padding: 1rem 2rem;
     opacity: 1;
-    height: calc(100% - 110px) !important;
     display: flex;
     overflow: hidden;
     justify-content: space-between;
+}
+
+.Minimal-Form-Container.Form-Image{
+    height: calc(100% - 110px) !important;
 }
 
 .Minimal-Form-Container.Form-Image .Minimal-Form-Header-Container{
@@ -66,6 +69,10 @@
     gap: 2rem;
     justify-content: center;
     height: 100%;
+    width: 60%;
+}
+
+.Minimal-Form-Container.Form-Image .Minimal-Form-Left-Container{
     width: 50%;
 }
 
@@ -111,6 +118,10 @@
 
 .Minimal-Form-Right-Container{
     padding: 2rem;
+    width: 40%;
+}
+
+.Minimal-Form-Container.Form-Image .Minimal-Form-Right-Container{
     width: 50%;
 }
 

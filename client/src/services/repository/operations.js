@@ -77,7 +77,7 @@ export const getMyGithubRepositories = () => async (dispatch) => {
 */
 export const updateRepository = (id, body, navigate) => async (dispatch) => {
     const operation = new OperationHandler(repositorySlice, dispatch);
-    operation.on('response', () => navigate('/dashboard/'))
+    operation.on('response', () => navigate('/dashboard/'));
     operation.use({
         api: repositoryService.updateRepository,
         loaderState: repositorySlice.setIsOperationLoading,

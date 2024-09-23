@@ -63,6 +63,7 @@ class APIRequestBuilder{
         Object.entries(queryParams).forEach(([ key, value ]) => {
             url.searchParams.append(key, value);
         });
+        console.log(url.toString());
         return url.toString();
     };
 

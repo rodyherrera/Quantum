@@ -148,7 +148,7 @@ const MinimalForm = ({
                             <Input 
                                 key={index}
                                 type={input.type}
-                                value={formValues[input.name]}
+                                value={formValues[input.name] || ''}
                                 ref={(el) => inputRefs.current[index] = el}
                                 onKeyPress={keyPressHandler}
                                 onChange={(e) => setFormValues({ ...formValues, [input.name]: e.target.value })}
@@ -161,6 +161,7 @@ const MinimalForm = ({
 
                 <div className='Minimal-Form-Footer-Container'>
                     <Button 
+                        type='submit'
                         onClick={() => handleFormSubmit(formValues)}
                         title={submitButtonTitle} 
                         variant='Contained Black Extend Small-Border-Radius Mobile-Max-Expand' 

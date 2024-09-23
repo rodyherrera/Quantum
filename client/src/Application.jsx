@@ -47,6 +47,8 @@ const Application = () => {
                     <Route path='/docker-container/create/' element={<pages.protected.dockerContainer.CreateDockerContainer />} />
                     <Route path='/docker-container/:dockerId/shell/' element={<pages.protected.dockerContainer.Shell />} />
 
+                    <Route path='/port-binding/create/' element={<pages.protected.portBinding.CreatePortBinding />} />
+
                     <Route path='/docker-image/create/' element={<pages.protected.dockerImage.CreateDockerImage />} />
 
                     <Route path='/docker-network/create/' element={<pages.protected.dockerNetwork.CreateDockerNetwork />} />

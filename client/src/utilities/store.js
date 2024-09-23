@@ -21,6 +21,7 @@ import githubReducer from '@services/github/slice';
 import repositoryReducer from '@services/repository/slice';
 import deploymentReducer from '@services/deployment/slice';
 import coreReducer from '@services/core/slice';
+import portBindingReducer from '@services/core/slice';
 
 /**
  * @function configureStore 
@@ -38,6 +39,7 @@ const store = configureStore({
         dockerNetwork: dockerNetworkReducer,
         github: githubReducer,
         repository: repositoryReducer,
+        portBinding: portBindingReducer,
         deployment: deploymentReducer
     }
 });

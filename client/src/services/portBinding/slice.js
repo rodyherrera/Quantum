@@ -17,27 +17,19 @@ import { createSlice } from '@reduxjs/toolkit';
 const state = {
     error: null,
     isLoading: true,
-    randomAvailablePort: 0,
-    isRandomAvailablePortLoading: true,
     isOperationLoading: false,
-    dockerContainers: []
+    portBindings: []
 };
 
-const dockerContainerSlice = createSlice({
-    name: 'dockerContainer',
+const portBindingSlice = createSlice({
+    name: 'portBinding',
     initialState: state,
     reducers: {
         setIsLoading: (state, action) => {
             state.isLoading = action.payload;
         },
-        setRandomAvailablePort: (state, action) => {
-            state.randomAvailablePort = action.payload;
-        },
-        setIsRandomAvailablePortLoading: (state, action) => {
-            state.isRandomAvailablePortLoading = action.payload;
-        },
-        setDockerContainers: (state, action) => {
-            state.dockerContainers = action.payload;
+        setPortBindings: (state, action) => {
+            state.portBindings = action.payload;
         },
         setIsOperationLoading: (state, action) => {
             state.isOperationLoading = action.payload;
@@ -52,9 +44,7 @@ export const {
     setIsOperationLoading,
     setError,
     setIsLoading,
-    setIsRandomAvailablePortLoading,
-    setRandomAvailablePort,
-    setDockerContainers
-} = dockerContainerSlice.actions;
+    setPortBindings
+} = portBindingSlice.actions;
 
-export default dockerContainerSlice.reducer;
+export default portBindingSlice.reducer;

@@ -19,24 +19,14 @@ import APIRequestBuilder from '@utilities/apiRequestBuilder';
  * @description Represents the base endpoint for server-related API requests.
  * @type {APIRequestBuilder} An instance of the APIRequestBuilder utility.
 */
-export const ServerAPI = new APIRequestBuilder('/docker-container');
+export const ServerAPI = new APIRequestBuilder('/port-binding');
 
-export const getMyDockerContainers = ServerAPI.register({
+export const getMyPortBindings = ServerAPI.register({
     path: '/me/',
     method: 'GET'
 });
 
-export const createDockerContainer = ServerAPI.register({
+export const createPortBinding = ServerAPI.register({
     path: '/',
     method: 'POST'
-});
-
-export const getRandomAvailablePort = ServerAPI.register({
-    path: '/random-available-port/',
-    method: 'GET'
-});
-
-export const updateDockerContainer = ServerAPI.register({
-    path: '/:id/',
-    method: 'PATCH'
 });

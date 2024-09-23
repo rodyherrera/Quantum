@@ -19,9 +19,11 @@ import authentication from './authentication';
 import dockerContainer from './dockerContainer';
 import dockerImage from './dockerImage';
 import dockerNetwork from './dockerNetwork';
+import portBinding from './portBinding';
 
 const pages = {
     github,
+    portBinding,
     dockerContainer,
     dockerNetwork,
     dockerImage,

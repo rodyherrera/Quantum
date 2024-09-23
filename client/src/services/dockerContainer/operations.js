@@ -25,6 +25,28 @@ export const getMyDockerContainers = () => async (dispatch) => {
     });
 };
 
+export const updateDockerContainer = (id, body, navigate) => async (dispatch) => {
+    const operation = new OperationHandler(dockerContainerSlice, dispatch);
+    operation.on('response', (data) => {
+        console.log(data);
+        navigate('/dashboard/');
+    });
+    operation.use({
+        api: dockerContainerService.updateDockerContainer,
+        loaderState: dockerContainerSlice.setIsOperationLoading,
+        query: { body, query: { params: { id } } }
+    });
+};
+
+export const getRandomAvailablePort = () => async (dispatch) => {
+    const operation = new OperationHandler(dockerContainerSlice, dispatch);
+    operation.use({
+        api: dockerContainerService.getRandomAvailablePort,
+        responseState: dockerContainerSlice.setRandomAvailablePort,
+        loaderState: dockerContainerSlice.setIsRandomAvailablePortLoading
+    });
+};
+
 export const createDockerContainer = (body, navigate) => async (dispatch) => {
     const operation = new OperationHandler(dockerContainerSlice, dispatch);
     operation.on('response', () => {
