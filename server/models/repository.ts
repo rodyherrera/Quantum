@@ -185,6 +185,7 @@ RepositorySchema.methods.updateUserAndRepository = async function(deployment: an
     const updateUser = {
         $push: { repositories: this._id, deployments: deployment._id }
     };
+    // findByIdAndUpdate?????
     await mongoose.model('User').findByIdAndUpdate(this.user, updateUser);
     this.deployments.push(deployment._id);
 };

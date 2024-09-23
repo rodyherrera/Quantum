@@ -1,5 +1,7 @@
 import mongoose, { Schema, Model } from 'mongoose';
 import { IPortBinding } from '@typings/models/portBinding';
+import { startProxyServer } from '@services/proxyServer';
+import DockerContainer from '@models/docker/container';
 
 const PortBindingSchema: Schema<IPortBinding> = new Schema({
     container: {
@@ -32,6 +34,22 @@ const PortBindingSchema: Schema<IPortBinding> = new Schema({
     }
 }, {
     timestamps: true
+});
+
+PortBindingSchema.pre('save', async function(next){
+    try{
+        if(this.isNew){
+            const updateUser = { $push: { portBindings: this._id } };
+            await mongoose.model('User').updateOne({ _id: this.user }, updateUser);
+            const container = await DockerContainer.findById(this.container).select('ipAddress');
+            if(container?.ipAddress && this.externalPort){
+                startProxyServer(container.ipAddress, this.externalPort, this.internalPort, this.protocol);
+            }
+        }
+        next();
+    }catch(error: any){
+        next(error);
+    }
 });
 
 const PortBinding: Model<IPortBinding> = mongoose.model('PortBinding', PortBindingSchema);

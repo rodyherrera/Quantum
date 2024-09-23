@@ -53,11 +53,16 @@ class DockerContainer{
         this.dockerNetwork = null;
     }
 
-    async getIpAddress(): Promise<string>{
-        const container =  await this.getExistingContainer();
+    async getIpAddress(): Promise<string | null>{
+        const container = await this.getExistingContainer();
+        const network = await DockerNetwork.findById(this.container.network).select('dockerNetworkName');
+        if(!network?.dockerNetworkName){
+            return null;
+        }
         const data = await container.inspect();
-        const { IPAddress } = data.NetworkSettings;
-        return IPAddress;
+        const ipAddress = data.NetworkSettings.Networks[network.dockerNetworkName].IPAddress;
+        console.log(ipAddress);
+        return ipAddress;
     }
 
     async initializeContainer(){

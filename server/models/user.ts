@@ -30,15 +30,15 @@ const UserSchema: Schema<IUser> = new Schema({
         lowercase: true,
         trim: true
     },
-    dockerContainers: [{
+    containers: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'DockerContainer'
     }],
-    dockerNetworks: [{
+    networks: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'DockerNetwork'
     }],
-    dockerImages: [{
+    images: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'DockerImage'
     }],
@@ -112,11 +112,21 @@ UserSchema.pre('findOneAndDelete', async function(){
     const user = await mongoose.model('User').findOne(conditions).populate('container');
     if(!user) return;
     await mongoose.model('Repository').deleteMany({ user: user._id });
+    // findOneAndDelete?????
     await mongoose.model('Github').findOneAndDelete({ user: user._id });
-    const container = new UserContainer(user);
-    container.remove().then().catch((error: Error) => {
-        logger.error(`CRITICAL ERROR (at @models/user - pre findOneAndDelete middleware): ${error}`)
-    });
+    await mongoose.model('DockerNetwork').deleteMany({ user: user._id });
+    await mongoose.model('DockerContainer').deleteMany({ user: user._id });
+    await mongoose.model('DockerImage').deleteMany({ user: user._id });
+    await mongoose.model('PortBinding').deleteMany({ user: user._id });
+
+    /*
+        * UserContainer also is a DockerContainer entry
+
+        const container = new UserContainer(user);
+        container.remove().then().catch((error: Error) => {
+            logger.error(`CRITICAL ERROR (at @models/user - pre findOneAndDelete middleware): ${error}`)
+        });
+    */
 });
 
 /**

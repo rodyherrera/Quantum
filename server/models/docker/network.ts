@@ -40,14 +40,15 @@ const DockerNetworkSchema: Schema<IDockerNetwork> = new Schema({
 DockerNetworkSchema.index({ user: 1, name: 1 }, { unique: true });
 
 DockerNetworkSchema.pre('save', async function(next){
-    if(!this.isNew){
-        return next();
-    }
     try{
-        this.subnet = randomIPv4Subnet();
-        const userId = this.user._id.toString();
-        this.dockerNetworkName = getSystemNetworkName(userId, this.name);
-        await createNetwork(this.dockerNetworkName, this.driver, this.subnet);
+        if(this.isNew){
+            this.subnet = randomIPv4Subnet();
+            const userId = this.user._id.toString();
+            this.dockerNetworkName = getSystemNetworkName(userId, this.name);
+            const updateUser = { $push: { dockerNetworks: this._id } };
+            await createNetwork(this.dockerNetworkName, this.driver, this.subnet);
+            await mongoose.model('User').updateOne({ _id: this.user }, updateUser);
+        }
         next();
     }catch(error: any){
         next(error);

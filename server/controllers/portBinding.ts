@@ -6,7 +6,10 @@ const PortBindingFactory = new HandlerFactory({
     fields: [
         'internalPort',
         'externalPort',
-        'protocol'
+        'protocol',
+        // verify ownership
+        'user',
+        'container'
     ]
 });
 

@@ -29,14 +29,18 @@ const DockerImageSchema: Schema<IDockerImage> = new Schema({
 DockerImageSchema.index({ name: 1, tag: 1, user: 1 }, { unique: true });
 
 DockerImageSchema.pre('save', async function(next){
-    if(!this.isNew){
+    try{
+        if(this.isNew){
+            // Pull image if not exists
+            await pullImage(this.name, this.tag);
+            this.size = await getImageSize(this.name, this.tag);
+            const updateUser = { $push: { dockerImages: this._id } };
+            await mongoose.model('User').updateOne({ _id: this.user }, updateUser);
+        }
         next();
-        return;
+    }catch(error: any){
+        next(error);   
     }
-    // Pull image if not exists
-    await pullImage(this.name, this.tag);
-    this.size = await getImageSize(this.name, this.tag);
-    next();
 });
 
 const DockerImage: Model<IDockerImage> = mongoose.model('DockerImage', DockerImageSchema);

@@ -105,6 +105,7 @@ class HandlerFactory{
     private getPopulateFromRequest(query: Request['query']): string | null{
         if(!query?.populate) return null;
         const populate = query.populate as string;
+        console.log(populate);
         return populate.startsWith('{')
             ? JSON.parse(populate).join(' ')
             : populate.split(',').join(' ');
