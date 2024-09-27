@@ -23,7 +23,6 @@ import useUserDockerContainers from '@hooks/useUserDockerContainers';
 import useUserDockerNetworks from '@hooks/useUserDockerNetworks';
 import useUserDockerImages from '@hooks/useUserDockerImages';
 import DataRenderer from '@components/organisms/DataRenderer';
-import { useDispatch, useSelector } from 'react-redux';
 import { HiPlus } from 'react-icons/hi';
 import { gsap } from 'gsap';
 import './Dashboard.css';
@@ -34,7 +33,6 @@ const Dashboard = () => {
     const { dockerNetworks } = useUserDockerNetworks();
     const { dockerImages } = useUserDockerImages();
     const createRepoBtnRef = useRef(null);
-    const dispatch = useDispatch();
 
     useLayoutEffect(() => {
         if(isLoading) return;
