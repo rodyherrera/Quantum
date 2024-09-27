@@ -1,6 +1,6 @@
 import React from 'react';
 import MinimalForm from '@components/organisms/MinimalForm';
-import useUserDockerContainers from '@hooks/useUserDockerContainers';
+import { useUserDockerContainers } from '@hooks/api/user/';
 import { createDockerNetwork } from '@services/dockerNetwork/operations';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';

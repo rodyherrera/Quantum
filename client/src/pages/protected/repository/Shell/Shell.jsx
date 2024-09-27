@@ -15,11 +15,11 @@
 import React, { useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { CircularProgress } from '@mui/material';
-import useWindowSize from '@hooks/useWindowSize';
+import { useWindowSize } from '@hooks/common/';
+import { useRemoteTerminal } from '@hooks/ws/';
 import RelatedRepositorySections from '@components/molecules/RelatedRepositorySections';
 import Breadcrumbs from '@components/molecules/Breadcrumbs';
 import AnimatedMain from '@components/atoms/AnimatedMain'
-import useRemoteTerminal from '@hooks/useRemoteTerminal';
 import './Shell.css';
 
 const Shell = () => {

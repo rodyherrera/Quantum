@@ -13,7 +13,7 @@
 ****/
 
 import React, { useEffect } from 'react';
-import useQuery from '@hooks/useQuery';
+import { useQuery } from '@hooks/common/';
 import AnimatedMain from '@components/atoms/AnimatedMain';
 import { useSelector, useDispatch } from 'react-redux';
 import { createAccount } from '@services/github/operations';

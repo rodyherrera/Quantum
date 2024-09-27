@@ -26,7 +26,7 @@ import Banner from '@components/atoms/Banner';
 import Header from '@components/organisms/Header';
 import Menu from '@components/organisms/Menu';
 import SquaredBackground from '@components/atoms/SquaredBackground';
-import useWindowSize from '@hooks/useWindowSize';
+import { useWindowSize } from '@hooks/common/';
 import './Layout.css';
 
 const Layout = () => {

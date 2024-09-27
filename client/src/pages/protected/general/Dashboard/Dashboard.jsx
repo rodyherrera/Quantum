@@ -12,26 +12,24 @@
  * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 ****/
 
-import React, { useEffect, useLayoutEffect, useRef } from 'react';
-import Project from '@components/organisms/Project';
+import React, { useLayoutEffect, useRef } from 'react';
 import { FiGithub } from 'react-icons/fi';
 import { IoLogoDocker } from 'react-icons/io5';
-import DashboardModule from '@components/organisms/DashboardModule';
-import Button from '@components/atoms/Button';
-import useUserRepositories from '@hooks/useUserRepositories';
-import useUserDockerContainers from '@hooks/useUserDockerContainers';
-import useUserDockerNetworks from '@hooks/useUserDockerNetworks';
-import useUserDockerImages from '@hooks/useUserDockerImages';
-import DataRenderer from '@components/organisms/DataRenderer';
 import { HiPlus } from 'react-icons/hi';
 import { gsap } from 'gsap';
+import Project from '@components/organisms/Project';
+import DashboardModule from '@components/organisms/DashboardModule';
+import Button from '@components/atoms/Button';
+import DataRenderer from '@components/organisms/DataRenderer';
+import * as userHooks from '@hooks/api/user/';
 import './Dashboard.css';
 
+
 const Dashboard = () => {
-    const { repositories, isLoading, isOperationLoading, error } = useUserRepositories();
-    const { dockerContainers } = useUserDockerContainers();
-    const { dockerNetworks } = useUserDockerNetworks();
-    const { dockerImages } = useUserDockerImages();
+    const { repositories, isLoading, isOperationLoading, error } = userHooks.useUserRepositories();
+    const { dockerContainers } = userHooks.useUserDockerContainers();
+    const { dockerNetworks } = userHooks.useUserDockerNetworks();
+    const { dockerImages } = userHooks.useUserDockerImages();
     const createRepoBtnRef = useRef(null);
 
     useLayoutEffect(() => {

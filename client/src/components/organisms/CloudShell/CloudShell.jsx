@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import ResizableInAxisY from '@components/atoms/ResizableInAxisY';
-import useRemoteTerminal from '@hooks/useRemoteTerminal';
+import { useRemoteTerminal } from '@hooks/ws/';
 import { VscGithubAlt } from 'react-icons/vsc';
 import { BiBookAlt } from 'react-icons/bi';
 import { AiOutlineClose } from 'react-icons/ai';

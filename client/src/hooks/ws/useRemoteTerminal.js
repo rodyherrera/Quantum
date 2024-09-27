@@ -1,4 +1,4 @@
-import useWebSocket from '@hooks/useWebSocket';
+import { useWebSocket } from '@hooks/ws/';
 import { Terminal } from '@xterm/xterm';
 import { FitAddon } from '@xterm/addon-fit'
 import { useEffect, useRef } from 'react';
