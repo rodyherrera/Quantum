@@ -16,10 +16,15 @@
  * Takes a date object or timestamp and returns a human-readable representation
  * of the time elapsed since that date.
  *
- * @param {Date | string | number} date - The date to calculate the difference from.
- * @returns {string} A formatted string representing the time difference.
 */
-export const formatDate = (date) => {
+export const formatDate = (date, useLocale) => {
+    if(useLocale){
+        return new Date(date).toLocaleString(navigator.language.split('-')[0], {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+    }
     const intervals = [
         { label: 'year', seconds: 31536000 },
         { label: 'month', seconds: 2592000 },
