@@ -17,16 +17,11 @@ import { FiGithub } from 'react-icons/fi';
 import { IoLogoDocker } from 'react-icons/io5';
 import { HiPlus } from 'react-icons/hi';
 import { gsap } from 'gsap';
-import { IoIosMore } from 'react-icons/io';
-import { IoCloudOutline } from "react-icons/io5";
-import { CiServer } from 'react-icons/ci';
-import { PiDatabaseThin } from "react-icons/pi";
-import { humanFileSize, formatDate } from '@utilities/runtime';
-import ContextMenu from '@components/organisms/ContextMenu';
 import Project from '@components/organisms/Project';
 import DashboardModule from '@components/organisms/DashboardModule';
 import Button from '@components/atoms/Button';
 import DataRenderer from '@components/organisms/DataRenderer';
+import DockerContainer from '@components/molecules/DockerContainer';
 import * as userHooks from '@hooks/api/user/';
 import './Dashboard.css';
 
@@ -111,62 +106,7 @@ const Dashboard = () => {
                 RenderComponent={() => (
                     <div id='Dashboard-Dockers-Container'>
                         {dockerContainers.map((container, index) => (
-                            <div className='Docker-Container' key={index}>
-                                <div className='Docker-Container-Header'>
-                                    {[
-                                        container.ipAddress ? `Subnet: ${container.ipAddress}` : 'Unallocated Subnet IP',
-                                        `${container.image.name}:${container.image.tag} ${humanFileSize(container.image.size)}`,
-                                        `Status: ${container.status}`
-                                    ].map((item, index) => (
-                                        <p className='Docker-Container-Header-Item' key={index}>{item}</p>
-                                    ))}
-                                </div>
-                                <div className='Docker-Container-Body'>
-                                    <div className='Docker-Container-Name-Container'>
-                                        <h3 className='Docker-Container-Name'>
-                                            {container.isUserContainer ? (
-                                                'Main Docker Container'
-                                            ) : (
-                                                container.name
-                                            )}
-                                        </h3>
-                                        <ContextMenu 
-                                            className='Docker-Container-More-Icon-Container' 
-                                            options={[
-                                                { title: 'Delete Permanently' },
-                                                { title: 'Edit Container' },
-                                                { title: 'Expose Ports' },
-                                                { title: 'Environment Variables' },
-                                                { title: 'File Explorer' },
-                                                { title: 'Container Terminal' },
-                                                { title: 'Edit Container Network' },
-                                                { title: 'Edit Container Image' }
-                                            ]}
-                                        >
-                                            <i>
-                                                <IoIosMore />
-                                            </i>
-                                        </ContextMenu>
-                                    </div>
-                                    <p className='Docker-Container-Last-Update'>Last update {formatDate(container.updatedAt)}, created at {formatDate(container.createdAt, true)}.</p>
-                                </div>
-                                <div className='Docker-Container-Footer'>
-                                    <div className='Docker-Container-Footer-Left-Container'>
-                                        {[
-                                            ['Expose Port', IoCloudOutline],
-                                            ['Environment Variables', PiDatabaseThin],
-                                            ['File Explorer', CiServer]
-                                        ].map(([ item, Icon ], index) => (
-                                            <div className='Docker-Container-Footer-Option-Container' key={index}>
-                                                <i className='Docker-Container-Footer-Option-Icon-Container'>
-                                                    <Icon />
-                                                </i>
-                                                <p className='Docker-Container-Footer-Option-Title'>{item}</p>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            </div>
+                            <DockerContainer key={index} container={container} />
                         ))}
                     </div>
                 )}

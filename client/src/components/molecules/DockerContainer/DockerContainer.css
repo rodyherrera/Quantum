@@ -1,0 +1,75 @@
+
+.Docker-Container-Header{
+    display: flex;
+    border-bottom: 1px solid #dfdfdf;
+}
+
+.Docker-Container-Header-Item:not(:first-child){
+    border-left: 1px solid #dfdfdf;
+}
+
+.Docker-Container-Header-Item{
+    font-size: .9rem;
+    padding: .2rem 1rem;
+}
+
+.Docker-Container-Footer-Option-Icon-Container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.Docker-Container-Name{
+    font-weight: 400;
+}
+
+.Docker-Container-Last-Update{
+    font-size: .8rem;
+}
+
+.Docker-Container-Footer,
+.Docker-Container-Body{
+    padding: 0 1rem;
+}
+
+.Docker-Container-Body{
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+}
+
+.Docker-Container-Footer-Left-Container{
+    display: flex;
+    gap: 1rem;
+}
+
+.Docker-Container-Footer-Option-Container{
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    border-radius: 1rem;
+}
+
+.Docker-Container-Footer-Option-Container:hover{
+    opacity: .8;
+}
+
+.Docker-Container-Footer-Option-Title{
+    font-size: .8rem;
+}
+
+.Docker-Container-Name-Container{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.Docker-Container{
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding-bottom: 1rem;
+    border-radius: .5rem;
+    border: 1px solid #dfdfdf;
+}
