@@ -21,7 +21,7 @@ import Project from '@components/organisms/Project';
 import DashboardModule from '@components/organisms/DashboardModule';
 import Button from '@components/atoms/Button';
 import DataRenderer from '@components/organisms/DataRenderer';
-import DockerContainer from '@components/molecules/DockerContainer';
+import DockerContainer from '@components/organisms/DockerContainer';
 import * as userHooks from '@hooks/api/user/';
 import './Dashboard.css';
 

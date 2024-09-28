@@ -1,0 +1,30 @@
+.Docker-Container-Footer-Option-Icon-Container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.Docker-Container-Footer{
+    padding: 0 1rem;
+}
+
+.Docker-Container-Footer-Left-Container{
+    display: flex;
+    gap: 1rem;
+}
+
+.Docker-Container-Footer-Option-Container{
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    border-radius: 1rem;
+}
+
+.Docker-Container-Footer-Option-Container:hover{
+    opacity: .8;
+}
+
+.Docker-Container-Footer-Option-Title{
+    font-size: .8rem;
+}
