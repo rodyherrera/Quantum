@@ -15,7 +15,7 @@
 import React, { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { formatDate } from '@utilities/runtime';
+import { formatDate } from '@utilities/common/dateUtils';
 import FileExplorer from '@components/organisms/FileExplorer';
 import Breadcrumbs from '@components/molecules/Breadcrumbs';
 import AnimatedMain from '@components/atoms/AnimatedMain';

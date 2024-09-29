@@ -1,17 +1,3 @@
-/***
- * Copyright (C) Rodolfo Herrera Hernandez. All rights reserved.
- * Licensed under the MIT license. See LICENSE file in the project root
- * for full license information.
- *
- * =+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
- *
- * For related information - https://github.com/rodyherrera/Quantum/
- *
- * All your applications, just in one place. 
- *
- * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-****/
-
 /**
  * Takes a date object or timestamp and returns a human-readable representation
  * of the time elapsed since that date.
@@ -44,8 +30,3 @@ export const formatDate = (date, useLocale) => {
     // In case the date is very recent.
     return 'Just now';
 };
-
-export const humanFileSize = (size) => {
-    var i = size == 0 ? 0 : Math.floor(Math.log(size) / Math.log(1024));
-    return +((size / Math.pow(1024, i)).toFixed(2)) * 1 + ' ' + ['B', 'kB', 'MB', 'GB', 'TB'][i];
-}

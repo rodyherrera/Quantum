@@ -5,7 +5,7 @@ import { getMyDockerNetworks } from '@services/docker/network/operations';
 import { getMyDockerImages } from '@services/docker/image/operations';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { humanFileSize } from '@utilities/runtime';
+import { humanFileSize } from '@utilities/common/fileUtils';
 import CreateDockerContainerImage from '@images/CreateDockerContainer.jpeg';
 import './CreateDockerContainer.css';
 

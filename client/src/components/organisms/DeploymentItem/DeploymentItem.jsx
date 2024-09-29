@@ -17,7 +17,7 @@ import { BsCalendarDate } from 'react-icons/bs';
 import { IoIosMore } from 'react-icons/io';
 import { RiDeleteBin7Line } from 'react-icons/ri';
 import { useDispatch } from 'react-redux';
-import { formatDate } from '@utilities/runtime';
+import { formatDate } from '@utilities/common/dateUtils';
 import * as deploymentOperations from '@services/deployment/operations';
 import './DeploymentItem.css';
 

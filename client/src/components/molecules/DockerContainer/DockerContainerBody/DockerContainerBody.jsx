@@ -1,6 +1,6 @@
 import React from 'react';
 import { IoIosMore } from 'react-icons/io';
-import { formatDate } from '@utilities/runtime';
+import { formatDate } from '@utilities/common/dateUtils';
 import ContextMenu from '@components/organisms/ContextMenu';
 import './DockerContainerBody.css';
 

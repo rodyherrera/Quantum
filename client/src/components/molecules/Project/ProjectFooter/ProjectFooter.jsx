@@ -15,7 +15,7 @@
 import React, { useState, useEffect } from 'react';
 import { FaGithub } from 'react-icons/fa';
 import { IoIosGitBranch } from 'react-icons/io';
-import { formatDate } from '@utilities/runtime';
+import { formatDate } from '@utilities/common/dateUtils';
 import { useDispatch } from 'react-redux';
 import { repositoryActions } from '@services/deployment/operations';
 import Button from '@components/atoms/Button';

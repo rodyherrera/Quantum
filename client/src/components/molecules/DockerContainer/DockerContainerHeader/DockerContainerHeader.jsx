@@ -1,5 +1,5 @@
 import React from 'react';
-import { humanFileSize } from '@utilities/runtime';
+import { humanFileSize } from '@utilities/common/fileUtils';
 import './DockerContainerHeader.css';
 
 const DockerContainerHeader = ({ container }) => {

@@ -15,7 +15,7 @@
 import React from 'react';
 import { HiArrowNarrowRight } from 'react-icons/hi';
 import { CiLock, CiUnlock } from 'react-icons/ci';
-import { formatDate } from '@utilities/runtime';
+import { formatDate } from '@utilities/common/dateUtils';
 import './RepositoryBasicItem.css';
 
 const RepositoryBasicItem = ({ repository, onClick }) => {
