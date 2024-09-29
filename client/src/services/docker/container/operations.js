@@ -13,8 +13,8 @@
 ****/
 
 import OperationHandler from '@utilities/operationHandler';
-import * as dockerContainerSlice from '@services/dockerContainer/slice';
-import * as dockerContainerService from '@services/dockerContainer/service'
+import * as dockerContainerSlice from '@services/docker/container/slice';
+import * as dockerContainerService from '@services/docker/container/service'
 
 export const getMyDockerContainers = () => async (dispatch) => {
     const operation = new OperationHandler(dockerContainerSlice, dispatch);

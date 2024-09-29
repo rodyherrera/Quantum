@@ -12,12 +12,5 @@
  * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 ****/
 
-import SignIn from './SignIn';
-import SignUp from './SignUp';
-
-const pages = {
-    SignIn,
-    SignUp
-};
-
-export default pages;
+export { default as SignIn } from './SignIn';
+export { default as SignUp } from './SignUp';

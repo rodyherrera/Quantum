@@ -12,14 +12,6 @@
  * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 ****/
 
-import everybody from './everybody';
-import guest from './guest';
-import protectedPages from './protected';
-
-const pages = {
-    everybody,
-    guest,
-    protected: protectedPages
-};
-
-export default pages;
+export { default as everybody } from './everybody';
+export { default as guest } from './guest';
+export { default as protected } from './protected';

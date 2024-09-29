@@ -1,7 +1,1 @@
-import CreatePortBinding from './CreatePortBinding';
-
-const pages = {
-    CreatePortBinding
-};
-
-export default pages;
+export { default as CreatePortBinding } from './CreatePortBinding';

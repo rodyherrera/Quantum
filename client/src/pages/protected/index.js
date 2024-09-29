@@ -12,24 +12,18 @@
  * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 ****/
 
-import github from './github';
-import repository from './repository';
-import general from './general';
-import authentication from './authentication';
-import dockerContainer from './dockerContainer';
-import dockerImage from './dockerImage';
-import dockerNetwork from './dockerNetwork';
-import portBinding from './portBinding';
+import * as github from './github';
+import * as repository from './repository';
+import * as general from './general';
+import * as portBinding from './portBinding';
+import * as authentication from './authentication';
+import * as docker from './docker';
 
-const pages = {
+export default{
     github,
     portBinding,
-    dockerContainer,
-    dockerNetwork,
-    dockerImage,
+    docker,
     repository,
     general,
     authentication
 };
-
-export default pages;

@@ -14,9 +14,9 @@
 
 import { configureStore } from '@reduxjs/toolkit';
 import authReducer from '@services/authentication/slice';
-import dockerContainerReducer from '@services/dockerContainer/slice';
-import dockerImageReducer from '@services/dockerImage/slice';
-import dockerNetworkReducer from '@services/dockerNetwork/slice';
+import dockerContainerReducer from '@services/docker/container/slice';
+import dockerImageReducer from '@services/docker/image/slice';
+import dockerNetworkReducer from '@services/docker/network/slice';
 import githubReducer from '@services/github/slice';
 import repositoryReducer from '@services/repository/slice';
 import deploymentReducer from '@services/deployment/slice';

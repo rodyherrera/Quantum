@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getMyDockerNetworks } from '@services/dockerNetwork/operations';
-import { setDockerNetworks } from '@services/dockerNetwork/slice';
+import { getMyDockerNetworks } from '@services/docker/network/operations';
+import { setDockerNetworks } from '@services/docker/network/slice';
 
 const useUserDockerNetworks = () => {
     const dispatch = useDispatch();

@@ -16,7 +16,7 @@ import React, { useEffect } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import Layout from '@components/organisms/Layout';
 import ProtectedRoute from '@components/organisms/ProtectedRoute';
-import pages from '@pages';
+import * as pages from '@pages';
 
 const Application = () => {
     const location = useLocation();
@@ -44,14 +44,14 @@ const Application = () => {
                     <Route path='/github/authenticate/' element={<pages.protected.github.Authenticate />} />
                     <Route path='/github/need-authenticate/' element={<pages.protected.github.NeedAuthenticate />} />
 
-                    <Route path='/docker-container/create/' element={<pages.protected.dockerContainer.CreateDockerContainer />} />
-                    <Route path='/docker-container/:dockerId/shell/' element={<pages.protected.dockerContainer.Shell />} />
+                    <Route path='/docker-container/create/' element={<pages.protected.docker.container.CreateDockerContainer />} />
+                    <Route path='/docker-container/:dockerId/shell/' element={<pages.protected.docker.container.Shell />} />
 
                     <Route path='/port-binding/create/' element={<pages.protected.portBinding.CreatePortBinding />} />
 
-                    <Route path='/docker-image/create/' element={<pages.protected.dockerImage.CreateDockerImage />} />
+                    <Route path='/docker-image/create/' element={<pages.protected.docker.image.CreateDockerImage />} />
 
-                    <Route path='/docker-network/create/' element={<pages.protected.dockerNetwork.CreateDockerNetwork />} />
+                    <Route path='/docker-network/create/' element={<pages.protected.docker.network.CreateDockerNetwork />} />
 
                     <Route path='/repository/create/' element={<pages.protected.repository.CreateRepository />} />
                     <Route path='/repository/:repositoryAlias/storage/' element={<pages.protected.repository.Storage />} />

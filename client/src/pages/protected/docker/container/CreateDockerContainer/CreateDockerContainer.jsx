@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
 import MinimalForm from '@components/organisms/MinimalForm';
-import { createDockerContainer } from '@services/dockerContainer/operations';
-import { getMyDockerNetworks } from '@services/dockerNetwork/operations';
-import { getMyDockerImages } from '@services/dockerImage/operations';
+import { createDockerContainer } from '@services/docker/container/operations';
+import { getMyDockerNetworks } from '@services/docker/network/operations';
+import { getMyDockerImages } from '@services/docker/image/operations';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { humanFileSize } from '@utilities/runtime';

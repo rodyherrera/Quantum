@@ -12,10 +12,8 @@
  * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 ****/
 
-import authentication from './authentication';
+import * as authentication from './authentication';
 
-const pages = {
+export default{
     authentication
 };
-
-export default pages;

@@ -13,26 +13,26 @@
 ****/
 
 import OperationHandler from '@utilities/operationHandler';
-import * as dockerNetworkSlice from '@services/dockerNetwork/slice';
-import * as dockerNetworkService from '@services/dockerNetwork/service'
+import * as dockerImageSlice from '@services/docker/image/slice';
+import * as dockerImageService from '@services/docker/image/service'
 
-export const createDockerNetwork = (body, navigate) => async (dispatch) => {
-    const operation = new OperationHandler(dockerNetworkSlice, dispatch);
+export const createDockerImage = (body, navigate) => async (dispatch) => {
+    const operation = new OperationHandler(dockerImageSlice, dispatch);
     operation.on('response', () => {
         navigate('/dashboard/');
     });
     operation.use({
-        api: dockerNetworkService.createDockerNetwork,
-        loaderState: dockerNetworkSlice.setIsOperationLoading,
+        api: dockerImageService.createDockerImage,
+        loaderState: dockerImageSlice.setIsOperationLoading,
         query: { body }
     });
 };
 
-export const getMyDockerNetworks = () => (dispatch) => {
-    const operation = new OperationHandler(dockerNetworkSlice, dispatch);
+export const getMyDockerImages = () => async (dispatch) => {
+    const operation = new OperationHandler(dockerImageSlice, dispatch);
     operation.use({
-        api: dockerNetworkService.getMyDockerNetworks,
-        responseState: dockerNetworkSlice.setDockerNetworks,
-        loaderState: dockerNetworkSlice.setIsLoading 
+        api: dockerImageService.getMyDockerImages,
+        responseState: dockerImageSlice.setDockerImages,
+        loaderState: dockerImageSlice.setIsLoading
     });
 };

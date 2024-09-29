@@ -12,12 +12,5 @@
  * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 ****/
 
-import Account from './Account';
-import ChangePassword from './ChangePassword';
-
-const pages = {
-    Account,
-    ChangePassword
-};
-
-export default pages;
+export { default as Account } from './Account';
+export { default as ChangePassword } from './ChangePassword';

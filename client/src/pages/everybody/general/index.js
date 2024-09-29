@@ -12,12 +12,5 @@
  * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 ****/
 
-import Home from './Home';
-import ServiceStatus from './ServiceStatus';
-
-const pages = {
-    Home,
-    ServiceStatus
-};
-
-export default pages;
+export { default as Home } from './Home';
+export { default as ServiceStatus } from './ServiceStatus';

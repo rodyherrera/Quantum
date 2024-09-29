@@ -12,22 +12,10 @@
  * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 ****/
 
-import CreateRepository from './CreateRepository';
-import RepositoryDeployments from './RepositoryDeployments';
-import SetupDeployment from './SetupDeployment';
-import EnvironmentVariables from './EnvironmentVariables';
-import RepositoryDomains from './RepositoryDomains';
-import Storage from './Storage';
-import Shell from './Shell';
-
-const pages = {
-    CreateRepository,
-    RepositoryDomains,
-    EnvironmentVariables,
-    RepositoryDeployments,
-    Storage,
-    SetupDeployment,
-    Shell
-};
-
-export default pages;
+export { default as CreateRepository } from './CreateRepository';
+export { default as RepositoryDeployments } from './RepositoryDeployments';
+export { default as SetupDeployment } from './SetupDeployment';
+export { default as EnvironmentVariables } from './EnvironmentVariables';
+export { default as RepositoryDomains } from './RepositoryDomains';
+export { default as Storage } from './Storage';
+export { default as Shell } from './Shell';

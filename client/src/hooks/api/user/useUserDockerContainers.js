@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getMyDockerContainers } from '@services/dockerContainer/operations';
-import { setDockerContainers } from '@services/dockerContainer/slice';
+import { getMyDockerContainers } from '@services/docker/container/operations';
+import { setDockerContainers } from '@services/docker/container/slice';
 
 const useUserDockerContainers = () => {
     const dispatch = useDispatch();

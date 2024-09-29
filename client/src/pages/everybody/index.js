@@ -12,12 +12,10 @@
  * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 ****/
 
-import general from './general';
-import legal from './legal';
+import * as general from './general';
+import * as legal from './legal';
 
-const pages = {
-    general,
-    legal
+export default{
+    legal, 
+    general
 };
-
-export default pages;

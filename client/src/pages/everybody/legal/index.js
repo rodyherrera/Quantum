@@ -12,10 +12,4 @@
  * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 ****/
 
-import PrivacyPolicy from './PrivacyPolicy';
-
-const pages = {
-    PrivacyPolicy
-};
-
-export default pages;
+export { default as PrivacyPolicy } from './PrivacyPolicy';

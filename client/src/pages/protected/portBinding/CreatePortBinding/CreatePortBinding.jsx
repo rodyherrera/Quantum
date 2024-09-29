@@ -5,7 +5,7 @@ import CreatePortBindingImage from '@images/CreatePortBinding.jpeg';
 import { useDispatch, useSelector } from 'react-redux';
 import { createPortBinding } from '@services/portBinding/operations';
 import { useNavigate } from 'react-router-dom';
-import { getRandomAvailablePort } from '@services/dockerContainer/operations';
+import { getRandomAvailablePort } from '@services/docker/container/operations';
 import './CreatePortBinding.css';
 
 const CreatePortBinding = () => {
