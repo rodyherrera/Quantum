@@ -1,5 +1,5 @@
 import React from 'react';
-import { DockerNetworkHeader, DockerNetworkBody } from '@components/molecules/DockerNetwork';
+import { DockerNetworkHeader, DockerNetworkBody } from '@components/molecules/Docker/DockerNetwork';
 import { DashboardCard } from '@components/atoms/DashboardCard';
 import './DockerNetwork.css';
 

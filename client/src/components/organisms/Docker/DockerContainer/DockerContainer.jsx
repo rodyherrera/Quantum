@@ -3,7 +3,7 @@ import {
     DockerContainerHeader,
     DockerContainerBody,
     DockerContainerFooter,
-} from '@components/molecules/DockerContainer';
+} from '@components/molecules/Docker/DockerContainer';
 import { DashboardCard } from '@components/atoms/DashboardCard';
 import './DockerContainer.css';
 

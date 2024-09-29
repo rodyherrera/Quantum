@@ -17,13 +17,11 @@ import { FiGithub } from 'react-icons/fi';
 import { IoLogoDocker } from 'react-icons/io5';
 import { HiPlus } from 'react-icons/hi';
 import { gsap } from 'gsap';
+import { DockerImage, DockerNetwork, DockerContainer } from '@components/organisms/Docker';
 import Project from '@components/organisms/Project';
 import DashboardModule from '@components/organisms/DashboardModule';
 import Button from '@components/atoms/Button';
 import DataRenderer from '@components/organisms/DataRenderer';
-import DockerImage from '@components/organisms/DockerImage';
-import DockerNetwork from '@components/organisms/DockerNetwork';
-import DockerContainer from '@components/organisms/DockerContainer';
 import * as userHooks from '@hooks/api/user/';
 import './Dashboard.css';
 

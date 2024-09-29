@@ -1,5 +1,5 @@
 import React from 'react';
-import { DockerImageHeader, DockerImageBody } from '@components/molecules/DockerImage';
+import { DockerImageHeader, DockerImageBody } from '@components/molecules/Docker/DockerImage';
 import { DashboardCard } from '@components/atoms/DashboardCard';
 import './DockerImage.css';
 
