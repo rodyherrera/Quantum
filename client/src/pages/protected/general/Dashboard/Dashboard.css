@@ -40,7 +40,8 @@
 }
 
 #Dashboard-Dockers-Container,
-#Dashboard-Dockers-Network{
+#Dashboard-Dockers-Network,
+#Dashboard-Dockers-Image{
     display: flex;
     flex-direction: column;
     gap: 1rem;

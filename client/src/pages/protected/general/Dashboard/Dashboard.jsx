@@ -21,6 +21,7 @@ import Project from '@components/organisms/Project';
 import DashboardModule from '@components/organisms/DashboardModule';
 import Button from '@components/atoms/Button';
 import DataRenderer from '@components/organisms/DataRenderer';
+import DockerImage from '@components/organisms/DockerImage';
 import DockerNetwork from '@components/organisms/DockerNetwork';
 import DockerContainer from '@components/organisms/DockerContainer';
 import * as userHooks from '@hooks/api/user/';
@@ -35,8 +36,8 @@ const Dashboard = () => {
     const createRepoBtnRef = useRef(null);
 
     useEffect(() => {
-        console.log(dockerNetworks);
-    }, [dockerNetworks]);
+        console.log(dockerImages);
+    }, [dockerImages]);
 
     useLayoutEffect(() => {
         if(isLoading) return;
@@ -137,11 +138,9 @@ const Dashboard = () => {
                 total={5}
                 results={1}
                 RenderComponent={() => (
-                    <div id='Dashboard-Dockers-Images'>
-                        {dockerImages.map((container, index) => (
-                            <div className='Docker-Container' key={index}>
-                                <h3 className='Docker-Container-Name'>{container.name}</h3>
-                            </div>
+                    <div id='Dashboard-Dockers-Image'>
+                        {dockerImages.map((image, index) => (
+                            <DockerImage image={image} key={index} />
                         ))}
                     </div>
                 )}
