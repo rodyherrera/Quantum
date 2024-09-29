@@ -1,0 +1,8 @@
+.Dashboard-Module-Container{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border: 1px solid #dfdfdf;
+    border-radius: .5rem;
+}

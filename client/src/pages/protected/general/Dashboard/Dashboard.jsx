@@ -19,7 +19,7 @@ import { HiPlus } from 'react-icons/hi';
 import { gsap } from 'gsap';
 import { DockerImage, DockerNetwork, DockerContainer } from '@components/organisms/Docker';
 import Project from '@components/organisms/Project';
-import DashboardModule from '@components/organisms/DashboardModule';
+import DashboardModule from '@components/molecules/DashboardModule';
 import Button from '@components/atoms/Button';
 import DataRenderer from '@components/organisms/DataRenderer';
 import * as userHooks from '@hooks/api/user/';
