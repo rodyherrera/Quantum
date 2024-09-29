@@ -1,0 +1,16 @@
+.Dashboard-Card-Body-Container{
+    padding: 0 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+}
+
+.Dashboard-Card-Name-Container{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.Dashboard-Card-Name{
+    font-weight: 400;
+}

@@ -1,0 +1,13 @@
+.Dashboard-Card-Header-Container{
+    display: flex;
+    border-bottom: 1px solid #dfdfdf;
+}
+
+.Dashboard-Card-Header-Item:not(:first-child){
+    border-left: 1px solid #dfdfdf;
+}
+
+.Dashboard-Card-Header-Item{
+    font-size: .9rem;
+    padding: .2rem 1rem;
+}

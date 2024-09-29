@@ -1,0 +1,29 @@
+.Docker-Network-Container{
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+    padding-bottom: 1rem;
+    border-radius: .5rem;
+    border: 1px solid #dfdfdf;
+}
+
+.Docker-Network-Header-Container{
+    display: flex;
+    border-bottom: 1px solid #dfdfdf;
+}
+
+.Docker-Network-Header-Item:not(:first-child){
+    border-left: 1px solid #dfdfdf;
+}
+
+.Docker-Network-Header-Item{
+    font-size: .9rem;
+    padding: .2rem 1rem;
+}
+
+.Docker-Network-Body-Container{
+    padding: 0 1rem 0 1rem;
+    display: flex;
+    gap: .5rem;
+    flex-direction: column;
+}

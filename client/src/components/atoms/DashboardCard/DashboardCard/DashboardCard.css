@@ -1,0 +1,8 @@
+.Dashboard-Card-Container{
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding-bottom: 1rem;
+    border-radius: .5rem;
+    border: 1px solid #dfdfdf;
+}

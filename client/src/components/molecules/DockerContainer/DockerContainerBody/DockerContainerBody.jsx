@@ -1,7 +1,5 @@
 import React from 'react';
-import { IoIosMore } from 'react-icons/io';
-import { formatDate } from '@utilities/common/dateUtils';
-import ContextMenu from '@components/organisms/ContextMenu';
+import { DashboardCardBody } from '@components/atoms/DashboardCard';
 import './DockerContainerBody.css';
 
 const DockerContainerBody = ({ container }) => {
@@ -17,27 +15,13 @@ const DockerContainerBody = ({ container }) => {
     ];
 
     return (
-        <div className='Docker-Container-Body'>
-            <div className='Docker-Container-Name-Container'>
-                <h3 className='Docker-Container-Name'>
-                    {container.isUserContainer ? (
-                        'Main Docker Container'
-                    ) : (
-                        container.name
-                    )}
-                </h3>
-                <ContextMenu 
-                    className='Docker-Container-More-Icon-Container' 
-                    options={ctxMenuOpts}
-                >
-                    <i>
-                        <IoIosMore />
-                    </i>
-                </ContextMenu>
-            </div>
-            <p className='Docker-Container-Last-Update'>Last update {formatDate(container.updatedAt)}, created at {formatDate(container.createdAt, true)}.</p>
-        </div>
-    )
+        <DashboardCardBody
+            name={container?.isUserContainer ? 'Main Docker Container' : container.name}
+            ctxMenuOpts={ctxMenuOpts}
+            createdAt={container.createdAt}
+            updatedAt={container.updatedAt}
+        />
+    );
 };
 
 export default DockerContainerBody;

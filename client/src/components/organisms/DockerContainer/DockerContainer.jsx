@@ -2,18 +2,19 @@ import React from 'react';
 import {
     DockerContainerHeader,
     DockerContainerBody,
-    DockerContainerFooter
+    DockerContainerFooter,
 } from '@components/molecules/DockerContainer';
+import { DashboardCard } from '@components/atoms/DashboardCard';
 import './DockerContainer.css';
 
 const DockerContainer = ({ container }) => {
 
     return (
-        <div className='Docker-Container'>
+        <DashboardCard>
             <DockerContainerHeader container={container} />
             <DockerContainerBody container={container} />
             <DockerContainerFooter container={container} />
-        </div>
+        </DashboardCard>
     );
 };
 

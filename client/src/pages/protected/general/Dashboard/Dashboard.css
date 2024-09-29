@@ -39,7 +39,8 @@
     display: none;
 }
 
-#Dashboard-Dockers-Container{
+#Dashboard-Dockers-Container,
+#Dashboard-Dockers-Network{
     display: flex;
     flex-direction: column;
     gap: 1rem;
