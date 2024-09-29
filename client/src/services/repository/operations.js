@@ -14,7 +14,7 @@
 
 import * as repositoryService from '@services/repository/service';
 import * as repositorySlice from '@services/repository/slice';
-import OperationHandler from '@utilities/operationHandler';
+import OperationHandler from '@utilities/api/operationHandler';
 
 /**
  * @function createRepository

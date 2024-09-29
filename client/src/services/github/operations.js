@@ -15,7 +15,7 @@
 import * as githubService from '@services/github/service';
 import * as githubSlice from '@services/github/slice';
 import * as authSlice from '@services/authentication/slice';
-import OperationHandler from '@utilities/operationHandler';
+import OperationHandler from '@utilities/api/operationHandler';
 
 /**
  * @function authenticate

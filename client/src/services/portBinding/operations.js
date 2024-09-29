@@ -12,7 +12,7 @@
  * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 ****/
 
-import OperationHandler from '@utilities/operationHandler';
+import OperationHandler from '@utilities/api/operationHandler';
 import * as portBindingSlice from '@services/portBinding/slice';
 import * as portBindingService from '@services/portBinding/service'
 

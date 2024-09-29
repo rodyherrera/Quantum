@@ -12,7 +12,7 @@
  * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 ****/
 
-import APIRequestBuilder from '@utilities/apiRequestBuilder';
+import APIRequestBuilder from '@utilities/api/apiRequestBuilder';
 
 /**
  * @constant GithubAPI

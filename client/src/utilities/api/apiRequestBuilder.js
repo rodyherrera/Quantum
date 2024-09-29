@@ -13,7 +13,7 @@
 ****/
 
 import axios from 'axios';
-import ServerRequestBuilder from '@utilities/serverRequestBuilder';
+import ServerRequestBuilder from '@utilities/api/serverRequestBuilder';
 import { getCurrentUserToken } from '@services/authentication/localStorageService';
 
 /**

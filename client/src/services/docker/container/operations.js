@@ -12,7 +12,7 @@
  * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 ****/
 
-import OperationHandler from '@utilities/operationHandler';
+import OperationHandler from '@utilities/api/operationHandler';
 import * as dockerContainerSlice from '@services/docker/container/slice';
 import * as dockerContainerService from '@services/docker/container/service'
 

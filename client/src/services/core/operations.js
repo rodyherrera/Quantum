@@ -20,7 +20,7 @@ import * as coreService from '@services/core/service';
 import * as coreSlice from '@services/core/slice';
 import errorCodeHandler from '@services/core/errorCodeHandler';
 import { addError } from '@services/core/slice';
-import OperationHandler from '@utilities/operationHandler';
+import OperationHandler from '@utilities/api/operationHandler';
 
 /**
  * @function globalErrorHandler

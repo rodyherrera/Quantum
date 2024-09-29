@@ -15,7 +15,7 @@
 import * as authService from '@services/authentication/service';
 import * as authSlice from '@services/authentication/slice';
 import * as authLocalStorageService from '@services/authentication/localStorageService';
-import OperationHandler from '@utilities/operationHandler';
+import OperationHandler from '@utilities/api/operationHandler';
 
 /**
  * @function handleAuthResponse

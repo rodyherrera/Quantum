@@ -15,7 +15,7 @@
 import * as deploymentService from '@services/deployment/service';
 import * as deploymentSlice from '@services/deployment/slice';
 import * as repositorySlice from '@services/repository/slice';
-import OperationHandler from '@utilities/operationHandler';
+import OperationHandler from '@utilities/api/operationHandler';
 
 /** 
  * @function getRepositoryDeployments
