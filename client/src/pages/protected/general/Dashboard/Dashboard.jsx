@@ -34,8 +34,8 @@ const Dashboard = () => {
     const createRepoBtnRef = useRef(null);
 
     useEffect(() => {
-        console.log(dockerContainers);
-    }, [dockerContainers]);
+        console.log(dockerNetworks);
+    }, [dockerNetworks]);
 
     useLayoutEffect(() => {
         if(isLoading) return;

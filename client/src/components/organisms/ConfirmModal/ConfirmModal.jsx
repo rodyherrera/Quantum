@@ -14,9 +14,11 @@
 
 import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import ReactDOM from 'react-dom';
-import ConfirmModalHeader from '@components/molecules/ConfirmModalHeader';
-import ConfirmModalBody from '@components/molecules/ConfirmModalBody';
-import ConfirmModalFooter from '@components/molecules/ConfirmModalFooter';
+import {
+    ConfirmModalHeader,
+    ConfirmModalBody,
+    ConfirmModalFooter
+} from '@components/molecules/ConfirmModal/';
 import { gsap } from 'gsap';
 import './ConfirmModal.css';
 

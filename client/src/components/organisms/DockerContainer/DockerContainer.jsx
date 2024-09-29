@@ -1,7 +1,9 @@
 import React from 'react';
-import DockerContainerHeader from '@components/molecules/DockerContainerHeader';
-import DockerContainerBody from '@components/molecules/DockerContainerBody';
-import DockerContainerFooter from '@components/molecules/DockerContainerFooter';
+import {
+    DockerContainerHeader,
+    DockerContainerBody,
+    DockerContainerFooter
+} from '@components/molecules/DockerContainer';
 import './DockerContainer.css';
 
 const DockerContainer = ({ container }) => {

@@ -13,9 +13,7 @@
 ****/
 
 import React, { useRef, useEffect } from 'react';
-import ProjectHeader from '@components/molecules/ProjectHeader';
-import ProjectActions from '@components/molecules/ProjectActions';
-import ProjectFooter from '@components/molecules/ProjectFooter';
+import { ProjectHeader, ProjectActions, ProjectFooter } from '@components/molecules/Project';
 import { gsap } from 'gsap';
 import './Project.css';
 

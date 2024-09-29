@@ -13,9 +13,8 @@
 ****/
 
 import React, { useRef } from 'react';
-import HeaderLinks from '@components/molecules/HeaderLinks';
+import { HeaderLinks, HeaderNavigation } from '@components/molecules/Header';
 import HeaderBrand from '@components/atoms/HeaderBrand';
-import HeaderNavigation from '@components/molecules/HeaderNavigation';
 import './Header.css';
 
 const Header = () => {
