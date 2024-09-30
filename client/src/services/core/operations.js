@@ -19,8 +19,8 @@ import * as repositorySlice from '@services/repository/slice';
 import * as coreService from '@services/core/service';
 import * as coreSlice from '@services/core/slice';
 import errorCodeHandler from '@services/core/errorCodeHandler';
+import createOperation from '@utilities/api/operationHandler';
 import { addError } from '@services/core/slice';
-import OperationHandler from '@utilities/api/operationHandler';
 
 /**
  * @function globalErrorHandler
@@ -63,7 +63,7 @@ export const resetErrorForAllSlices = () => (dispatch) => {
  * @returns {Promise} Resolves when the server health check is complete.
 */
 export const getServerHealth = () => async (dispatch) => {
-    const operation = new OperationHandler(coreSlice, dispatch);
+    const operation = createOperation(coreService, dispatch);
     operation.use({
         api: coreService.getServerHealth,
         responseState: coreSlice.setServerHealth,

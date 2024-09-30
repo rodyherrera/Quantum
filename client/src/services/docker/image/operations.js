@@ -12,12 +12,12 @@
  * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 ****/
 
-import OperationHandler from '@utilities/api/operationHandler';
+import createOperation from '@utilities/api/operationHandler';
 import * as dockerImageSlice from '@services/docker/image/slice';
 import * as dockerImageService from '@services/docker/image/service'
 
 export const createDockerImage = (body, navigate) => async (dispatch) => {
-    const operation = new OperationHandler(dockerImageSlice, dispatch);
+    const operation = createOperation(dockerImageSlice, dispatch);
     operation.on('response', () => {
         navigate('/dashboard/');
     });
@@ -29,7 +29,7 @@ export const createDockerImage = (body, navigate) => async (dispatch) => {
 };
 
 export const getMyDockerImages = () => async (dispatch) => {
-    const operation = new OperationHandler(dockerImageSlice, dispatch);
+    const operation = createOperation(dockerImageSlice, dispatch);
     operation.use({
         api: dockerImageService.getMyDockerImages,
         responseState: dockerImageSlice.setDockerImages,

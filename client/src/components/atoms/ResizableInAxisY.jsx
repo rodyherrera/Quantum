@@ -1,19 +1,6 @@
-/***
- * Copyright (C) Rodolfo Herrera Hernandez. All rights reserved.
- * Licensed under the MIT license. See LICENSE file in the project root
- * for full license information.
- *
- * =+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
- *
- * For related information - https://github.com/rodyherrera/Quantum/
- *
- * All your applications, just in one place. 
- *
- * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-****/
-
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useLockBodyScroll, useToggle } from 'react-use';
+
 
 const ResizableInAxisY = ({
     initialHeight,
@@ -22,11 +9,18 @@ const ResizableInAxisY = ({
     containerRef,
     triggerNodeRef,
     callback,
-    children
+    children,
 }) => {
     const [nodeHeight, setNodeHeight] = useState(initialHeight);
-    const [locked, toggleLocked] = useToggle(false)
+    const [locked, toggleLocked] = useToggle(false);
     useLockBodyScroll(locked);
+
+    const sanitizeHeightLimits = useCallback(() => {
+        const getMaxMinHeight = (ref) => ref?.current?.clientHeight || 0;
+        const sanitizedMaxHeight = window.innerHeight - getMaxMinHeight(maxHeight);
+        const sanitizedMinHeight = getMaxMinHeight(minHeight);
+        return { maxHeight: sanitizedMaxHeight, minHeight: sanitizedMinHeight };
+    }, [maxHeight, minHeight]);
 
     useEffect(() => {
         if(containerRef.current){
@@ -35,72 +29,64 @@ const ResizableInAxisY = ({
     }, [nodeHeight, containerRef]);
 
     useEffect(() => {
-        const sanitizeHeightLimits = () => {
-            const getMaxMinHeight = (ref) => (ref?.current ? ref.current.clientHeight : undefined);
-            const sanitizedMaxHeight = window.innerHeight - getMaxMinHeight(maxHeight);
-            const sanitizedMinHeight = getMaxMinHeight(minHeight);
-            return { maxHeight: sanitizedMaxHeight, minHeight: sanitizedMinHeight };
-        };
-
-        const handleTouchEnd = () => {
-            toggleLocked(false);
-            document.removeEventListener('touchend', handleTouchEnd);
-            document.removeEventListener('touchmove', handleTouchMove);
-        };
-
-        const handleTouchMove = (e) => {
-            const newNodeHeight = window.innerHeight - e.touches[0].clientY;
-            const headerEl = document.querySelector('#QuantumCloud-ROOT .Header');
-            const maxHeight = window.innerHeight - headerEl.clientHeight;
-            const { minHeight } = sanitizeHeightLimits();
-            if(newNodeHeight > maxHeight || newNodeHeight < minHeight) return;
-            callback(newNodeHeight);
-            setNodeHeight(newNodeHeight);
-        };
-
-        const handleTouchStart = () => {
-            toggleLocked(true);
-            document.addEventListener('touchend', handleTouchEnd);
-            document.addEventListener('touchmove', handleTouchMove);
-        };
-
-        const handleMouseUp = () => {
-            document.querySelector('body').style.userSelect = 'unset';
-            document.removeEventListener('mouseup', handleMouseUp);
-            document.removeEventListener('mousemove', handleMouseMove);
-        };
-
-        const handleMouseMove = (e) => {
-            const newNodeHeight = window.innerHeight - e.clientY;
+        let isTouch = false;
+        const updateHeight = (clientY) => {
+            const newHeight = window.innerHeight - clientY;
             const { maxHeight, minHeight } = sanitizeHeightLimits();
-            if(
-                (maxHeight && newNodeHeight > maxHeight) || 
-                (minHeight && newNodeHeight < minHeight)
-            ){
+            if((maxHeight && newHeight > maxHeight) || (minHeight && newHeight < minHeight)){
                 return;
             }
-            callback(newNodeHeight);
-            setNodeHeight(newNodeHeight);
+            setNodeHeight(newHeight);
+            callback(newHeight);
         };
 
-        const handleOnMouseDown = () => {
-            document.querySelector('body').style.userSelect = 'none';
-            document.addEventListener('mouseup', handleMouseUp);
-            document.addEventListener('mousemove', handleMouseMove);
+        const handleMove = (e) => {
+            const clientY = isTouch ? e.touches[0].clientY : e.clientY;
+            updateHeight(clientY);
         };
 
-        if(triggerNodeRef.current){
-            triggerNodeRef.current.addEventListener('mousedown', handleOnMouseDown);
-            triggerNodeRef.current.addEventListener('touchstart', handleTouchStart); 
+        const handleEnd = () => {
+            if(isTouch){
+                toggleLocked(false);
+                document.removeEventListener('touchmove', handleMove);
+                document.removeEventListener('touchend', handleEnd);
+            }else{
+                document.body.style.userSelect = '';
+                document.removeEventListener('mousemove', handleMove);
+                document.removeEventListener('mouseup', handleEnd);
+            }
+        };
+
+        const handleStart = (e) => {
+            isTouch = e.type === 'touchstart';
+            if(isTouch){
+                toggleLocked(true);
+                document.addEventListener('touchmove', handleMove);
+                document.addEventListener('touchend', handleEnd);
+            }else{
+                document.body.style.userSelect = 'none';
+                document.addEventListener('mousemove', handleMove);
+                document.addEventListener('mouseup', handleEnd);  
+            }
+        };
+
+        const triggerNode = triggerNodeRef.current;
+        if(triggerNode){
+            triggerNode.addEventListener('mousedown', handleStart);
+            triggerNode.addEventListener('touchstart', handleStart);
         }
 
         return () => {
-            document.removeEventListener('mouseup', handleMouseUp);
-            document.removeEventListener('mousemove', handleMouseMove);
-            document.removeEventListener('touchend', handleTouchEnd);
-            document.removeEventListener('touchmove', handleTouchMove);
-        };
-    }, [maxHeight, minHeight, triggerNodeRef, callback]);
+            if(triggerNode){
+                triggerNode.removeEventListener('mousedown', handleStart);
+                triggerNode.removeEventListener('touchstart', handleStart);
+            }
+            document.removeEventListener('mousemove', handleMove);
+            document.removeEventListener('mouseup', handleEnd);
+            document.removeEventListener('touchmove', handleMove);
+            document.removeEventListener('touchend', handleEnd);
+        }
+    }, [sanitizeHeightLimits, triggerNodeRef, callback, toggleLocked]);
 
     return children;
 };

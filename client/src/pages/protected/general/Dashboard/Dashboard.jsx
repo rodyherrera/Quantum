@@ -33,10 +33,6 @@ const Dashboard = () => {
     const { dockerImages } = userHooks.useUserDockerImages();
     const createRepoBtnRef = useRef(null);
 
-    useEffect(() => {
-        console.log(dockerImages);
-    }, [dockerImages]);
-
     useLayoutEffect(() => {
         if(isLoading) return;
         gsap.fromTo(createRepoBtnRef.current, { 

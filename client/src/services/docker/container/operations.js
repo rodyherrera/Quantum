@@ -12,12 +12,12 @@
  * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 ****/
 
-import OperationHandler from '@utilities/api/operationHandler';
+import createOperation from '@utilities/api/operationHandler';
 import * as dockerContainerSlice from '@services/docker/container/slice';
 import * as dockerContainerService from '@services/docker/container/service'
 
 export const getMyDockerContainers = () => async (dispatch) => {
-    const operation = new OperationHandler(dockerContainerSlice, dispatch);
+    const operation = createOperation(dockerContainerSlice, dispatch);
     operation.use({
         api: dockerContainerService.getMyDockerContainers,
         responseState: dockerContainerSlice.setDockerContainers,
@@ -26,9 +26,8 @@ export const getMyDockerContainers = () => async (dispatch) => {
 };
 
 export const updateDockerContainer = (id, body, navigate) => async (dispatch) => {
-    const operation = new OperationHandler(dockerContainerSlice, dispatch);
+    const operation = createOperation(dockerContainerSlice, dispatch);
     operation.on('response', (data) => {
-        console.log(data);
         navigate('/dashboard/');
     });
     operation.use({
@@ -39,7 +38,7 @@ export const updateDockerContainer = (id, body, navigate) => async (dispatch) =>
 };
 
 export const getRandomAvailablePort = () => async (dispatch) => {
-    const operation = new OperationHandler(dockerContainerSlice, dispatch);
+    const operation = createOperation(dockerContainerSlice, dispatch);
     operation.use({
         api: dockerContainerService.getRandomAvailablePort,
         responseState: dockerContainerSlice.setRandomAvailablePort,
@@ -48,7 +47,7 @@ export const getRandomAvailablePort = () => async (dispatch) => {
 };
 
 export const createDockerContainer = (body, navigate) => async (dispatch) => {
-    const operation = new OperationHandler(dockerContainerSlice, dispatch);
+    const operation = createOperation(dockerContainerSlice, dispatch);
     operation.on('response', () => {
         navigate('/dashboard/');
     });

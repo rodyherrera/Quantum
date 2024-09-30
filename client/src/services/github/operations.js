@@ -15,7 +15,7 @@
 import * as githubService from '@services/github/service';
 import * as githubSlice from '@services/github/slice';
 import * as authSlice from '@services/authentication/slice';
-import OperationHandler from '@utilities/api/operationHandler';
+import createOperation from '@utilities/api/operationHandler';
 
 /**
  * @function authenticate
@@ -36,7 +36,7 @@ export const authenticate = async (userId) => {
  * @returns {Promise} Resolves when the GitHub account creation process is complete.
 */
 export const createAccount = (body) => async (dispatch) => {
-    const operation = new OperationHandler(githubSlice, dispatch);
+    const operation = createOperation(githubSlice, dispatch);
     operation.use({
         api: githubService.createAccount,
         loaderState: githubSlice.setIsLoading,

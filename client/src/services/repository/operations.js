@@ -14,7 +14,7 @@
 
 import * as repositoryService from '@services/repository/service';
 import * as repositorySlice from '@services/repository/slice';
-import OperationHandler from '@utilities/api/operationHandler';
+import createOperation from '@utilities/api/operationHandler';
 
 /**
  * @function createRepository
@@ -24,7 +24,7 @@ import OperationHandler from '@utilities/api/operationHandler';
  * @returns {Promise} Resolves when the repository is successfully created.
 */
 export const createRepository = (body, navigate) => async (dispatch) => {
-    const operation = new OperationHandler(repositorySlice, dispatch);
+    const operation = createOperation(repositorySlice, dispatch);
 
     operation.on('response', (data) => {
         navigate(`/repository/${data.alias}/deployment/setup/`);
@@ -45,7 +45,7 @@ export const createRepository = (body, navigate) => async (dispatch) => {
  * @returns {Promise} Resolves when the repositories are received.
 */
 export const getRepositories = (setLoaderState = true) => async (dispatch) => {
-    const operation = new OperationHandler(repositorySlice, dispatch);
+    const operation = createOperation(repositorySlice, dispatch);
     operation.use({
         api: repositoryService.getRepositories,
         loaderState: setLoaderState ? repositorySlice.setIsLoading : null,
@@ -59,7 +59,7 @@ export const getRepositories = (setLoaderState = true) => async (dispatch) => {
  * @returns {Promise} Resolves with the list of GitHub repositories.
 */
 export const getMyGithubRepositories = () => async (dispatch) => {
-    const operation = new OperationHandler(repositorySlice, dispatch);
+    const operation = createOperation(repositorySlice, dispatch);
     operation.use({
         api: repositoryService.getMyGithubRepositories,
         loaderState: repositorySlice.setIsLoading,
@@ -76,7 +76,7 @@ export const getMyGithubRepositories = () => async (dispatch) => {
  * @returns {Promise} Resolves when the repository is updated.
 */
 export const updateRepository = (id, body, navigate) => async (dispatch) => {
-    const operation = new OperationHandler(repositorySlice, dispatch);
+    const operation = createOperation(repositorySlice, dispatch);
     operation.on('response', () => navigate('/dashboard/'));
     operation.use({
         api: repositoryService.updateRepository,
@@ -94,7 +94,7 @@ export const updateRepository = (id, body, navigate) => async (dispatch) => {
  * @returns {Promise} Resolves when the repository is deleted.
 */
 export const deleteRepository = (id, repositories, navigate) => async (dispatch) => {
-    const operation = new OperationHandler(repositorySlice, dispatch);
+    const operation = createOperation(repositorySlice, dispatch);
     
     operation.on('finally', () => {
         const updatedRepositories = repositories.filter((repository) => repository._id !== id);
@@ -117,7 +117,7 @@ export const deleteRepository = (id, repositories, navigate) => async (dispatch)
  * @returns {Promise} Resolves when the directory listing is fetched.
 */
 export const storageExplorer = (id, route) => async (dispatch) => {
-    const operation = new OperationHandler(repositorySlice, dispatch);
+    const operation = createOperation(repositorySlice, dispatch);
     operation.use({
         api: repositoryService.storageExplorer,
         loaderState: repositorySlice.setIsOperationLoading,
@@ -134,7 +134,7 @@ export const storageExplorer = (id, route) => async (dispatch) => {
  * @returns {Promise} Resolves when the file contents are fetched. 
 */
 export const readRepositoryFile = (id, route) => async (dispatch) => {
-    const operation = new OperationHandler(repositorySlice, dispatch);
+    const operation = createOperation(repositorySlice, dispatch);
     operation.use({
         api: repositoryService.readRepositoryFile,
         loaderState: repositorySlice.setIsOperationLoading,
@@ -152,7 +152,7 @@ export const readRepositoryFile = (id, route) => async (dispatch) => {
  * @returns {Promise} Resolves when the file content is updated.
 */
 export const updateRepositoryFile = (id, route, content) => async (dispatch) => {
-    const operation = new OperationHandler(repositorySlice, dispatch);
+    const operation = createOperation(repositorySlice, dispatch);
     operation.use({
         api: repositoryService.updateRepositoryFile,
         loaderState: repositorySlice.setIsOperationLoading,

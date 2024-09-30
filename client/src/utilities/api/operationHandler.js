@@ -13,54 +13,47 @@
 ****/
 
 import { globalErrorHandler } from '@services/core/operations';
+import { errorTrackingMiddleware, timingMiddleware } from '@utilities/api/middlewares';
+import EventManager from '@utilities/api/eventManager';
 
 /**
  * This class manages API operations, including loading states, error handling,
  * and event-based communication for asynchronous data fetching tasks.
 */
-class OperationHandler{
+class OperationHandler extends EventManager{
     /**
      * Constructor for the OperationHandler class.
      * 
      * @param {string} slice - The Redux Slice.
      * @param {function} dispatch - A dispatch function from Redux.
     */
-    constructor(slice, dispatch){
+    constructor(slice, dispatch, middlewares = []){
+        super();
         this.slice = slice;
         this.dispatch = dispatch;
-        this.events = {};
-    };
+        this.middlewares = middlewares;
+    }
 
-    /**
-     * Registers an event listener for a specific operation event.
-     *
-     * @param {string} event - The name of the event to listen for ('response', 'error', 'finally', or custom events).
-     * @param {function} callback - The function to execute when the event occurs.
-    */
-    on(event, callback){
-        this.events[event] = callback;
-    };
-
-    /**
-     * Emits a specified event, triggering any registered event listeners.
-     * 
-     * @param {string} event - The name of the event to emit.
-     * @param {...*} args - Any arguments to pass to the event listener callback.
-    */
-    emit(event, ...args){
-        this.events?.[event]?.(...args);
-    };
+    applyMiddlewares(config){
+        let modifiedConfig = { ...config };
+        this.middlewares.forEach((middleware) => {
+            modifiedConfig = middleware(modifiedConfig);
+        });
+        return modifiedConfig;
+    }
 
     /**
      * Executes an API operation and manages related state updates and events.
-     *
+     * 
      * @param {object} config - Configuration for the API operation.
      * @param {function} config.api - The function that performs the API call.
      * @param {function} [config.loaderState] - A function to dispatch a loader state update (e.g., setting a loading flag to true or false).
      * @param {function} [config.responseState] - A function to dispatch a state update with the API response data.
      * @param {object} [config.query={}] - Query parameters for the API request.
     */
-    async use({ api, loaderState, responseState, query = {} }){
+    async use(config){
+        const modifiedConfig = this.applyMiddlewares(config);
+        const { api, loaderState, responseState, query = {} } = modifiedConfig;
         try{
             if(loaderState) this.dispatch(loaderState(true));
             const { data } = await api(query);
@@ -73,7 +66,14 @@ class OperationHandler{
             if(loaderState) this.dispatch(loaderState(false));
             this.emit('finally');
         }
-    };
-};
+    }
+}
 
-export default OperationHandler;
+const createOperation = (slice, dispatch, middlewares = []) => {
+    if(import.meta.env){
+        middlewares.push(errorTrackingMiddleware, timingMiddleware);
+    }
+    return new OperationHandler(slice, dispatch, middlewares);
+}
+
+export default createOperation;

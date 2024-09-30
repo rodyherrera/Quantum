@@ -12,12 +12,12 @@
  * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 ****/
 
-import OperationHandler from '@utilities/api/operationHandler';
+import createOperation from '@utilities/api/operationHandler';
 import * as dockerNetworkSlice from '@services/docker/network/slice';
 import * as dockerNetworkService from '@services/docker/network/service'
 
 export const createDockerNetwork = (body, navigate) => async (dispatch) => {
-    const operation = new OperationHandler(dockerNetworkSlice, dispatch);
+    const operation = createOperation(dockerNetworkSlice, dispatch);
     operation.on('response', () => {
         navigate('/dashboard/');
     });
@@ -29,7 +29,7 @@ export const createDockerNetwork = (body, navigate) => async (dispatch) => {
 };
 
 export const getMyDockerNetworks = () => (dispatch) => {
-    const operation = new OperationHandler(dockerNetworkSlice, dispatch);
+    const operation = createOperation(dockerNetworkSlice, dispatch);
     operation.use({
         api: dockerNetworkService.getMyDockerNetworks,
         responseState: dockerNetworkSlice.setDockerNetworks,

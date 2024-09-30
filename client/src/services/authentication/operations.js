@@ -15,7 +15,7 @@
 import * as authService from '@services/authentication/service';
 import * as authSlice from '@services/authentication/slice';
 import * as authLocalStorageService from '@services/authentication/localStorageService';
-import OperationHandler from '@utilities/api/operationHandler';
+import createOperation from '@utilities/api/operationHandler';
 
 /**
  * @function handleAuthResponse
@@ -35,7 +35,7 @@ const handleAuthResponse = (data, dispatch) => {
  * @returns {Promise} Resolves when the user profile is received.
 */
 export const getMyProfile = () => async (dispatch) => {
-    const operation = new OperationHandler(authSlice, dispatch);
+    const operation = createOperation(authSlice, dispatch);
     operation.on('response', (data) => dispatch(authSlice.setUser(data)));
     operation.use({
         api: authService.myProfile,
@@ -50,7 +50,7 @@ export const getMyProfile = () => async (dispatch) => {
  * @returns {Promise} Resolves when registration is successful.
 */
 export const signUp = (body) => async (dispatch) => {
-    const operation = new OperationHandler(authSlice, dispatch);
+    const operation = createOperation(authSlice, dispatch);
     operation.on('response', (data) => handleAuthResponse(data, dispatch));
     operation.use({
         api: authService.signUp,
@@ -66,7 +66,7 @@ export const signUp = (body) => async (dispatch) => {
  * @returns {Promise} Resolves when login is successful.
 */
 export const signIn = (body) => async (dispatch) => {
-    const operation = new OperationHandler(authSlice, dispatch);
+    const operation = createOperation(authSlice, dispatch);
     operation.on('response', (data) => handleAuthResponse(data, dispatch));
     operation.use({
         api: authService.signIn,
@@ -84,7 +84,7 @@ export const signIn = (body) => async (dispatch) => {
 */
 export const updateMyProfile = (body, navigate) => async (dispatch) => {
     // TODO: In backend, verify (newPassword === currentPassword -> err)
-    const operation = new OperationHandler(authSlice, dispatch);
+    const operation = createOperation(authSlice, dispatch);
     operation.on('response', (data) => {
         dispatch(authSlice.setUser(data));
         navigate('/dashboard/');
@@ -105,7 +105,7 @@ export const updateMyProfile = (body, navigate) => async (dispatch) => {
  * @returns {Promise} Resolves when account deletion is successful.
 */
 export const deleteMyProfile = () => async (dispatch) => {
-    const operation = new OperationHandler(authSlice, dispatch);
+    const operation = createOperation(authSlice, dispatch);
     operation.on('response', () => dispatch(logout()));
     operation.use({
         api: authService.deleteMyProfile,
@@ -121,7 +121,7 @@ export const deleteMyProfile = () => async (dispatch) => {
  * @returns {Promise} Resolves when password update is successful.
 */
 export const updateMyPassword = (body, navigate) => async (dispatch) => {
-    const operation = new OperationHandler(authSlice, dispatch);
+    const operation = createOperation(authSlice, dispatch);
     operation.on('response', (data) => {
         handleAuthResponse(data, dispatch);
         navigate('/auth/account/');

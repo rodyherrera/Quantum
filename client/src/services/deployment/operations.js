@@ -15,7 +15,7 @@
 import * as deploymentService from '@services/deployment/service';
 import * as deploymentSlice from '@services/deployment/slice';
 import * as repositorySlice from '@services/repository/slice';
-import OperationHandler from '@utilities/api/operationHandler';
+import createOperation from '@utilities/api/operationHandler';
 
 /** 
  * @function getRepositoryDeployments
@@ -24,7 +24,7 @@ import OperationHandler from '@utilities/api/operationHandler';
  * @returns {Promise} Resolves when the deployments are fetched.
 */
 export const getRepositoryDeployments = (repositoryName) => async (dispatch) => {
-    const operation = new OperationHandler(deploymentSlice, dispatch);
+    const operation = createOperation(deploymentSlice, dispatch);
     operation.use({
         api: deploymentService.getRepositoryDeployments,
         loaderState: deploymentSlice.setIsLoading,
@@ -41,7 +41,7 @@ export const getRepositoryDeployments = (repositoryName) => async (dispatch) => 
  * @returns {Promise} Resolves when the deployment is deleted.
 */
 export const deleteRepositoryDeployment = (repositoryName, deploymentId) => async (dispatch) => {
-    const operation = new OperationHandler(deploymentSlice, dispatch);
+    const operation = createOperation(deploymentSlice, dispatch);
     operation.use({
         api: deploymentService.deleteRepositoryDeployment,
         loaderState: deploymentSlice.setIsOperationLoading,
@@ -57,7 +57,7 @@ export const deleteRepositoryDeployment = (repositoryName, deploymentId) => asyn
  * @returns {Promise} Resolves when the environment data is retrieved.
 */
 export const getActiveDeploymentEnvironment = (repositoryAlias) => async (dispatch) => {
-    const operation = new OperationHandler(deploymentSlice, dispatch);
+    const operation = createOperation(deploymentSlice, dispatch);
 
     operation.on('response', (data) => {
         data.variables = Object.entries(data.variables);
@@ -80,7 +80,7 @@ export const getActiveDeploymentEnvironment = (repositoryAlias) => async (dispat
  * @returns {Promise} Resolves when the deployment is updated.
 */
 export const updateDeployment = (id, body, navigate) => async (dispatch) => {
-    const operation = new OperationHandler(deploymentSlice, dispatch);
+    const operation = createOperation(deploymentSlice, dispatch);
     operation.on('response', () => navigate('/dashboard/'));
     operation.use({
         api: deploymentService.updateDeployment,
@@ -99,7 +99,7 @@ export const updateDeployment = (id, body, navigate) => async (dispatch) => {
 */
 export const repositoryActions = (repositoryAlias, loaderState, body) => async (dispatch) => {
     loaderState(true);
-    const operation = new OperationHandler(deploymentSlice, dispatch);
+    const operation = createOperation(deploymentSlice, dispatch);
 
     operation.on('response', ({ status, repository }) => {
         dispatch(repositorySlice.updateDeploymentStatus({ _id: repository._id, status }));

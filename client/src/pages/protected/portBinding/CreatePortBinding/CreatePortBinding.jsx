@@ -20,7 +20,6 @@ const CreatePortBinding = () => {
     }, []);
 
     const handleFormSubmit = (formValues) => {
-        console.log(formValues);
         dispatch(createPortBinding(formValues, navigate));
     };
 

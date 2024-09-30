@@ -12,12 +12,12 @@
  * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 ****/
 
-import OperationHandler from '@utilities/api/operationHandler';
+import createOperation from '@utilities/api/operationHandler';
 import * as portBindingSlice from '@services/portBinding/slice';
 import * as portBindingService from '@services/portBinding/service'
 
 export const createPortBinding = (body, navigate) => async (dispatch) => {
-    const operation = new OperationHandler(portBindingSlice, dispatch);
+    const operation = createOperation(portBindingSlice, dispatch);
     operation.on('response', () => {
         navigate('/dashboard/');
     });
@@ -29,7 +29,7 @@ export const createPortBinding = (body, navigate) => async (dispatch) => {
 };
 
 export const getMyPortBindings = () => async (dispatch) => {
-    const operation = new OperationHandler(portBindingSlice, dispatch);
+    const operation = createOperation(portBindingSlice, dispatch);
     operation.use({
         api: portBindingService.getMyPortBindings,
         responseState: portBindingSlice.setPortBindings,
