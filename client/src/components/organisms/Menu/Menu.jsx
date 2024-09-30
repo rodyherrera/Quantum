@@ -19,7 +19,7 @@ import { BsBook, BsTerminal } from 'react-icons/bs';
 import { CiServer } from 'react-icons/ci';
 import { FiUser } from 'react-icons/fi';
 import { RxReader } from 'react-icons/rx';
-import { setIsCloudConsoleEnabled, setIsMenuEnabled } from '@services/core/slice';
+import { setState as setCoreState } from '@services/core/slice';
 import { GoProjectSymlink } from 'react-icons/go';
 import { useDispatch } from 'react-redux';
 import { gsap } from 'gsap';
@@ -42,8 +42,8 @@ const Menu = () => {
     ];
 
     const cloudConsoleEnableHandler = () => {
-        dispatch(setIsCloudConsoleEnabled(true));
-        dispatch(setIsMenuEnabled(false));
+        dispatch(setCoreState({ path: 'isCloudConsoleEnabled', value: true }));
+        dispatch(setCoreState({ path: 'isMenuEnabled', value: false }));
     };
 
     useEffect(() => {

@@ -13,19 +13,14 @@
 ****/
 
 import { createSlice } from '@reduxjs/toolkit';
+import * as reduxUtils from '@utilities/common/reduxUtils';
 
 const state = {
-    // Controls visibility of a navigation or menu component
     isMenuEnabled: false,
-    // Controls visibility of the cloud console 
     isCloudConsoleEnabled: false,
-    // Array to store global application errors 
     errors: [],
-    // Tracks if the server health check is in progress 
     isServerHealthLoading: true,
-    // Stores the server's health status
     serverHealth: null,
-    // Stores potential slice-specific errors 
     error: null
 };
 
@@ -33,40 +28,12 @@ const coreSlice = createSlice({
     name: 'core',
     initialState: state,
     reducers: {
-        setIsMenuEnabled: (state, action) => {
-            state.isMenuEnabled = action.payload;
-        },
-        setIsCloudConsoleEnabled: (state, action) => {
-            state.isCloudConsoleEnabled = action.payload;
-        },
-        setError: (state, action) => {
-            state.error = action.payload;
-        },
-        setIsServerHealthLoading: (state, action) => {
-            state.isServerHealthLoading = action.payload;
-        },
-        setServerHealth: (state, action) => {
-            state.serverHealth = action.payload;
-        },
-        addError: (state, action) => {
-            const error = action.payload;
-            state.errors.push(error);
-        },
-        removeError: (state, action) => {
-            const errorId = action.payload;
-            state.errors = state.errors.filter((error) => error.id !== errorId);
-        }
+        setState: reduxUtils.setState
     }
 });
 
 export const {
-    setIsMenuEnabled,
-    setServerHealth,
-    setIsServerHealthLoading,
-    setError,
-    setIsCloudConsoleEnabled,
-    addError,
-    removeError
+    setState
 } = coreSlice.actions;
 
 export default coreSlice.reducer;

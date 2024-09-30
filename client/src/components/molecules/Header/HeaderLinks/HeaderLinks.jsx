@@ -15,11 +15,11 @@
 import React from 'react';
 import IconLink from '@components/atoms/IconLink';
 import { useSelector, useDispatch } from 'react-redux';
-import { setIsCloudConsoleEnabled } from '@services/core/slice';
+import { setState as coreSetState } from '@services/core/slice';
 import './HeaderLinks.css';
 
 const HeaderLinks = () => {
-    const { isAuthenticated } = useSelector(state => state.auth);
+    const { authStatus } = useSelector(state => state.auth);
     const { isCloudConsoleEnabled } = useSelector(state => state.core);
     const dispatch = useDispatch();
 
@@ -31,10 +31,10 @@ const HeaderLinks = () => {
                 <IconLink title='Service Status' to='/service-status/' />
             </div>
             <div className='Header-Links-Right-Container'>
-                {(isAuthenticated) && (
+                {(authStatus.isAuthenticated) && (
                     <React.Fragment>
                         <IconLink title='My Account' to='/auth/account/' />
-                        <IconLink title='Cloud Console' onClick={() => dispatch(setIsCloudConsoleEnabled(!isCloudConsoleEnabled))} />
+                        <IconLink title='Cloud Console' onClick={() => dispatch(coreSetState({ path: 'isCloudConsoleEnabled', value: !isCloudConsoleEnabled }))} />
                     </React.Fragment>
                 )}
             </div>

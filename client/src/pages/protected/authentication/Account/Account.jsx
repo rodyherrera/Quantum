@@ -26,7 +26,7 @@ import './Account.css';
 const AccountPage = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const { user, error, isOperationLoading } = useSelector((state) => state.auth);
+    const { user, error, loadingStatus } = useSelector((state) => state.auth);
 
     useEffect(() => {
         dispatch(getMyProfile());
@@ -39,7 +39,7 @@ const AccountPage = () => {
     return (
         <MinimalForm
             error={error}
-            isLoading={isOperationLoading}
+            isLoading={loadingStatus.isOperationLoading}
             submitButtonTitle='Save Changes'
             handleFormSubmit={handleFormSubmit}
             HeaderComponent={() => (

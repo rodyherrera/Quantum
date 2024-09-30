@@ -42,28 +42,30 @@ class OperationHandler extends EventManager{
         return modifiedConfig;
     }
 
+    updateState(state, value){
+        if(typeof state === 'string'){
+            this.dispatch(this.slice.setState({ path: state, value }));
+        }else if(state?.slice && state?.path){
+            this.dispatch(state.slice.setState({ path: state.path, value }));
+        }
+    }
+
     /**
      * Executes an API operation and manages related state updates and events.
-     * 
-     * @param {object} config - Configuration for the API operation.
-     * @param {function} config.api - The function that performs the API call.
-     * @param {function} [config.loaderState] - A function to dispatch a loader state update (e.g., setting a loading flag to true or false).
-     * @param {function} [config.responseState] - A function to dispatch a state update with the API response data.
-     * @param {object} [config.query={}] - Query parameters for the API request.
     */
     async use(config){
         const modifiedConfig = this.applyMiddlewares(config);
         const { api, loaderState, responseState, query = {} } = modifiedConfig;
         try{
-            if(loaderState) this.dispatch(loaderState(true));
+            if(loaderState) this.updateState(loaderState, true);
             const { data } = await api(query);
             this.emit('response', data);
-            if(responseState) this.dispatch(responseState(data));
+            if(responseState) this.updateState(responseState, data);
         }catch(error){
             this.dispatch(globalErrorHandler(error, this.slice));
             this.emit('error', error);
         }finally{
-            if(loaderState) this.dispatch(loaderState(false));
+            if(loaderState) this.updateState(loaderState, false);
             this.emit('finally');
         }
     }

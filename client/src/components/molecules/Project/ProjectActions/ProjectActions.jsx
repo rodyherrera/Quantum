@@ -16,7 +16,7 @@ import React, { useState } from 'react';
 import { IoIosMore } from 'react-icons/io';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { setSelectedRepository } from '@services/repository/slice';
+import { setState as repoSetState } from '@services/repository/slice';
 import { deleteRepository } from '@services/repository/operations';
 import ContextMenu from '@components/organisms/ContextMenu';
 import ConfirmModal from '@components/organisms/ConfirmModal';
@@ -29,7 +29,7 @@ const ProjectActions = ({ repository }) => {
     const [isDeleteModalActive, setIsDeleteModalActive] = useState(false);
 
     const handleRepositorySelection = (path) => {
-        dispatch(setSelectedRepository(repository));
+        dispatch(repoSetState({ path: 'selectedRepository', value: repository }));
         navigate(path);
     };
 

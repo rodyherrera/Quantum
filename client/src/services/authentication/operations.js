@@ -25,8 +25,8 @@ import createOperation from '@utilities/api/operationHandler';
 */
 const handleAuthResponse = (data, dispatch) => {
     authLocalStorageService.setCurrentUserToken(data.token);
-    dispatch(authSlice.setUser(data.user));
-    dispatch(authSlice.setIsAuthenticated(true));
+    dispatch(authSlice.setState({ path: 'user', value: data.user }));
+    dispatch(authSlice.setState({ path: 'loadingStatus.isLoading', value: true }));
 };
 
 /**
@@ -36,10 +36,10 @@ const handleAuthResponse = (data, dispatch) => {
 */
 export const getMyProfile = () => async (dispatch) => {
     const operation = createOperation(authSlice, dispatch);
-    operation.on('response', (data) => dispatch(authSlice.setUser(data)));
+    operation.on('response', (data) => dispatch(authSlice.setState({ path: 'user', value: data })));
     operation.use({
         api: authService.myProfile,
-        loaderState: authSlice.setIsLoading
+        loaderState: 'loadingStatus.isLoading'
     });
 };
 
@@ -54,7 +54,7 @@ export const signUp = (body) => async (dispatch) => {
     operation.on('response', (data) => handleAuthResponse(data, dispatch));
     operation.use({
         api: authService.signUp,
-        loaderState: authSlice.setIsLoading,
+        loaderState: 'loadingStatus.isLoading',
         query: { body }
     });
 };
@@ -70,7 +70,7 @@ export const signIn = (body) => async (dispatch) => {
     operation.on('response', (data) => handleAuthResponse(data, dispatch));
     operation.use({
         api: authService.signIn,
-        loaderState: authSlice.setIsLoading,
+        loaderState: 'loadingStatus.isLoading',
         query: { body }
     });
 };
@@ -86,12 +86,12 @@ export const updateMyProfile = (body, navigate) => async (dispatch) => {
     // TODO: In backend, verify (newPassword === currentPassword -> err)
     const operation = createOperation(authSlice, dispatch);
     operation.on('response', (data) => {
-        dispatch(authSlice.setUser(data));
+        dispatch(authSlice.setState({ path: 'user', value: data }));
         navigate('/dashboard/');
     });
     operation.use({
         api: authService.updateMyProfile,
-        loaderState: authSlice.setIsOperationLoading,
+        loaderState: 'loadingStatus.isOperationLoading',
         query: {
             body,
             query: { populate: 'github' }
@@ -109,7 +109,7 @@ export const deleteMyProfile = () => async (dispatch) => {
     operation.on('response', () => dispatch(logout()));
     operation.use({
         api: authService.deleteMyProfile,
-        loaderState: authSlice.setIsEliminatingAccount
+        loaderState: 'authStatus.isEliminatingAccount'
     });
 };
 
@@ -128,7 +128,7 @@ export const updateMyPassword = (body, navigate) => async (dispatch) => {
     });
     operation.use({
         api: authService.updateMyPassword,
-        loaderState: authSlice.setIsOperationLoading,
+        loaderState: 'loadingStatus.isOperationLoading',
         query: { body }
     });
 };
@@ -139,8 +139,8 @@ export const updateMyPassword = (body, navigate) => async (dispatch) => {
  * @returns {Promise} Resolves when the logout process is complete.
 */
 export const logout = () => async (dispatch) => {
-    await dispatch(authSlice.setIsLoading(true));
+    await dispatch(authSlice.setLoadingStatus({ key: 'isLoading', value: false }));
     authLocalStorageService.removeCurrentUserToken();
-    await dispatch(authSlice.setIsAuthenticated(false));
-    await dispatch(authSlice.setIsLoading(false));
+    await dispatch(authSlice.setAuthStatus({ key: 'isAuthenticated', value: false }));
+    await dispatch(authSlice.setLoadingStatus({ key: 'isLoading', value: false }));
 };

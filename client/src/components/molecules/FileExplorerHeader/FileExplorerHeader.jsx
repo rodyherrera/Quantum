@@ -15,7 +15,7 @@
 import React from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { setSelectedRepositoryFile } from '@services/repository/slice';
+import { setState as repoSetState } from '@services/repository/slice';
 import { updateRepositoryFile } from '@services/repository/operations';
 import Button from '@components/atoms/Button';
 import './FileExplorerHeader.css';
@@ -35,7 +35,7 @@ const FileExplorerHeader = ({ repositoryId, loadPath }) => {
 
     // Handles navigation to the parent directory.
     const goBackHandler = () => {
-        if(selectedRepositoryFile !== null) dispatch(setSelectedRepositoryFile(null));
+        if(selectedRepositoryFile !== null) dispatch(repoSetState({ path: 'selectedRepositoryFile', value: null }));
         const currentPath = searchParams.get('path');
         const newPath = currentPath.split('/').slice(0, -1).join('/') || '/';
         loadPath(newPath);

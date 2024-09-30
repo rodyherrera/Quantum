@@ -144,7 +144,10 @@ const EnvironmentVariables = () => {
         const { variables } = environment;
         if(variables.length && !variables[0][0].length) return;
         const state = [ ['', ''], ...variables ];
-        dispatch(deploymentSlice.setEnvironment({ ...environment, variables: state }));
+        dispatch(deploymentSlice.setState({
+            path: 'environment',
+            value: { ...environment, variables: state }
+        }));
     };
 
     return (

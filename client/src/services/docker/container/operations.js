@@ -20,19 +20,19 @@ export const getMyDockerContainers = () => async (dispatch) => {
     const operation = createOperation(dockerContainerSlice, dispatch);
     operation.use({
         api: dockerContainerService.getMyDockerContainers,
-        responseState: dockerContainerSlice.setDockerContainers,
-        loaderState: dockerContainerSlice.setIsLoading
+        responseState: 'dockerContainers',
+        loaderState: 'isLoading'
     });
 };
 
 export const updateDockerContainer = (id, body, navigate) => async (dispatch) => {
     const operation = createOperation(dockerContainerSlice, dispatch);
-    operation.on('response', (data) => {
+    operation.on('response', () => {
         navigate('/dashboard/');
     });
     operation.use({
         api: dockerContainerService.updateDockerContainer,
-        loaderState: dockerContainerSlice.setIsOperationLoading,
+        loaderState: 'isOperationLoading',
         query: { body, query: { params: { id } } }
     });
 };
@@ -41,8 +41,8 @@ export const getRandomAvailablePort = () => async (dispatch) => {
     const operation = createOperation(dockerContainerSlice, dispatch);
     operation.use({
         api: dockerContainerService.getRandomAvailablePort,
-        responseState: dockerContainerSlice.setRandomAvailablePort,
-        loaderState: dockerContainerSlice.setIsRandomAvailablePortLoading
+        responseState: 'randomAvailablePort',
+        loaderState: 'isRandomAvailablePortLoading'
     });
 };
 
@@ -53,7 +53,7 @@ export const createDockerContainer = (body, navigate) => async (dispatch) => {
     });
     operation.use({
         api: dockerContainerService.createDockerContainer,
-        loaderState: dockerContainerSlice.setIsOperationLoading,
+        loaderState: 'isOperationLoading',
         query: { body }
     });
 };

@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getMyDockerImages } from '@services/docker/image/operations';
-import { setDockerImages } from '@services/docker/image/slice';
+import { setState as dockerImgSetState } from '@services/docker/image/slice';
 
 const useUserDockerImages = () => {
     const dispatch = useDispatch();
@@ -10,7 +10,7 @@ const useUserDockerImages = () => {
     useEffect(() => {
         dispatch(getMyDockerImages());
         return () => {
-            dispatch(setDockerImages([]));
+            dispatch(dockerImgSetState({ path: 'images', value: [] }));
         };
     }, []);
 

@@ -21,7 +21,7 @@ import { useNavigate } from 'react-router-dom';
 import './ChangePassword.css';
 
 const ChangePassword = () => {
-    const { error, isOperationLoading } = useSelector((state) => state.auth);
+    const { error, loadingStatus } = useSelector((state) => state.auth);
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
@@ -32,7 +32,7 @@ const ChangePassword = () => {
     return (
         <MinimalForm
             error={error}
-            isLoading={isOperationLoading}
+            isLoading={loadingStatus.isOperationLoading}
             submitButtonTitle='Save changes'
             handleFormSubmit={handleFormSubmit}
             headerTitle='Change Password'

@@ -27,8 +27,8 @@ export const getRepositoryDeployments = (repositoryName) => async (dispatch) => 
     const operation = createOperation(deploymentSlice, dispatch);
     operation.use({
         api: deploymentService.getRepositoryDeployments,
-        loaderState: deploymentSlice.setIsLoading,
-        responseState: deploymentSlice.setDeployments,
+        loaderState: 'isLoading',
+        responseState: 'deployments',
         query: { query: { params: { repositoryName } } }
     });
 };
@@ -44,8 +44,8 @@ export const deleteRepositoryDeployment = (repositoryName, deploymentId) => asyn
     const operation = createOperation(deploymentSlice, dispatch);
     operation.use({
         api: deploymentService.deleteRepositoryDeployment,
-        loaderState: deploymentSlice.setIsOperationLoading,
-        responseState: deploymentSlice.setDeployments,
+        loaderState: 'isOperationLoading',
+        responseState: 'deployments',
         query: { query: { params: { repositoryName, deploymentId } } }
     });
 };
@@ -61,12 +61,15 @@ export const getActiveDeploymentEnvironment = (repositoryAlias) => async (dispat
 
     operation.on('response', (data) => {
         data.variables = Object.entries(data.variables);
-        dispatch(deploymentSlice.setEnvironment(data));
+        dispatch(deploymentSlice.setState({
+            path: 'environment',
+            value: data
+        }));
     });
 
     operation.use({
         api: deploymentService.getActiveDeploymentEnvironment,
-        loaderState: deploymentSlice.setIsEnvironmentLoading,
+        loaderState: 'isEnvironmentLoading',
         query: { query: { params: { repositoryAlias } } }
     });
 };
@@ -84,7 +87,7 @@ export const updateDeployment = (id, body, navigate) => async (dispatch) => {
     operation.on('response', () => navigate('/dashboard/'));
     operation.use({
         api: deploymentService.updateDeployment,
-        loaderState: deploymentSlice.setIsOperationLoading,
+        loaderState: 'isOperationLoading',
         query: { body, query: { params: { id } } }
     });
 };
@@ -102,7 +105,21 @@ export const repositoryActions = (repositoryAlias, loaderState, body) => async (
     const operation = createOperation(deploymentSlice, dispatch);
 
     operation.on('response', ({ status, repository }) => {
-        dispatch(repositorySlice.updateDeploymentStatus({ _id: repository._id, status }));
+        dispatch(repositorySlice.setState({
+            path: 'repositories',
+            //
+            // TEMPORAL FIX THIS IS NOT SERIALIZABLE VALUE!!!!!!!!!!!!!!!!!
+            //
+            value: (state) => {
+                const repositories = state.repositories.map((stateRepo) => {
+                    if(stateRepo._id === repository._id){
+                        stateRepo.activeDeployment.status = status;
+                    }
+                    return stateRepo;
+                });
+                return repositories;
+            }
+        }));
     });
 
     operation.on('finally', () => loaderState(false));

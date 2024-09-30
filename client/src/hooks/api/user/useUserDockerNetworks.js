@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getMyDockerNetworks } from '@services/docker/network/operations';
-import { setDockerNetworks } from '@services/docker/network/slice';
+import { setState as dockerNetSetState } from '@services/docker/network/slice';
 
 const useUserDockerNetworks = () => {
     const dispatch = useDispatch();
@@ -10,7 +10,7 @@ const useUserDockerNetworks = () => {
     useEffect(() => {
         dispatch(getMyDockerNetworks());
         return () => {
-            dispatch(setDockerNetworks([]));
+            dispatch(dockerNetSetState({ path: 'networks', value: [] }));
         }
     }, []);
 

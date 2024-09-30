@@ -20,7 +20,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import './SignIn.css';
 
 const SignIn = () => {
-    const { isLoading, error } = useSelector(state => state.auth);
+    const { loadingStatus, error } = useSelector(state => state.auth);
     const dispatch = useDispatch();
 
     const handleFormSubmit = (formValues) => {
@@ -39,7 +39,7 @@ const SignIn = () => {
         error={error}
         handleFormSubmit={handleFormSubmit} 
         RightContainerComponent={AuthSignInRelatedSections}
-        isLoading={isLoading}
+        isLoading={loadingStatus.isLoading}
         formInputs={[
             { 
                 type: 'email', 

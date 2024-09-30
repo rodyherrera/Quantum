@@ -30,7 +30,7 @@ import { useWindowSize } from '@hooks/common/';
 import './Layout.css';
 
 const Layout = () => {
-    const { isAuthenticated, user, isLoading, isCacheLoading } = useSelector(state => state.auth);
+    const { user, authStatus, loadingStatus } = useSelector((state) => state.auth);
     const { isLoading: githubIsLoading } = useSelector(state => state.github);
     const { isMenuEnabled, isCloudConsoleEnabled } = useSelector(state => state.core);
     const { width } = useWindowSize();
@@ -49,15 +49,15 @@ const Layout = () => {
     }, [location.pathname]);
 
     useEffect(() => {
-        if(isAuthenticated) return;
+        if(authStatus.isAuthenticated) return;
         authenticateWithCachedToken(dispatch);
-    }, [dispatch, isAuthenticated]);
+    }, [dispatch, authStatus.isAuthenticated]);
 
     useEffect(() => {
-        if(isAuthenticated && !user?.github?._id){
+        if(authStatus.isAuthenticated && !user?.github?._id){
             navigate('/github/need-authenticate/');
         }
-    }, [user, isLoading, isCacheLoading, githubIsLoading, isAuthenticated]);
+    }, [user, loadingStatus.isLoading, authStatus.isCachedAuthLoading, githubIsLoading, authStatus.isAuthenticated]);
 
     return (
         <React.Fragment>

@@ -39,8 +39,11 @@ export const createAccount = (body) => async (dispatch) => {
     const operation = createOperation(githubSlice, dispatch);
     operation.use({
         api: githubService.createAccount,
-        loaderState: githubSlice.setIsLoading,
-        responseState: authSlice.setGithubAccount,
+        loaderState: 'isLoading',
+        responseState: {
+            slice: authSlice,
+            path: 'user.github'
+        },
         query: { body }
     });
 };

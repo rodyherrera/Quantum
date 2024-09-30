@@ -23,7 +23,7 @@ export const createDockerNetwork = (body, navigate) => async (dispatch) => {
     });
     operation.use({
         api: dockerNetworkService.createDockerNetwork,
-        loaderState: dockerNetworkSlice.setIsOperationLoading,
+        loaderState: 'isOperationLoading',
         query: { body }
     });
 };
@@ -32,7 +32,7 @@ export const getMyDockerNetworks = () => (dispatch) => {
     const operation = createOperation(dockerNetworkSlice, dispatch);
     operation.use({
         api: dockerNetworkService.getMyDockerNetworks,
-        responseState: dockerNetworkSlice.setDockerNetworks,
-        loaderState: dockerNetworkSlice.setIsLoading 
+        responseState: 'dockerNetworks',
+        loaderState: 'isLoading' 
     });
 };

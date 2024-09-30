@@ -16,7 +16,7 @@ import React, { useEffect } from 'react';
 import { gsap } from 'gsap';
 import { useSearchParams } from 'react-router-dom';
 import { storageExplorer, readRepositoryFile } from '@services/repository/operations';
-import { setSelectedRepositoryFile } from '@services/repository/slice';
+import { setState as repoSetState } from '@services/repository/slice';
 import { CircularProgress } from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux';
 import CodeEditor from '@uiw/react-textarea-code-editor';
@@ -76,7 +76,7 @@ const FileExplorer = ({ repositoryId }) => {
             ease: 'power2.out' 
         });
         return () => {
-            dispatch(setSelectedRepositoryFile(null));
+            dispatch(repoSetState({ path: 'selectedRepositoryFile', value: null }));
         };
     }, []);
 
@@ -91,7 +91,7 @@ const FileExplorer = ({ repositoryId }) => {
                 <div className='File-Explorer-Code-Block-Container'>
                     <CodeEditor
                         value={selectedRepositoryFile.content}
-                        onChange={(e) => dispatch(setSelectedRepositoryFile({ name: selectedRepositoryFile.name, content: e.target.value }))}
+                        onChange={(e) => dispatch(repoSetState({ path: 'selectedRepositoryFile', value: { name: selectedRepositoryFile.name, content: e.target.value } }))}
                         padding={16}
                         style={{ 
                             backgroundColor: '#161616'

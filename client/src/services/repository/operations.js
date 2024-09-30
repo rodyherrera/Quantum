@@ -32,8 +32,8 @@ export const createRepository = (body, navigate) => async (dispatch) => {
 
     operation.use({
         api: repositoryService.createRepository,
-        loaderState: repositorySlice.setIsOperationLoading,
-        responseState: repositorySlice.setSelectedRepository,
+        loaderState: 'isOperationLoading',
+        responseState: 'selectedRepository',
         query: { body }
     });
 };
@@ -48,8 +48,8 @@ export const getRepositories = (setLoaderState = true) => async (dispatch) => {
     const operation = createOperation(repositorySlice, dispatch);
     operation.use({
         api: repositoryService.getRepositories,
-        loaderState: setLoaderState ? repositorySlice.setIsLoading : null,
-        responseState: repositorySlice.setRepositories
+        loaderState: setLoaderState ? 'isLoading' : null,
+        responseState: 'repositories'
     });
 };
 
@@ -62,8 +62,8 @@ export const getMyGithubRepositories = () => async (dispatch) => {
     const operation = createOperation(repositorySlice, dispatch);
     operation.use({
         api: repositoryService.getMyGithubRepositories,
-        loaderState: repositorySlice.setIsLoading,
-        responseState: repositorySlice.setGithubRepositories
+        loaderState: 'isLoading',
+        responseState: 'githubRepositories'
     });
 };
 
@@ -80,7 +80,7 @@ export const updateRepository = (id, body, navigate) => async (dispatch) => {
     operation.on('response', () => navigate('/dashboard/'));
     operation.use({
         api: repositoryService.updateRepository,
-        loaderState: repositorySlice.setIsOperationLoading,
+        loaderState: 'isOperationLoading',
         query: { body, query: { params: { id } } }
     });
 };
@@ -98,13 +98,16 @@ export const deleteRepository = (id, repositories, navigate) => async (dispatch)
     
     operation.on('finally', () => {
         const updatedRepositories = repositories.filter((repository) => repository._id !== id);
-        dispatch(repositorySlice.setRepositories(updatedRepositories));
+        dispatch(repositorySlice.setState({
+            path: 'repositories',
+            value: updatedRepositories
+        }))
         navigate('/dashboard/');
     });
 
     operation.use({
         api: repositoryService.deleteRepository,
-        loaderState: repositorySlice.setIsOperationLoading,
+        loaderState: 'isOperationLoading',
         query: { query: { params: { id } } }
     });
 };
@@ -120,8 +123,8 @@ export const storageExplorer = (id, route) => async (dispatch) => {
     const operation = createOperation(repositorySlice, dispatch);
     operation.use({
         api: repositoryService.storageExplorer,
-        loaderState: repositorySlice.setIsOperationLoading,
-        responseState: repositorySlice.setRepositoryFiles,
+        loaderState: 'isOperationLoading',
+        responseState: 'repositoryFiles',
         query: { query: { params: { id, route } } }
     });
 };
@@ -137,8 +140,8 @@ export const readRepositoryFile = (id, route) => async (dispatch) => {
     const operation = createOperation(repositorySlice, dispatch);
     operation.use({
         api: repositoryService.readRepositoryFile,
-        loaderState: repositorySlice.setIsOperationLoading,
-        responseState: repositorySlice.setSelectedRepositoryFile,
+        loaderState: 'isOperationLoading',
+        responseState: 'selectedRepositoryFile',
         query: { query: { params: { id, route } } }
     });
 };
@@ -155,7 +158,7 @@ export const updateRepositoryFile = (id, route, content) => async (dispatch) => 
     const operation = createOperation(repositorySlice, dispatch);
     operation.use({
         api: repositoryService.updateRepositoryFile,
-        loaderState: repositorySlice.setIsOperationLoading,
+        loaderState: 'isOperationLoading',
         query: { query: { params: { id, route } }, body: { content } }
     });
 };

@@ -25,16 +25,16 @@ import * as coreOperations from '@services/core/operations';
 */
 export const authenticateWithCachedToken = async (dispatch) => {
     try{
-        await dispatch(authSlice.setIsCachedAuthLoading(true));
+        await dispatch(authSlice.setState({ path: 'authStatus.isCachedAuthLoading', value: true }));
         const cachedSessionToken = authLocalStorageService.getCurrentUserToken();
         if(!cachedSessionToken) 
             return;
         const authenticatedUser = await authService.myProfile({});
-        await dispatch(authSlice.setUser(authenticatedUser.data));
-        await dispatch(authSlice.setIsAuthenticated(true));
+        await dispatch(authSlice.setState({ path: 'user', value: authenticatedUser.data }));
+        await dispatch(authSlice.setState({ path: 'authStatus.isAuthenticated', value: true }));
     }catch(error){
         dispatch(coreOperations.globalErrorHandler(error, authSlice));
     }finally{
-        await dispatch(authSlice.setIsCachedAuthLoading(false));
+        await dispatch(authSlice.setState({ path: 'authStatus.isCachedAuthLoading', value: false }));
     }
 };

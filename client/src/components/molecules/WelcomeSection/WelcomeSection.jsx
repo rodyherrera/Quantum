@@ -23,7 +23,7 @@ import './WelcomeSection.css';
 gsap.registerPlugin(ScrollTrigger);
 
 const WelcomeSection = ({ ...props }) => {
-    const { isAuthenticated, user } = useSelector(state => state.auth);
+    const { authStatus, user } = useSelector(state => state.auth);
     const links = [
         ['Support Us', 'https://ko-fi.com/codewithrodi'],
         ['Contribute', 'https://ko-fi.com/codewithrodi'],
@@ -70,7 +70,7 @@ const WelcomeSection = ({ ...props }) => {
     return (
         <aside className='Welcome-Container' {...props}>
             <p className='Welcome-Title'>
-                {(isAuthenticated) ? (
+                {(authStatus.isAuthenticated) ? (
                     <span>Welcome back <b>@{user.username}</b>!</span>
                 ) : (
                     <span>You're not authenticated yet.</span>

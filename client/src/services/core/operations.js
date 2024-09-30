@@ -20,7 +20,6 @@ import * as coreService from '@services/core/service';
 import * as coreSlice from '@services/core/slice';
 import errorCodeHandler from '@services/core/errorCodeHandler';
 import createOperation from '@utilities/api/operationHandler';
-import { addError } from '@services/core/slice';
 
 /**
  * @function globalErrorHandler
@@ -30,18 +29,21 @@ import { addError } from '@services/core/slice';
  * @returns {function} - Redux dispatch function.
 */
 export const globalErrorHandler = (message, slice = null) => (dispatch) => {
-    const error = {
-        // Generates a unique error ID
-        id: new Date().getTime(),
-        message
-    };
-    // Adds the error to the global error store
-    dispatch(addError(error));
+    /*
+        const error = {
+            // Generates a unique error ID
+            id: new Date().getTime(),
+            message
+        };
+        // Adds the error to the global error store
+        dispatch(addError(error));
+    */
+
     if(slice === null) return;
     // Translates error codes if necessary
     const readableError = errorCodeHandler(message);
     // Updates the slice-specific error state
-    dispatch(slice.setError(readableError));
+    dispatch(slice.setState({ path: 'error', readableError }));
 };
 
 /**
@@ -50,11 +52,11 @@ export const globalErrorHandler = (message, slice = null) => (dispatch) => {
  * @returns {function} - Redux dispatch function.
 */
 export const resetErrorForAllSlices = () => (dispatch) => {
-    dispatch(authSlice.setError(null));
-    dispatch(deploymentSlice.setError(null));
-    dispatch(githubSlice.setError(null));
-    dispatch(repositorySlice.setError(null));
-    dispatch(coreSlice.setError(null));
+    dispatch(authSlice.setState({ path: 'error', value: null }));
+    dispatch(deploymentSlice.setState({ path: 'error', value: null }));
+    dispatch(githubSlice.setState({ path: 'error', value: null }));
+    dispatch(repositorySlice.setState({ path: 'error', value: null }));
+    dispatch(coreSlice.setState({ path: 'error', value: null }));
 };
 
 /**
@@ -63,10 +65,10 @@ export const resetErrorForAllSlices = () => (dispatch) => {
  * @returns {Promise} Resolves when the server health check is complete.
 */
 export const getServerHealth = () => async (dispatch) => {
-    const operation = createOperation(coreService, dispatch);
+    const operation = createOperation(coreSlice, dispatch);
     operation.use({
         api: coreService.getServerHealth,
-        responseState: coreSlice.setServerHealth,
-        loaderState: coreSlice.setIsServerHealthLoading
+        responseState: 'serverHealth',
+        loaderState: 'isServerHealthLoading'
     });
 };

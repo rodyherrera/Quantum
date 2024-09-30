@@ -28,7 +28,7 @@ import './Home.css';
 gsap.registerPlugin(ScrollTrigger);
 
 const HomePage = () => {
-    const { isAuthenticated } = useSelector(state => state.auth);
+    const { authStatus } = useSelector(state => state.auth);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -139,7 +139,7 @@ const HomePage = () => {
                     </p>
                 </article>
                 <article id='Home-Presentation-Container-Actions-Container'>
-                    {(isAuthenticated) ? (
+                    {(authStatus.isAuthenticated) ? (
                         <Button title='Go to Dashboard' to='/dashboard/' />
                     ) : (
                         <Button title='Start Deploying' to='/auth/sign-in/' />

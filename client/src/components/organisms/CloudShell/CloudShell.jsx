@@ -8,7 +8,7 @@ import { CircularProgress } from '@mui/material';
 import { BsTerminal } from 'react-icons/bs';
 import { PiDotsSixBold } from 'react-icons/pi';
 import { useDispatch } from 'react-redux';
-import { setIsCloudConsoleEnabled } from '@services/core/slice';
+import { setState as coreSetState } from '@services/core/slice';
 import './CloudShell.css';
 
 const CloudConsole = () => {
@@ -19,7 +19,7 @@ const CloudConsole = () => {
     const headerIcons = [
         [VscGithubAlt, () => window.open('https://github.com/rodyherrera/Quantum/')],
         [BiBookAlt, () => window.open('https://github.com/rodyherrera/Quantum/')],
-        [AiOutlineClose, () => dispatch(setIsCloudConsoleEnabled(false))]
+        [AiOutlineClose, () => dispatch(coreSetState({ path: 'isCloudConsoleEnabled', value: false }))]
     ];
 
     const cloudShellHeaderRef = useRef(null);

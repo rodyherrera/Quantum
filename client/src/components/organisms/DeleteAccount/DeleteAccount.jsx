@@ -7,7 +7,7 @@ import './DeleteAccount.css';
 
 const DeleteAccount = () => {
     const [isDeleteModalActive, setIsDeleteModalActive] = useState(false);
-    const { isEliminatingAccount, user } = useSelector((state) => state.auth);
+    const { authStatus, user } = useSelector((state) => state.auth);
     const dispatch = useDispatch();
 
     return (
@@ -39,7 +39,7 @@ const DeleteAccount = () => {
                 </div>
                 <div className='Account-Page-Delete-Footer-Container'>
                     <Button 
-                        isLoading={isEliminatingAccount}
+                        isLoading={authStatus.isEliminatingAccount}
                         onClick={() => setIsDeleteModalActive(true)}
                         variant='White'
                         title='Ok, I agree and I know the consequences.'

@@ -44,13 +44,18 @@ const EnvironmentVariable = ({ name, value, index, ...props }) => {
             if(i === index) return [newKey, newValue];
             return variable;
         });
-
-        dispatch(deploymentSlice.setEnvironment({ ...environment, variables: updatedVariables }));
+        dispatch(deploymentSlice.setState({
+            path: 'environment',
+            value: { ...environment, variables: updatedVariables }
+        }));
     };
 
     const handleDeletion = () => {
         const updatedVariables = environment.variables.filter((_, i) => (i !== index));
-        dispatch(deploymentSlice.setEnvironment({ ...environment, variables: updatedVariables }));
+        dispatch(deploymentSlice.setState({
+            path: 'environment',
+            value: { ...environment, variables: updatedVariables }
+        }));
     };
 
     // Handle clicks outside the component (to reset the style)

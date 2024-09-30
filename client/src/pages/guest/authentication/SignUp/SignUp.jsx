@@ -21,7 +21,7 @@ import { signUp } from '@services/authentication/operations';
 import './SignUp.css';
 
 const SignUp = () => {
-    const { isLoading, error } = useSelector(state => state.auth);
+    const { loadingStatus, error } = useSelector(state => state.auth);
     const dispatch = useDispatch();
 
     const handleFormSubmit = (formValues) => {
@@ -45,7 +45,7 @@ const SignUp = () => {
         )}
         handleFormSubmit={handleFormSubmit}
         error={error}
-        isLoading={isLoading}
+        isLoading={loadingStatus.isLoading}
         formInputs={[
             { 
                 type: 'email', 

@@ -16,7 +16,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { FaLongArrowAltRight } from 'react-icons/fa';
-import { setIsMenuEnabled } from '@services/core/slice';
+import { setState as coreSetState } from '@services/core/slice';
 import './MenuItem.css';
 
 const MenuItem = ({ icon, title, to }) => {
@@ -26,7 +26,7 @@ const MenuItem = ({ icon, title, to }) => {
     const clickHandler = (link) => {
         if(link.startsWith('http')) window.open(link, '_blank')
         else navigate(link);
-        dispatch(setIsMenuEnabled(false));
+        dispatch(coreSetState({ path: 'isMenuEnabled', value: false }));
     };
 
     return (

@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getRepositories } from '@services/repository/operations';
-import { setRepositories } from '@services/repository/slice';
+import { setState as repoSetState } from '@services/repository/slice';
 
 const useUserRepositories = () => {
     const dispatch = useDispatch();
@@ -16,7 +16,7 @@ const useUserRepositories = () => {
 
         return () => {
             clearInterval(intervalId);
-            dispatch(setRepositories([]));
+            dispatch(repoSetState({ path: 'repositories', value: [] }));
         }
     }, []);
 

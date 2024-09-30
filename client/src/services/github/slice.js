@@ -13,11 +13,10 @@
 ****/
 
 import { createSlice } from '@reduxjs/toolkit';
+import * as reduxUtils from '@utilities/common/reduxUtils';
 
 const state = {
-    // // Stores GitHub related errors
     error: null,
-    // Tracks global loading state for GitHub operations
     isLoading: false
 };
 
@@ -25,18 +24,12 @@ const githubSlice = createSlice({
     name: 'github',
     initialState: state,
     reducers: {
-        setIsLoading: (state, action) => {
-            state.isLoading = action.payload;
-        },
-        setError: (state, action) => {
-            state.error = action.payload;
-        }
+        setState: reduxUtils.setState
     }
 });
 
 export const {
-    setError,
-    setIsLoading
+    setState
 } = githubSlice.actions;
 
 export default githubSlice.reducer;

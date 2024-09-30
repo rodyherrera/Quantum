@@ -15,19 +15,19 @@
 import React from 'react';
 import { logout } from '@services/authentication/operations';
 import { useSelector, useDispatch } from 'react-redux';
-import { setIsMenuEnabled } from '@services/core/slice';
+import { setState as coreSetState } from '@services/core/slice';
 import HeaderNavItem from '@components/atoms/HeaderNavItem';
 import HamburguerMenu from '@components/atoms/HamburguerMenu';
 import './HeaderNavigation.css';
 
 const HeaderNavigation = () => {
-    const { isAuthenticated } = useSelector(state => state.auth);
+    const { authStatus } = useSelector(state => state.auth);
     const { isMenuEnabled } = useSelector(state => state.core);
     const dispatch = useDispatch();
 
     return (
         <article className='Header-Navigation-Container'>
-            {isAuthenticated ? (
+            {authStatus.isAuthenticated ? (
                 <React.Fragment>
                     <HeaderNavItem title='Dashboard' to='/dashboard/' />
                     <HeaderNavItem title='Sign Out' onClick={() => dispatch(logout())} />
@@ -40,7 +40,7 @@ const HeaderNavigation = () => {
             )}
             <HeaderNavItem className='Hamburguer-Menu-Container'>
                 <HamburguerMenu
-                    onClick={() => dispatch(setIsMenuEnabled(!isMenuEnabled))}
+                    onClick={() => dispatch(coreSetState({ path: 'isMenuEnabled', value: !isMenuEnabled }))}
                     isactive={isMenuEnabled.toString()} />
             </HeaderNavItem>
         </article>

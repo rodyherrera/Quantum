@@ -13,6 +13,7 @@
 ****/
 
 import { createSlice } from '@reduxjs/toolkit';
+import * as reduxUtils from '@utilities/common/reduxUtils';
 
 const state = {
     error: null,
@@ -25,26 +26,12 @@ const dockerNetworkSlice = createSlice({
     name: 'dockerContainer',
     initialState: state,
     reducers: {
-        setIsLoading: (state, action) => {
-            state.isLoading = action.payload;
-        },
-        setDockerNetworks: (state, action) => {
-            state.dockerNetworks = action.payload;
-        },
-        setIsOperationLoading: (state, action) => {
-            state.isOperationLoading = action.payload;
-        },
-        setError: (state, action) => {
-            state.error = action.payload;
-        }
+        setState: reduxUtils.setState
     }
 });
 
 export const {
-    setIsOperationLoading,
-    setError,
-    setIsLoading,
-    setDockerNetworks
+    setState
 } = dockerNetworkSlice.actions;
 
 export default dockerNetworkSlice.reducer;

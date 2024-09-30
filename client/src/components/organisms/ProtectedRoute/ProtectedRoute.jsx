@@ -19,10 +19,10 @@ import { useSelector } from 'react-redux';
 import './ProtectedRoute.css';
 
 const ProtectedRoute = ({ mode, restrictTo = undefined }) => {
-    const { isCachedAuthLoading, isAuthenticated, user } = useSelector(state => state.auth);
+    const { authStatus, user } = useSelector(state => state.auth);
     const location = useLocation();
 
-    return (isCachedAuthLoading) ? (
+    return (authStatus.isCachedAuthLoading) ? (
         <main className='Authentication-Loading-Main'>
             <CircularProgress className='Circular-Progress' />
         </main>
@@ -30,9 +30,9 @@ const ProtectedRoute = ({ mode, restrictTo = undefined }) => {
         user && user.Role.toLowerCase().includes(restrictTo.toLowerCase()) ?
             (<Outlet />) : (<Navigate to='/' />)
     ) : mode === 'protect' ? (
-        !isAuthenticated ? 
+        !authStatus.isAuthenticated ? 
             (<Navigate to='/auth/sign-in/' state={{ from: location }} />) : (<Outlet />)
-    ) : isAuthenticated ? 
+    ) : authStatus.isAuthenticated ? 
         (<Navigate to='/' state={{ from: location }} />) : (<Outlet />)
 };
 

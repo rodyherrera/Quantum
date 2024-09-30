@@ -23,7 +23,7 @@ export const createDockerImage = (body, navigate) => async (dispatch) => {
     });
     operation.use({
         api: dockerImageService.createDockerImage,
-        loaderState: dockerImageSlice.setIsOperationLoading,
+        loaderState: 'isOperationLoading',
         query: { body }
     });
 };
@@ -32,7 +32,7 @@ export const getMyDockerImages = () => async (dispatch) => {
     const operation = createOperation(dockerImageSlice, dispatch);
     operation.use({
         api: dockerImageService.getMyDockerImages,
-        responseState: dockerImageSlice.setDockerImages,
-        loaderState: dockerImageSlice.setIsLoading
+        responseState: 'dockerImages',
+        loaderState: 'isLoading'
     });
 };
