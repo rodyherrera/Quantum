@@ -244,6 +244,7 @@
     .Minimal-Form-Container.Form-Image .Minimal-Form-Left-Container{
         justify-content: flex-start;
         gap: 1rem;
+        width: 100%;
         padding: 0;
     }
 
@@ -280,5 +281,9 @@
     .Minimal-Form-Container.Form-Image .Minimal-Form-Subtitle{
         font-size: 1rem;
         color: white;
+    }
+
+    .Minimal-Form-Container.Form-Image{
+        height: unset !important;
     }
 }
