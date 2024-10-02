@@ -105,21 +105,7 @@ export const repositoryActions = (repositoryAlias, loaderState, body) => async (
     const operation = createOperation(deploymentSlice, dispatch);
 
     operation.on('response', ({ status, repository }) => {
-        dispatch(repositorySlice.setState({
-            path: 'repositories',
-            //
-            // TEMPORAL FIX THIS IS NOT SERIALIZABLE VALUE!!!!!!!!!!!!!!!!!
-            //
-            value: (state) => {
-                const repositories = state.repositories.map((stateRepo) => {
-                    if(stateRepo._id === repository._id){
-                        stateRepo.activeDeployment.status = status;
-                    }
-                    return stateRepo;
-                });
-                return repositories;
-            }
-        }));
+        dispatch(repositorySlice.updateRepositories({ repository, status }));
     });
 
     operation.on('finally', () => loaderState(false));

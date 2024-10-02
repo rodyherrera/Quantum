@@ -9,16 +9,6 @@ export const setState = (state, action) => {
         }
         current = current[key];
     }
-    if(typeof value === 'function'){
-        // ========================================
-        // TEMPORAL FIX 
-        // @services/repository/operations - repositoryActions
-        // ========================================
-        const serializedState = JSON.parse(JSON.stringify(state));
-        const newValue = value(serializedState);
-        current[keys[keys.length - 1]] = newValue;
-        return;
-    }
 
     current[keys[keys.length - 1]] = value;
 };

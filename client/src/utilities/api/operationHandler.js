@@ -35,11 +35,9 @@ class OperationHandler extends EventManager{
     }
 
     applyMiddlewares(config){
-        let modifiedConfig = { ...config };
-        this.middlewares.forEach((middleware) => {
-            modifiedConfig = middleware(modifiedConfig);
-        });
-        return modifiedConfig;
+        return this.middlewares.reduce((modifiedConfig, middleware) => {
+            return middleware(modifiedConfig);
+        }, config);
     }
 
     updateState(state, value){
