@@ -43,7 +43,7 @@ export const globalErrorHandler = (message, slice = null) => (dispatch) => {
     // Translates error codes if necessary
     const readableError = errorCodeHandler(message);
     // Updates the slice-specific error state
-    dispatch(slice.setState({ path: 'error', readableError }));
+    dispatch(slice.setState({ path: 'error', value: readableError }));
 };
 
 /**
