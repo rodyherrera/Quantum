@@ -12,50 +12,38 @@
  * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 ****/
 
+#Dashboard-Page .Data-Renderer-Basic-Layout-Container > :first-child{
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;  
+    padding: 1rem;
+}
+
+#Dashboard-Page .Dashboard-Modules-Container{
+    overflow-y: unset;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); 
+    gap: 2rem;
+    padding: 2rem;
+}
+
 #Dashboard-Projects-Container{
     display: flex;
     flex-wrap: wrap;
-    height: 100%;
     overflow-y: scroll;
     padding-right: 2rem;
     gap: 2rem;
 }
 
-/*
-    TODO: Hack for <DataRenderer />. Implement this better in future versions.
-*/
-#Dashboard-Main .Binary-View-Left-Container{
-    width: 100%;
-}
-
-#Dashboard-Main .Data-Renderer-Body-Container{
-    overflow-y: unset;
-    display: grid;
-    grid-template-columns: repeat(2, 1fr); 
-    gap: 2rem;
-}
-
-#Dashboard-Main .Binary-View-Right-Container{
-    display: none;
-}
-
-#Dashboard-Dockers-Container,
-#Dashboard-Dockers-Network,
-#Dashboard-Dockers-Image{
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-}
-
 @media screen and (max-width: 768px){
-    #Dashboard-Main .Data-Renderer-Body-Container{
-        gap: 2rem;
-        grid-template-columns: repeat(1, 1fr); 
+    #Dashboard-Page{
+        height: unset;
     }
 
-    #Dashboard-Projects-Container{
-        overflow: hidden;
-        padding-bottom: 0;
-        padding-right: 0;
+    #Dashboard-Page .Dashboard-Modules-Container{
+        gap: 2rem;
+        display: flex;
+        flex-direction: column;
+        padding: 1rem;
     }
 }

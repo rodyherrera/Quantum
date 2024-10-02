@@ -12,6 +12,7 @@ const DataRenderer = ({
     description,
     error = null,
     data = [],
+    useBasicLayout = false,
     emptyDataMessage = 'No data available',
     emptyDataBtn = null,
     isLoading = false,
@@ -69,6 +70,14 @@ const DataRenderer = ({
         
         return children;
     };
+
+    if(useBasicLayout){
+        return (
+            <div className='Data-Renderer-Basic-Layout-Container'>
+                {renderContent()}
+            </div>
+        );
+    }
 
     return (
         <AnimatedMain {...props} className='Data-Renderer-Main Binary-View-Container'>

@@ -20,10 +20,12 @@ import './Dashboard.css';
 const Dashboard = () => {
     return (
         <main id='Dashboard-Page'>
-            <Repositories />
-            <DockerContainers />
-            <DockerNetworks />
-            <DockerImages />
+            <section className='Dashboard-Modules-Container'>
+                <Repositories />
+                <DockerContainers />
+                <DockerNetworks />
+                <DockerImages />
+            </section>
         </main>
     );
 };

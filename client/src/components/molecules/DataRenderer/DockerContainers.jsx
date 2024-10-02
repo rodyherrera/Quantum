@@ -5,37 +5,39 @@ import DashboardModule from '@components/molecules/DashboardModule';
 import { IoLogoDocker } from 'react-icons/io5';
 import { DockerContainer } from '@components/organisms/Docker';
 
-const DockerContainers = () => {
+const DockerContainers = ({ ...props }) => {
     const { dockerContainers, isLoading, error } = useUserDockerContainers();
 
     return (
-        <DataRenderer
+        <DashboardModule
             title='Docker Containers'
-            error={error}
-            isLoading={isLoading}
-            data={dockerContainers}
-            emptyDataMessage="No Docker containers found."
-            emptyDataBtn={{
-                title: 'Create Docker Container',
-                to: '/docker-container/create/'
-            }}
-        >
-            <DashboardModule
-                title='Docker Containers'
-                Icon={IoLogoDocker}
-                alias='container(s)'
-                createLink='/docker-container/create/'
-                total={5}
-                results={1}
-                RenderComponent={() => (
+            Icon={IoLogoDocker}
+            alias='container(s)'
+            createLink='/docker-container/create/'
+            total={5}
+            results={1}
+            RenderComponent={() => (
+                <DataRenderer
+                    title='Docker Containers'
+                    error={error}
+                    isLoading={isLoading}
+                    data={dockerContainers}
+                    emptyDataMessage="No Docker containers found."
+                    emptyDataBtn={{
+                        title: 'Create Docker Container',
+                        to: '/docker-container/create/'
+                    }}
+                    useBasicLayout={true}
+                    {...props}
+                >
                     <div id='Dashboard-Dockers-Container'>
                         {dockerContainers.map((container, index) => (
                             <DockerContainer key={index} container={container} />
                         ))}
                     </div>
-                )}
-            />
-        </DataRenderer>
+                </DataRenderer>
+            )}
+        />
     );
 };
 

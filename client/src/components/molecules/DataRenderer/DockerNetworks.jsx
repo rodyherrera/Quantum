@@ -5,37 +5,39 @@ import DashboardModule from '@components/molecules/DashboardModule';
 import { IoLogoDocker } from 'react-icons/io5';
 import { DockerNetwork } from '@components/organisms/Docker';
 
-const DockerNetworks = () => {
+const DockerNetworks = ({ ...props }) => {
     const { dockerNetworks, isLoading, error } = useUserDockerNetworks();
 
     return (
-        <DataRenderer
+        <DashboardModule
             title='Docker Networks'
-            error={error}
-            isLoading={isLoading}
-            data={dockerNetworks}
-            emptyDataMessage="No Docker networks found."
-            emptyDataBtn={{
-                title: 'Create Docker Network',
-                to: '/docker-network/create/'
-            }}
-        >
-            <DashboardModule
-                title='Docker Networks'
-                createLink='/docker-network/create/'
-                Icon={IoLogoDocker}
-                alias='network(s)'
-                total={5}
-                results={1}
-                RenderComponent={() => (
+            createLink='/docker-network/create/'
+            Icon={IoLogoDocker}
+            alias='network(s)'
+            total={5}
+            results={1}
+            RenderComponent={() => (
+                <DataRenderer
+                    title='Docker Networks'
+                    error={error}
+                    isLoading={isLoading}
+                    data={dockerNetworks}
+                    emptyDataMessage="No Docker networks found."
+                    emptyDataBtn={{
+                        title: 'Create Docker Network',
+                        to: '/docker-network/create/'
+                    }}
+                    useBasicLayout={true}
+                    {...props}
+                >
                     <div id='Dashboard-Dockers-Network'>
                         {dockerNetworks.map((network, index) => (
                             <DockerNetwork network={network} key={index} />
                         ))}
                     </div>
-                )}
-            />
-        </DataRenderer>
+                </DataRenderer>
+            )}
+        />
     );
 };
 

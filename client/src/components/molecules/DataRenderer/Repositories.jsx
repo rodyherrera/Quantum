@@ -7,46 +7,39 @@ import DashboardModule from '@components/molecules/DashboardModule';
 import { HiPlus } from 'react-icons/hi';
 import { FiGithub } from 'react-icons/fi';
 
-const RepositoriesDataRenderer = () => {
+const RepositoriesDataRenderer = ({ ...props }) => {
     const { repositories, isLoading, error } = useUserRepositories();
+
     return (
-        <DataRenderer
+        <DashboardModule
             title='Your Github Repositories'
-            error={error}
-            isLoading={isLoading}
-            data={repositories}
-            emptyDataMessage="You still don't have repositories."
-            emptyDataBtn={{
-                title: 'Create Repository',
-                to: '/repository/create/'
-            }}
-            headerRightContainer={() => (
-                !isLoading && (
-                    <Button 
-                        to='/repository/create/'
-                        title='Create new' 
-                        variant='Contained End-Icon' 
-                        icon={<HiPlus />} />
-                )
-            )}
-        >
-            <DashboardModule
-                title='Your Github Repositories'
-                Icon={FiGithub}
-                createLink='/repository/create/'
-                alias='repositorie(s)'
-                total={5}
-                results={1}
-                RenderComponent={() => (
+            Icon={FiGithub}
+            createLink='/repository/create/'
+            alias='repositorie(s)'
+            total={5}
+            results={1}
+            RenderComponent={() => (
+                <DataRenderer
+                    title='Your Github Repositories'
+                    error={error}
+                    isLoading={isLoading}
+                    data={repositories}
+                    emptyDataMessage="You still don't have repositories."
+                    emptyDataBtn={{
+                        title: 'Create Repository',
+                        to: '/repository/create/'
+                    }}
+                    useBasicLayout={true}
+                    {...props}
+                >
                     <div id='Dashboard-Projects-Container'>
                         {repositories.map((repository, index) => (
                             <Project key={index} repository={repository} />
                         ))}
                     </div>
-                )}
-            />
-
-        </DataRenderer>   
+                </DataRenderer>
+            )}
+        />
     );
 };
 
