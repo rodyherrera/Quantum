@@ -1,17 +1,19 @@
-import { Response, NextFunction, RequestHandler, response } from 'express';
+import { Response, NextFunction, RequestHandler } from 'express';
 import { IRequest } from '@typings/controllers/common';
-import { Document, Model } from 'mongoose';
+import { Model } from 'mongoose';
 import { catchAsync, filterObject, checkIfSlugOrId } from '@utilities/helpers';
 import { IUser } from '@typings/models/user';
 import type {
     HandlerFactoryOptions, 
     MiddlewareFunction, 
-    HandlerFactoryMethodConfig } from '@typings/controllers/handlerFactory';
+    HandlerFactoryMethodConfig 
+} from '@typings/controllers/handlerFactory';
 import APIFeatures from '@utilities/apiFeatures';
 import RuntimeError from '@utilities/runtimeError';
+import logger from '@utilities/logger';
 
 class HandlerFactory{
-    private model: Model<any>;
+    private model: Model<any>
     private fields: string[];
 
     constructor({ model, fields = [] }: HandlerFactoryOptions){
@@ -20,42 +22,49 @@ class HandlerFactory{
     }
 
     private async applyMiddlewares(
-        middlewares: MiddlewareFunction[] = [], 
-        req: IRequest, 
+        middlewares: MiddlewareFunction[] = [],
+        req: IRequest,
         data: any
     ): Promise<any>{
-        let result = data;
-        for(const middleware of middlewares){
-            result = await middleware(req, result);
-        }
-        return result;
+        if(middlewares.length === 0) return data;
+        // Run middlewares in parallel if they are independent
+        // If it depends on order, keep sequential execution
+        // Here we assume that they are independent :)!
+        const results = await Promise.all(middlewares.map((middleware) => middleware(req, data)));
+        return results.reduce((acc, curr) => ({ ...acc, ...curr }), data);
     }
 
     private createHandler(
         operation: (req: IRequest, res: Response, next: NextFunction) => Promise<void>,
         config: HandlerFactoryMethodConfig = {}
-    ) : RequestHandler{
+    ): RequestHandler{
         return catchAsync(async (req: IRequest, res: Response, next: NextFunction) => {
-            if(config.middlewares){
-                req.handlerData = await this.applyMiddlewares(config.middlewares.pre, req, req.body);
+            const { middlewares } = config;
+            if(middlewares?.pre?.length){
+                req.handlerData = await this.applyMiddlewares(middlewares.pre, req, req.body);
             }
             await operation(req, res, next);
-            if(res.locals.data && config.middlewares){
-                res.locals.data = await this.applyMiddlewares(config.middlewares.post, req, res.locals.data);
+            if(res.locals.data && middlewares?.post?.length){
+                res.locals.data = await this.applyMiddlewares(middlewares?.post, req, res.locals.data);
             }
         });
+    }
+    
+    private createBody(res: Response, status: string, value: any){
+        res.locals.data = value;
+        const body = { status, data: value };
+        return body;
     }
 
     deleteOne(config: HandlerFactoryMethodConfig = {}): RequestHandler{
         return this.createHandler(async (req, res, next) => {
             const query = checkIfSlugOrId(req.params.id);
-            const record = await this.model.findOneAndDelete(query);
+            const record = await this.model.findOneAndDelete(query).lean();
             if(!record){
                 return next(new RuntimeError('Core::DeleteOne::RecordNotFound', 404));
             }
-            res.locals.data = record;
-            const body = { status: 'success', data: record };
-            this.sendResponse(204, body, req, res, config);
+            const body = this.createBody(res, 'success', record);
+            await this.sendResponse(204, body, req, res, config);
         }, config);
     }
 
@@ -65,48 +74,25 @@ class HandlerFactory{
             const record = await this.model.findOneAndUpdate(
                 checkIfSlugOrId(req.params.id),
                 query,
-                { new: true, runValidators: true });
+                { new: true, runValidators: true, lean: true }
+            );
             if(!record){
                 return next(new RuntimeError('Core::UpdateOne::RecordNotFound', 404));
             }
-            res.locals.data = record;
-            const body = { status: 'success', data: record };
-            this.sendResponse(200, body, req, res, config);
+            const body = this.createBody(res, 'success', record);
+            await this.sendResponse(200, body, req, res, config);
         }, config);
     }
 
     private createQuery(req: IRequest): object{
         const query = filterObject(req.body, ...this.fields);
-        // Via API, through the body you can send the user's 'id' to establish 
-        // the relationship. This is unsafe. Only users with the 'admin' role can
-        // do this. Otherwise, it is automatically assigned to the authenticated user's ID.
         if(this.fields.includes('user') && req.user){
             const authenticatedUser = req.user as IUser;
-            if(authenticatedUser.role === 'admin' && req.body?.user){
-                query.user = req.body.user;
-            }else{
-                query.user = authenticatedUser._id;
-            }
+            query['user'] = (authenticatedUser.role === 'admin' && req.body.user)
+                ? req.body.user
+                : authenticatedUser._id;
         }
         return query;
-    }
-
-    createOne(config: HandlerFactoryMethodConfig = {}): RequestHandler{
-        return this.createHandler(async (req, res) => {
-            const query = this.createQuery(req);
-            const record = await this.model.create(query);
-            res.locals.data = record;
-            const body = { status: 'success', data: record };
-            this.sendResponse(201, body, req, res, config);
-        }, config);
-    }
-
-    private getPopulateFromRequest(query: IRequest['query']): string | null{
-        if(!query?.populate) return null;
-        const populate = query.populate as string;
-        return populate.startsWith('{')
-            ? JSON.parse(populate).join(' ')
-            : populate.split(',').join(' ');
     }
 
     private async sendResponse(
@@ -115,12 +101,51 @@ class HandlerFactory{
         req: IRequest, 
         res: Response, 
         config: HandlerFactoryMethodConfig
-    ): Promise<any>{
+    ): Promise<void>{
         if(config.responseInterceptor){
             await config.responseInterceptor(req, res, body);
             return;
         }
         res.status(status).json(body);
+    }
+
+    createOne(config: HandlerFactoryMethodConfig = {}): RequestHandler{
+        return this.createHandler(async (req, res) => {
+            const query = this.createQuery(req);
+            const record = await this.model.create(query);
+            const body = this.createBody(res, 'success', record);
+            await this.sendResponse(201, body, req, res, config);
+        }, config);
+    }
+
+    private getPopulateFromRequest(query: IRequest['query']): string | null{
+        const populate = query.populate as string | undefined;
+        if(!populate) return null;
+        if(populate.startsWith('{') || populate.startsWith('[')){
+            try{
+                const parsed = JSON.parse(populate);
+                return Array.isArray(parsed) ? parsed.join(' ') : String(parsed);
+            }catch(e){
+                logger.error(e);
+                return null;
+            }
+        }
+        return populate.split(',').join(' ');
+    }
+
+    getOne(config: HandlerFactoryMethodConfig = {}): RequestHandler{
+        return this.createHandler(async (req, res, next) => {
+            const populate = this.getPopulateFromRequest(req.query);
+            let query = checkIfSlugOrId(req.params.id);
+            let queryObj = this.model.findOne(query).lean();
+            if(populate) queryObj = queryObj.populate(populate);
+            let record = await queryObj.exec();
+            if(!record){
+                return next(new RuntimeError('Core::GetOne::RecordNotFound', 404));
+            }
+            const body = this.createBody(res, 'success', record);
+            await this.sendResponse(200, body, req, res, config);
+        }, config);
     }
 
     getAll(config: HandlerFactoryMethodConfig = {}): RequestHandler{
@@ -148,25 +173,8 @@ class HandlerFactory{
                 },
                 data: records
             };
-            this.sendResponse(200, body, req, res, config);
+            await this.sendResponse(200, body, req, res, config);
         }, config);
-    }
-
-    getOne(config: HandlerFactoryMethodConfig = {}): RequestHandler{
-        return this.createHandler(async (req, res, next) => {
-            const populate = this.getPopulateFromRequest(req.query);
-            let record: Document<any, {}> | null = await this.model.findOne(checkIfSlugOrId(req.params.id));
-            if(!record){
-                return next(new RuntimeError('Core::GetOne::RecordNotFound', 404));
-            }
-            if(populate) record = await record.populate(populate);
-            res.locals.data = record;
-            const body = {
-                status: 'success',
-                data: record
-            };
-            this.sendResponse(200, body, req, res, config);
-        }, config)
     }
 }
 

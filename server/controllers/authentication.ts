@@ -96,7 +96,7 @@ export const signUp = catchAsync(async (req: any, res: any, next: any): Promise<
  * Updates the user record and sends a JWT with the updated user data.
  *
  * @returns {Promise<void>}
- */
+*/
 export const updateMyPassword = catchAsync(async (req: any, res: any, next: any): Promise<void> => {
     const requestedUser = await User.findById(req.user.id).select('+password').populate('github') as IUser;
     if(!(await requestedUser.isCorrectPassword(req.body.passwordCurrent, requestedUser.password))){
@@ -115,7 +115,7 @@ export const updateMyPassword = catchAsync(async (req: any, res: any, next: any)
  * Deletes the authenticated user's account.
  *
  * @returns {Promise<void>}
- */
+*/
 export const deleteMyAccount = catchAsync(async (req: any, res: any, next: any): Promise<void> => {
     const requestedUser = await User.findByIdAndDelete(req.user.id);
     if(!requestedUser){
