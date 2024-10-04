@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang='en'>
+    <head>
+        <meta charset='utf-8' />
+        <meta http-equiv='X-UA-Compatible' content='IE=edge'/>
+        <meta name="viewport" content = "width = device-width, initial-scale = 1.0, minimum-scale = 1, maximum-scale = 1, user-scalable = no" />
+        <meta name='apple-mobile-web-app-capable' content='yes'/>
+        <meta name='mobile-web-app-capable' content='yes'>
+        <meta name='apple-mobile-web-app-status-bar-style' content='black-translucent'/>
+        <meta name='contentType' content='website'/>
+        <meta content='#FFF' data-react-helmet='true' name='theme-color' />
+        <meta property='og:type' content='website'/>
+        <meta name='msapplication-TileColor' content="#FFFFFF">
+        <title>503: SERVICE_UNAVAILABLE</title>
+    </head>
+    <style>
+        *{
+            box-sizing: border-box;
+            padding: 0;
+            margin: 0;
+        }
+
+        body{
+            display: flex;
+            background-color: #FFF;
+            height: 100vh;
+            align-items: center;
+            margin: 0 auto;
+            max-width: 1000px;
+            padding: 1rem;
+        }
+
+        .Service-Unavailable-Title{
+            font-size: 3rem;
+        }
+
+        .Service-Unavailable-Description{
+            font-size: 1.2rem;
+        }
+
+        .Service-Unavailable-Header{
+            display: flex;
+            flex-direction: column;
+            gap: .5rem;
+        }
+
+        .Request-Error-Code{
+            font-size: .95rem;
+            opacity: .8;
+        }
+
+        @media screen and (max-width: 768px){
+            .Service-Unavailable-Title{
+                font-size: 2rem;
+            }
+        }
+    </style>
+    <body>
+        <main class='Service-Unavailable-Container'>
+            <section class='Service-Unavailable-Header'>
+                <span class='Request-Error-Code'>Core::Service::Unavailable (HTTP E. 503)</span>
+                <h3 class='Service-Unavailable-Title'>Unable to establish <br/> connection with the server.</h3>
+                <p class='Service-Unavailable-Description'>The application is overloaded or may be down.</p>
+            </section>
+        </main>
+    </body>
+</html>

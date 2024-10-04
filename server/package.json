@@ -3,7 +3,7 @@
     "version": "1.0.6",
     "description": "🚀 Self-hosted open source alternative to Vercel, Heroku and Netlify. All your applications, just in one place. Develop and deploy with your favorite tools and continuous deployment with Github.",
     "scripts": {
-        "start": "npx tsx server.ts",
+        "start": "bash start.sh",
         "cli": "IS_CLI=true npx tsx cli/manager.ts"
     },
     "dependencies": {
@@ -12,11 +12,10 @@
         "bcryptjs": "^2.4.3",
         "body-parser": "^1.20.2",
         "cors": "^2.8.5",
-        "dockerode": "^4.0.2",
+        "dgram": "^1.0.1",
         "dotenv": "^16.3.1",
         "express": "^4.18.2",
         "express-session": "^1.17.3",
-        "http-proxy": "^1.18.1",
         "jsonwebtoken": "^9.0.2",
         "lodash": "^4.17.21",
         "module-alias": "^2.2.3",
@@ -32,7 +31,8 @@
         "socket.io": "^4.7.3",
         "tsx": "^4.19.0",
         "uuid": "^9.0.1",
-        "validator": "^13.11.0"
+        "validator": "^13.11.0",
+        "ws": "^8.18.0"
     },
     "devDependencies": {
         "@types/bcryptjs": "^2.4.6",
@@ -50,6 +50,7 @@
         "@types/passport-github": "^1.1.12",
         "@types/prompts": "^2.4.9",
         "@types/uuid": "^10.0.0",
-        "@types/validator": "^13.12.1"
+        "@types/validator": "^13.12.1",
+        "@types/ws": "^8.5.12"
     }
 }

@@ -19,10 +19,10 @@ import fs from 'fs';
 import path from 'path';
 import UserContainer from '@services/userContainer';
 import RepositoryHandler from '@services/repositoryHandler';
+import PortBinding from '@models/portBinding';
 import sendMail from '@services/sendEmail';
 import logger from '@utilities/logger';
-import DockerContainer from '@models/docker/container';
-import { startProxyServer } from '@services/proxyServer';
+import { createProxyServer } from '@services/proxyServer';
 import { ConfigureAppParams } from '@typings/utilities/bootstrap';
 import { spawn } from 'child_process';
 import { IUser } from '@typings/models/user';
@@ -99,6 +99,24 @@ export const restartServer = async (): Promise<void> => {
     childProcess.on('close', (code) => {
         logger.info(`Server process exited with code ${code}.`);
     });
+};
+
+export const loadReverseProxies = async (): Promise<void> => {
+    try{
+        logger.info('Loading reverse proxies...');
+        const portBindings = await PortBinding
+            .find()
+            .select('internalPort ipAddress container externalPort -_id')
+            .populate({
+                path: 'container',
+                select: 'ipAddress -_id'
+            });
+        await Promise.all(portBindings.map(({ internalPort, externalPort, container }) => {
+            createProxyServer(externalPort, container.ipAddress, internalPort);
+        }));
+    }catch(error){
+        logger.error('CRITICAL ERROR (at @utilities/bootstrap - loadReverseProxies): ' + error);
+    }
 };
 
 /**

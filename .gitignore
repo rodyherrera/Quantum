@@ -6,3 +6,6 @@ client/.env
 server/node_modules/
 server/package-lock.json
 server/.env
+
+network-gateway/target/
+network-gateway/Cargo.lock

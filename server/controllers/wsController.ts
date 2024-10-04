@@ -1,17 +1,3 @@
-/***
- * Copyright (C) Rodolfo Herrera Hernandez. All rights reserved.
- * Licensed under the MIT license. See LICENSE file in the project root
- * for full license information.
- *
- * =+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
- *
- * For related information - https://github.com/rodyherrera/Quantum/
- *
- * All your applications, just in one place. 
- *
- * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-****/
-
 import { getUserByToken } from '@middlewares/authentication';
 import { ISocket, WsNextFunction } from '@typings/controllers/wsController';
 import UserContainer from '@services/userContainer';
@@ -22,19 +8,18 @@ import RepositoryHandler from '@services/repositoryHandler';
 import DockerContainer from '@models/docker/container';
 import logger from '@utilities/logger';
 
-const userAuthentication = async (socket: ISocket, next: WsNextFunction) => {
+const authenticateUser = async (socket: ISocket, next: WsNextFunction) => {
     const { token } = socket.handshake.auth;
     if(!token) return next(new RuntimeError('Authentication::Token::Required', 400));
     try{
-        const user = await getUserByToken(token);
-        socket.user = user;
+        socket.user = await getUserByToken(token);
         next();
-    }catch(error: any){
+    }catch(error){
         next(error);
     }
 };
 
-const tokenOwnership = async (socket: ISocket, next: WsNextFunction) => {
+const checkRepositoryOwnership = async (socket: ISocket, next: WsNextFunction) => {
     const { repositoryAlias } = socket.handshake.query;
     if(!repositoryAlias) return next(new RuntimeError('Repository::Name::Required', 400));
     try{
@@ -47,61 +32,57 @@ const tokenOwnership = async (socket: ISocket, next: WsNextFunction) => {
     }
 };
 
-const repositoryShellHandler = async (socket: ISocket) => {
+const handleShell = async (socket: ISocket) => {
     try{
-        const { repository, user } = socket;
-        const repositoryHandler = new RepositoryHandler(repository, user);
+        const repositoryHandler = new RepositoryHandler(socket.repository, socket.user);
         await repositoryHandler.executeInteractiveShell(socket);
     }catch(error){
-        logger.info('Critical Error (@controllers/wsController - repositoryShellHandler)', error);
+        logger.info('Critical Error (@controllers/wsController - handleShell): ' + error);
     }
 };
 
-const dockerContainerShellHandler = async (socket: ISocket) => {
+const handleDockerShell = async (socket: ISocket) => {
     try{
         const { dockerId } = socket.handshake.query;
         const dockerContainer = await DockerContainer.findById(dockerId);
-        if(!dockerContainer || !dockerId){
-            // handle next function
-            return;
+        if(dockerContainer && dockerId){
+            const dockerHandler = new DockerContainerService(dockerContainer);
+            dockerHandler.startSocketShell(socket, '/');
         }
-        const dockerHandler = new DockerContainerService(dockerContainer);
-        dockerHandler.startSocketShell(socket, '/');
     }catch(error){
-        logger.info('Critical Error (@controllers/wsController - dockerContainerShellHandler)', error);
+        logger.info('Critical Error (@controllers/wsController - handleDockerShell): ' + error);
     }
 };
 
-const cloudConsoleHandler = async (socket: ISocket) => {
+const handleCloudConsole = async (socket: ISocket) => {
     try{
-        const { user } = socket;
-        const populatedUser = await user.populate('container');
-        const container = new UserContainer(populatedUser);
+        const container = new UserContainer(await socket.user.populate('container'));
         await container.executeInteractiveShell(socket);
-    }catch(error){
-        logger.error('Critical Error (@controllers/wsController - cloudConsoleHandler)', error);
+    }catch (error){
+        logger.error('Critical Error (@controllers/wsController - handleCloudConsole): ' + error);
     }
 };
 
 export default (io: any) => {
-    io.use(userAuthentication);
+    io.use(authenticateUser);
     io.on('connection', async (socket: ISocket) => {
         socket.emit('connected');
         const { action } = socket.handshake.query;
-        if(action === 'Repository::Shell'){
-            await tokenOwnership(socket, async (error): Promise<void> => {
-                if(error){
-                    logger.error('Critical Error (@controllers/wsController): ' + error);
-                }
-                else repositoryShellHandler(socket);
-            });
-        }else if(action === 'Cloud::Console'){
-            cloudConsoleHandler(socket);
-        }else if(action === 'DockerContainer::Shell'){
-            // TOOD: verify ownership
-            dockerContainerShellHandler(socket);
-        }else{
-            socket.disconnect();
+        switch(action){
+            case 'Repository::Shell':
+                await checkRepositoryOwnership(socket, async (error) => {
+                    if(!error) handleShell(socket);
+                    else logger.error('Error in repositoryShell:', error);
+                });
+                break;
+            case 'Cloud::Console':
+                handleCloudConsole(socket);
+                break;
+            case 'DockerContainer::Shell':
+                handleDockerShell(socket);
+                break;
+            default:
+                socket.disconnect();
         }
     });
 };
