@@ -20,8 +20,10 @@ export const updatePortBinding = PortBindingFactory.updateOne();
 export const deletePortBinding = PortBindingFactory.deleteOne();
 
 export const getMyPortBindings = PortBindingFactory.getAll({
-    pre: [(req, query) => {
-        query.user = req.user;
-        return query;
-    }]
+    middlewares: {
+        pre: [(req, query) => {
+            query.user = req.user;
+            return query;
+        }]
+    }
 });

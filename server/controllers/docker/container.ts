@@ -65,7 +65,7 @@ const findOrCreateNetwork = async (
 
 export const getMyDockerContainers = catchAsync(async (req: Request, res: Response) => {
     const user = req.user as IUser;
-    const containers = await DockerContainer.find({ user: user._id }).populate('network');
+    const containers = await DockerContainer.find({ user: user._id }).populate('network image');
     res.status(200).json({ status: 'success', data: containers });
 });
 

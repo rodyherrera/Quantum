@@ -115,7 +115,6 @@ export const loadUserContainers = async (): Promise<void> => {
             const container = new UserContainer(user);
             await container.start();
         }));
-        startProxyServer('107.100.61.3', 23326, 3000, 'tcp');
         await sendMail({
             subject: "Let's gooo, user containers loaded correctly!",
             html: 'The containers of all users registered on the platform were successfully mounted on the host.'

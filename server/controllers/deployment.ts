@@ -159,7 +159,7 @@ export const deleteGithubDeployment = catchAsync(async (req: Request, res: Respo
 
 /**
  * Retrieves the active deployment environment for a given repository.
- *
+ *s
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  * @throws {RuntimeError} If the repository is not found.

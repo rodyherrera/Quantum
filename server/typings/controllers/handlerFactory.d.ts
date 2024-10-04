@@ -1,4 +1,5 @@
 import { Model } from 'mongoose';
+import { IRequest } from '@typings/controllers/common';
 
 /**
  * Interface for the options passed to the HandlerFactory class.
@@ -9,12 +10,15 @@ import { Model } from 'mongoose';
 export interface HandlerFactoryOptions{
     model: Model<any>;
     fields?: string[];
-};
+}
 
-
-export type MiddlewareFunction = (req: Request, data: any) => Promise<any>;
+export type MiddlewareFunction = (req: IRequest, data: any) => Promise<any>;
 
 export interface HandlerFactoryMiddleware{
     pre?: MiddlewareFunction[];
     post?: MiddlewareFunction[];
+}
+
+export interface HandlerFactoryMethodConfig{
+    middlewares: HandlerFactoryMiddleware;
 }

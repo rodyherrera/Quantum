@@ -18,8 +18,10 @@ export const updateDockerImage = DockerImageFactory.updateOne();
 export const deleteDockerImage = DockerImageFactory.deleteOne();
 
 export const getMyDockersImage = DockerImageFactory.getAll({
-    pre: [(req, query) => {
-        query.user = req.user;
-        return query;
-    }]
+    middlewares: {
+        pre: [(req, query) => {
+            query.user = req.user;
+            return query;
+        }]
+    }
 });

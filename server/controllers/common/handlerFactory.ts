@@ -1,9 +1,12 @@
-import { Request, Response, NextFunction, RequestHandler } from 'express';
+import { Response, NextFunction, RequestHandler } from 'express';
+import { IRequest } from '@typings/controllers/common';
 import { Document, Model } from 'mongoose';
 import { catchAsync, filterObject, checkIfSlugOrId } from '@utilities/helpers';
-import type { HandlerFactoryOptions, MiddlewareFunction } from '@typings/controllers/handlerFactory';
-import { HandlerFactoryMiddleware } from '@typings/controllers/handlerFactory';
 import { IUser } from '@typings/models/user';
+import type {
+    HandlerFactoryOptions, 
+    MiddlewareFunction, 
+    HandlerFactoryMethodConfig } from '@typings/controllers/handlerFactory';
 import APIFeatures from '@utilities/apiFeatures';
 import RuntimeError from '@utilities/runtimeError';
 
@@ -18,7 +21,7 @@ class HandlerFactory{
 
     private async applyMiddlewares(
         middlewares: MiddlewareFunction[] = [], 
-        req: Request, 
+        req: IRequest, 
         data: any
     ): Promise<any>{
         let result = data;
@@ -29,19 +32,19 @@ class HandlerFactory{
     }
 
     private createHandler(
-        operation: (req: Request, res: Response, next: NextFunction) => Promise<void>,
-        middlewares: HandlerFactoryMiddleware = {}
+        operation: (req: IRequest, res: Response, next: NextFunction) => Promise<void>,
+        config: HandlerFactoryMethodConfig = {}
     ) : RequestHandler{
-        return catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-            req.handlerData = await this.applyMiddlewares(middlewares.pre, req, req.body);
+        return catchAsync(async (req: IRequest, res: Response, next: NextFunction) => {
+            req.handlerData = await this.applyMiddlewares(config.middlewares.pre, req, req.body);
             await operation(req, res, next);
             if(res.locals.data){
-                res.locals.data = await this.applyMiddlewares(middlewares.post, req, res.locals.data);
+                res.locals.data = await this.applyMiddlewares(config.middlewares.post, req, res.locals.data);
             }
         });
     }
 
-    deleteOne(middlewares: HandlerFactoryMiddleware = {}): RequestHandler{
+    deleteOne(config: HandlerFactoryMethodConfig): RequestHandler{
         return this.createHandler(async (req, res, next) => {
             const query = checkIfSlugOrId(req.params.id);
             const record = await this.model.findOneAndDelete(query);
@@ -53,10 +56,10 @@ class HandlerFactory{
                 status: 'success',
                 data: record
             });
-        }, middlewares);
+        }, config);
     }
 
-    updateOne(middlewares: HandlerFactoryMiddleware = {}): RequestHandler{
+    updateOne(config: HandlerFactoryMethodConfig): RequestHandler{
         return this.createHandler(async (req, res, next) => {
             const query = this.createQuery(req);
             const record = await this.model.findOneAndUpdate(
@@ -71,15 +74,15 @@ class HandlerFactory{
                 status: 'success',
                 data: record
             });
-        }, middlewares);
+        }, config);
     }
 
-    private createQuery(req: Request): object{
+    private createQuery(req: IRequest): object{
         const query = filterObject(req.body, ...this.fields);
         // Via API, through the body you can send the user's 'id' to establish 
         // the relationship. This is unsafe. Only users with the 'admin' role can
         // do this. Otherwise, it is automatically assigned to the authenticated user's ID.
-        if(this.fields.includes('user')){
+        if(this.fields.includes('user') && req.user){
             const authenticatedUser = req.user as IUser;
             if(authenticatedUser.role === 'admin' && req.body?.user){
                 query.user = req.body.user;
@@ -90,7 +93,7 @@ class HandlerFactory{
         return query;
     }
 
-    createOne(middlewares: HandlerFactoryMiddleware = {}): RequestHandler{
+    createOne(config: HandlerFactoryMethodConfig): RequestHandler{
         return this.createHandler(async (req, res) => {
             const query = this.createQuery(req);
             const record = await this.model.create(query);
@@ -99,10 +102,10 @@ class HandlerFactory{
                 status: 'success',
                 data: record
             });
-        }, middlewares);
+        }, config);
     }
 
-    private getPopulateFromRequest(query: Request['query']): string | null{
+    private getPopulateFromRequest(query: IRequest['query']): string | null{
         if(!query?.populate) return null;
         const populate = query.populate as string;
         console.log(populate);
@@ -111,7 +114,7 @@ class HandlerFactory{
             : populate.split(',').join(' ');
     }
 
-    getAll(middlewares: HandlerFactoryMiddleware = {}): RequestHandler{
+    getAll(config: HandlerFactoryMethodConfig): RequestHandler{
         return this.createHandler(async (req, res) => {
             const populate = this.getPopulateFromRequest(req.query);
             const operations = new APIFeatures({
@@ -136,10 +139,10 @@ class HandlerFactory{
                 },
                 data: records
             });
-        }, middlewares);
+        }, config);
     }
 
-    getOne(middlewares: HandlerFactoryMiddleware = {}): RequestHandler{
+    getOne(config: HandlerFactoryMethodConfig): RequestHandler{
         return this.createHandler(async (req, res, next) => {
             const populate = this.getPopulateFromRequest(req.query);
             let record: Document<any, {}> | null = await this.model.findOne(checkIfSlugOrId(req.params.id));
@@ -152,7 +155,7 @@ class HandlerFactory{
                 status: 'success',
                 data: record
             });
-        }, middlewares)
+        }, config)
     }
 }
 

@@ -18,8 +18,10 @@ export const deleteDockerNetwork = DockerNetworkFactory.deleteOne();
 export const createDockerNetwork = DockerNetworkFactory.createOne();
 
 export const getMyDockersNetwork = DockerNetworkFactory.getAll({
-    pre: [(req, query) => {
-        query.user = req.user;
-        return query;
-    }]
+    middlewares: {
+        pre: [(req, query) => {
+            query.user = req.user;
+            return query;
+        }]
+    }
 });
