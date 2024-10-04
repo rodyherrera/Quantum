@@ -26,7 +26,7 @@ import createOperation from '@utilities/api/operationHandler';
 const handleAuthResponse = (data, dispatch) => {
     authLocalStorageService.setCurrentUserToken(data.token);
     dispatch(authSlice.setState({ path: 'user', value: data.user }));
-    dispatch(authSlice.setState({ path: 'loadingStatus.isLoading', value: true }));
+    dispatch(authSlice.setState({ path: 'authStatus.isAuthenticated', value: true }));
 };
 
 /**
@@ -139,8 +139,8 @@ export const updateMyPassword = (body, navigate) => async (dispatch) => {
  * @returns {Promise} Resolves when the logout process is complete.
 */
 export const logout = () => async (dispatch) => {
-    await dispatch(authSlice.setLoadingStatus({ key: 'isLoading', value: false }));
+    await dispatch(authSlice.setState({ path: 'authStatus.isLoading', value: false }));
     authLocalStorageService.removeCurrentUserToken();
-    await dispatch(authSlice.setAuthStatus({ key: 'isAuthenticated', value: false }));
-    await dispatch(authSlice.setLoadingStatus({ key: 'isLoading', value: false }));
+    await dispatch(authSlice.setState({ path: 'authStatus.isAuthenticated', value: false }));
+    await dispatch(authSlice.setState({ path: 'authStatus.isLoading', value: false }));
 };

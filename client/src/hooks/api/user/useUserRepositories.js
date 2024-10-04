@@ -8,8 +8,6 @@ const useUserRepositories = () => {
     const { repositories, isLoading, isOperationLoading, error } = useSelector(state => state.repository);
 
     useEffect(() => {
-        dispatch(getRepositories());
-
         const intervalId = setInterval(() => {
             dispatch(getRepositories(false));
         }, 15000);
