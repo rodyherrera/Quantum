@@ -5,7 +5,7 @@ import { setState as dockerContSetState } from '@services/docker/container/slice
 
 const useUserDockerContainers = () => {
     const dispatch = useDispatch();
-    const { dockerContainers, isLoading, error } = useSelector((state) => state.dockerContainer);
+    const { dockerContainers, isLoading, error, stats } = useSelector((state) => state.dockerContainer);
     
     useEffect(() => {
         dispatch(getMyDockerContainers());
@@ -14,7 +14,7 @@ const useUserDockerContainers = () => {
         }
     }, []);
 
-    return { dockerContainers, isLoading, error };
+    return { dockerContainers, isLoading, error, stats };
 };
 
 export default useUserDockerContainers;

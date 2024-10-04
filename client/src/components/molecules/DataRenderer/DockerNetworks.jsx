@@ -6,7 +6,7 @@ import { IoLogoDocker } from 'react-icons/io5';
 import { DockerNetwork } from '@components/organisms/Docker';
 
 const DockerNetworks = ({ ...props }) => {
-    const { dockerNetworks, isLoading, error } = useUserDockerNetworks();
+    const { dockerNetworks, isLoading, error, stats } = useUserDockerNetworks();
 
     return (
         <DashboardModule
@@ -14,8 +14,8 @@ const DockerNetworks = ({ ...props }) => {
             createLink='/docker-network/create/'
             Icon={IoLogoDocker}
             alias='network(s)'
-            total={5}
-            results={1}
+            results={stats?.results?.total}
+            total={dockerNetworks?.length}
             RenderComponent={() => (
                 <DataRenderer
                     title='Docker Networks'

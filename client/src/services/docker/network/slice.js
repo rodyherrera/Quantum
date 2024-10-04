@@ -19,7 +19,8 @@ const state = {
     error: null,
     isLoading: true,
     isOperationLoading: false,
-    dockerNetworks: []
+    dockerNetworks: [],
+    stats: {},
 };
 
 const dockerNetworkSlice = createSlice({

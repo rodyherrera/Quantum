@@ -5,9 +5,11 @@ import { setState as repoSetState } from '@services/repository/slice';
 
 const useUserRepositories = () => {
     const dispatch = useDispatch();
-    const { repositories, isLoading, isOperationLoading, error } = useSelector(state => state.repository);
+    const { repositories, isLoading, isOperationLoading, error, stats } = useSelector(state => state.repository);
 
     useEffect(() => {
+        dispatch(getRepositories());
+        
         const intervalId = setInterval(() => {
             dispatch(getRepositories(false));
         }, 15000);
@@ -18,7 +20,7 @@ const useUserRepositories = () => {
         }
     }, []);
 
-    return { repositories, isLoading, isOperationLoading, error };
+    return { repositories, isLoading, isOperationLoading, error, stats };
 };
 
 export default useUserRepositories;

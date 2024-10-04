@@ -19,6 +19,7 @@ const state = {
     error: null,
     isLoading: true,
     isOperationLoading: false,
+    stats: {},
     repositories: [],
     repositoryFiles: [],
     githubRepositories: [],

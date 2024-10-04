@@ -1,12 +1,12 @@
 import React from 'react';
-import useUserDockerNetworks from '@hooks/api/user/useUserDockerNetworks';
+import useUserDockerImages from '@hooks/api/user/useUserDockerImages';
 import DataRenderer from '@components/organisms/DataRenderer';
 import DashboardModule from '@components/molecules/DashboardModule';
 import { IoLogoDocker } from 'react-icons/io5';
 import { DockerImage } from '@components/organisms/Docker';
 
 const DockerImages = ({ ...props }) => {
-    const { dockerImages, isLoading, error } = useUserDockerNetworks();
+    const { dockerImages, isLoading, error, stats } = useUserDockerImages();
 
     return (
         <DashboardModule
@@ -14,8 +14,8 @@ const DockerImages = ({ ...props }) => {
             Icon={IoLogoDocker}
             alias='image(s)'
             createLink='/docker-image/create/'
-            total={5}
-            results={1}
+            results={stats?.results?.total}
+            total={dockerImages?.length}
             RenderComponent={() => (
                 <DataRenderer
                     title='Docker Images'

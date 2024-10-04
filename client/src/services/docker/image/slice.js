@@ -18,6 +18,7 @@ import * as reduxUtils from '@utilities/common/reduxUtils';
 const state = {
     error: null,
     isLoading: true,
+    stats: {},
     isOperationLoading: false,
     dockerImages: []
 };

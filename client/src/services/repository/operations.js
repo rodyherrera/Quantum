@@ -49,7 +49,8 @@ export const getRepositories = (setLoaderState = true) => async (dispatch) => {
     operation.use({
         api: repositoryService.getRepositories,
         loaderState: setLoaderState ? 'isLoading' : null,
-        responseState: 'repositories'
+        responseState: 'repositories',
+        statsState: 'stats'
     });
 };
 

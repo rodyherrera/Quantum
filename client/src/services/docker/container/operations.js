@@ -21,7 +21,8 @@ export const getMyDockerContainers = () => async (dispatch) => {
     operation.use({
         api: dockerContainerService.getMyDockerContainers,
         responseState: 'dockerContainers',
-        loaderState: 'isLoading'
+        loaderState: 'isLoading',
+        statsState: 'stats'
     });
 };
 

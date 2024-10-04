@@ -33,6 +33,7 @@ export const getMyDockerImages = () => async (dispatch) => {
     operation.use({
         api: dockerImageService.getMyDockerImages,
         responseState: 'dockerImages',
-        loaderState: 'isLoading'
+        loaderState: 'isLoading',
+        statsState: 'stats'
     });
 };
