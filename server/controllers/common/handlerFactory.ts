@@ -1,4 +1,4 @@
-import { Response, NextFunction, RequestHandler } from 'express';
+import { Response, NextFunction, RequestHandler, response } from 'express';
 import { IRequest } from '@typings/controllers/common';
 import { Document, Model } from 'mongoose';
 import { catchAsync, filterObject, checkIfSlugOrId } from '@utilities/helpers';
@@ -36,15 +36,17 @@ class HandlerFactory{
         config: HandlerFactoryMethodConfig = {}
     ) : RequestHandler{
         return catchAsync(async (req: IRequest, res: Response, next: NextFunction) => {
-            req.handlerData = await this.applyMiddlewares(config.middlewares.pre, req, req.body);
+            if(config.middlewares){
+                req.handlerData = await this.applyMiddlewares(config.middlewares.pre, req, req.body);
+            }
             await operation(req, res, next);
-            if(res.locals.data){
+            if(res.locals.data && config.middlewares){
                 res.locals.data = await this.applyMiddlewares(config.middlewares.post, req, res.locals.data);
             }
         });
     }
 
-    deleteOne(config: HandlerFactoryMethodConfig): RequestHandler{
+    deleteOne(config: HandlerFactoryMethodConfig = {}): RequestHandler{
         return this.createHandler(async (req, res, next) => {
             const query = checkIfSlugOrId(req.params.id);
             const record = await this.model.findOneAndDelete(query);
@@ -52,14 +54,12 @@ class HandlerFactory{
                 return next(new RuntimeError('Core::DeleteOne::RecordNotFound', 404));
             }
             res.locals.data = record;
-            res.status(204).json({
-                status: 'success',
-                data: record
-            });
+            const body = { status: 'success', data: record };
+            this.sendResponse(204, body, req, res, config);
         }, config);
     }
 
-    updateOne(config: HandlerFactoryMethodConfig): RequestHandler{
+    updateOne(config: HandlerFactoryMethodConfig = {}): RequestHandler{
         return this.createHandler(async (req, res, next) => {
             const query = this.createQuery(req);
             const record = await this.model.findOneAndUpdate(
@@ -70,10 +70,8 @@ class HandlerFactory{
                 return next(new RuntimeError('Core::UpdateOne::RecordNotFound', 404));
             }
             res.locals.data = record;
-            res.status(200).json({
-                status: 'success',
-                data: record
-            });
+            const body = { status: 'success', data: record };
+            this.sendResponse(200, body, req, res, config);
         }, config);
     }
 
@@ -93,40 +91,51 @@ class HandlerFactory{
         return query;
     }
 
-    createOne(config: HandlerFactoryMethodConfig): RequestHandler{
+    createOne(config: HandlerFactoryMethodConfig = {}): RequestHandler{
         return this.createHandler(async (req, res) => {
             const query = this.createQuery(req);
             const record = await this.model.create(query);
             res.locals.data = record;
-            res.status(201).json({
-                status: 'success',
-                data: record
-            });
+            const body = { status: 'success', data: record };
+            this.sendResponse(201, body, req, res, config);
         }, config);
     }
 
     private getPopulateFromRequest(query: IRequest['query']): string | null{
         if(!query?.populate) return null;
         const populate = query.populate as string;
-        console.log(populate);
         return populate.startsWith('{')
             ? JSON.parse(populate).join(' ')
             : populate.split(',').join(' ');
     }
 
-    getAll(config: HandlerFactoryMethodConfig): RequestHandler{
+    private async sendResponse(
+        status: number, 
+        body: any, 
+        req: IRequest, 
+        res: Response, 
+        config: HandlerFactoryMethodConfig
+    ): Promise<any>{
+        if(config.responseInterceptor){
+            await config.responseInterceptor(req, res, body);
+            return;
+        }
+        res.status(status).json(body);
+    }
+
+    getAll(config: HandlerFactoryMethodConfig = {}): RequestHandler{
         return this.createHandler(async (req, res) => {
             const populate = this.getPopulateFromRequest(req.query);
             const operations = new APIFeatures({
                 requestQueryString: req.query,
                 model: this.model,
                 fields: this.fields,
-                populate
+                populate: populate
             }).filter().sort().limitFields().search();
             await operations.paginate();
             const { records, skippedResults, totalResults, page, limit, totalPages } = await operations.perform();
             res.locals.data = records;
-            res.status(200).json({
+            const body = {
                 status: 'success',
                 page: {
                     current: page,
@@ -138,11 +147,12 @@ class HandlerFactory{
                     paginated: limit
                 },
                 data: records
-            });
+            };
+            this.sendResponse(200, body, req, res, config);
         }, config);
     }
 
-    getOne(config: HandlerFactoryMethodConfig): RequestHandler{
+    getOne(config: HandlerFactoryMethodConfig = {}): RequestHandler{
         return this.createHandler(async (req, res, next) => {
             const populate = this.getPopulateFromRequest(req.query);
             let record: Document<any, {}> | null = await this.model.findOne(checkIfSlugOrId(req.params.id));
@@ -151,10 +161,11 @@ class HandlerFactory{
             }
             if(populate) record = await record.populate(populate);
             res.locals.data = record;
-            res.status(200).json({
+            const body = {
                 status: 'success',
                 data: record
-            });
+            };
+            this.sendResponse(200, body, req, res, config);
         }, config)
     }
 }

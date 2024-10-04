@@ -98,23 +98,31 @@ export const getMyGithubRepositories = catchAsync(async (req: Request, res: Resp
  * @param {Request} req - Express request object
  * @param {Response} res - Express response object 
 */
-export const getMyRepositories = catchAsync(async (req: Request, res: Response) => {
-    const user = req.user as IUser;
-    const repositories: IRepository[] = await Repository.find({ user }).lean();
-    for(const repository of repositories){
-        const activeDeploymentId = repository.deployments[0];
-        if(!activeDeploymentId) continue;
-        const deployment = await Deployment.findById(activeDeploymentId).select('status');
-        if(deployment) repository.activeDeployment = deployment;
+// DO IT BETTER !!!!!!!
+export const getMyRepositories = RepositoryFactory.getAll({
+    middlewares: {
+        pre: [(req, _) => {
+            req.query.populate = 'deployments';
+        }]
+    },
+    async responseInterceptor(req, res, body){
+        const user = req.user as IUser;
+        const data = JSON.parse(JSON.stringify(body));
+        for(const repository of data.data){
+            const activeDeploymentId = repository.deployments[0];
+            if(!activeDeploymentId) continue;
+            const deployment = await Deployment.findById(activeDeploymentId).select('status');
+            if(deployment) repository.activeDeployment = deployment;
+        }
+        const repositoriesWithInfo = await Promise.all(data.data.map(async (repository) => {
+            const github = new Github(user, repository);
+            const repositoryInfo = await github.getRepositoryInfo();
+            if(!repositoryInfo) return null;
+            return { ...repositoryInfo, ...repository };
+        }));
+        data.data = repositoriesWithInfo.filter(repo => repo !== null);
+        res.status(200).json(data);
     }
-    const repositoriesWithInfo = await Promise.all(repositories.map(async (repository) => {
-        const github = new Github(user, repository);
-        const repositoryInfo = await github.getRepositoryInfo();
-        if(!repositoryInfo) return null;
-        return { ...repositoryInfo, ...repository };
-    }));
-    const filteredRepositoriesWithInfo = repositoriesWithInfo.filter(repo => repo !== null);
-    res.status(200).json({ status: 'success', data: filteredRepositoriesWithInfo });
 });
 
 /**
