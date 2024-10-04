@@ -1,17 +1,3 @@
-/***
- * Copyright (C) Rodolfo Herrera Hernandez. All rights reserved.
- * Licensed under the MIT license. See LICENSE file in the project root
- * for full license information.
- *
- * =+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
- *
- * For related information - https://github.com/rodyherrera/Quantum/
- *
- * All your applications, just in one place. 
- *
- * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-****/
-
 import axios from 'axios';
 import fs from 'fs';
 import path from 'path';
@@ -23,22 +9,20 @@ import RuntimeError from '@utilities/runtimeError';
 import { catchAsync } from '@utilities/helpers';
 import { Request, Response, NextFunction } from 'express';
 import { IUser } from '@typings/models/user';
-import { IRepository } from '@typings/models/repository';
-import { IGithub } from '@typings/models/github';
 
 const RepositoryFactory = new HandlerFactory({
     model: Repository,
     fields: [
-        'name',
-        'url',
-        'user',
-        'alias',
-        'deployments',
+        'name', 
+        'url', 
+        'user', 
+        'alias', 
+        'deployments', 
         'buildCommand',
-        'domains',
-        'port',
-        'installCommand',
-        'startCommand',
+        'domains', 
+        'port', 
+        'installCommand', 
+        'startCommand', 
         'rootDirectory'
     ]
 });
@@ -49,148 +33,79 @@ export const createRepository = RepositoryFactory.createOne();
 export const updateRepository = RepositoryFactory.updateOne();
 export const deleteRepository = RepositoryFactory.deleteOne();
 
-/**
- * Fetches and retrieves a list of all GitHub repositories associated with a user's access token.  
- *
- * @param {string} accessToken - The user's GitHub access token.
- * @returns {Promise<Array>} Promise resolving to an array of repository data objects.
-*/
 const getGithubRepositories = async (accessToken: string): Promise<any[]> => {
-    const response = await axios.get(`https://api.github.com/user/repos`, {
+    const response = await axios.get('https://api.github.com/user/repos', {
         headers: { Authorization: `Bearer ${accessToken}` },
-        // NOTE: The maximum number of repositories per page is 100. 
-        // In the future, add pagination, as it is not yet implemented.
         params: { visibility: 'all', per_page: 100 }
     });
     return response.data;
 };
 
-/**
- * Filters a list of GitHub repositories, removing any that already exist in a user's own repositories.
- *
- * @param {Array} githubRepositories - Array of GitHub repository data objects.
- * @param {Array} userRepositories - Array of the user's own repository objects.
- * @returns {Array} A filtered array of GitHub repositories.
-*/
-const filterRepositories = (githubRepositories: any[], userRepositories: any[]): any[] => {
-    return githubRepositories.filter((repository) => {
-        return !userRepositories.some((userRepository) => userRepository.name === repository.full_name);
-    });
-};
+const filterRepositories = (githubRepositories: any[], userRepositories: any[]): any[] => 
+    githubRepositories.filter(repo => !userRepositories.some(userRepo => userRepo.name === repo.full_name));
 
-/**
- * Endpoint: Retrieves filtered GitHub repositories for a user.
- * 
- * @param {Request} req - Express request object
- * @param {Response} res - Express response object
-*/
 export const getMyGithubRepositories = catchAsync(async (req: Request, res: Response) => {
     const user = req.user as IUser;
-    const { accessToken } = user.github as IGithub;
-    const githubRepositories = await getGithubRepositories(accessToken);
+    const githubRepositories = await getGithubRepositories(user.github.accessToken);
     const sanitizedRepositories = filterRepositories(githubRepositories, user.repositories);
     res.status(200).json({ status: 'success', data: sanitizedRepositories });
 });
 
-/**
- * Endpoint: Retrieves a user's custom repositories from data storage.
- *
- * @param {Request} req - Express request object
- * @param {Response} res - Express response object 
-*/
-// DO IT BETTER !!!!!!!
 export const getMyRepositories = RepositoryFactory.getAll({
     middlewares: {
-        pre: [(req, _) => {
-            req.query.populate = 'deployments';
+        pre: [(req) => { 
+            req.query.populate = 'deployments'; 
         }]
     },
-    async responseInterceptor(req, res, body){
+    async responseInterceptor(req, res, body) {
         const user = req.user as IUser;
         const data = JSON.parse(JSON.stringify(body));
-        for(const repository of data.data){
-            const activeDeploymentId = repository.deployments[0];
-            if(!activeDeploymentId) continue;
-            const deployment = await Deployment.findById(activeDeploymentId).select('status');
-            if(deployment) repository.activeDeployment = deployment;
+        for(const repo of data.data){
+            const activeDeploymentId = repo.deployments[0];
+            if(activeDeploymentId){
+                const deployment = await Deployment.findById(activeDeploymentId).select('status');
+                if(deployment) repo.activeDeployment = deployment;
+            }
         }
-        const repositoriesWithInfo = await Promise.all(data.data.map(async (repository) => {
-            const github = new Github(user, repository);
-            const repositoryInfo = await github.getRepositoryInfo();
-            if(!repositoryInfo) return null;
-            return { ...repositoryInfo, ...repository };
+        const enrichedData = await Promise.all(data.data.map(async (repo) => {
+            const github = new Github(user, repo);
+            const repoInfo = await github.getRepositoryInfo();
+            return repoInfo ? { ...repoInfo, ...repo } : null;
         }));
-        data.data = repositoriesWithInfo.filter(repo => repo !== null);
-        res.status(200).json(data);
+        res.status(200).json({ status: 'success', data: enrichedData.filter(Boolean) });
     }
 });
 
-/**
- * Helper function to generate a file/directory path within the designated user storage area.  
- *
- * @param {Request} req - Express request object
- * @returns {string} Constructed file system path
-*/
 const getRequestedPath = (req: Request): string => {
-    const route = req.params.route || '';
     const env = process.env.NODE_ENV || 'development';
     const user = req.user as IUser;
-    const basePath = path.join('/var/lib/quantum', env, `/containers/${user._id}/github-repos/`, req.params.id);
-    return path.join(basePath, route);
+    return path.join('/var/lib/quantum', env, `/containers/${user._id}/github-repos/`, req.params.id, req.params.route || '');
 };
 
-/**
- * Endpoint: Provides directory listing for file storage exploration.
- *
- * @param {Request} req - Express request object
- * @param {Response} res - Express response object 
-*/
 export const storageExplorer = catchAsync(async (req: Request, res: Response) => {
     const requestedPath = getRequestedPath(req);
-    const files = fs.readdirSync(requestedPath);
-    const fileDetails: { name: string, isDirectory: boolean }[] = [];
-    for(const file of files){
-        const filePath = path.join(requestedPath, file);
-        const stat = fs.statSync(filePath);
-        const isDirectory = stat.isDirectory();
-        fileDetails.push({ name: file, isDirectory });
-    }
-    res.status(200).json({ status: 'success', data: fileDetails });
+    const files = fs.readdirSync(requestedPath).map(file => ({
+        name: file,
+        isDirectory: fs.statSync(path.join(requestedPath, file)).isDirectory()
+    }));
+    res.status(200).json({ status: 'success', data: files });
 });
 
-/**
- * Endpoint: Handles updating the content of a file within the user's designated storage area.
- *
- * @param {Request} req - Express request object
- * @param {Response} res - Express response object
- * @param {NextFunction} next - Express 'next' function (likely used for error handling middleware)
-*/
 export const updateRepositoryFile = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const requestedPath = getRequestedPath(req);
-    if(!fs.existsSync(requestedPath))
-        return next(new RuntimeError('RepositoryFileNotExists', 404));
-    const { content } = req.body;
-    if(!content)
-        return next(new RuntimeError('RepositoryFileUpdateContentRequired', 400));
-    fs.writeFileSync(requestedPath, content, 'utf-8');
+    if(!fs.existsSync(requestedPath)) return next(new RuntimeError('Repository::File::NotExists', 404));
+    if(!req.body.content) return next(new RuntimeError('Repository::File::UpdateContentRequired', 400));
+    fs.writeFileSync(requestedPath, req.body.content, 'utf-8');
     res.status(200).json({ status: 'success' });
 });
 
-/**
- * Endpoint: Reads and returns the contents of a file from the user's storage.
- * 
- * @param {Request} req - Express request object
- * @param {Response} res - Express response object 
-*/
 export const readRepositoryFile = catchAsync(async (req: Request, res: Response) => {
     const requestedPath = getRequestedPath(req);
-    const fileName = path.basename(requestedPath);
-    const fileContent = fs.readFileSync(requestedPath, 'utf-8');
     res.status(200).json({
         status: 'success',
         data: {
-            name: fileName,
-            content: fileContent
+            name: path.basename(requestedPath),
+            content: fs.readFileSync(requestedPath, 'utf-8')
         }
     });
 });
