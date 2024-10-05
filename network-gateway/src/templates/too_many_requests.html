@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang='en'>
+    <head>
+        <meta charset='utf-8' />
+        <meta http-equiv='X-UA-Compatible' content='IE=edge'/>
+        <meta name="viewport" content = "width = device-width, initial-scale = 1.0, minimum-scale = 1, maximum-scale = 1, user-scalable = no" />
+        <meta name='apple-mobile-web-app-capable' content='yes'/>
+        <meta name='mobile-web-app-capable' content='yes'>
+        <meta name='apple-mobile-web-app-status-bar-style' content='black-translucent'/>
+        <meta name='contentType' content='website'/>
+        <meta content='#FFF' data-react-helmet='true' name='theme-color' />
+        <meta property='og:type' content='website'/>
+        <meta name='msapplication-TileColor' content="#FFFFFF">
+        <title>429: TOO_MANY_REQUESTS</title>
+    </head>
+    <style>
+        *{
+            box-sizing: border-box;
+            padding: 0;
+            margin: 0;
+        }
+
+        body{
+            display: flex;
+            background-color: #FFF;
+            height: 100vh;
+            align-items: center;
+            margin: 0 auto;
+            max-width: 1000px;
+            padding: 1rem;
+        }
+
+        .Too-Many-Requests-Title{
+            font-size: 3rem;
+        }
+
+        .Too-Many-Requests--Description{
+            font-size: 1.2rem;
+        }
+
+        .Too-Many-Requests-Header{
+            display: flex;
+            flex-direction: column;
+            gap: .5rem;
+        }
+
+        .Request-Error-Code{
+            font-size: .95rem;
+            opacity: .8;
+        }
+
+        @media screen and (max-width: 768px){
+            .Too-Many-Requests-Title{
+                font-size: 2rem;
+            }
+        }
+    </style>
+    <body>
+        <main class='Too-Many-Requests-Container'>
+            <section class='Too-Many-Requests-Header'>
+                <span class='Request-Error-Code'>Core::Service::TooManyRequests (HTTP E. 429)</span>
+                <h3 class='Too-Many-Requests-Title'>Access temporarily denied<br/>due to high request volume</h3>
+                <p class='Too-Many-Requests-Description'>You’ve made too many requests in a short period. Please wait before trying again.</p>
+            </section>
+        </main>
+    </body>
+</html>

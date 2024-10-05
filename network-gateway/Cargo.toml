@@ -1,12 +1,15 @@
 [package]
 name = "quantum_network_gateway"
-version = "0.1.0"
+version = "1.0.7"
 edition = "2021"
 
 [dependencies]
 tokio = { version = "1", features = ["full"] }
-tokio-tungstenite = "0.16"
 hyper = { version = "0.14", features = ["full"] }
+tokio-tungstenite = "0.17"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 futures = "0.3"
+ratelimit_meter = "5.0"
+num_cpus = "1.13"
+dashmap = "6.1.0"
