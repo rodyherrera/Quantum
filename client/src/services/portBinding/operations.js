@@ -24,7 +24,7 @@ export const createPortBinding = (body, navigate) => async (dispatch) => {
     operation.use({
         api: portBindingService.createPortBinding,
         loaderState: 'isOperationLoading',
-        query: { body }
+        body
     });
 };
 
@@ -33,6 +33,11 @@ export const getMyPortBindings = () => async (dispatch) => {
     operation.use({
         api: portBindingService.getMyPortBindings,
         responseState: 'portBindings',
-        loaderState: portBindingSlice.setIsLoading
+        loaderState: 'isLoading',
+        query: {
+            queryParams: {
+                populate: 'container',
+            }
+        }
     });
 };

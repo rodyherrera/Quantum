@@ -55,7 +55,7 @@ export const signUp = (body) => async (dispatch) => {
     operation.use({
         api: authService.signUp,
         loaderState: 'loadingStatus.isLoading',
-        query: { body }
+        body
     });
 };
 
@@ -71,7 +71,7 @@ export const signIn = (body) => async (dispatch) => {
     operation.use({
         api: authService.signIn,
         loaderState: 'loadingStatus.isLoading',
-        query: { body }
+        body
     });
 };
 
@@ -92,9 +92,9 @@ export const updateMyProfile = (body, navigate) => async (dispatch) => {
     operation.use({
         api: authService.updateMyProfile,
         loaderState: 'loadingStatus.isOperationLoading',
+        body,
         query: {
-            body,
-            query: { populate: 'github' }
+            queryParams: { populate: 'github' }
         }
     });
 };
@@ -129,7 +129,7 @@ export const updateMyPassword = (body, navigate) => async (dispatch) => {
     operation.use({
         api: authService.updateMyPassword,
         loaderState: 'loadingStatus.isOperationLoading',
-        query: { body }
+        body
     });
 };
 

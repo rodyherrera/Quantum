@@ -44,6 +44,6 @@ export const createAccount = (body) => async (dispatch) => {
             slice: authSlice,
             path: 'user.github'
         },
-        query: { body }
+        body
     });
 };

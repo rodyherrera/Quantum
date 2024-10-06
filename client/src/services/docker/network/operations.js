@@ -24,7 +24,7 @@ export const createDockerNetwork = (body, navigate) => async (dispatch) => {
     operation.use({
         api: dockerNetworkService.createDockerNetwork,
         loaderState: 'isOperationLoading',
-        query: { body }
+        body
     });
 };
 

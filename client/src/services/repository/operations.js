@@ -34,7 +34,7 @@ export const createRepository = (body, navigate) => async (dispatch) => {
         api: repositoryService.createRepository,
         loaderState: 'isOperationLoading',
         responseState: 'selectedRepository',
-        query: { body }
+        body
     });
 };
 
@@ -82,7 +82,8 @@ export const updateRepository = (id, body, navigate) => async (dispatch) => {
     operation.use({
         api: repositoryService.updateRepository,
         loaderState: 'isOperationLoading',
-        query: { body, query: { params: { id } } }
+        query: { query: { params: { id } } },
+        body
     });
 };
 
@@ -160,6 +161,7 @@ export const updateRepositoryFile = (id, route, content) => async (dispatch) => 
     operation.use({
         api: repositoryService.updateRepositoryFile,
         loaderState: 'isOperationLoading',
-        query: { query: { params: { id, route } }, body: { content } }
+        query: { query: { params: { id, route } } },
+        body: { content }
     });
 };

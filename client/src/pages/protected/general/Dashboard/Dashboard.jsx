@@ -13,7 +13,12 @@
 ****/
 
 import React from 'react';
-import { DockerContainers, DockerImages, DockerNetworks, Repositories } from '@components/molecules/DataRenderer';
+import {
+    DockerContainers, 
+    DockerImages, 
+    DockerNetworks, 
+    Repositories, 
+    PortBindings } from '@components/molecules/DataRenderer';
 import './Dashboard.css';
 
 
@@ -25,6 +30,7 @@ const Dashboard = () => {
                 <DockerContainers />
                 <DockerNetworks />
                 <DockerImages />
+                <PortBindings />
             </section>
         </main>
     );

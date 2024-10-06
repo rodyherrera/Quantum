@@ -22,7 +22,7 @@ const CreateDockerContainer = () => {
     }, []);
 
     const handleFormSubmit = (formValues) => {
-        if(formValues?.image?.search(':') !== -1){
+        if(formValues?.image?.search?.(':') !== -1){
             // e.g { image: 'alpine:latest' }
             const [ name, tag ] = formValues.image.split(':');
             formValues.image = { name, tag};
@@ -66,6 +66,13 @@ const CreateDockerContainer = () => {
                     'options': dockerNetworks.map(({ name, driver, subnet, _id }) => [_id, `${name} (${subnet}) (${driver})`]),
                     'placeholder': 'Select or create a new network eg., "my-custom-network"',
                     'helperText': 'Select an existing Docker network or enter a new one, e.g., "my-custom-network" to create a new network.'
+                },
+                {
+                    'type': 'text',
+                    'name': 'command',
+                    'placeholder': 'e.g., /bin/bash, ollama run llama3, ...',
+                    'default': '/bin/sh',
+                    'helperText': 'Specify the command that you want to execute inside your Docker container. This will define what process runs when the container starts.'
                 }
             ]}
         />

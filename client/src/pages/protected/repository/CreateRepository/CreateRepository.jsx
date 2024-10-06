@@ -60,9 +60,7 @@ const CreateRepository = () => {
         }, { 
             y: 0, 
             opacity: 1, 
-            duration: 1,
-             // 0.2 seconds between each item animation
-            stagger: 0.2, 
+            duration: .5,
             // A bouncy effect
             ease: "back.out(1.7)"  
         });

@@ -88,7 +88,8 @@ export const updateDeployment = (id, body, navigate) => async (dispatch) => {
     operation.use({
         api: deploymentService.updateDeployment,
         loaderState: 'isOperationLoading',
-        query: { body, query: { params: { id } } }
+        query: { query: { params: { id } } },
+        body
     });
 };
 
@@ -112,6 +113,7 @@ export const repositoryActions = (repositoryAlias, loaderState, body) => async (
 
     operation.use({
         api: deploymentService.repositoryOperations,
-        query: { body, query: { params: { repositoryAlias } } }
+        query: { query: { params: { repositoryAlias } } },
+        body
     });
 };

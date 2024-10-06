@@ -24,7 +24,7 @@ export const createDockerImage = (body, navigate) => async (dispatch) => {
     operation.use({
         api: dockerImageService.createDockerImage,
         loaderState: 'isOperationLoading',
-        query: { body }
+        body
     });
 };
 

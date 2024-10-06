@@ -1,5 +1,6 @@
 .Dashboard-Card-Header-Container{
     display: flex;
+    flex-shrink: 0;
     border-bottom: 1px solid #dfdfdf;
 }
 
@@ -10,4 +11,6 @@
 .Dashboard-Card-Header-Item{
     font-size: .9rem;
     padding: .2rem 1rem;
+    flex-shrink: 0;
+    white-space: nowrap;
 }

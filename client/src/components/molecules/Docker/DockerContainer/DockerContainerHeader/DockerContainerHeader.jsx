@@ -7,7 +7,8 @@ const DockerContainerHeader = ({ container }) => {
     const options = [
         container.ipAddress ? `IPv4: ${container.ipAddress}` : 'Unallocated Subnet IP',
         `${container.image.name}:${container.image.tag} ${humanFileSize(container.image.size)}`,
-        `Status: ${container.status}`
+        `Status: ${container.status}`,
+        `ID: ${container._id}`,
     ];
 
     return <DashboardCardHeader options={options} />

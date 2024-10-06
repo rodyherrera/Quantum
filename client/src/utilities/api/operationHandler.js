@@ -53,10 +53,10 @@ class OperationHandler extends EventManager{
     */
     async use(config){
         const modifiedConfig = this.applyMiddlewares(config);
-        const { api, loaderState, responseState, statsState, query = {} } = modifiedConfig;
+        const { api, loaderState, responseState, statsState, query = {}, body = {} } = modifiedConfig;
         try{
             if(loaderState) this.updateState(loaderState, true);
-            const { data, page, results } = await api(query);
+            const { data, page, results } = await api({ query, body });
             this.emit('response', data);
             if(statsState) this.updateState(statsState, { page, results });
             if(responseState) this.updateState(responseState, data);
