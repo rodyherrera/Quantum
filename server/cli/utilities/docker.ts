@@ -1,9 +1,10 @@
 import Docker from 'dockerode';
 const docker = new Docker();
 
+const aliases = ['quantum-container', 'quantum-network'];
+
 export const filterAvailableContainers = async (activeOnly: boolean = false): Promise<any[]> => {
     const containers = await docker.listContainers({ all: !activeOnly });
-    const aliases = ['quantum-container'];
     return containers
         .filter((containerInfo) => {
             if(!activeOnly || containerInfo.State === 'running'){
@@ -13,3 +14,10 @@ export const filterAvailableContainers = async (activeOnly: boolean = false): Pr
             return false;
         });
 };
+
+export const filterAvailableNetworks = async (): Promise<any[]> => {
+    const networks = await docker.listNetworks();
+    return networks.filter((networkInfo) => {
+        return aliases.some((alias) => networkInfo.Name.startsWith(alias));
+    });
+}

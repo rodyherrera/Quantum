@@ -16,10 +16,12 @@ import createUser from '@cli/actions/createUser';
 import dropDatabase from '@cli/actions/dropDatabase';
 import listActiveContainers from '@cli/actions/listActiveContainers';
 import listCreatedContainers from '@cli/actions/listCreatedContainers';
+import listCreatedDockerNetworks from './listCreatedDockerNetworks';
 
 const actions = {
     createUser,
     dropDatabase,
+    listCreatedDockerNetworks,
     listCreatedContainers,
     listActiveContainers
 };

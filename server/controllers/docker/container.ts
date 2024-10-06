@@ -19,7 +19,8 @@ const DockerContainerFactory = new HandlerFactory({
         'image',
         'portBindings',
         'status',
-        'networks',
+        'command',
+        'network',
         'environment',
         'name'
     ]
@@ -84,7 +85,7 @@ export const randomAvailablePort = catchAsync(async (req: Request, res: Response
 });
 
 export const createDockerContainer = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    const { image, name, network } = req.body;
+    const { image, name, network, command } = req.body;
     if(!image || !name){
         return next(new RuntimeError('DockerContainer::CreateDocker::MissingParams', 400));
     }
@@ -100,6 +101,7 @@ export const createDockerContainer = catchAsync(async (req: Request, res: Respon
     const container = await DockerContainer.create({ 
         name, 
         user: userId, 
+        command,
         image: containerImage._id, 
         network: containerNetwork._id 
     });

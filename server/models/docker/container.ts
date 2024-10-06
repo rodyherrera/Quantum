@@ -33,6 +33,10 @@ const DockerContainerSchema: Schema<IDockerContainer> = new Schema({
         enum: ['created', 'running', 'stopped', 'paused', 'exited'],
         default: 'created'
     },
+    command: {
+        type: String,
+        default: '/bin/sh'
+    },
     startedAt: {
         type: Date,
     },

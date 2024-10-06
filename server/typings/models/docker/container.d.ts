@@ -18,6 +18,7 @@ export interface IDockerContainer extends Document{
     image: mongoose.Schema.Types.ObjectId,
     dockerContainerName: string;
     ipAddress?: string;
+    command: string;
     storagePath?: string,
     isUserContainer: boolean;
     environment: IDockerContainerEnvironment;

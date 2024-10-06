@@ -5,7 +5,7 @@ import * as authMiddleware from '@middlewares/authentication';
 const router = express.Router();
 
 router.use(authMiddleware.protect);
-router.post('/me/', portBindingController.getMyPortBindings);
+router.get('/me/', portBindingController.getMyPortBindings);
 router.post('/', portBindingController.createPortBinding);
 
 router.use(authMiddleware.restrictTo('admin'));

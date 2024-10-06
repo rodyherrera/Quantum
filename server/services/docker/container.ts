@@ -61,7 +61,6 @@ class DockerContainer{
         }
         const data = await container.inspect();
         const ipAddress = data.NetworkSettings.Networks[network.dockerNetworkName].IPAddress;
-        console.log(ipAddress);
         return ipAddress;
     }
 
@@ -84,7 +83,7 @@ class DockerContainer{
             const container = await this.initializeContainer();
             if(!container) return;
             const exec = await container.exec({
-                Cmd: ['/bin/sh'],
+                Cmd: [this.container.command],
                 AttachStdout: true,
                 AttachStderr: true,
                 AttachStdin: true,
@@ -155,7 +154,6 @@ class DockerContainer{
             Tty: true,
             OpenStdin: true,
             StdinOnce: true,
-            Cmd: ['/bin/sh'],
             HostConfig: {
                 Binds: [`${this.getDockerStoragePath()}:/app:rw`],
                 NetworkMode: networkName,
