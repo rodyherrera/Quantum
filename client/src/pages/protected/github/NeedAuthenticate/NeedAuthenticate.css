@@ -23,7 +23,9 @@
 
 #Github-Need-Authenticate-Main{
     height: 70%;
+    max-width: 1100px;
     width: 100%;
+    padding: 1rem;
 }
 
 #Github-Need-Authenticate-Body,
@@ -40,7 +42,7 @@
 }
 
 #Github-Need-Authenticate-Title{
-    font-size: 2rem;
+    font-size: 3rem;
     font-weight: 600;
 }
 
@@ -49,24 +51,38 @@
     font-weight: 500;
     margin-top: .5rem;
     max-width: 80%;
+    line-height: 1.8rem;
+}
+
+#Github-Need-Authenticate-Body .Button{
+    width: 300px;
+    display: flex;
+    gap: 1rem;
+    padding: .8rem 1rem;
 }
 
 @media screen and (max-width: 600px){
     #Github-Need-Authenticate-Main{
         padding: 1rem;
+        max-width: unset;
     }
 
     #Github-Need-Authenticate-Body{
         gap: 3rem;
     }
 
+    #Github-Need-Authenticate-Body .Button{
+        width: 300px;
+    }
+
     #Github-Need-Authenticate-Title{
-        font-size: 2rem;
+        font-size: 3rem;
         margin-bottom: 1rem;
     }
 
     #Github-Need-Authenticate-Subtitle{
-        font-size: .95rem;
+        font-size: 1.2rem;
+        line-height: 1.8rem;
         max-width: unset;
     }
 }

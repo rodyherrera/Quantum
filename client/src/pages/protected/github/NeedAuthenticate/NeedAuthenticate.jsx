@@ -41,15 +41,15 @@ const NeedAuthenticate = () => {
         <AnimatedMain id='Github-Need-Authenticate-Main'>
             <section id='Github-Need-Authenticate-Body'>
                 <article id='Github-Need-Authenticate-Title-Container'>
-                    <h1 id='Github-Need-Authenticate-Title'>Let's start something new together...</h1>
-                    <p id='Github-Need-Authenticate-Subtitle'>We will need you to authenticate using your Github account. We will gain access to your repositories to be able to deploy them.</p>
+                    <h1 id='Github-Need-Authenticate-Title'>We are almost ready...</h1>
+                    <p id='Github-Need-Authenticate-Subtitle'>You must link your Github account to be able to, among other things, deploy your repositories.</p>
                 </article>
         
                 <article id='Github-Need-Authenticate-Body'>
                     <Button 
                         onClick={() => authenticate(user._id)}
                         title='Proceed to Github' 
-                        variant='Contained Black Extend' 
+                        variant='Contained Big-Border-Radius' 
                         icon={<BsArrowRight />} />
                 </article>
             </section>
