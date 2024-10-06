@@ -20,6 +20,35 @@
     justify-content: space-between;
 }
 
+.Minimal-Form-Container:has(.Overlay-Loading-Container) .Minimal-Form-Right-Container,
+.Minimal-Form-Container:has(.Overlay-Loading-Container) .Minimal-Form-Left-Container{
+    filter: blur(2px);
+}
+
+.Minimal-Form-Container:has(.Overlay-Loading-Container) .Circular-Progress{
+    width: 1.5rem !important;
+    height: 1.5rem !important;
+}
+
+.Overlay-Loading-Message{
+    font-size: 1rem;
+    text-align: center;
+}
+
+.Overlay-Loading-Container{
+    position: fixed;
+    top: 0;
+    width: 100vw;
+    gap: 1rem;
+    padding: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(255, 255, 255, .2);
+    z-index: 200;
+    height: 100vh;
+}
+
 .Minimal-Form-Container.Form-Image{
     height: calc(100% - 110px) !important;
 }
@@ -179,6 +208,10 @@
         filter: grayscale(1);
         object-position: top;
         object-fit: cover;
+    }
+
+    .Overlay-Loading-Container{
+        flex-direction: column;
     }
 
     .Minimal-Form-Left-Container,

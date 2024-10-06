@@ -34,7 +34,9 @@ const MinimalForm = ({
     submitButtonTitle,
     handleFormSubmit,
     formImage = null,
+    overlayLoading = false,
     RightContainerComponent = null,
+    overlayLoadingMessage = null,
     breadcrumbsItems = null,
     isLoading = false
 }) => {
@@ -95,6 +97,13 @@ const MinimalForm = ({
                 ...((formInputs.length >= 3) && ({ height: 'unset' }))
             }}
         >
+            {(isLoading && overlayLoading && overlayLoadingMessage.length >= 1) && (
+                <div className='Overlay-Loading-Container'>
+                    <CircularProgress className='Circular-Progress' />
+                    <p className='Overlay-Loading-Message'>{overlayLoadingMessage}</p>
+                </div>
+            )}
+
             <div className='Minimal-Form-Left-Container'>
                 <div className='Minimal-Form-Header-Container'>
                     {formImage !== null && (

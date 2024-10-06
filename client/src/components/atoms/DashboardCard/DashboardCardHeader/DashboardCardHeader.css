@@ -1,7 +1,15 @@
 .Dashboard-Card-Header-Container{
     display: flex;
-    flex-shrink: 0;
+    overflow-x: scroll;
     border-bottom: 1px solid #dfdfdf;
+}
+
+.Dashboard-Card-Header-Container::-webkit-scrollbar-thumb{
+    background-color: transparent;
+}
+
+.Dashboard-Card-Header-Container::-webkit-scrollbar-thumb:hover{
+    background-color: transparent;
 }
 
 .Dashboard-Card-Header-Item:not(:first-child){
@@ -11,6 +19,5 @@
 .Dashboard-Card-Header-Item{
     font-size: .9rem;
     padding: .2rem 1rem;
-    flex-shrink: 0;
-    white-space: nowrap;
+    min-width: fit-content;
 }

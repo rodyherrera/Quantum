@@ -33,6 +33,8 @@ const CreateDockerContainer = () => {
     return (
         <MinimalForm
             error={error}
+            overlayLoading={true}
+            overlayLoadingMessage='Getting image and creating volume, wait a few seconds...'
             isLoading={isOperationLoading}
             variant='Form-Image'
             formImage={CreateDockerContainerImage}
