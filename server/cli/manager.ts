@@ -30,7 +30,8 @@ dotenv.config({ path: './.env' });
             { title: 'Delete the database and local waste from the system.', value: actions.dropDatabase },
             { title: "Displays the platform's active Dockers containers on the screen.", value: actions.listActiveContainers },
             { title: 'Displays all containers created by Quantum on the screen, whether inactive or active.', value: actions.listCreatedContainers },
-            { title: 'Shows all Dockers container networks.', value: actions.listCreatedDockerNetworks }
+            { title: 'Shows all Dockers container networks.', value: actions.listCreatedDockerNetworks },
+            { title: 'Delete all Dockers container networks.', value: actions.removeCreatedDockerNetworks }
         ]
     });
     await callback?.();

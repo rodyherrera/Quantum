@@ -7,17 +7,37 @@ export const filterAvailableContainers = async (activeOnly: boolean = false): Pr
     const containers = await docker.listContainers({ all: !activeOnly });
     return containers
         .filter((containerInfo) => {
-            if(!activeOnly || containerInfo.State === 'running'){
-                const containerName = containerInfo.Names[0];
-                return aliases.some((alias) => containerName.startsWith(`/${alias}`));
-            }
-            return false;
+            const containerName = containerInfo.Names[0];
+            return aliases.some((alias) => containerName
+                .startsWith(`/${alias}`)) && (!activeOnly || containerInfo.State === 'running');
         });
 };
 
 export const filterAvailableNetworks = async (): Promise<any[]> => {
     const networks = await docker.listNetworks();
-    return networks.filter((networkInfo) => {
-        return aliases.some((alias) => networkInfo.Name.startsWith(alias));
-    });
-}
+    return networks.filter((networkInfo) => aliases.some((alias) => networkInfo.Name.startsWith(alias)));
+};
+
+export const removeNetworks = async (networks: any[]): Promise<void> => {
+    for(const network of networks){
+        try{
+            const net = docker.getNetwork(network.Id);
+            const networkDetails = await net.inspect();
+            const containers = networkDetails.Containers;
+            if(containers){
+                for(const containerId in containers){
+                    try{
+                        await net.disconnect({ Container: containerId, Force: true });
+                        console.log(`Container ${containerId} disconnected from network ${network.Name}`);
+                    }catch (error){
+                        console.error(`Error disconnecting container ${containerId}:`, error);
+                    }
+                }
+            }
+            await net.remove();
+            console.log(`Deleted: ${network.Name}`);
+        }catch(error){
+            console.error(`Error for ${network.Name}:`, error);
+        }
+    }
+};
