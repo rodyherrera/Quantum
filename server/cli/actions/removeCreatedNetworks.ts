@@ -7,17 +7,28 @@ export const removeCreatedNetworks = async (): Promise<void> => {
         console.log('There are no networks created.');
         return;
     }
-    for(let i = 0; i < networks.length; i++){
-        console.log(`${i + 1}) ${networks[i].Name}`);
+    const { environment } = await prompts({
+        type: 'select',
+        name: 'environment',
+        message: 'What networks do you want to delete?',
+        choices: [
+            { title: 'All those that have been created in production.', value: 'production' },
+            { title: 'Those created in development.', value: 'development' },
+        ]
+    });
+    const environmentNetworks = networks
+        .filter(({ Names }) => Names[0].startsWith(`/quantum-network-${environment}`));
+    for(let i = 0; i < environmentNetworks.length; i++){
+        console.log(`${i + 1}) ${environmentNetworks[i].Name}`);
     }
-    console.log(`\n${networks.length} created networks have been found.`);
+    console.log(`\n${environmentNetworks.length} created networks have been found.`);
     const { confirm } = await prompts({
         type: 'confirm',
         name: 'confirm',
         message: 'This cannot be undone. Do you want to continue?'
     })
     if(confirm){
-        await removeNetworks(networks); 
+        await removeNetworks(environmentNetworks); 
         console.log('All networks were removed.');
         return;
     }

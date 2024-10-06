@@ -31,7 +31,8 @@ dotenv.config({ path: './.env' });
             { title: "Displays the platform's active Dockers containers on the screen.", value: actions.listActiveContainers },
             { title: 'Displays all containers created by Quantum on the screen, whether inactive or active.', value: actions.listCreatedContainers },
             { title: 'Shows all Dockers container networks.', value: actions.listCreatedDockerNetworks },
-            { title: 'Delete all Dockers container networks.', value: actions.removeCreatedDockerNetworks }
+            { title: 'Delete all networks created in production or development as you choose.', value: actions.removeCreatedDockerNetworks },
+            { title: 'Delete containers created in production or development as you choose.', value: actions.removeContainers }
         ]
     });
     await callback?.();
