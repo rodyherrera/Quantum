@@ -31,7 +31,7 @@ class APIRequestBuilder{
      * @param {object} params - An object containing values for path parameters (e.g., :userId).
      * @param {object} queryParams - An object containing query parameters (e.g., ?fields=name).
      * @returns {string} - The constructed URL.
-    */
+    */  
     buildUrl(path, params = {}, queryParams = {}){
         // Replace path parameters with their actual values
         const compiledPath = path.replace(/:([a-zA-Z0-9_]+)/g, (_, key) => {
