@@ -51,13 +51,12 @@ const Application = () => {
                             <Route path='storage' element={<pages.protected.repository.Storage />} />
                             <Route path='deployments' element={<pages.protected.repository.RepositoryDeployments />} />
                             <Route path='deployment'>
-                                <Route path='setup' element={<pages.protected.repository.SetupDeployment />} />
-                                <Route path='environment-variables' element={<pages.protected.repository.EnvironmentVariables />} />
+                            <Route path='setup' element={<pages.protected.repository.SetupDeployment />} />
+                            <Route path='environment-variables' element={<pages.protected.general.EnvironmentVariables />} />
                             </Route>
-                            <Route path='shell' element={<pages.protected.repository.Shell />} />
-                            <Route path='domains' element={<pages.protected.repository.RepositoryDomains />} />
                         </Route>
                     </Route>
+
 
                     <Route path='/dashboard' element={<pages.protected.general.Dashboard />} />
                 </Route>

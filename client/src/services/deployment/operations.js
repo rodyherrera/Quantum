@@ -29,7 +29,7 @@ export const getRepositoryDeployments = (repositoryName) => async (dispatch) => 
         api: deploymentService.getRepositoryDeployments,
         loaderState: 'isLoading',
         responseState: 'deployments',
-        query: { query: { params: { repositoryName } } }
+        query: { params: { repositoryName } }
     });
 };
 
@@ -46,7 +46,7 @@ export const deleteRepositoryDeployment = (repositoryName, deploymentId) => asyn
         api: deploymentService.deleteRepositoryDeployment,
         loaderState: 'isOperationLoading',
         responseState: 'deployments',
-        query: { query: { params: { repositoryName, deploymentId } } }
+        query: { params: { repositoryName, deploymentId } }
     });
 };
 
@@ -60,6 +60,7 @@ export const getActiveDeploymentEnvironment = (repositoryAlias) => async (dispat
     const operation = createOperation(deploymentSlice, dispatch);
 
     operation.on('response', (data) => {
+        console.log(data);
         data.variables = Object.entries(data.variables);
         dispatch(deploymentSlice.setState({
             path: 'environment',
@@ -70,7 +71,7 @@ export const getActiveDeploymentEnvironment = (repositoryAlias) => async (dispat
     operation.use({
         api: deploymentService.getActiveDeploymentEnvironment,
         loaderState: 'isEnvironmentLoading',
-        query: { query: { params: { repositoryAlias } } }
+        query: { params: { repositoryAlias } }
     });
 };
 
@@ -88,7 +89,7 @@ export const updateDeployment = (id, body, navigate) => async (dispatch) => {
     operation.use({
         api: deploymentService.updateDeployment,
         loaderState: 'isOperationLoading',
-        query: { query: { params: { id } } },
+        query: { params: { id } },
         body
     });
 };
@@ -113,7 +114,7 @@ export const repositoryActions = (repositoryAlias, loaderState, body) => async (
 
     operation.use({
         api: deploymentService.repositoryOperations,
-        query: { query: { params: { repositoryAlias } } },
+        query: { params: { repositoryAlias } },
         body
     });
 };

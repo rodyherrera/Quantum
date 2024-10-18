@@ -7,7 +7,7 @@ import './DockerContainerFooter.css';
 
 const DockerContainerFooter = ({ container }) => {
     const options = [
-        ['Expose Port', IoCloudOutline],
+        ['Expose Port', IoCloudOutline, '/port-binding/create/'],
         ['Environment Variables', PiDatabaseThin],
         ['File Explorer', CiServer]
     ];

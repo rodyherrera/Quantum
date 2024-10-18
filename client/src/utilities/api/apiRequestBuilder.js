@@ -34,6 +34,7 @@ class APIRequestBuilder{
     */  
     buildUrl(path, params = {}, queryParams = {}){
         // Replace path parameters with their actual values
+        console.log(params)
         const compiledPath = path.replace(/:([a-zA-Z0-9_]+)/g, (_, key) => {
             const param = params[key];
             if(param){
