@@ -52,7 +52,7 @@ const Application = () => {
                             <Route path='deployments' element={<pages.protected.repository.RepositoryDeployments />} />
                             <Route path='deployment'>
                             <Route path='setup' element={<pages.protected.repository.SetupDeployment />} />
-                            <Route path='environment-variables' element={<pages.protected.general.EnvironmentVariables />} />
+                            <Route path='environment-variables' element={<pages.protected.repository.EnvironmentVariables />} />
                             </Route>
                         </Route>
                     </Route>
