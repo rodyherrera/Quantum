@@ -33,7 +33,8 @@ const DeploymentSchema = new mongoose.Schema<IDeployment>({
     environment: {
         variables: {
             type: Map,
-            of: String
+            of: String,
+            default: () => new Map()
         }
     },
     commit: {
@@ -55,19 +56,19 @@ const DeploymentSchema = new mongoose.Schema<IDeployment>({
 
 DeploymentSchema.index({ environment: 'text', commit: 'text', url: 'text' });
 
-DeploymentSchema.methods.getFormattedEnvironment = function(){
+DeploymentSchema.methods.getFormattedEnvironment = function () {
     const formattedEnvironment = Array.from(
         this.environment.variables, ([key, value]) => `${key.trim()}="${value.trim()}"`);
     return formattedEnvironment.join(' ');
 };
 
-DeploymentSchema.post<Query<IDeployment, IDeployment>>('findOneAndUpdate', async function(){
+DeploymentSchema.post<Query<IDeployment, IDeployment>>('findOneAndUpdate', async function () {
     const updatedDoc = await this.model.findOne(this.getFilter()).select('environment repository');
-    if(updatedDoc){
+    if (updatedDoc) {
         const { variables } = updatedDoc.environment;
-        for(let [key, value] of variables){
+        for (let [key, value] of variables) {
             key = key.toLowerCase();
-            if(!key.includes('port')) continue;
+            if (!key.includes('port')) continue;
             await mongoose.model('Repository')
                 .updateOne({ _id: updatedDoc.repository }, { port: value });
             break;
@@ -75,7 +76,7 @@ DeploymentSchema.post<Query<IDeployment, IDeployment>>('findOneAndUpdate', async
     }
 });
 
-DeploymentSchema.post<Query<IDeployment, IDeployment>>('findOneAndDelete', async function(){
+DeploymentSchema.post<Query<IDeployment, IDeployment>>('findOneAndDelete', async function () {
     const { user, repository, _id }: any = this.getFilter();
 
     const userUpdatePromise = mongoose.model('User')
