@@ -37,6 +37,7 @@ const Application = () => {
                     <Route path='/docker-container'>
                         <Route path='create' element={<pages.protected.docker.container.CreateDockerContainer />} />
                         <Route path=':dockerId/shell' element={<pages.protected.docker.container.Shell />} />
+                        <Route path=':dockerId/environment-variables/' element={<pages.protected.docker.container.EnvironmentVariables />} />
                     </Route>
 
                     <Route path='/port-binding/create' element={<pages.protected.portBinding.CreatePortBinding />} />
@@ -48,6 +49,7 @@ const Application = () => {
                     <Route path='/repository'>
                         <Route path='create' element={<pages.protected.repository.CreateRepository />} />
                         <Route path=':repositoryAlias'>
+                            <Route path='shell' element={<pages.protected.repository.Shell />} />
                             <Route path='storage' element={<pages.protected.repository.Storage />} />
                             <Route path='deployments' element={<pages.protected.repository.RepositoryDeployments />} />
                             <Route path='deployment'>

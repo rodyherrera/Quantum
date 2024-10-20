@@ -8,10 +8,13 @@ const DashboardCardFooter = ({ options }) => {
     return (
         <div className='Dashboard-Card-Container-Footer'>
             <div className='Dashboard-Card-Container-Footer-Left-Container'>
-                {options.map(([ item, Icon, to = '/' ], index) => (
+                {options.map(([ item, Icon, to = '/', handleOnClick = () => {} ], index) => (
                     <div 
                         className='Dashboard-Card-Container-Footer-Option-Container' 
-                        onClick={() => navigate(to)}
+                        onClick={() => {
+                            handleOnClick();
+                            navigate(to);
+                        }}
                         key={index}
                     >
                         <i className='Dashboard-Card-Container-Footer-Option-Icon-Container'>

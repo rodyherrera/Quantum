@@ -22,7 +22,8 @@ const state = {
     isRandomAvailablePortLoading: true,
     isOperationLoading: false,
     stats: {},
-    dockerContainers: []
+    dockerContainers: [],
+    selectedDockerContainer: {}
 };
 
 const dockerContainerSlice = createSlice({

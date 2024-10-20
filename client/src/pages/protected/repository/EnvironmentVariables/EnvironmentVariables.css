@@ -12,7 +12,7 @@
  * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 ****/
 
-#Environment-Variables-Main{
+.Environment-Variables-Main{
     margin: 0 auto;
     gap: 2rem;
     display: flex;
@@ -20,22 +20,22 @@
     min-height: 500px;
 }
 
-#Environment-Variables-Left-Title-Container{
+.Environment-Variables-Left-Title-Container{
     display: flex;
     flex-direction: column;
     gap: .5rem;
 }
 
-#Environment-Variables-Left-Title{
+.Environment-Variables-Left-Title{
     font-size: 2.5rem;
 }
 
-#Environment-Variables-Left-Subtitle{
+.Environment-Variables-Left-Subtitle{
     font-size: .95rem;
     max-width: 70%;
 }
 
-#Environment-Variables-Container{
+.Environment-Variables-Container{
     display: flex;
     flex-direction: column;
     gap: 1rem;
@@ -45,7 +45,7 @@
     height: 100%;
 }
 
-#Environment-Variables-Left-Container{
+.Environment-Variables-Left-Container{
     display: flex;
     flex-direction: column;
     padding: 2rem;
@@ -54,19 +54,19 @@
     border-right: 1px solid #000000;
 }
 
-#Environment-Variables-Actions-Container{
+.Environment-Variables-Actions-Container{
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
     gap: 1rem;
 }
 
-#Environment-Variables-Navigation-Container{
+.Environment-Variables-Navigation-Container{
     display: flex;
     gap: 1rem;
 }
 
-#Environment-Variables-Create-New-Container{
+.Environment-Variables-Create-New-Container{
     cursor: pointer;
     border: 1px solid #000000;
     display: flex;
@@ -79,7 +79,7 @@
     height: 100%;
 }
 
-#Environment-Variables-Operation-Loading-Container{
+.Environment-Variables-Operation-Loading-Container{
     position: absolute;
     width: 100%;
     gap: 1.5rem;
@@ -91,22 +91,22 @@
     background-color: rgba(245, 245, 245, .8);
 }
 
-#Environment-Variables-Actions-Left-Container{
+.Environment-Variables-Actions-Left-Container{
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
     height: 200px;
 }
 
-#Environment-Variables-Body{
+.Environment-Variables-Body{
     position: relative;
     padding-right: .5rem;
     min-width: 55%;
     width: 55%;
 }
 
-#Environment-Variables-Loader-Container,
-#Environment-Variables-Empty-Container{
+.Environment-Variables-Loader-Container,
+.Environment-Variables-Empty-Container{
     display: flex;
     justify-content: center;
     align-items: center;
@@ -114,33 +114,33 @@
     height: 100%;
 }
 
-#Environment-Variables-Empty-Container{
+.Environment-Variables-Empty-Container{
     flex-direction: column;
     text-align: center;
     gap: 1rem;
 }
 
-#Environment-Variables-Empty-Container .Button-Text{
+.Environment-Variables-Empty-Container .Button-Text{
     font-size: .75rem;
 }
 
-#Environment-Variables-Create-New-Container:hover{
+.Environment-Variables-Create-New-Container:hover{
     background-color: #000000;
     color: #F5F5F5;
 }
 
-#Environment-Variables-Create-New-Title{
+.Environment-Variables-Create-New-Title{
     text-transform: uppercase;
     font-size: 1.3rem;
     line-height: 2rem;
 }
 
 @media screen and (max-width: 768px){
-    #Environment-Variables-Empty-Title{
+    .Environment-Variables-Empty-Title{
         font-size: 1.5rem;
     }
 
-    #Environment-Variables-Main{
+    .Environment-Variables-Main{
         position: relative;
         flex-direction: column;
         height: auto;
@@ -148,32 +148,32 @@
         gap: 0;
     }
 
-    #Environment-Variables-Actions-Container{
+    .Environment-Variables-Actions-Container{
         display: none;
     }
     
-    #Environment-Variables-Left-Container{
+    .Environment-Variables-Left-Container{
         width: 100%;
         padding: 1rem;
     }
 
-    #Environment-Variables-Container{
+    .Environment-Variables-Container{
         padding: 0;
         overflow-y: unset;
     }
 
-    #Environment-Variables-Body{
+    .Environment-Variables-Body{
         min-width: unset;
         width: 100%;
         padding: 1.1rem;
     }
     
-    #Environment-Variables-Left-Subtitle{
+    .Environment-Variables-Left-Subtitle{
         max-width: unset;
         font-size: .9rem;
     }
     
-    #Environment-Variables-Left-Title{
+    .Environment-Variables-Left-Title{
         font-size: 1.7rem;
     }
 }

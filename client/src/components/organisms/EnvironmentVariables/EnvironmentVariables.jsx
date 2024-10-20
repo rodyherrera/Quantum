@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { CircularProgress } from '@mui/material';
+import { gsap } from 'gsap'; 
 import Breadcrumbs from '@components/molecules/Breadcrumbs';
 import EnvironmentVariable from '@components/atoms/EnvironmentVariable';
 import AnimatedMain from '@components/atoms/AnimatedMain';
@@ -17,52 +18,158 @@ const EnvironmentVariables = ({
     isEnvironmentLoading,
     environment
 }) => {
+    const [variables, setVariables] = useState([]);
+
+    useEffect(() => {
+        if(isEnvironmentLoading) return;
+        gsap.fromTo('.Environment-Variable-Container', {
+            y: 20,
+            opacity: 0
+        }, { 
+            duration: 0.8, 
+            opacity: 1, 
+            y: 0, 
+            stagger: 0.15, 
+            scrollTrigger: {
+                trigger: '.Environment-Variable-Container' 
+            }
+        });
+    }, [isEnvironmentLoading]);
+
+    useEffect(() => {
+        // Title Area Animations 
+        gsap.fromTo('.Environment-Variables-Left-Title', {
+            y: 30
+        }, { 
+            duration: 0.8, 
+            y: 0, 
+            stagger: 0.1, 
+            ease: 'back' 
+        });
+
+        gsap.fromTo('.Environment-Variables-Left-Subtitle', {
+            scale: 0.95
+        }, {
+            duration: 0.8,
+            scale: 1,
+            ease: 'power2.out'
+        });
+
+        // Environment Variable Items Animation
+        gsap.fromTo('.Environment-Variable-Container', {
+            // Slide in from the right
+            x: 50
+        }, { 
+            x: 0,
+            duration: 0.8, 
+            stagger: 0.15,
+            // Add a 'pop' effect
+            ease: 'back(2)',
+            scrollTrigger: {
+                trigger: '.Environment-Variable-Container' 
+            }
+        });
+
+        gsap.fromTo('.Environment-Variables-Navigation-Container button', {
+            x: (index) => index === 0 ? -50 : 50
+        }, {
+            x: 0,
+            duration: 0.8,
+            // Slide in from opposite sides
+            stagger: 0.1,
+            ease: 'back(2)'
+        }); 
+
+        const addNewTween = gsap.to('.Environment-Variables-Create-New-Container', {
+            scale: 1.05, 
+            duration: 0.5, 
+            ease: 'power1.out', 
+            paused: true 
+        });
+
+        const mouseEnterHandler = () => addNewTween.play();
+        const mouseLeaveHandler = () => addNewTween.reverse();
+        const addNewContainer = document.querySelector('.Environment-Variables-Create-New-Container');
+        addNewContainer.addEventListener('mouseenter', mouseEnterHandler);
+        addNewContainer.addEventListener('mouseleave', mouseLeaveHandler);
+
+        return () => {
+            addNewContainer.removeEventListener('mouseenter', mouseEnterHandler);
+            addNewContainer.removeEventListener('mouseleave', mouseLeaveHandler);
+        };
+    }, []);
+
+    const onEnvironmentUpdate = () => {
+        // When working with variables, they are contained 
+        // within the "environment" object, obtained through the 
+        // API. "environment" has a key called "variables", where 
+        // the variables are contained by an object. In the 
+        // client, we do not work directly with the object, but
+        // we transform that variable object into an array so that 
+        // "key:value" will now be [key, value]. For this reason, we must 
+        // reverse this operation to send the update to the server.
+        // Assuming environment.variables is the array you need to transform back to an object
+        const variables = variables.reduce((acc, [key, value]) => {
+            acc[key] = value;
+            return acc;
+        }, {});
+        const updatedEnvironment = { ...environment, variables };
+        setVariables(updatedEnvironment);
+        handleSave(updatedEnvironment);
+    };
+
+    const onCreateNew = () => {
+        if(variables.length && !variables[0][0].length) return;
+        const state = [ ['', ''], ...variables ];
+        setVariables(state);
+        handleCreateNew(state, environment);
+    };
 
     return (
-        <AnimatedMain id='Environment-Variables-Main'>
-            <section id='Environment-Variables-Left-Container'>
-                <article id='Environment-Variables-Left-Title-Container'>
-                    <article id='Environment-Variables-Breadcrumbs-Container'>
+        <AnimatedMain className='Environment-Variables-Main'>
+            <section className='Environment-Variables-Left-Container'>
+                <article className='Environment-Variables-Left-Title-Container'>
+                    <article className='Environment-Variables-Breadcrumbs-Container'>
                         <Breadcrumbs items={breadcrumbs} />
                     </article>
 
-                    <h1 id='Environment-Variables-Left-Title'>{title}</h1>
-                    <p id='Environment-Variables-Left-Subtitle'>{description}</p>
+                    <h1 className='Environment-Variables-Left-Title'>{title}</h1>
+                    <p className='Environment-Variables-Left-Subtitle'>{description}</p>
                 </article>
 
-                <article id='Environment-Variables-Actions-Container'>
-                    <div id='Environment-Variables-Actions-Left-Container'>
-                        <div id='Environment-Variables-Navigation-Container'>
+                <article className='Environment-Variables-Actions-Container'>
+                    <div className='Environment-Variables-Actions-Left-Container'>
+                        <div className='Environment-Variables-Navigation-Container'>
                             <Button title='Go Back' onClick={() => navigate('/dashboard/')} />
-                            <Button title='Save Changes' variant='Contained' onClick={handleSave} />
+                            <Button title='Save Changes' variant='Contained' onClick={onEnvironmentUpdate} />
                         </div>
                     </div>
-                    <div id='Environment-Variables-Create-New-Container' onClick={handleCreateNew}>
-                        <h3 id='Environment-Variables-Create-New-Title'>Add new variable</h3>
+                    <div className='Environment-Variables-Create-New-Container' onClick={onCreateNew}>
+                        <h3 className='Environment-Variables-Create-New-Title'>Add new variable</h3>
                     </div>
                 </article>
             </section>
 
-            <section id='Environment-Variables-Body'>
+            <section className='Environment-Variables-Body'>
                 {(isOperationLoading) && (
-                    <div id='Environment-Variables-Operation-Loading-Container'>
+                    <div className='Environment-Variables-Operation-Loading-Container'>
                         <CircularProgress className='Circular-Progress' />
                     </div>
                 )}
 
                 {(isEnvironmentLoading) ? (
-                    <div id='Environment-Variables-Loader-Container'>
+                    <div className='Environment-Variables-Loader-Container'>
                         <CircularProgress className='Circular-Progress' />
                     </div>
                 ) : (
-                    (environment.variables.length === 0) ? (
-                        <article id='Environment-Variables-Empty-Container'>
-                            <h3 id='Environment-Variables-Empty-Title'>There are no environment variables to display.</h3>
-                            <Button title='Create new variable' onClick={handleCreateNew} variant='Contained' />
+                    (variables.length === 0) ? (
+                        <article className='Environment-Variables-Empty-Container'>
+                            <h3 className='Environment-Variables-Empty-Title'>There are no environment variables to display.</h3>
+                            <Button title='Create new variable' onClick={onCreateNew} variant='Contained' />
                         </article>
                     ) : (
-                        <article id='Environment-Variables-Container'>
-                            {environment.variables.map(([ key, value ], index) => (
+                        <article className='Environment-Variables-Container'>
+                            {variables.map(([ key, value ], index) => (
                                 <EnvironmentVariable
                                     value={value}
                                     index={index}
@@ -76,8 +183,8 @@ const EnvironmentVariables = ({
         
             {!isEnvironmentLoading && 
                 <EnvironmentMobileActions 
-                    saveHandler={handleSave}
-                    addNewVariableHandler={handleCreateNew} />}
+                    saveHandler={onEnvironmentUpdate}
+                    addNewVariableHandler={onCreateNew} />}
         </AnimatedMain>
     );
 };
