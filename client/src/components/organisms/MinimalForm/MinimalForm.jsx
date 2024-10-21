@@ -12,23 +12,43 @@
  * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 ****/
 
-import React, { useState, useEffect, useRef } from 'react';
-import Input from '@components/atoms/Input';
-import Button from '@components/atoms/Button';
-import Breadcrumbs from '@components/molecules/Breadcrumbs';
-import AnimatedMain from '@components/atoms/AnimatedMain'
-import Select from '@components/atoms/Select';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import { CircularProgress } from '@mui/material';
 import { gsap } from 'gsap';
 import { BiErrorCircle } from 'react-icons/bi';
 import { BsArrowRight } from 'react-icons/bs';
-import { CircularProgress } from '@mui/material';
+import Input from '@components/atoms/Input';
+import Button from '@components/atoms/Button';
+import Breadcrumbs from '@components/molecules/Breadcrumbs';
+import AnimatedMain from '@components/atoms/AnimatedMain';
+import Select from '@components/atoms/Select';
 import './MinimalForm.css';
 
+/**
+ * MinimalForm Component
+ * A versatile form component with support for inputs, selects, custom headers, and loading overlays.
+ *
+ * @param {Object} props - Component properties.
+ * @param {string} props.headerTitle - The main title of the form.
+ * @param {string} props.headerSubtitle - The subtitle or description of the form.
+ * @param {React.Component} [props.HeaderComponent=null] - Optional custom header component.
+ * @param {string} [props.error=''] - Error message to display.
+ * @param {string} [props.variant=''] - Variant for styling the form.
+ * @param {Array} props.formInputs - Array of form input configurations.
+ * @param {string} props.submitButtonTitle - The title of the submit button.
+ * @param {Function} props.handleFormSubmit - Function to handle form submission.
+ * @param {string} [props.formImage=null] - URL of the image to display in the form.
+ * @param {boolean} [props.overlayLoading=false] - Flag to show loading overlay.
+ * @param {React.Component} [props.RightContainerComponent=null] - Optional component for the right container.
+ * @param {string} [props.overlayLoadingMessage=''] - Message to display in the loading overlay.
+ * @param {Array} [props.breadcrumbsItems=null] - Array of breadcrumb items.
+ * @param {boolean} [props.isLoading=false] - Flag indicating if the form is in a loading state.
+*/
 const MinimalForm = ({
     headerTitle,
     headerSubtitle,
     HeaderComponent = null,
-    error,
+    error = '',
     variant = '',
     formInputs,
     submitButtonTitle,
@@ -36,59 +56,138 @@ const MinimalForm = ({
     formImage = null,
     overlayLoading = false,
     RightContainerComponent = null,
-    overlayLoadingMessage = null,
+    overlayLoadingMessage = '',
     breadcrumbsItems = null,
     isLoading = false
 }) => {
-    const [formValues, setFormValues] = useState(
-        formInputs.map(input => ({ [input.name]: input?.value || '' })).reduce((acc, cur) => ({ ...acc, ...cur }), {}));
-   
-    // Array to hold input refs
-    const inputRefs = useRef([]); 
+    const [formValues, setFormValues] = useState(() => {
+        return formInputs.reduce((acc, input) => ({
+            ...acc,
+            [input.name]: input.value ||  (input.type === 'select' && input.multiSelect ? [] : '')
+        }))
+    });
 
-    const keyPressHandler = (e) => {
+    const inputRefs = useRef([]);
+
+    /**
+     * Handles form submission when the Enter key is pressed.
+     *
+     * @param {Object} e - The keyboard event.
+    */
+    const handleKeyPress = useCallback((e) => {
         if(e.key === 'Enter'){
             handleFormSubmit(formValues);
         }
-    };
+    }, [handleFormSubmit, formValues]);
+
+    /**
+     * Initializes GSAP animations for the form and its inputs.
+    */
+    const initializeAnimations = useCallback(() => {
+        // Animate the main form container
+        gsap.fromTo(
+            '.Minimal-Form-Container',
+            { y: 20 },
+            { duration: 0.8, y: 0, ease: 'Power2.easeOut' }
+        );
+
+        // Animate each input field
+        gsap.fromTo(
+            inputRefs.current,
+            { y: 10, opacity: 0 },
+            {
+                duration: 0.4,
+                opacity: 1,
+                y: 0,
+                stagger: 0.15,
+                ease: 'Back.easeOut(1.2)'
+            }
+        );
+    }, []);
+
+
+    /**
+     * Handles error animations when an error message is present.
+    */
+    const handleErrorAnimation = useCallback(() => {
+        if(error){
+            gsap.fromTo(
+                '.Minimal-Form-Error-Container',
+                { opacity: 0, x: -10 },
+                { duration: 0.4, opacity: 1, x: 0, ease: 'Elastic.easeOut(1, 0.4)' }
+            );
+        }
+    }, [error]);
+
+    /**
+     * Updates the value of a specific form input.
+     *
+     * @param {string} name - The name of the input field.
+     * @param {any} value - The new value for the input field.
+    */
+    const updateFormValue = useCallback((name, value) => {
+        setFormValues((prevValues) => ({
+            ...prevValues,
+            [name]: value
+        }));
+    }, []);
+
+    /**
+     * Renders form input fields based on the formInputs configuration.
+     *
+     * @returns {JSX.Element[]} Array of input components.
+    */
+    const renderFormInputs = useMemo(() => {
+        return formInputs.map((input, index) => {
+            const commonProps = {
+                key: index,
+                type: input.type,
+                name: input.name,
+                value: formValues[input.name],
+                ref: (el) => inputRefs.current[index] = el,
+                onKeyPress: handleKeyPress,
+                helperText: input.helperText,
+                placeholder: input.placeholder  
+            };
+            if(input.type === 'select'){
+                return (
+                    <Select
+                        {...commonProps}
+                        options={input.options}
+                        multiSelect={input.multiSelect}
+                        onSelect={(value) => {
+                            const newValue = input.multiSelect
+                                ? [...formValues[input.name], value]
+                                : value;
+                            updateFormValue(input.name, newValue);
+                        }}
+                    />
+                );
+            }
+            return (
+                <Input
+                    {...commonProps}
+                    onChange={(e) => updateFormValue(input.name, e.target.value)}
+                />
+            );
+        });
+    }, [formInputs, formValues, handleKeyPress, updateFormValue]);
 
     useEffect(() => {
-        gsap.fromTo('.Minimal-Form-Container', {
-            y: 20
-        }, { 
-            duration: 0.8, 
-            y: 0, 
-            ease: 'Power2.easeOut' 
-        });
-    
-        gsap.fromTo(inputRefs.current, {
-            y: 10,
-            opacity: 0
-        }, {
-            duration: 0.4,
-            opacity: 1,
-            y: 0,
-            stagger: 0.15,
-            ease: 'Back.easeOut(1.2)'
-        });
+        initializeAnimations();
+        // Cleanup function to reset form values when the
+        // component unmounts
         return () => {
-            setFormValues(formInputs.map(input => ({ [input.name]: input.type === 'select' ? [] : '' })));
-        }
+            setFormValues(formInputs.reduce((acc, input) => ({
+                ...acc,
+                [input.name]: input.type === 'select' ? [] : ''
+            }), {}));
+        };
     }, []);
 
     useEffect(() => {
-        if(error){
-            gsap.fromTo('.Minimal-Form-Error-Container', { 
-                opacity: 0,
-                x: -10
-            }, {
-                duration: 0.4, 
-                opacity: 1, 
-                x: 0, 
-                ease: 'Elastic.easeOut(1, 0.4)' 
-            });
-        }
-    }, [error]);
+        handleErrorAnimation();
+    }, [handleErrorAnimation]);
 
     return (
         <AnimatedMain 
@@ -97,7 +196,7 @@ const MinimalForm = ({
                 ...((formInputs.length >= 3) && ({ height: 'unset' }))
             }}
         >
-            {(isLoading && overlayLoading && overlayLoadingMessage.length >= 1) && (
+            {isLoading && overlayLoading && overlayLoadingMessage && (
                 <div className='Overlay-Loading-Container'>
                     <CircularProgress className='Circular-Progress' />
                     <p className='Overlay-Loading-Message'>{overlayLoadingMessage}</p>
@@ -106,7 +205,7 @@ const MinimalForm = ({
 
             <div className='Minimal-Form-Left-Container'>
                 <div className='Minimal-Form-Header-Container'>
-                    {formImage !== null && (
+                    {formImage && (
                         <figure className='Form-Image-Mobile-Container'>
                             <img className='Form-Image-Mobile' src={formImage} />
                         </figure>
@@ -116,7 +215,7 @@ const MinimalForm = ({
                     )}
 
                     <div className='Minimal-Form-Title-Container'>
-                        {HeaderComponent !== null ? (
+                        {HeaderComponent ? (
                             <HeaderComponent />
                         ) : (
                             <React.Fragment>
@@ -126,7 +225,7 @@ const MinimalForm = ({
                         )}
                     </div>
 
-                    {error?.length >= 1 && (
+                    {error && (
                         <div className='Minimal-Form-Error-Container'>
                             <i className='Minimal-Form-Error-Icon-Container'>
                                 <BiErrorCircle />
@@ -137,35 +236,7 @@ const MinimalForm = ({
                 </div>
 
                 <div className='Minimal-Form-Body-Container'>
-                    {[...formInputs].map((input, index) => (
-                        input.type === 'select' ? (
-                            <Select 
-                                key={index}
-                                type={input.type}
-                                value={formValues[input.name]}
-                                options={input.options}
-                                ref={(el) => inputRefs.current[index] = el}
-                                onKeyPress={keyPressHandler}
-                                onSelect={(value) => {
-                                    const newValue = input.multiSelect ? [...formValues[input.name], value] : value;
-                                    setFormValues({ ...formValues, [input.name]: newValue });
-                                }}
-                                name={input.name}
-                                helperText={input.helperText}
-                                placeholder={input.placeholder} />
-                        ) : (
-                            <Input 
-                                key={index}
-                                type={input.type}
-                                value={formValues[input.name] || ''}
-                                ref={(el) => inputRefs.current[index] = el}
-                                onKeyPress={keyPressHandler}
-                                onChange={(e) => setFormValues({ ...formValues, [input.name]: e.target.value })}
-                                name={input.name}
-                                helperText={input.helperText}
-                                placeholder={input.placeholder} />
-                        )
-                    ))}
+                    {renderFormInputs}
                 </div>
 
                 <div className='Minimal-Form-Footer-Container'>

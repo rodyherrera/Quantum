@@ -1,6 +1,5 @@
-import React, { useLayoutEffect } from 'react';
+import React from 'react';
 import { CircularProgress } from '@mui/material';
-import { gsap } from 'gsap';
 import Button from '@components/atoms/Button';
 import Breadcrumbs from '@components/molecules/Breadcrumbs';
 import AnimatedMain from '@components/atoms/AnimatedMain';
@@ -23,21 +22,6 @@ const DataRenderer = ({
     RightContainerComponent = null,
     ...props
 }) => {
-
-    useLayoutEffect(() => {
-       /* const tl = gsap.timeline();
-        tl.fromTo('.Data-Renderer-Main', { y: 20 }, { duration: 0.1, y: 0, ease: 'power2.out' })
-            .fromTo(
-                ['.Data-Renderer-Header-Container', '.Data-Renderer-Body-Container'],
-                { y: 10, opacity: 0 },
-                { duration: 0.5, y: 0, opacity: 1, ease: 'power2.out', stagger: 0.1 });*/
-    }, []);
-
-    useLayoutEffect(() => {
-        /*if(isLoading || isOperationLoading){
-            gsap.fromTo('.Data-Renderer-Loading-Container', { opacity: 0 }, { duration: 0.4, opacity: 1 });
-        }*/
-    }, [isLoading, isOperationLoading]);
 
     const renderContent = () => {
         if(isLoading || isOperationLoading){

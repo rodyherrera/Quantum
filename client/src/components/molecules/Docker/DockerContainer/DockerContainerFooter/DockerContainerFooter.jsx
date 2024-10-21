@@ -13,7 +13,7 @@ const DockerContainerFooter = ({ container }) => {
     const selectContainerHandler = () => {
         const { environment } = container;
         const variables = Object.entries(environment.variables);
-        dispatch(dockerContainerSlice.setState({
+        dispatch(setState({
             path: 'selectedDockerContainer',
             value: { ...container, environment: { variables } }
         }));

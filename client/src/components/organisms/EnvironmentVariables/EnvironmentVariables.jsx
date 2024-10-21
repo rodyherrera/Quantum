@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { CircularProgress } from '@mui/material';
 import { gsap } from 'gsap'; 
 import Breadcrumbs from '@components/molecules/Breadcrumbs';
@@ -6,7 +6,7 @@ import EnvironmentVariable from '@components/atoms/EnvironmentVariable';
 import AnimatedMain from '@components/atoms/AnimatedMain';
 import Button from '@components/atoms/Button';
 import EnvironmentMobileActions from '@components/atoms/EnvironmentMobileActions';
-import './EnvironmentVariables';
+import './EnvironmentVariables.css';
 
 const EnvironmentVariables = ({
     breadcrumbs,
@@ -18,23 +18,7 @@ const EnvironmentVariables = ({
     isEnvironmentLoading,
     environment
 }) => {
-    useEffect(() => {
-        if(isEnvironmentLoading) return;
-        gsap.fromTo('.Environment-Variable-Container', {
-            y: 20,
-            opacity: 0
-        }, { 
-            duration: 0.8, 
-            opacity: 1, 
-            y: 0, 
-            stagger: 0.15, 
-            scrollTrigger: {
-                trigger: '.Environment-Variable-Container' 
-            }
-        });
-    }, [isEnvironmentLoading]);
-
-    useEffect(() => {
+    const initAnimations = useCallback(() => {
         // Title Area Animations 
         gsap.fromTo('.Environment-Variables-Left-Title', {
             y: 30
@@ -78,48 +62,71 @@ const EnvironmentVariables = ({
             ease: 'back(2)'
         }); 
 
+        // Add New Variable Button Animation
         const addNewTween = gsap.to('.Environment-Variables-Create-New-Container', {
-            scale: 1.05, 
-            duration: 0.5, 
-            ease: 'power1.out', 
-            paused: true 
+            scale: 1.05,
+            duration: 0.5,
+            ease: 'power1.out',
+            paused: true
         });
 
-        const mouseEnterHandler = () => addNewTween.play();
-        const mouseLeaveHandler = () => addNewTween.reverse();
-        const addNewContainer = document.querySelector('.Environment-Variables-Create-New-Container');
-        addNewContainer.addEventListener('mouseenter', mouseEnterHandler);
-        addNewContainer.addEventListener('mouseleave', mouseLeaveHandler);
+        const handleMouseEnter = () => addNewTween.play();
+        const handleMouseLeave = () => addNewTween.reverse();
 
+        const addNewElement = document.querySelector('.Environment-Variables-Create-New-Container');
+        addNewElement.addEventListener('mouseenter', handleMouseEnter);
+        addNewElement.addEventListener('mouseleave', handleMouseLeave);
+
+        // Cleanup Event Listeners on Unmount
         return () => {
-            addNewContainer.removeEventListener('mouseenter', mouseEnterHandler);
-            addNewContainer.removeEventListener('mouseleave', mouseLeaveHandler);
+            addNewElement.removeEventListener('mouseenter', handleMouseEnter);
+            addNewElement.removeEventListener('mouseleave', handleMouseLeave);
         };
     }, []);
 
-    const onEnvironmentUpdate = () => {
-        // When working with variables, they are contained 
-        // within the "environment" object, obtained through the 
-        // API. "environment" has a key called "variables", where 
-        // the variables are contained by an object. In the 
-        // client, we do not work directly with the object, but
-        // we transform that variable object into an array so that 
-        // "key:value" will now be [key, value]. For this reason, we must 
-        // reverse this operation to send the update to the server.
-        // Assuming environment.variables is the array you need to transform back to an object
-        const variables = environment.variables.reduce((acc, [key, value]) => {
-            acc[key] = value;
+    useEffect(() => {
+        const cleanupAnimations = initAnimations();
+        return () => {
+            if(cleanupAnimations){
+                cleanupAnimations();
+            }
+        };
+    }, [initAnimations]);
+
+    const onEnvironmentUpdate = useCallback(() => {
+        if(!environment || !environment.variables){
+            console.error('Environment data is missing.');
+            return;
+        }
+        // Transform variables array back to object
+        const variablesObject = environment.variables.reduce((acc, [key, value]) => {
+            if(key.trim() !== ''){
+                acc[key] = value;
+            }
             return acc;
         }, {});
-        const updatedEnvironment = { ...environment, variables };
+        const updatedEnvironment = { ...environment, variables: variablesObject };
         handleSave(updatedEnvironment);
-    };
+    }, [environment, handleSave]);
 
-    const onCreateNew = () => {
+    const onCreateNew = useCallback(() => {
         if(environment.variables.length && !environment.variables[0][0].length) return;
         const state = [ ['', ''], ...environment.variables ];
         updateHandler(state);
-    };
+    }, [environment?.variables, updateHandler]);
+
+    const renderEnvironVariables = useMemo(() => {
+        return environment?.variables?.map(([ key, value ], index) => (
+            <EnvironmentVariable
+                key={index}
+                name={key}
+                value={value}
+                environment={environment}
+                onUpdateVariable={updateHandler}
+                index={index}
+            />
+        ));
+    }, [environment, updateHandler]);
 
     return (
         <AnimatedMain className='Environment-Variables-Main'>
@@ -165,15 +172,7 @@ const EnvironmentVariables = ({
                         </article>
                     ) : (
                         <article className='Environment-Variables-Container'>
-                            {environment.variables.map(([ key, value ], index) => (
-                                <EnvironmentVariable
-                                    value={value}
-                                    environment={environment}
-                                    onUpdateVariable={updateHandler}
-                                    index={index}
-                                    name={key}
-                                    key={index} />
-                            ))}
+                            {renderEnvironVariables}
                         </article>
                     )
                 )}

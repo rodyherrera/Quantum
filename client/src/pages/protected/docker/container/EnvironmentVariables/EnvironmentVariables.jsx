@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import EnvironmentVariables from '@components/organisms/EnvironmentVariables';
 import * as dockerContainerSlice from '@services/docker/container/slice';
 import { useSelector, useDispatch } from 'react-redux';
@@ -16,9 +16,9 @@ const ContainerEnvironVariables = () =>{
         dispatch(updateDockerContainer(selectedDockerContainer._id, body, navigate));
     }, [dispatch, selectedDockerContainer, navigate]);
 
-    const updateHandler = (variables) => useCallback(() => {
+    const updateHandler = useCallback((variables) => {
         const updatedContainer = {
-            ...selectedContainer,
+            ...selectedDockerContainer,
             environment: { variables },
         };
 
@@ -35,7 +35,7 @@ const ContainerEnvironVariables = () =>{
             { title: 'Docker Containers', to: '/dashboard/' },
             { title: 'Environment Variables', to: `/docker-container/${selectedDockerContainer._id}/environment-variables/` }
         ];
-    }, [selectedDockerContainer]);
+    }, [selectedDockerContainer._id]);
 
     return <EnvironmentVariables
         title='Environment Variables'
