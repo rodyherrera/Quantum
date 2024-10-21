@@ -9,8 +9,11 @@ import { getRandomAvailablePort } from '@services/docker/container/operations';
 import './CreatePortBinding.css';
 
 const CreatePortBinding = () => {
+    const { 
+        randomAvailablePort, 
+        isRandomAvailablePortLoading, 
+        selectedDockerContainer } = useSelector((state) => state.dockerContainer);
     const { error, isOperationLoading } = useSelector((state) => state.portBinding);
-    const { randomAvailablePort, isRandomAvailablePortLoading } = useSelector((state) => state.dockerContainer);
     const { dockerContainers } = useUserDockerContainers();
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -56,8 +59,9 @@ const CreatePortBinding = () => {
                 },
                 {
                     type: 'select',
+                    value: selectedDockerContainer?._id,
                     name: 'container',
-                    options: dockerContainers.map(({ name, _id, network, ipAddress }) => [_id, `${name} (${ipAddress})`]),
+                    options: dockerContainers.map(({ name, _id, ipAddress }) => [_id, `${name} (${ipAddress})`]),
                     placeholder: 'Choose containers to connect',
                     helperText: 'Select the containers you wish to connect to this network. You can choose one or multiple containers from the list.'
                 },

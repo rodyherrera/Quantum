@@ -153,6 +153,7 @@ const MinimalForm = ({
                     <Select
                         {...commonProps}
                         key={index}
+                        inputProps={{ value: formValues[input.name] }}
                         options={input.options}
                         multiSelect={input.multiSelect}
                         onSelect={(value) => {
