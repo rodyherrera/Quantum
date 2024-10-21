@@ -13,14 +13,27 @@
 ****/
 
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import './ContextMenuOption.css';
 
-const ContextMenuOption = ({ onClick, title, ...props }) => {
+const ContextMenuOption = ({ to, onClick, title, ...props }) => {
+    const navigate = useNavigate();
+
+    const clickHandler = () => {
+        if(to){
+            navigate(to);
+            return;
+        }
+        if(onClick){
+            onClick();
+        }
+    };
+
     return (
         <React.Fragment>
             <li 
                 className='Context-Menu-Option' 
-                onClick={onClick}
+                onClick={clickHandler}
                 {...props}
             >
                 <span className='Context-Menu-Option-Title'>{title}</span>
