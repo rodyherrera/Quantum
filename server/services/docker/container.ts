@@ -6,7 +6,7 @@ import { Socket } from 'socket.io';
 import { ensureDirectoryExists } from '@utilities/helpers';
 import { createLogStream, setupSocketEvents } from '@services/logManager';
 import { pullImage } from '@services/docker/image';
-import { IDockerContainer, IDockerContainerPortBindings } from '@typings/models/docker/container';
+import { IDockerContainer } from '@typings/models/docker/container';
 import { IDockerImage } from '@typings/models/docker/image';
 import { IDockerNetwork } from '@typings/models/docker/network';
 import { getSystemNetworkName } from '@services/docker/network';
@@ -24,7 +24,7 @@ export const getContainerStoragePath = (userId: string, containerId: string, nam
     return { userContainerPath, containerStoragePath };
 }
 
-export const createUserContainer =  async (userId: string): Promise<IDockerContainer> => {
+export const createUserContainer = async (userId: string): Promise<IDockerContainer> => {
     const image = await DockerImage.create({ name: 'alpine', tag: 'latest', user: userId });
     const network = await DockerNetwork.create({ user: userId, driver: 'bridge', name: userId });
     const container = await DockerContainerModel.create({
@@ -42,21 +42,21 @@ export const getSystemDockerName = (name: string): string => {
     return `quantum-container-${process.env.NODE_ENV}-${formattedName}`;
 }
 
-class DockerContainer{
+class DockerContainer {
     private container: IDockerContainer;
     private dockerImage: IDockerImage | null;
     private dockerNetwork: IDockerNetwork | null;
 
-    constructor(container: IDockerContainer){
+    constructor(container: IDockerContainer) {
         this.container = container;
         this.dockerImage = null;
         this.dockerNetwork = null;
     }
 
-    async getIpAddress(): Promise<string | null>{
+    async getIpAddress(): Promise<string | null> {
         const container = await this.getExistingContainer();
         const network = await DockerNetwork.findById(this.container.network).select('dockerNetworkName');
-        if(!network?.dockerNetworkName){
+        if (!network?.dockerNetworkName) {
             return null;
         }
         const data = await container.inspect();
@@ -64,24 +64,24 @@ class DockerContainer{
         return ipAddress;
     }
 
-    async initializeContainer(){
-        try{
+    async initializeContainer() {
+        try {
             const container = await this.getExistingContainer();
             return container;
-        }catch(error: any){
-            if(error.statusCode === 404){
+        } catch (error: any) {
+            if (error.statusCode === 404) {
                 const container = await this.createAndStartContainer();
                 return container;
-            }else{
+            } else {
                 logger.error('Could not handle Docker container startup request: ' + error);
             }
         }
     }
 
-    async startSocketShell(socket: Socket, workDir: string = '/app'){
-        try{
+    async startSocketShell(socket: Socket, workDir: string = '/app') {
+        try {
             const container = await this.initializeContainer();
-            if(!container) return;
+            if (!container) return;
             const exec = await container.exec({
                 Cmd: [this.container.command],
                 AttachStdout: true,
@@ -94,57 +94,57 @@ class DockerContainer{
             // TODO: check for storagePath usage
             await createLogStream(id, this.container.user.toString());
             setupSocketEvents(socket, id, this.container.user.toString(), exec);
-        }catch(error){
+        } catch (error) {
             logger.info('CRITICAL ERROR (at @services/dockerHandler - startSocketShell): ' + error);
         }
     }
 
-    getDockerStoragePath(): string{
-        if(!this.container.storagePath){
+    getDockerStoragePath(): string {
+        if (!this.container.storagePath) {
             throw Error('The container does not have a storage directory.');
         }
         return this.container.storagePath;
     }
 
-    async removeContainer(){
-        try{
+    async removeContainer() {
+        try {
             const container = docker.getContainer(this.container.dockerContainerName);
-            if(!container) return;
+            if (!container) return;
             await container.stop();
             await container.remove({ force: true });
             await fs.rm(this.getDockerStoragePath(), { recursive: true });
-        }catch(error){
+        } catch (error) {
             logger.error('CRITICAL ERROR (@dockerHandler - remove): ' + error);
         }
     }
 
-    async getExistingContainer(): Promise<Dockerode.Container>{
+    async getExistingContainer(): Promise<Dockerode.Container> {
         const container = docker.getContainer(this.container.dockerContainerName);
         const { State } = await container.inspect();
-        if(!State.Running) await container.start();
+        if (!State.Running) await container.start();
         return container;
     }
 
-    async getDockerImage(): Promise<IDockerImage>{
-        if(this.dockerImage) return this.dockerImage;
+    async getDockerImage(): Promise<IDockerImage> {
+        if (this.dockerImage) return this.dockerImage;
         const dockerImage = await DockerImage.findById(this.container.image).select('name tag');
-        if(dockerImage === null){
+        if (dockerImage === null) {
             throw Error("Can't create a container that does not have any images configured.");
         }
         return dockerImage;
     }
 
-    async getDockerNetwork(): Promise<IDockerNetwork>{
-        if(this.dockerNetwork) return this.dockerNetwork;
+    async getDockerNetwork(): Promise<IDockerNetwork> {
+        if (this.dockerNetwork) return this.dockerNetwork;
 
         let dockerNetwork = await DockerNetwork.findById(this.container.network).select('name');
-        if(dockerNetwork === null){
+        if (dockerNetwork === null) {
             throw Error('Trying to create a container that does not have any network configured yet.');
         }
         return dockerNetwork;
     }
 
-    async createContainer(): Promise<Dockerode.Container>{
+    async createContainer(): Promise<Dockerode.Container> {
         const dockerImage = await this.getDockerImage();
         const dockerNetwork = await this.getDockerNetwork();
         const networkName = getSystemNetworkName(this.container.user.toString(), dockerNetwork.name);
@@ -164,15 +164,15 @@ class DockerContainer{
         return container;
     }
 
-    async createAndStartContainer(): Promise<Dockerode.Container | null>{
-        try{
+    async createAndStartContainer(): Promise<Dockerode.Container | null> {
+        try {
             const dockerImage = await this.getDockerImage();
             await pullImage(dockerImage.name, dockerImage.tag);
             await ensureDirectoryExists(this.getDockerStoragePath());
             const container = await this.createContainer();
             await container.start();
             return container;
-        }catch(error){
+        } catch (error) {
             logger.error('CRITICAL ERROR (@dockerHandler - createAndStartContainer): ' + error);
             return null;
         }

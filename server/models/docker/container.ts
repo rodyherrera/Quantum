@@ -44,9 +44,11 @@ const DockerContainerSchema: Schema<IDockerContainer> = new Schema({
         type: Date
     },
     environment: {
-        type: Map,
-        of: String,
-        default: {}
+        variables: {
+            type: Map,
+            of: String,
+            default: () => new Map()
+        }
     },
     ipAddress: {
         type: String,
@@ -67,7 +69,7 @@ const DockerContainerSchema: Schema<IDockerContainer> = new Schema({
 
 DockerContainerSchema.index({ user: 1, name: 1 }, { unique: true });
 
-DockerContainerSchema.post('findOneAndDelete', async function(deletedDoc){
+DockerContainerSchema.post('findOneAndDelete', async function (deletedDoc) {
     const { user, network, image, _id } = deletedDoc;
     const update = { $pull: { containers: _id } };
     await mongoose.model('User').updateOne({ _id: user }, update);
@@ -76,9 +78,9 @@ DockerContainerSchema.post('findOneAndDelete', async function(deletedDoc){
     await mongoose.model('PortBinding').deleteOne({ container: _id });
 });
 
-DockerContainerSchema.pre('save', async function(next){
-    try{
-        if(this.isNew){
+DockerContainerSchema.pre('save', async function (next) {
+    try {
+        if (this.isNew) {
             const containerId = this._id.toString();
             const userId = this.user.toString();
             const { containerStoragePath, userContainerPath } = getContainerStoragePath(userId, containerId, userId);
@@ -87,7 +89,7 @@ DockerContainerSchema.pre('save', async function(next){
             const containerService = new DockerContainerService(this);
             await containerService.createAndStartContainer();
             const ipAddress = await containerService.getIpAddress();
-            if(ipAddress){
+            if (ipAddress) {
                 this.ipAddress = ipAddress;
             }
             // Should this be in the 'pre' middleware? What about the other models?
@@ -95,7 +97,7 @@ DockerContainerSchema.pre('save', async function(next){
             await mongoose.model('User').updateOne({ _id: this.user }, updateUser);
         }
         next();
-    }catch(error: any){
+    } catch (error: any) {
         next(error);
     }
 });
