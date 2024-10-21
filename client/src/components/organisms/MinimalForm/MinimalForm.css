@@ -304,16 +304,19 @@
         gap: .5rem;
     }
 
+    .Minimal-Form-Container.Form-Image .Minimal-Form-Title,
+    .Minimal-Form-Container.Form-Image .Minimal-Form-Subtitle{
+        color: white;
+    }
+
     .Minimal-Form-Title,
     .Minimal-Form-Container.Form-Image .Minimal-Form-Title{
         font-size: 2rem;
-        color: white;
     }
 
     .Minimal-Form-Subtitle,
     .Minimal-Form-Container.Form-Image .Minimal-Form-Subtitle{
         font-size: 1rem;
-        color: white;
     }
 
     .Minimal-Form-Container.Form-Image{
