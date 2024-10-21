@@ -9,11 +9,19 @@ import './DockerContainerFooter.css';
 
 const DockerContainerFooter = ({ container }) => {
     const dispatch = useDispatch();
+
+    const selectContainerHandler = () => {
+        const { environment } = container;
+        const variables = Object.entries(environment.variables);
+        dispatch(dockerContainerSlice.setState({
+            path: 'selectedDockerContainer',
+            value: { ...container, environment: { variables } }
+        }));
+    };
     
     const options = [
         ['Expose Port', IoCloudOutline, '/port-binding/create/'],
-        ['Environment Variables', PiDatabaseThin, 
-            `/docker-container/${container._id}/environment-variables/`, () => dispatch(setState({ path: 'selectedDockerContainer', value: container }))],
+        ['Environment Variables', PiDatabaseThin, `/docker-container/${container._id}/environment-variables/`, selectContainerHandler],
         ['File Explorer', CiServer]
     ];
 

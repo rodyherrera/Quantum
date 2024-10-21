@@ -12,7 +12,7 @@
  * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 ****/
 
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import EnvironmentVariables from '@components/organisms/EnvironmentVariables';
@@ -30,49 +30,49 @@ const EnvironVariables = () => {
         isOperationLoading, 
         environment } = useSelector((state) => state.deployment);
 
-    useEffect(() => {
-        initializeEnvironment();
-    }, []);
-
-    const initializeEnvironment = () => {
-        if(!selectedRepository) return navigate('/dashboard/');
+    const initEnviron = useCallback(() => {
+        if(!selectedRepository){
+            navigate('/dashboard');
+            return;
+        }
         dispatch(deploymentOperations.getActiveDeploymentEnvironment(selectedRepository.alias));
-    };
+    }, [dispatch, selectedRepository, navigate]);
 
-    const onUpdateVariable = (_, variables) => {
-        dispatch(deploymentSlice.setState({
-            path: 'environment',
-            value: { ...environment, variables }
-        }));
-    };
-
-    const handleEnvironmentUpdate = (updatedEnvironment) => {
-        const body = { environment: updatedEnvironment }
+    const environUpdate = useCallback((environment) => {
+        const body = { environment };
         dispatch(deploymentOperations.updateDeployment(environment._id, body, navigate));
-    };
+    }, [dispatch, environment, navigate]);
 
-    const handleCreateNew = (variables) => {
+    const updateHandler = useCallback((variables) => {
+        const updatedEnvironment = { ...environment, variables };
         dispatch(deploymentSlice.setState({
             path: 'environment',
-            value: { ...environment, variables }
+            value: updatedEnvironment
         }));
-    };
+    }, [dispatch, environment]);
 
-    return <EnvironmentVariables
-        title='Environment Variables'
-        description='To provide your implementation with environment variables at compile and run time, you can enter them right here. If there are any .env files in the root of your repository, these are mapped and loaded automatically when deploying.'
-        handleCreateNew={handleCreateNew}
-        handleSave={handleEnvironmentUpdate}
-        onUpdateVariable={onUpdateVariable}
-        isOperationLoading={isOperationLoading}
-        isEnvironmentLoading={isEnvironmentLoading}
-        environment={environment}
-        breadcrumbs={[
+    const breadcrumbs = useMemo(() => {
+        return [
             { title: 'Home', to: '/' },
             { title: 'Dashboard', to: '/dashboard/' },
             { title: repositoryAlias, to: '/dashboard/' },
             { title: 'Environment Variables', to: `/repository/${repositoryAlias}/deployment/environment-variables/` }
-        ]}
+        ];
+    }, [repositoryAlias]);
+
+    useEffect(() => {
+        initEnviron();
+    }, [initEnviron]);
+
+    return <EnvironmentVariables
+        title='Environment Variables'
+        description='To provide your implementation with environment variables at compile and run time, you can enter them right here. If there are any .env files in the root of your repository, these are mapped and loaded automatically when deploying.'
+        handleSave={environUpdate}
+        updateHandler={updateHandler}
+        isOperationLoading={isOperationLoading}
+        isEnvironmentLoading={isEnvironmentLoading}
+        environment={environment}
+        breadcrumbs={breadcrumbs}
     />
 };
 

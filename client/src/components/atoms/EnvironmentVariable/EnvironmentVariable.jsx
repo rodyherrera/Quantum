@@ -14,19 +14,9 @@
 
 import React, { useEffect, useRef } from 'react';
 import Input from '@components/atoms/Input';
-import { useDispatch, useSelector } from 'react-redux';
 import { CiTrash } from 'react-icons/ci';
-import * as deploymentSlice from '@services/deployment/slice';
 import './EnvironmentVariable.css';
 
-/**
- * Component to represent an individual environment variable.
- * 
- * @param {string} name -  Name of the environment variable.
- * @param {string} value - Environment variable value.
- * @param {number} index -  Index of the tone variable within its list.
- * @param {object} props -  Additional props for the component.
-*/
 const EnvironmentVariable = ({ name, value, index, environment, onUpdateVariable, ...props }) => {
     const unionRef = useRef(null);
     const variableContainerRef = useRef(null);
@@ -42,12 +32,12 @@ const EnvironmentVariable = ({ name, value, index, environment, onUpdateVariable
             if(i === index) return [newKey, newValue];
             return variable;
         });
-        onUpdateVariable(environment, updatedVariables);
+        onUpdateVariable(updatedVariables);
     };
 
     const handleDeletion = () => {
         const updatedVariables = environment.variables.filter((_, i) => (i !== index));
-        onUpdateVariable(environment, updatedVariables);
+        onUpdateVariable(updatedVariables);
     };
 
     // Handle clicks outside the component (to reset the style)

@@ -13,8 +13,7 @@ const EnvironmentVariables = ({
     title,
     description,
     handleSave,
-    handleCreateNew,
-    onUpdateVariable,
+    updateHandler,
     isOperationLoading,
     isEnvironmentLoading,
     environment
@@ -119,7 +118,7 @@ const EnvironmentVariables = ({
     const onCreateNew = () => {
         if(environment.variables.length && !environment.variables[0][0].length) return;
         const state = [ ['', ''], ...environment.variables ];
-        handleCreateNew(state, environment);
+        updateHandler(state);
     };
 
     return (
@@ -170,7 +169,7 @@ const EnvironmentVariables = ({
                                 <EnvironmentVariable
                                     value={value}
                                     environment={environment}
-                                    onUpdateVariable={onUpdateVariable}
+                                    onUpdateVariable={updateHandler}
                                     index={index}
                                     name={key}
                                     key={index} />
