@@ -1,0 +1,84 @@
+#Docker-Container-Terminal-Main{
+    height: calc(100% - 111px);
+}
+
+.Docker-Container-Terminal-Loading-Container{
+    width: 100vw;
+    height: 100dvh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+    flex-direction: column;
+}
+
+.Docker-Container-Terminal-Wrapper{
+    width: 60%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.Docker-Container-Info{
+    height: 5%;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    padding: 0 .5rem;
+}
+
+.Docker-Container-Nerd-Info{
+    font-size: .95rem;
+}
+
+.Docker-Terminal-Container{
+    width: 100%;
+    height: 97%;
+}
+
+.Docker-Terminal-Image{
+    width: 100%;
+    height: 100%;
+}
+
+.Docker-Terminal-Image-Container{
+    width: 40%;
+    filter: grayscale(100%);
+}
+
+.Docker-Terminal-Container .xterm .xterm-viewport, .xterm-text-layer{
+    border-radius: 0 !important;
+}
+
+.Docker-Container-Terminal{
+    display: flex;
+    height: 100%;
+}
+
+.Docker-Container-Terminal[data-isconnected='false']{
+    display: none;
+}
+
+@media screen and (max-width: 768px){
+    #Docker-Container-Terminal-Main{
+        height: unset;
+    }
+
+    .Docker-Terminal-Image-Container{
+        display: none;
+    }
+    
+    .Docker-Container-Terminal-Wrapper{
+        width: 100%;
+        height: 100%;
+    }
+
+    .Docker-Terminal-Container{
+        height: 100vh;
+        margin-bottom: -5px;
+    }
+
+    .Docker-Container-Nerd-Info{
+        display: none;
+    }
+}
