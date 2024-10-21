@@ -13,6 +13,14 @@ router.get('/storage/:id/explore/:route?',
     dockerContainerMiddleware.verifyOwnership,
     dockerContainerController.storageExplorer);
 
+router.get('/storage/:id/read/:route?',
+    dockerContainerMiddleware.verifyOwnership,
+    dockerContainerController.readContainerFile);
+
+router.post('/storage/:id/overwrite/:route?',
+    dockerContainerMiddleware.verifyOwnership,
+    dockerContainerController.updateContainerFile);
+    
 router.get('/me/', dockerContainerController.getMyDockerContainers);
 router.post('/', dockerContainerController.createDockerContainer);
 router.patch('/:id', dockerContainerController.updateDockerContainer);

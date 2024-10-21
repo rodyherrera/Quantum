@@ -81,6 +81,7 @@ DockerContainerSchema.post('findOneAndDelete', async function (deletedDoc) {
 DockerContainerSchema.pre('save', async function (next) {
     try {
         if (this.isNew) {
+            console.log('aqui');
             const containerId = this._id.toString();
             const userId = this.user.toString();
             const { containerStoragePath, userContainerPath } = getContainerStoragePath(userId, containerId, userId);
