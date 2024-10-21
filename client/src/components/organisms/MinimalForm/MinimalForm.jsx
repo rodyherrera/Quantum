@@ -140,7 +140,6 @@ const MinimalForm = ({
     const renderFormInputs = useMemo(() => {
         return formInputs.map((input, index) => {
             const commonProps = {
-                key: index,
                 type: input.type,
                 name: input.name,
                 value: formValues[input.name],
@@ -153,6 +152,7 @@ const MinimalForm = ({
                 return (
                     <Select
                         {...commonProps}
+                        key={index}
                         options={input.options}
                         multiSelect={input.multiSelect}
                         onSelect={(value) => {
@@ -167,6 +167,7 @@ const MinimalForm = ({
             return (
                 <Input
                     {...commonProps}
+                    key={index}
                     onChange={(e) => updateFormValue(input.name, e.target.value)}
                 />
             );
