@@ -25,7 +25,7 @@ const ContextMenu = ({ options, children, ...props }) => {
             const rect = contextMenuRef.current.getBoundingClientRect();
             setMenuPosition({
                 top: rect.top + window.scrollY + 16,
-                left: rect.left + window.scrollX
+                left: rect.left + window.scrollX - 128
             });
         }
         setIsContextMenuOpen(!isContextMenuOpen);
