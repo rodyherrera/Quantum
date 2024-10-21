@@ -14,28 +14,25 @@
 
 import React from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { setState as repoSetState } from '@services/repository/slice';
-import { updateRepositoryFile } from '@services/repository/operations';
+import { useDispatch } from 'react-redux';
 import Button from '@components/atoms/Button';
 import './FileExplorerHeader.css';
 
-const FileExplorerHeader = ({ repositoryId, loadPath }) => {
+const FileExplorerHeader = ({ id, updateSelectedFile, loadPath, selectedFile, updateOperation }) => {
     const [searchParams] = useSearchParams();
     const dispatch = useDispatch();
-    const { selectedRepositoryFile } = useSelector((state) => state.repository);
 
     // Handles overwriting the current file.
     const overwriteFileHandler = () => {
-        const { content } = selectedRepositoryFile;
+        const { content } = selectedFile;
         const path = searchParams.get('path');
-        dispatch(updateRepositoryFile(repositoryId, path, content));
+        dispatch(updateOperation(id, path, content));
         goBackHandler();
     };
 
     // Handles navigation to the parent directory.
     const goBackHandler = () => {
-        if(selectedRepositoryFile !== null) dispatch(repoSetState({ path: 'selectedRepositoryFile', value: null }));
+        if(selectedFile !== null) updateSelectedFile(null);
         const currentPath = searchParams.get('path');
         const newPath = currentPath.split('/').slice(0, -1).join('/') || '/';
         loadPath(newPath);
@@ -47,7 +44,7 @@ const FileExplorerHeader = ({ repositoryId, loadPath }) => {
                 <div className='File-Explorer-Go-Back-Container' onClick={goBackHandler}>
                     <span className='File-Explorer-Go-Back-Text'>...</span>
                 </div>
-                {selectedRepositoryFile !== null && (
+                {selectedFile !== null && (
                     <div className='File-Explorer-Header-Right-Container'>
                         <Button 
                             onClick={overwriteFileHandler}

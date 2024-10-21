@@ -13,16 +13,14 @@
 ****/
 
 import React, { useEffect } from 'react';
-import { useSelector } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
 import { CiFileOn } from 'react-icons/ci';
 import { gsap } from 'gsap';
 import { GoFileDirectory } from 'react-icons/go';
 import './FileExplorerContent.css';
 
-const FileExplorerContent = ({ loadPath }) => {
+const FileExplorerContent = ({ loadPath, files }) => {
     const [searchParams] = useSearchParams();
-    const { repositoryFiles } = useSelector((state) => state.repository);
 
     /** 
      * Handles navigation to a file or directory. 
@@ -37,7 +35,7 @@ const FileExplorerContent = ({ loadPath }) => {
     };
 
     useEffect(() => {
-        if(!repositoryFiles.length) return;
+        if(!files.length) return;
         gsap.fromTo('.File-Explorer-File-Container', {
             opacity: 0
         }, { 
@@ -47,10 +45,10 @@ const FileExplorerContent = ({ loadPath }) => {
             stagger: 0.1,
             ease: 'power2.out' 
         });
-    }, [repositoryFiles]);
+    }, [files]);
         
     return (
-        repositoryFiles.map(({ name, isDirectory }, index) => (
+        files.map(({ name, isDirectory }, index) => (
             <div
                 onClick={() => repositoryClickHandler({ name, isDirectory })}
                 className='File-Explorer-File-Container'

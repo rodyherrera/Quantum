@@ -22,7 +22,7 @@ const DockerContainerFooter = ({ container }) => {
     const options = [
         ['Expose Port', IoCloudOutline, '/port-binding/create/'],
         ['Environment Variables', PiDatabaseThin, `/docker-container/${container._id}/environment-variables/`, selectContainerHandler],
-        ['File Explorer', CiServer]
+        ['File Explorer', CiServer,  `/docker-container/${container._id}/storage/`, selectContainerHandler]
     ];
 
     return <DashboardCardFooter options={options} />

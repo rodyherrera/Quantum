@@ -26,6 +26,37 @@ export const getMyDockerContainers = () => async (dispatch) => {
     });
 };
 
+// duplicated code @services/repository/operations.js
+export const storageExplorer = (id, route) => async (dispatch) => {
+    const operation = createOperation(dockerContainerSlice, dispatch);
+    operation.use({
+        api: dockerContainerService.storageExplorer,
+        loaderState: 'isOperationLoading',
+        responseState: 'containerFiles',
+        query: { params: { id, route } }
+    });
+};
+
+export const readContainerFile = (id, route) => async (dispatch) => {
+    const operation = createOperation(dockerContainerSlice, dispatch);
+    operation.use({
+        api: dockerContainerService.readContainerFile,
+        loaderState: 'isOperationLoading',
+        responseState: 'selectedContainerFile',
+        query: { params: { id, route } }
+    });
+};
+
+export const updateContainerFile = (id, route, content) => async (dispatch) => {
+    const operation = createOperation(dockerContainerSlice, dispatch);
+    operation.use({
+        api: dockerContainerService.updateContainerFile,
+        loaderState: 'isOperationLoading',
+        query: { params: { id, route } },
+        body: { content }
+    });
+};
+
 export const updateDockerContainer = (id, body, navigate) => async (dispatch) => {
     const operation = createOperation(dockerContainerSlice, dispatch);
     operation.on('response', () => {
