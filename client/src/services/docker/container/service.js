@@ -14,39 +14,39 @@
 
 import APIRequestBuilder from '@utilities/api/apiRequestBuilder';
 
-export const ServerAPI = new APIRequestBuilder('/docker-container');
+export const DockerContainerAPI = new APIRequestBuilder('/docker-container');
 
-export const getMyDockerContainers = ServerAPI.register({
+export const getMyDockerContainers = DockerContainerAPI.register({
     path: '/me/',
     method: 'GET'
 });
 
-export const createDockerContainer = ServerAPI.register({
+export const createDockerContainer = DockerContainerAPI.register({
     path: '/',
     method: 'POST'
 });
 
-export const storageExplorer = ServerAPI.register({
+export const storageExplorer = DockerContainerAPI.register({
     path: '/storage/:id/explore/:route/',
     method: 'GET'
 });
 
-export const getRandomAvailablePort = ServerAPI.register({
+export const getRandomAvailablePort = DockerContainerAPI.register({
     path: '/random-available-port/',
     method: 'GET'
 });
 
-export const updateDockerContainer = ServerAPI.register({
+export const updateDockerContainer = DockerContainerAPI.register({
     path: '/:id/',
     method: 'PATCH'
 });
 
-export const readContainerFile = ServerAPI.register({
+export const readContainerFile = DockerContainerAPI.register({
     path: '/storage/:id/read/:route/',
     method: 'GET'
 });
 
-export const updateContainerFile = ServerAPI.register({
+export const updateContainerFile = DockerContainerAPI.register({
     path: '/storage/:id/overwrite/:route/',
     method: 'POST'
 });

@@ -14,19 +14,14 @@
 
 import APIRequestBuilder from '@utilities/api/apiRequestBuilder';
 
-/**
- * @constant ServerAPI
- * @description Represents the base endpoint for server-related API requests.
- * @type {APIRequestBuilder} An instance of the APIRequestBuilder utility.
-*/
-export const ServerAPI = new APIRequestBuilder('/docker-image');
+export const DockerImageAPI = new APIRequestBuilder('/docker-image');
 
-export const createDockerImage = ServerAPI.register({
+export const createDockerImage = DockerImageAPI.register({
     path: '/',
     method: 'POST'
 });
 
-export const getMyDockerImages = ServerAPI.register({
+export const getMyDockerImages = DockerImageAPI.register({
     path: '/me/',
     method: 'GET'
 });
