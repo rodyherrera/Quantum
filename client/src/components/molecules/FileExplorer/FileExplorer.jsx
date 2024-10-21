@@ -15,24 +15,25 @@
 import React, { useEffect } from 'react';
 import { gsap } from 'gsap';
 import { useSearchParams } from 'react-router-dom';
-import { storageExplorer, readRepositoryFile } from '@services/repository/operations';
-import { setState as repoSetState } from '@services/repository/slice';
 import { CircularProgress } from '@mui/material';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import CodeEditor from '@uiw/react-textarea-code-editor';
 import FileExplorerHeader from '@components/molecules/FileExplorerHeader';
 import FileExplorerContent from '@components/atoms/FileExplorerContent';
 import './FileExplorer.css';
 
-/**
- * FileExplorer component for repository file navigation and editing.
- * 
- * @param {string} repositoryId - ID of the repository associated with the file explorer.
-*/
-const FileExplorer = ({ repositoryId }) => {
+const FileExplorer = ({ 
+    id, 
+    files,
+    isOperationLoading, 
+    selectedFile, 
+    updateSelectedFile,
+    storageExplorer,
+    updateOperation,
+    readRepositoryFile
+}) => {
     const [searchParams, setSearchParams] = useSearchParams();
     const dispatch = useDispatch();
-    const { isOperationLoading, selectedRepositoryFile } = useSelector((state) => state.repository);
 
     /**
      * Loads a directory or file based on the current path.
@@ -43,9 +44,9 @@ const FileExplorer = ({ repositoryId }) => {
     const loadPath = (path, isDirectory = true) => {
         setSearchParams({ path });
         if(isDirectory){
-            return dispatch(storageExplorer(repositoryId, path));
+            return dispatch(storageExplorer(id, path));
         }
-        dispatch(readRepositoryFile(repositoryId, path));
+        dispatch(readRepositoryFile(id, path));
     };
 
     const getFileExtension = (filename) => {
@@ -55,7 +56,7 @@ const FileExplorer = ({ repositoryId }) => {
     useEffect(() => {
         const path = searchParams.get('path') || '/';
         loadPath(path);
-        gsap.fromTo('#Repository-Storage-Header-Title', {
+        gsap.fromTo('.Repository-Storage-Header-Title', {
             opacity: 0,
             scale: 0.95 
         }, { 
@@ -64,7 +65,7 @@ const FileExplorer = ({ repositoryId }) => {
             opacity: 1, 
             ease: 'power2.out' 
         });
-        gsap.fromTo('#Repository-Storage-Header-Description', {
+        gsap.fromTo('.Repository-Storage-Header-Description', {
             opacity: 0,
             y: 20
         }, { 
@@ -76,7 +77,7 @@ const FileExplorer = ({ repositoryId }) => {
             ease: 'power2.out' 
         });
         return () => {
-            dispatch(repoSetState({ path: 'selectedRepositoryFile', value: null }));
+            updateSelectedFile(null);
         };
     }, []);
 
@@ -86,23 +87,28 @@ const FileExplorer = ({ repositoryId }) => {
         </div>
     ) : (
         <div className='File-Explorer-Body-Container'>
-            <FileExplorerHeader repositoryId={repositoryId} loadPath={loadPath} />
-            {selectedRepositoryFile !== null ? (
+            <FileExplorerHeader 
+                selectedFile={selectedFile} 
+                updateOperation={updateOperation} 
+                updateSelectedFile={updateSelectedFile}
+                id={id} 
+                loadPath={loadPath} />
+            {selectedFile !== null ? (
                 <div className='File-Explorer-Code-Block-Container'>
                     <CodeEditor
-                        value={selectedRepositoryFile.content}
-                        onChange={(e) => dispatch(repoSetState({ path: 'selectedRepositoryFile', value: { name: selectedRepositoryFile.name, content: e.target.value } }))}
+                        value={selectedFile.content}
+                        onChange={(e) => updateSelectedFile({ name: selectedFile.name, content: e.target.value })}
                         padding={16}
                         style={{ 
                             backgroundColor: '#161616'
                         }}
                         showLineNumbers={false}
-                        language={getFileExtension(selectedRepositoryFile.name)}
-                        text={selectedRepositoryFile.content}
+                        language={getFileExtension(selectedFile.name)}
+                        text={selectedFile.content}
                     />
                 </div>
             ) : (
-                <FileExplorerContent loadPath={loadPath} />
+                <FileExplorerContent files={files} loadPath={loadPath} />
             )}
         </div>
     )

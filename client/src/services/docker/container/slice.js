@@ -23,6 +23,8 @@ const state = {
     isOperationLoading: false,
     stats: {},
     dockerContainers: [],
+    containerFiles: [],
+    selectedContainerFile: null,
     selectedDockerContainer: {}
 };
 

@@ -1,0 +1,45 @@
+/***
+ * Copyright (C) Rodolfo Herrera Hernandez. All rights reserved.
+ * Licensed under the MIT license. See LICENSE file in the project root
+ * for full license information.
+ *
+ * =+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
+ *
+ * For related information - https://github.com/rodyherrera/Quantum/
+ *
+ * All your applications, just in one place. 
+ *
+ * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+****/
+
+.Storage-Main{
+    height: unset;
+}
+
+.Storage-Main .Binary-View-Left-Container{
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.Storage-Header-Title-Container{
+    display: flex;
+    flex-direction: column;
+    gap: .3rem;
+}
+
+.Storage-Header-Title{
+    font-size: 2rem;
+}
+
+.Storage-Header-Description{
+    font-size: 1rem;
+    width: 80%;
+}
+
+@media screen and (max-width: 768px){
+    .Storage-Header-Description{
+        width: 100%;
+    }
+}

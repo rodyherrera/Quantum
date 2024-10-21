@@ -82,7 +82,7 @@ export const updateRepository = (id, body, navigate) => async (dispatch) => {
     operation.use({
         api: repositoryService.updateRepository,
         loaderState: 'isOperationLoading',
-        query: { query: { params: { id } } },
+        query: { params: { id } },
         body
     });
 };
@@ -127,7 +127,7 @@ export const storageExplorer = (id, route) => async (dispatch) => {
         api: repositoryService.storageExplorer,
         loaderState: 'isOperationLoading',
         responseState: 'repositoryFiles',
-        query: { query: { params: { id, route } } }
+        query: { params: { id, route } }
     });
 };
 
@@ -144,7 +144,7 @@ export const readRepositoryFile = (id, route) => async (dispatch) => {
         api: repositoryService.readRepositoryFile,
         loaderState: 'isOperationLoading',
         responseState: 'selectedRepositoryFile',
-        query: { query: { params: { id, route } } }
+        query: { params: { id, route } }
     });
 };
 
@@ -161,7 +161,7 @@ export const updateRepositoryFile = (id, route, content) => async (dispatch) => 
     operation.use({
         api: repositoryService.updateRepositoryFile,
         loaderState: 'isOperationLoading',
-        query: { query: { params: { id, route } } },
+        query: { params: { id, route } },
         body: { content }
     });
 };

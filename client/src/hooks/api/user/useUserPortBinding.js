@@ -8,10 +8,6 @@ const useUserPortBinding = () => {
     const { portBindings, isLoading, error, stats } = useSelector((state) => state.portBinding);
    
     useEffect(() => {
-        console.log(portBindings)
-    }, [portBindings])
-
-    useEffect(() => {
         dispatch(getMyPortBindings());
         return () => {
             dispatch(portBindingSetState({ path: 'portBindings', value: [] }));
