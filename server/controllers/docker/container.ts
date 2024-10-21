@@ -90,7 +90,7 @@ export const randomAvailablePort = catchAsync(async (req: Request, res: Response
 const getRequestedPath = async (req: Request): Promise<string> => {
     const user = req.user as IUser;
     const container = await DockerContainer.findOne({ _id: req.params.id, user: user._id }).select('storagePath');
-    return path.join(container.storagePath);
+    return path.join(container?.storagePath, req.params.route || '');
 };
 
 export const storageExplorer = catchAsync(async (req: Request, res: Response) => {
@@ -100,6 +100,25 @@ export const storageExplorer = catchAsync(async (req: Request, res: Response) =>
         isDirectory: fs.statSync(path.join(requestedPath, file)).isDirectory()
     }));
     res.status(200).json({ status: 'success', data: files });
+});
+
+export const updateContainerFile = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const requestedPath = await getRequestedPath(req);
+    if(!fs.existsSync(requestedPath)) return next(new RuntimeError('Docker::Container::File::NotExists', 404));
+    if(!req.body.content) return next(new RuntimeError('Docker::Container::File::UpdateContentRequired', 400));
+    fs.writeFileSync(requestedPath, req.body.content, 'utf-8');
+    res.status(200).json({ status: 'success' });
+});
+
+export const readContainerFile = catchAsync(async (req: Request, res: Response) => {
+    const requestedPath = await getRequestedPath(req);
+    res.status(200).json({
+        status: 'success',
+        data: {
+            name: path.basename(requestedPath),
+            content: fs.readFileSync(requestedPath, 'utf-8')
+        }
+    });
 });
 
 export const createDockerContainer = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
