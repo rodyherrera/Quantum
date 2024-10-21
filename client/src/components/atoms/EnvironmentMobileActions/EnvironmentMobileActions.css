@@ -20,12 +20,14 @@
     .Mobile-Environment-Actions{
         display: flex;
         padding: 1rem;
+        width: 100%;
+        justify-content: space-between;
         gap: .5rem;
     }
 
     .Mobile-Environment-Actions-Container{
         display: block;
-        position: fixed;
+        position: absolute;
         bottom: 0;
         background-color: #F5F5F5;
         width: 100%;
