@@ -4,6 +4,8 @@ import DockerImage from '@models/docker/image';
 import DockerNetwork from '@models/docker/network';
 import HandlerFactory from '@controllers/common/handlerFactory';
 import mongoose from 'mongoose';
+import fs from 'node:fs';
+import path from 'node:path';
 import { IDockerImage } from '@typings/models/docker/image';
 import { IDockerNetwork } from '@typings/models/docker/network';
 import { IRequestDockerImage } from '@typings/controllers/docker/container';
@@ -27,17 +29,17 @@ const DockerContainerFactory = new HandlerFactory({
 });
 
 const findOrCreateImage = async (
-    image: string | IRequestDockerImage, 
-    userId: string, 
+    image: string | IRequestDockerImage,
+    userId: string,
     next: NextFunction
 ): Promise<IDockerImage | null> => {
     let containerImage = null;
-    if(mongoose.isValidObjectId(image)){
+    if (mongoose.isValidObjectId(image)) {
         containerImage = await DockerImage.findById(image).select('_id');
     }
-    if(!containerImage){
+    if (!containerImage) {
         const { name, tag } = image as IRequestDockerImage;
-        if(!isImageAvailable(name, tag)){
+        if (!isImageAvailable(name, tag)) {
             next(new RuntimeError('DockerContainer::CreateDocker::ImageNotFound', 404));
             return null;
         }
@@ -47,18 +49,18 @@ const findOrCreateImage = async (
 };
 
 const findOrCreateNetwork = async (
-    network: string, 
+    network: string,
     userId: string,
 ): Promise<IDockerNetwork | null> => {
     let containerNetwork = null;
-    if(mongoose.isValidObjectId(network)){
+    if (mongoose.isValidObjectId(network)) {
         containerNetwork = await DockerNetwork.findById(network).select('_id');
     }
-    if(!containerNetwork){
-        containerNetwork = await DockerNetwork.create({ 
+    if (!containerNetwork) {
+        containerNetwork = await DockerNetwork.create({
             user: userId,
-            driver: 'bridge', 
-            name: network 
+            driver: 'bridge',
+            name: network
         });
     }
     return containerNetwork;
@@ -75,7 +77,7 @@ export const updateDockerContainer = DockerContainerFactory.updateOne();
 
 export const randomAvailablePort = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const port = await findRandomAvailablePort();
-    if(port === -1){
+    if (port === -1) {
         // "ManyFailedAttempts" comes from the fact that, if the function finds that 
         // a port is busy, it will try another 9 times to look for a free one. 
         // If all attempts fail (10), it will return -1.
@@ -84,26 +86,42 @@ export const randomAvailablePort = catchAsync(async (req: Request, res: Response
     res.status(200).json({ status: 'success', data: port });
 });
 
+// DUPLICATED CODE @controllers/repository.ts
+const getRequestedPath = async (req: Request): Promise<string> => {
+    const user = req.user as IUser;
+    const container = await DockerContainer.findOne({ _id: req.params.id, user: user._id }).select('storagePath');
+    return path.join(container.storagePath);
+};
+
+export const storageExplorer = catchAsync(async (req: Request, res: Response) => {
+    const requestedPath = await getRequestedPath(req);
+    const files = fs.readdirSync(requestedPath).map(file => ({
+        name: file,
+        isDirectory: fs.statSync(path.join(requestedPath, file)).isDirectory()
+    }));
+    res.status(200).json({ status: 'success', data: files });
+});
+
 export const createDockerContainer = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const { image, name, network, command } = req.body;
-    if(!image || !name){
+    if (!image || !name) {
         return next(new RuntimeError('DockerContainer::CreateDocker::MissingParams', 400));
     }
     const user = req.user as IUser;
     const userId = user._id.toString();
-    
+
     const containerImage = await findOrCreateImage(image, userId, next);
     const containerNetwork = await findOrCreateNetwork(network, userId);
-    if(!containerNetwork || !containerImage){
+    if (!containerNetwork || !containerImage) {
         return next(new RuntimeError('DockerContainer::CreateDocker::ImageOrNetworkError', 500));
     }
 
-    const container = await DockerContainer.create({ 
-        name, 
-        user: userId, 
+    const container = await DockerContainer.create({
+        name,
+        user: userId,
         command,
-        image: containerImage._id, 
-        network: containerNetwork._id 
+        image: containerImage._id,
+        network: containerNetwork._id
     });
 
     res.status(200).json({ status: 'success', data: container });
