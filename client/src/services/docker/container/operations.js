@@ -34,7 +34,7 @@ export const updateDockerContainer = (id, body, navigate) => async (dispatch) =>
     operation.use({
         api: dockerContainerService.updateDockerContainer,
         loaderState: 'isOperationLoading',
-        query: { query: { params: { id } } },
+        query: { params: { id } },
         body
     });
 };

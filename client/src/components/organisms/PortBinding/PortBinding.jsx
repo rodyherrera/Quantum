@@ -5,10 +5,6 @@ import './PortBinding.css';
 
 const PortBinding = ({ portBinding }) => {
 
-    useEffect(() => {
-        console.log(portBinding);
-    }, []);
-
     return (
         <DashboardCard>
             <PortBindingHeader portBinding={portBinding} />

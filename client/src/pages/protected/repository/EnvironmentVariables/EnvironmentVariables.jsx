@@ -39,6 +39,13 @@ const EnvironVariables = () => {
         dispatch(deploymentOperations.getActiveDeploymentEnvironment(selectedRepository.alias));
     };
 
+    const onUpdateVariable = (_, variables) => {
+        dispatch(deploymentSlice.setState({
+            path: 'environment',
+            value: { ...environment, variables }
+        }));
+    };
+
     const handleEnvironmentUpdate = (updatedEnvironment) => {
         const body = { environment: updatedEnvironment }
         dispatch(deploymentOperations.updateDeployment(environment._id, body, navigate));
@@ -56,6 +63,7 @@ const EnvironVariables = () => {
         description='To provide your implementation with environment variables at compile and run time, you can enter them right here. If there are any .env files in the root of your repository, these are mapped and loaded automatically when deploying.'
         handleCreateNew={handleCreateNew}
         handleSave={handleEnvironmentUpdate}
+        onUpdateVariable={onUpdateVariable}
         isOperationLoading={isOperationLoading}
         isEnvironmentLoading={isEnvironmentLoading}
         environment={environment}

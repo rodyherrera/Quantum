@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import EnvironmentVariables from '@components/organisms/EnvironmentVariables';
 import * as dockerContainerSlice from '@services/docker/container/slice';
 import { useSelector, useDispatch } from 'react-redux';
@@ -9,6 +9,7 @@ import './EnvironmentVariables.css';
 const ContainerEnvironVariables = () =>{
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const [isLoading, setIsLoading] = useState(true);
     const { selectedDockerContainer } = useSelector((state) => state.dockerContainer);
 
     const handleEnvironmentUpdate = (updatedEnvironment) => {
@@ -18,16 +19,39 @@ const ContainerEnvironVariables = () =>{
 
     const handleCreateNew = (variables, environment) => {
         dispatch(dockerContainerSlice.setState({
-            path: 'environment',
-            value: { ...environment, variables }
+            path: 'selectedDockerContainer',
+            value: { ...selectedDockerContainer, environment: { variables } }
         }));
     };
 
-    return <EnvironmentVariables
+    const onUpdateVariable = (_, variables) => {
+        dispatch(dockerContainerSlice.setState({
+            path: 'selectedDockerContainer',
+            value: { ...selectedDockerContainer, environment: { variables } }
+        }));
+    };
+
+    const unwrapVariables = () => {
+        setIsLoading(true);
+        const { environment } = selectedDockerContainer;
+        const variables = Object.entries(environment.variables);
+        dispatch(dockerContainerSlice.setState({
+            path: 'selectedDockerContainer',
+            value: { ...selectedDockerContainer, environment: { variables } }
+        }));
+        setIsLoading(false);
+    };
+
+    useEffect(() => {
+        unwrapVariables();
+    }, []);
+
+    return (!isLoading) && <EnvironmentVariables
         title='Environment Variables'
         description='Manage environment variables for your containers simply and securely. Customize settings, manage credentials, and adjust parameters based on your environment without modifying images. Optimize your deployments with ease!'
         environment={selectedDockerContainer?.environment || {}}
         handleSave={handleEnvironmentUpdate}
+        onUpdateVariable={onUpdateVariable}
         handleCreateNew={handleCreateNew}
         breadcrumbs={[
             { title: 'Home', to: '/' },

@@ -60,7 +60,6 @@ export const getActiveDeploymentEnvironment = (repositoryAlias) => async (dispat
     const operation = createOperation(deploymentSlice, dispatch);
 
     operation.on('response', (data) => {
-        console.log(data);
         data.variables = Object.entries(data.variables);
         dispatch(deploymentSlice.setState({
             path: 'environment',

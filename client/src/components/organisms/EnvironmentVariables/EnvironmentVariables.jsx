@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { CircularProgress } from '@mui/material';
 import { gsap } from 'gsap'; 
 import Breadcrumbs from '@components/molecules/Breadcrumbs';
@@ -14,12 +14,11 @@ const EnvironmentVariables = ({
     description,
     handleSave,
     handleCreateNew,
+    onUpdateVariable,
     isOperationLoading,
     isEnvironmentLoading,
     environment
 }) => {
-    const [variables, setVariables] = useState([]);
-
     useEffect(() => {
         if(isEnvironmentLoading) return;
         gsap.fromTo('.Environment-Variable-Container', {
@@ -109,19 +108,17 @@ const EnvironmentVariables = ({
         // "key:value" will now be [key, value]. For this reason, we must 
         // reverse this operation to send the update to the server.
         // Assuming environment.variables is the array you need to transform back to an object
-        const variables = variables.reduce((acc, [key, value]) => {
+        const variables = environment.variables.reduce((acc, [key, value]) => {
             acc[key] = value;
             return acc;
         }, {});
         const updatedEnvironment = { ...environment, variables };
-        setVariables(updatedEnvironment);
         handleSave(updatedEnvironment);
     };
 
     const onCreateNew = () => {
-        if(variables.length && !variables[0][0].length) return;
-        const state = [ ['', ''], ...variables ];
-        setVariables(state);
+        if(environment.variables.length && !environment.variables[0][0].length) return;
+        const state = [ ['', ''], ...environment.variables ];
         handleCreateNew(state, environment);
     };
 
@@ -162,16 +159,18 @@ const EnvironmentVariables = ({
                         <CircularProgress className='Circular-Progress' />
                     </div>
                 ) : (
-                    (variables.length === 0) ? (
+                    (environment.variables.length === 0) ? (
                         <article className='Environment-Variables-Empty-Container'>
                             <h3 className='Environment-Variables-Empty-Title'>There are no environment variables to display.</h3>
                             <Button title='Create new variable' onClick={onCreateNew} variant='Contained' />
                         </article>
                     ) : (
                         <article className='Environment-Variables-Container'>
-                            {variables.map(([ key, value ], index) => (
+                            {environment.variables.map(([ key, value ], index) => (
                                 <EnvironmentVariable
                                     value={value}
+                                    environment={environment}
+                                    onUpdateVariable={onUpdateVariable}
                                     index={index}
                                     name={key}
                                     key={index} />

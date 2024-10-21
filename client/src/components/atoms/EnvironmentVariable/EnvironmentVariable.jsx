@@ -27,11 +27,9 @@ import './EnvironmentVariable.css';
  * @param {number} index -  Index of the tone variable within its list.
  * @param {object} props -  Additional props for the component.
 */
-const EnvironmentVariable = ({ name, value, index, ...props }) => {
-    const dispatch = useDispatch();
+const EnvironmentVariable = ({ name, value, index, environment, onUpdateVariable, ...props }) => {
     const unionRef = useRef(null);
     const variableContainerRef = useRef(null);
-    const { environment } = useSelector(state => state.deployment);
 
     /**
      * Updates the environment variable when modifying the name or value field.
@@ -44,18 +42,12 @@ const EnvironmentVariable = ({ name, value, index, ...props }) => {
             if(i === index) return [newKey, newValue];
             return variable;
         });
-        dispatch(deploymentSlice.setState({
-            path: 'environment',
-            value: { ...environment, variables: updatedVariables }
-        }));
+        onUpdateVariable(environment, updatedVariables);
     };
 
     const handleDeletion = () => {
         const updatedVariables = environment.variables.filter((_, i) => (i !== index));
-        dispatch(deploymentSlice.setState({
-            path: 'environment',
-            value: { ...environment, variables: updatedVariables }
-        }));
+        onUpdateVariable(environment, updatedVariables);
     };
 
     // Handle clicks outside the component (to reset the style)
