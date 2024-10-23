@@ -8,12 +8,13 @@ router.use(authMiddleware.protect);
 router.get('/me/', dockerImageController.getMyDockersImage);
 router.post('/', dockerImageController.createDockerImage);
 
-router.use(authMiddleware.restrictTo('admin'));
-router.get('/', dockerImageController.getDockerImages)
-
+// Verify ownership
 router.route('/:id')
     .get(dockerImageController.getDockerImage)
     .patch(dockerImageController.updateDockerImage)
     .delete(dockerImageController.deleteDockerImage);
+
+router.use(authMiddleware.restrictTo('admin'));
+router.get('/', dockerImageController.getDockerImages)
 
 export default router;
