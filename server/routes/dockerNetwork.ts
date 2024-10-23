@@ -8,12 +8,13 @@ router.use(authMiddleware.protect);
 router.get('/me/', dockerNetworkController.getMyDockersNetwork);
 router.post('/', dockerNetworkController.createDockerNetwork);
 
-router.use(authMiddleware.restrictTo('admin'));
-router.get('/', dockerNetworkController.getDockerNetworks);
-
+// Verify ownership
 router.route('/:id')
     .get(dockerNetworkController.getDockerNetwork)
     .patch(dockerNetworkController.updateDockerNetwork)
     .delete(dockerNetworkController.deleteDockerNetwork);
+
+router.use(authMiddleware.restrictTo('admin'));
+router.get('/', dockerNetworkController.getDockerNetworks);
 
 export default router;
