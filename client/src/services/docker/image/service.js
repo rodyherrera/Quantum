@@ -25,3 +25,8 @@ export const getMyDockerImages = DockerImageAPI.register({
     path: '/me/',
     method: 'GET'
 });
+
+export const deleteDockerImage = DockerImageAPI.register({
+    path: '/:id/',
+    method: 'DELETE'
+});

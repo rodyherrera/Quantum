@@ -24,4 +24,9 @@ export const createDockerNetwork = DockerNetworkAPI.register({
 export const getMyDockerNetworks = DockerNetworkAPI.register({
     path: '/me/',
     method: 'GET'
-})
+});
+
+export const deleteDockerNetwork = DockerNetworkAPI.register({
+    path: '/:id/',
+    method: 'DELETE'
+});
