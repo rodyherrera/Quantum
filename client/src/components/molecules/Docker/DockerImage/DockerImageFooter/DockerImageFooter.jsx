@@ -1,14 +1,14 @@
 import React from 'react';
 import { DashboardCardFooter } from '@components/atoms/DashboardCard';
-import { useDispatch } from 'react-redux';
 import { IoIosRemoveCircleOutline } from 'react-icons/io';
+import useDeleteDockerImage from '@hooks/api/docker/useDeleteDockerImage';
 import './DockerImageFooter.css';
 
-const DockerImageFooter = ({ image, onDelete }) => {
-    const dispatch = useDispatch();
+const DockerImageFooter = ({ image }) => {
+    const deleteDockerImage = useDeleteDockerImage(image._id);
 
     const options = [
-        ['Delete', IoIosRemoveCircleOutline, null, onDelete]
+        ['Delete', IoIosRemoveCircleOutline, null, deleteDockerImage]
     ];
 
     return <DashboardCardFooter options={options} />
