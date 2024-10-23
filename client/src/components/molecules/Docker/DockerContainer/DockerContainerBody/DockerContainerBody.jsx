@@ -2,17 +2,19 @@ import React from 'react';
 import { DashboardCardBody } from '@components/atoms/DashboardCard';
 import { useDispatch } from 'react-redux';
 import { setState } from '@services/docker/container/slice';
+import useDeleteDockerContainer from '@hooks/api/docker/useDeleteDockerContainer';
 import './DockerContainerBody.css';
 
-const DockerContainerBody = ({ container, onDelete }) => {
+const DockerContainerBody = ({ container }) => {
     const dispatch = useDispatch();
+    const deleteDockerContainer = useDeleteDockerContainer(container._id);
 
     const selectContainer = () => {
         dispatch(setState({ path: 'selectedDockerContainer', value: container }))
     };
 
     const ctxMenuOpts = [
-        { title: 'Delete Permanently', onClick: onDelete },
+        { title: 'Delete Permanently', onClick: deleteDockerContainer },
         { title: 'Edit Container' },
         { title: 'Expose Ports', to: '/port-binding/create/', onClick: selectContainer },
         { title: 'Environment Variables', to: `/docker-container/${container._id}/environment-variables/`, onClick: selectContainer },
