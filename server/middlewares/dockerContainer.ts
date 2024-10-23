@@ -9,7 +9,9 @@ export const verifyOwnership = catchAsync(async (req: Request, res: Response, ne
     const user = req.user as IUser;
     if(user.role === 'admin') return next();
     const { id } = req.params;
+    console.log(id, user._id)
     const container = await DockerContainer.findOne({ _id: id, user: user._id });
+    console.log(container);
     if(!container){
         throw new RuntimeError('Docker::Container::Not::Found', 404);
     }

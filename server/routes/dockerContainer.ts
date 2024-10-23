@@ -20,9 +20,12 @@ router.get('/storage/:id/read/:route?',
 router.post('/storage/:id/overwrite/:route?',
     dockerContainerMiddleware.verifyOwnership,
     dockerContainerController.updateContainerFile);
-    
+
 router.get('/me/', dockerContainerController.getMyDockerContainers);
 router.post('/', dockerContainerController.createDockerContainer);
-router.patch('/:id', dockerContainerController.updateDockerContainer);
+
+router.route('/:id')
+    .patch(dockerContainerMiddleware.verifyOwnership, dockerContainerController.updateDockerContainer)
+    .delete(dockerContainerMiddleware.verifyOwnership, dockerContainerController.deleteDockerContainer);
 
 export default router;

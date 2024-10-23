@@ -28,6 +28,8 @@ const DockerContainerFactory = new HandlerFactory({
     ]
 });
 
+export const deleteDockerContainer = DockerContainerFactory.deleteOne({});
+
 const findOrCreateImage = async (
     image: string | IRequestDockerImage,
     userId: string,
