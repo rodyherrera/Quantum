@@ -26,6 +26,22 @@ export const getMyDockerContainers = () => async (dispatch) => {
     });
 };
 
+export const deleteDockerContainer = (id, containers) => async (dispatch) => {
+    const operation = createOperation(dockerContainerSlice, dispatch);
+    operation.on('finally', () => {
+        const updatedContainers = containers.filter((container) => container._id !== id);
+        dispatch(dockerContainerSlice.setState({
+            path: 'dockerContainers',
+            value: updatedContainers
+        }));
+    });
+    operation.use({
+        api: dockerContainerService.deleteDockerContainer,
+        loaderState: 'isOperationLoading',
+        query: { params: { id } }
+    });
+};
+
 // duplicated code @services/repository/operations.js
 export const storageExplorer = (id, route) => async (dispatch) => {
     const operation = createOperation(dockerContainerSlice, dispatch);

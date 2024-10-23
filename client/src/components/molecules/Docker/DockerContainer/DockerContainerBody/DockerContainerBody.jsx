@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 import { setState } from '@services/docker/container/slice';
 import './DockerContainerBody.css';
 
-const DockerContainerBody = ({ container }) => {
+const DockerContainerBody = ({ container, onDelete }) => {
     const dispatch = useDispatch();
 
     const selectContainer = () => {
@@ -12,7 +12,7 @@ const DockerContainerBody = ({ container }) => {
     };
 
     const ctxMenuOpts = [
-        { title: 'Delete Permanently' },
+        { title: 'Delete Permanently', onClick: onDelete },
         { title: 'Edit Container' },
         { title: 'Expose Ports', to: '/port-binding/create/', onClick: selectContainer },
         { title: 'Environment Variables', to: `/docker-container/${container._id}/environment-variables/`, onClick: selectContainer },

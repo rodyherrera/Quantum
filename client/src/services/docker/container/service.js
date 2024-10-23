@@ -31,6 +31,11 @@ export const storageExplorer = DockerContainerAPI.register({
     method: 'GET'
 });
 
+export const deleteDockerContainer = DockerContainerAPI.register({
+    path: '/:id/',
+    method: 'DELETE'
+});
+
 export const getRandomAvailablePort = DockerContainerAPI.register({
     path: '/random-available-port/',
     method: 'GET'
