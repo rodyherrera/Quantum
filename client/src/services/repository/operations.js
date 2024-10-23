@@ -110,7 +110,7 @@ export const deleteRepository = (id, repositories, navigate) => async (dispatch)
     operation.use({
         api: repositoryService.deleteRepository,
         loaderState: 'isOperationLoading',
-        query: { query: { params: { id } } }
+        query: { params: { id } }
     });
 };
 
