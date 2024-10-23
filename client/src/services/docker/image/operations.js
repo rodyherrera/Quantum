@@ -28,6 +28,22 @@ export const createDockerImage = (body, navigate) => async (dispatch) => {
     });
 };
 
+export const deleteDockerImage = (id, images) => async (dispatch) => {
+    const operation = createOperation(dockerImageSlice, dispatch);
+    operation.on('finally', () => {
+        const updatedImages = images.filter((image) => image._id !== id);
+        dispatch(dockerImageSlice.setState({
+            path: 'dockerImages',
+            value: updatedImages
+        }));
+    });
+    operation.use({
+        api: dockerImageService.deleteDockerImage,
+        loaderState: 'isOperationLoading',
+        query: { params: { id } }
+    })
+};
+
 export const getMyDockerImages = () => async (dispatch) => {
     const operation = createOperation(dockerImageSlice, dispatch);
     operation.use({

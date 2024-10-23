@@ -13,7 +13,9 @@ const DashboardCardFooter = ({ options }) => {
                         className='Dashboard-Card-Container-Footer-Option-Container' 
                         onClick={() => {
                             handleOnClick();
-                            navigate(to);
+                            if(to){
+                                navigate(to);
+                            }
                         }}
                         key={index}
                     >
