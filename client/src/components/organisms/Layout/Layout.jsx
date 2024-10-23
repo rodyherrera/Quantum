@@ -25,6 +25,7 @@ import ClickSpark from '@components/atoms/ClickSpark';
 import Banner from '@components/atoms/Banner';
 import Header from '@components/organisms/Header';
 import Menu from '@components/organisms/Menu';
+import useKeyPress from '@hooks/common/useKeyPress'
 import SquaredBackground from '@components/atoms/SquaredBackground';
 import { useWindowSize } from '@hooks/common/';
 import './Layout.css';
@@ -37,6 +38,10 @@ const Layout = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const location = useLocation();
+
+    useKeyPress('Escape', () => {
+        navigate(-1);
+    });
 
     useEffect(() => {
         const bodyEl = document.getElementById('QuantumCloud-Body');

@@ -9,7 +9,7 @@ import { deleteDockerContainer } from '@services/docker/container/operations';
 import { useDispatch, useSelector } from 'react-redux';
 import './DockerContainer.css';
 
-const DockerContainer = ({ container, }) => {
+const DockerContainer = ({ container }) => {
     const dispatch = useDispatch();
     const { dockerContainers } = useSelector((state) => state.dockerContainer);
 
