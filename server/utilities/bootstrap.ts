@@ -76,7 +76,7 @@ export const configureApp = async ({ app, routes, suffix, middlewares }: Configu
     middlewares.forEach((middlewares) => app.use(middlewares));
     try{
         const routePromises = routes.map(async (route) => {
-            const path = suffix + route.split(/(?=[A-Z])/).join('-').toLowerCase();
+            const path = suffix + route.replace(/\//g, '-').split(/(?=[A-Z])/).join('-').toLowerCase();
             const router = require(`@routes/${route}.ts`);
             if(router.default){
                 app.use(path, router.default);

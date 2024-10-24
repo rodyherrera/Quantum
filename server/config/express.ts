@@ -33,16 +33,16 @@ bootstrap.configureApp({
     app,
     suffix: '/api/v1/',
     routes: [
+        'docker/image',
+        'docker/network',
+        'docker/container',
         'github',
-        'dockerImage',
-        'dockerNetwork',
         'auth',
         'repository',
         'webhook',
         'portBinding',
         'deployment',
-        'server',
-        'dockerContainer'
+        'server'
     ],
     middlewares: [
         session({
