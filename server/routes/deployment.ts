@@ -16,9 +16,11 @@ import express from 'express';
 import * as deploymentController from '@controllers/deployment';
 import * as authMiddleware from '@middlewares/authentication';
 import * as githubMiddleware from '@middlewares/github';
-import * as deploymentMiddleware from '@middlewares/deployment';
+import Deployment from '@models/deployment';
+import { verifyOwnership } from '@middlewares/common';
 
 const router = express.Router();
+const ownership = verifyOwnership(Deployment);
 
 router.use(authMiddleware.protect);
 
@@ -34,14 +36,12 @@ router.delete('/repository/:repositoryName/:deploymentId',
     githubMiddleware.populateGithubAccount,
     deploymentController.deleteGithubDeployment);
 
-router.post('/repository/:repositoryAlias/actions/',
-    deploymentController.repositoryOperations);
+router.post('/repository/:repositoryAlias/actions/', deploymentController.repositoryOperations);
 
-router.use('/:id', deploymentMiddleware.verifyDeploymentAccess);
 router.route('/:id')
-    .get(deploymentController.getDeployment)
-    .patch(deploymentController.updateDeployment)
-    .delete(deploymentController.deleteDeployment);
+    .get(ownership, deploymentController.getDeployment)
+    .patch(ownership, deploymentController.updateDeployment)
+    .delete(ownership, deploymentController.deleteDeployment);
 
 router.use(authMiddleware.restrictTo('admin'));
 router.get('/', deploymentController.getDeployments);

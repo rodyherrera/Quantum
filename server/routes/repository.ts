@@ -14,11 +14,13 @@
 
 import express from 'express';
 import * as repositoryController from '@controllers/repository';
-import * as repositoryMiddleware from '@middlewares/repository';
 import * as authMiddleware from '@middlewares/authentication';
 import * as githubMiddleware from '@middlewares/github';
+import Repository from '@models/repository';
+import { verifyOwnership } from '@middlewares/common';
 
 const router = express.Router();
+const ownership = verifyOwnership(Repository);
 
 router.use(authMiddleware.protect);
 
@@ -34,23 +36,14 @@ router.get('/me/',
 
 router.post('/',repositoryController.createRepository);
 
-router.get('/storage/:id/explore/:route?',
-    repositoryMiddleware.verifyRepositoryAccess,
-    repositoryController.storageExplorer);
+router.get('/storage/:id/explore/:route?', ownership, repositoryController.storageExplorer);
+router.get('/storage/:id/read/:route?', ownership, repositoryController.readRepositoryFile);
+router.post('/storage/:id/overwrite/:route?', ownership, repositoryController.updateRepositoryFile);
 
-router.get('/storage/:id/read/:route?',
-    repositoryMiddleware.verifyRepositoryAccess,
-    repositoryController.readRepositoryFile);
-
-router.post('/storage/:id/overwrite/:route?',
-    repositoryMiddleware.verifyRepositoryAccess,
-    repositoryController.updateRepositoryFile);
-
-router.use('/:id', repositoryMiddleware.verifyRepositoryAccess);
 router.route('/:id')
-    .get(repositoryController.getRepository)
-    .patch(repositoryController.updateRepository)
-    .delete(repositoryController.deleteRepository);
+    .get(ownership, repositoryController.getRepository)
+    .patch(ownership, repositoryController.updateRepository)
+    .delete(ownership, repositoryController.deleteRepository);
 
 router.use(authMiddleware.restrictTo('admin'));
 router.get('/', repositoryController.getRepositories);
