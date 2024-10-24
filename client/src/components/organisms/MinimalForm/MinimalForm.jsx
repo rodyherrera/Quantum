@@ -63,10 +63,13 @@ const MinimalForm = ({
     const [formValues, setFormValues] = useState(() => {
         return formInputs.reduce((acc, input) => ({
             ...acc,
-            [input.name]: input.value ||  (input.type === 'select' && input.multiSelect ? [] : '')
-        }))
+            [input.name]:
+                input.value ||
+                input.default ||
+                (input.type === 'select' && input.multiSelect ? [] : '')
+        }), {});
     });
-
+    
     const inputRefs = useRef([]);
 
     /**
