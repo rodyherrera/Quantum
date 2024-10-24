@@ -1,10 +1,13 @@
 import React from 'react';
 import { DashboardCardBody } from '@components/atoms/DashboardCard';
+import useDeleteDockerImage from '@hooks/api/docker/useDeleteDockerImage';
 import './DockerImageBody.css';
 
 const DockerImageBody = ({ image }) => {
+    const deleteDockerImage = useDeleteDockerImage(image._id);
+
     const ctxMenuOpts = [
-        { title: 'Delete Permanently' },
+        { title: 'Delete Permanently', onClick: deleteDockerImage },
         { title: 'Edit Network' }
     ];
 
