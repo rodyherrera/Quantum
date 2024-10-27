@@ -30,11 +30,11 @@ export const authenticateWithCachedToken = async (dispatch) => {
         if(!cachedSessionToken) 
             return;
         const authenticatedUser = await authService.myProfile({});
-        await dispatch(authSlice.setState({ path: 'user', value: authenticatedUser.data }));
-        await dispatch(authSlice.setState({ path: 'authStatus.isAuthenticated', value: true }));
+        dispatch(authSlice.setState({ path: 'user', value: authenticatedUser.data }));
+        dispatch(authSlice.setState({ path: 'authStatus.isAuthenticated', value: true }));
     }catch(error){
         dispatch(coreOperations.globalErrorHandler(error, authSlice));
     }finally{
-        await dispatch(authSlice.setState({ path: 'authStatus.isCachedAuthLoading', value: false }));
+        dispatch(authSlice.setState({ path: 'authStatus.isCachedAuthLoading', value: false }));
     }
 };

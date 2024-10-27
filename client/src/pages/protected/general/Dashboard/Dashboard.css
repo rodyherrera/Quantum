@@ -35,6 +35,16 @@
     gap: 2rem;
 }
 
+#Dashboard-Page{
+    display: flex;
+}
+
+.Dashboard-Menu{
+    padding: 1rem;
+    width: 297px;
+    border: 1px solid #dadada;
+}
+
 @media screen and (max-width: 768px){
     #Dashboard-Page{
         height: unset;

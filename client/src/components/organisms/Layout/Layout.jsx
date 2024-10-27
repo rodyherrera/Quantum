@@ -38,7 +38,7 @@ const Layout = () => {
         if(!authStatus.isAuthenticated){
             authenticateWithCachedToken(dispatch);
         }
-    }, [dispatch, authStatus]);
+    }, [dispatch, authStatus.isAuthenticated]);
     
     useEffect(() => {
         if(authStatus.isAuthenticated && !user?.github?._id){
