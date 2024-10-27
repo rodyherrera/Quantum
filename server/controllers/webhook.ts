@@ -6,6 +6,8 @@ import RepositoryHandler from '@services/repositoryHandler';
 import logger from '@utilities/logger';
 import { shells } from '@services/logManager';
 import { Request, Response } from 'express';
+import { IRepository } from '@typings/models/repository';
+import { IUser } from '@typings/models/user';
 import mongoose from 'mongoose';
 
 /**
