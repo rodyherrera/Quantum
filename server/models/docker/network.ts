@@ -59,6 +59,14 @@ DockerNetworkSchema.post('findOneAndDelete', async function(doc){
     await removeNetwork(doc.dockerNetworkName);
 });
 
+DockerNetworkSchema.pre('deleteMany', async function(){
+    const conditions = this.getQuery();
+    const networks = await mongoose.model('DockerNetwork').find(conditions);
+    await Promise.all(networks.map(async (network) => {
+        await removeNetwork(network.dockerNetworkName);
+    }));
+});
+
 const DockerNetwork: Model<IDockerNetwork> = mongoose.model('DockerNetwork', DockerNetworkSchema);
 
 export default DockerNetwork;

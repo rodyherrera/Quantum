@@ -28,6 +28,23 @@ const DockerImageSchema: Schema<IDockerImage> = new Schema({
 
 DockerImageSchema.index({ name: 1, tag: 1, user: 1 }, { unique: true });
 
+const cascadeDeleteHandler = async (document: IDockerImage): Promise<void> => {
+    const { _id } = document;
+    await mongoose.model('DockerContainer').deleteMany({ image: _id });
+}
+
+DockerImageSchema.pre('deleteMany', async function() {
+    const conditions = this.getQuery();
+    const images = await mongoose.model('DockerImage').find(conditions);
+    await Promise.all(images.map(async (image) => {
+        await cascadeDeleteHandler(image);
+    }));
+});
+
+DockerImageSchema.post('findOneAndDelete', async function(deletedDoc){
+    await cascadeDeleteHandler(deletedDoc);
+});
+
 DockerImageSchema.pre('save', async function(next){
     try{
         if(this.isNew){

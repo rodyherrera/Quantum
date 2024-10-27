@@ -39,14 +39,25 @@ const GithubSchema = new mongoose.Schema<IGithub>({
 
 GithubSchema.index({ username: 'text' });
 
+const cascadeDeleteHandler = async (document: IGithub): Promise<void> => {
+    await mongoose.model('User').findByIdAndUpdate(document.user, { $unset: { github: 1 } });
+};
+
 GithubSchema.post('save', async function(this: IGithub){
     const { user, _id } = this;
     await mongoose.model('User').findByIdAndUpdate(user, { github: _id });
 }); 
 
-GithubSchema.post('findOneAndDelete', async function(this: IGithub){
-    const { user } = this;
-    await mongoose.model('User').findByIdAndUpdate(user, { $unset: { github: 1 } });
+GithubSchema.post('findOneAndDelete', async function (this: IGithub){
+    await cascadeDeleteHandler(this);
+});
+
+GithubSchema.pre('deleteMany', async function(){
+    const conditions = this.getQuery();
+    const githubAccounts = await mongoose.model('Github').find(conditions);
+    await Promise.all(githubAccounts.map(async (githubAccount) => {
+        await cascadeDeleteHandler(githubAccount);
+    }));
 });
 
 const Github = mongoose.model<IGithub>('Github', GithubSchema);

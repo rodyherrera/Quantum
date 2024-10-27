@@ -56,35 +56,42 @@ const DeploymentSchema = new mongoose.Schema<IDeployment>({
 
 DeploymentSchema.index({ environment: 'text', commit: 'text', url: 'text' });
 
+const cascadeDeleteHandler = async (document: IDeployment): Promise<void> => {
+    const { user, repository, _id } = document;
+    await mongoose.model('User').updateOne({ _id: user }, { $pull: { deployments: _id } });
+    await mongoose.model('Repository').updateOne({ _id: repository }, { $pull: { deployments: _id } });
+};
+
+DeploymentSchema.post('findOneAndDelete', async function(deletedDoc: IDeployment){
+    await cascadeDeleteHandler(deletedDoc);
+});
+
+DeploymentSchema.pre('deleteMany', async function() {
+    const conditions = this.getQuery();
+    const deployments = await mongoose.model('Deployment').find(conditions);
+    await Promise.all(deployments.map(async (deployment) => {
+        await cascadeDeleteHandler(deployment);
+    }));
+});
+
 DeploymentSchema.methods.getFormattedEnvironment = function () {
     const formattedEnvironment = Array.from(
         this.environment.variables, ([key, value]) => `${key.trim()}="${value.trim()}"`);
     return formattedEnvironment.join(' ');
 };
 
-DeploymentSchema.post<Query<IDeployment, IDeployment>>('findOneAndUpdate', async function () {
+DeploymentSchema.post('findOneAndUpdate', async function (){
     const updatedDoc = await this.model.findOne(this.getFilter()).select('environment repository');
-    if (updatedDoc) {
+    if(updatedDoc){
         const { variables } = updatedDoc.environment;
-        for (let [key, value] of variables) {
+        for(let [key, value] of variables){
             key = key.toLowerCase();
-            if (!key.includes('port')) continue;
+            if(!key.includes('port')) continue;
             await mongoose.model('Repository')
                 .updateOne({ _id: updatedDoc.repository }, { port: value });
             break;
         }
     }
-});
-
-DeploymentSchema.post<Query<IDeployment, IDeployment>>('findOneAndDelete', async function () {
-    const { user, repository, _id }: any = this.getFilter();
-
-    const userUpdatePromise = mongoose.model('User')
-        .updateOne({ _id: user }, { $pull: { deployments: _id } }).lean().exec();
-    const repoUpdatePromise = mongoose.model('Repository')
-        .updateOne({ _id: repository }, { $pull: { deployments: _id } }).lean().exec();
-
-    await Promise.all([userUpdatePromise, repoUpdatePromise]);
 });
 
 const Deployment = mongoose.model<IDeployment>('Deployment', DeploymentSchema);

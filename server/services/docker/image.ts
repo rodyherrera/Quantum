@@ -33,7 +33,6 @@ export const pullImage = async (imageName: string, tag: string = 'latest'): Prom
 
         logger.info(`Pulling "${fullImageName}"...`);
         await new Promise<void>((resolve, reject) => {
-
             docker.pull(fullImageName, (error: any, stream: NodeJS.ReadableStream) => {
                 if(error){
                     reject(error);

@@ -69,19 +69,30 @@ const DockerContainerSchema: Schema<IDockerContainer> = new Schema({
 
 DockerContainerSchema.index({ user: 1, name: 1 }, { unique: true });
 
-DockerContainerSchema.post('findOneAndDelete', async function (deletedDoc) {
-    const { user, network, image, _id } = deletedDoc;
+const cascadeDeleteHandler = async (document: IDockerContainer): Promise<void> => {
+    const { user, network, image, _id } = document;
     const update = { $pull: { containers: _id } };
     await mongoose.model('User').updateOne({ _id: user }, update);
     await mongoose.model('DockerNetwork').updateOne({ _id: network }, update);
     await mongoose.model('DockerImage').updateOne({ _id: image }, update);
     await mongoose.model('PortBinding').deleteOne({ container: _id });
+};
+
+DockerContainerSchema.post('findOneAndDelete', async function (deletedDoc: IDockerContainer){
+    await cascadeDeleteHandler(deletedDoc);
+});
+
+DockerContainerSchema.pre('deleteMany', async function(){
+    const conditions = this.getQuery();
+    const containers = await mongoose.model('DockerContainer').find(conditions);
+    await Promise.all(containers.map(async (container: IDockerContainer) => {
+        await cascadeDeleteHandler(container);
+    }));
 });
 
 DockerContainerSchema.pre('save', async function (next) {
-    try {
-        if (this.isNew) {
-            console.log('aqui');
+    try{
+        if(this.isNew){
             const containerId = this._id.toString();
             const userId = this.user.toString();
             const { containerStoragePath, userContainerPath } = getContainerStoragePath(userId, containerId, userId);
@@ -90,7 +101,7 @@ DockerContainerSchema.pre('save', async function (next) {
             const containerService = new DockerContainerService(this);
             await containerService.createAndStartContainer();
             const ipAddress = await containerService.getIpAddress();
-            if (ipAddress) {
+            if(ipAddress){
                 this.ipAddress = ipAddress;
             }
             // Should this be in the 'pre' middleware? What about the other models?
@@ -98,7 +109,7 @@ DockerContainerSchema.pre('save', async function (next) {
             await mongoose.model('User').updateOne({ _id: this.user }, updateUser);
         }
         next();
-    } catch (error: any) {
+    }catch(error: any){
         next(error);
     }
 });

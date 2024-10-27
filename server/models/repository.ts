@@ -209,6 +209,14 @@ RepositorySchema.pre('save', async function(next){
     }
 });
 
+RepositorySchema.pre('deleteMany', async function() {
+    const conditions = this.getQuery();
+    const repositories = await mongoose.model('Repository').find(conditions);
+    await Promise.all(repositories.map(async (repository) => {
+        await deleteRepositoryHandler(repository);
+    }));
+});
+
 RepositorySchema.post('findOneAndDelete', async function(deletedDoc: IRepository){
     await deleteRepositoryHandler(deletedDoc);
 });

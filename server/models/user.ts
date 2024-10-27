@@ -107,26 +107,29 @@ const UserSchema: Schema<IUser> = new Schema({
 
 UserSchema.index({ username: 'text', fullname: 'text', email: 'text' });
 
+const cascadeDeleteHandler = async (document: IUser): Promise<void> => {
+    const query = { user: document._id };
+    // check for errors (cascade in the others models)
+    await mongoose.model('Repository').deleteMany(query);
+    await mongoose.model('Github').findOneAndDelete(query);
+    await mongoose.model('DockerNetwork').deleteMany(query);
+    await mongoose.model('DockerContainer').deleteMany(query);
+    await mongoose.model('DockerImage').deleteMany(query);
+    await mongoose.model('PortBinding').deleteMany(query);
+}
+
 UserSchema.pre('findOneAndDelete', async function(){
     const conditions = this.getQuery();
     const user = await mongoose.model('User').findOne(conditions).populate('container');
-    if(!user) return;
-    await mongoose.model('Repository').deleteMany({ user: user._id });
-    // findOneAndDelete?????
-    await mongoose.model('Github').findOneAndDelete({ user: user._id });
-    await mongoose.model('DockerNetwork').deleteMany({ user: user._id });
-    await mongoose.model('DockerContainer').deleteMany({ user: user._id });
-    await mongoose.model('DockerImage').deleteMany({ user: user._id });
-    await mongoose.model('PortBinding').deleteMany({ user: user._id });
+    await cascadeDeleteHandler(user);
+});
 
-    /*
-        * UserContainer also is a DockerContainer entry
-
-        const container = new UserContainer(user);
-        container.remove().then().catch((error: Error) => {
-            logger.error(`CRITICAL ERROR (at @models/user - pre findOneAndDelete middleware): ${error}`)
-        });
-    */
+UserSchema.pre('deleteMany', async function() {
+    const conditions = this.getQuery();
+    const users = await mongoose.model('User').find(conditions);
+    await Promise.all(users.map(async (user) => {
+        await cascadeDeleteHandler(user);
+    }));
 });
 
 /**
