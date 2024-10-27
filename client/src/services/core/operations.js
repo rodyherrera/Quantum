@@ -18,8 +18,24 @@ import * as githubSlice from '@services/github/slice';
 import * as repositorySlice from '@services/repository/slice';
 import * as coreService from '@services/core/service';
 import * as coreSlice from '@services/core/slice';
+import * as containerSlice from '@services/docker/container/slice';
+import * as networkSlice from '@services/docker/network/slice';
+import * as imageSlice from '@services/docker/image/slice';
+import * as portBindingSlice from '@services/portBinding/slice';
 import errorCodeHandler from '@services/core/errorCodeHandler';
 import createOperation from '@utilities/api/operationHandler';
+
+const slices = [
+    authSlice, 
+    deploymentSlice, 
+    githubSlice, 
+    repositorySlice, 
+    coreSlice, 
+    containerSlice, 
+    networkSlice, 
+    imageSlice, 
+    portBindingSlice
+];
 
 /**
  * @function globalErrorHandler
@@ -29,16 +45,6 @@ import createOperation from '@utilities/api/operationHandler';
  * @returns {function} - Redux dispatch function.
 */
 export const globalErrorHandler = (message, slice = null) => (dispatch) => {
-    /*
-        const error = {
-            // Generates a unique error ID
-            id: new Date().getTime(),
-            message
-        };
-        // Adds the error to the global error store
-        dispatch(addError(error));
-    */
-
     if(slice === null) return;
     // Translates error codes if necessary
     const readableError = errorCodeHandler(message);
@@ -52,11 +58,9 @@ export const globalErrorHandler = (message, slice = null) => (dispatch) => {
  * @returns {function} - Redux dispatch function.
 */
 export const resetErrorForAllSlices = () => (dispatch) => {
-    dispatch(authSlice.setState({ path: 'error', value: null }));
-    dispatch(deploymentSlice.setState({ path: 'error', value: null }));
-    dispatch(githubSlice.setState({ path: 'error', value: null }));
-    dispatch(repositorySlice.setState({ path: 'error', value: null }));
-    dispatch(coreSlice.setState({ path: 'error', value: null }));
+    for(const slice of slices){
+        dispatch(slice.setState({ path: 'error', value: null }));
+    }
 };
 
 /**
