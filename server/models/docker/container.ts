@@ -96,7 +96,7 @@ DockerContainerSchema.pre('save', async function (next) {
             const containerId = this._id.toString();
             const userId = this.user.toString();
             const { containerStoragePath, userContainerPath } = getContainerStoragePath(userId, containerId, userId);
-            this.dockerContainerName = getSystemDockerName(this.name);
+            this.dockerContainerName = getSystemDockerName(containerId);
             this.storagePath = this.isUserContainer ? userContainerPath : containerStoragePath;
             const containerService = new DockerContainerService(this);
             await containerService.createAndStartContainer();

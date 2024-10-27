@@ -45,7 +45,7 @@ DockerNetworkSchema.pre('save', async function(next){
         if(this.isNew){
             this.subnet = randomIPv4Subnet();
             const userId = (this.user as IUser)._id.toString();
-            this.dockerNetworkName = getSystemNetworkName(userId, this.name);
+            this.dockerNetworkName = getSystemNetworkName(userId, this._id.toString());
             const updateUser = { $push: { dockerNetworks: this._id } };
             await createNetwork(this.dockerNetworkName, this.driver, this.subnet);
             await mongoose.model('User').updateOne({ _id: this.user }, updateUser);

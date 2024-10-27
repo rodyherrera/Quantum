@@ -37,8 +37,8 @@ export const createUserContainer = async (userId: string): Promise<IDockerContai
     return container;
 }
 
-export const getSystemDockerName = (name: string): string => {
-    const formattedName = name.replace(/[^a-zA-Z0-9_.-]/g, '_');
+export const getSystemDockerName = (containerId: string): string => {
+    const formattedName = containerId.replace(/[^a-zA-Z0-9_.-]/g, '_');
     return `quantum-container-${process.env.NODE_ENV}-${formattedName}`;
 }
 
@@ -147,7 +147,7 @@ class DockerContainer {
     async createContainer(): Promise<Dockerode.Container> {
         const dockerImage = await this.getDockerImage();
         const dockerNetwork = await this.getDockerNetwork();
-        const networkName = getSystemNetworkName(this.container.user.toString(), dockerNetwork.name);
+        const networkName = getSystemNetworkName(this.container.user.toString(), dockerNetwork._id.toString());
         const options = {
             Image: `${dockerImage.name}:${dockerImage.tag}`,
             name: this.container.dockerContainerName,
