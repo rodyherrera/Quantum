@@ -40,15 +40,21 @@ const DockerNetworkSchema: Schema<IDockerNetwork> = new Schema({
 
 DockerNetworkSchema.index({ user: 1, name: 1 }, { unique: true });
 
+const cascadeDeleteHandler = async (document: IDockerNetwork): Promise<void> => {
+    await removeNetwork(document.dockerNetworkName);
+    // TODO: Allow a container to function without having an assigned network.
+    await mongoose.model('DockerContainer').deleteMany({ network: document._id });
+    await mongoose.model('User').updateOne({ _id: document.user }, { $pull: { networks: document._id } });
+};
+
 DockerNetworkSchema.pre('save', async function(next){
     try{
         if(this.isNew){
             this.subnet = randomIPv4Subnet();
             const userId = (this.user as IUser)._id.toString();
             this.dockerNetworkName = getSystemNetworkName(userId, this._id.toString());
-            const updateUser = { $push: { dockerNetworks: this._id } };
             await createNetwork(this.dockerNetworkName, this.driver, this.subnet);
-            await mongoose.model('User').updateOne({ _id: this.user }, updateUser);
+            await mongoose.model('User').updateOne({ _id: this.user }, { $push: { networks: this._id } });
         }
         next();
     }catch(error: any){
@@ -57,14 +63,14 @@ DockerNetworkSchema.pre('save', async function(next){
 });
 
 DockerNetworkSchema.post('findOneAndDelete', async function(doc){
-    await removeNetwork(doc.dockerNetworkName);
+    await cascadeDeleteHandler(doc);
 });
 
 DockerNetworkSchema.pre('deleteMany', async function(){
     const conditions = this.getQuery();
     const networks = await mongoose.model('DockerNetwork').find(conditions);
     await Promise.all(networks.map(async (network) => {
-        await removeNetwork(network.dockerNetworkName);
+        await cascadeDeleteHandler(network);
     }));
 });
 

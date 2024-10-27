@@ -36,11 +36,30 @@ const PortBindingSchema: Schema<IPortBinding> = new Schema({
     timestamps: true
 });
 
+const cascadeDeleteHandler = async (document: IPortBinding): Promise<void> => {
+    const update = { $pull: { portBindings: document._id } };
+    await mongoose.model('DockerContainer').updateOne({ _id: document.container }, update);
+    await mongoose.model('User').updateOne({ _id: document.user }, update);
+};
+
+PortBindingSchema.post('findOneAndDelete', async function(deletedDoc: IPortBinding){
+    await cascadeDeleteHandler(deletedDoc);
+});
+
+PortBindingSchema.pre('deleteMany', async function(){
+    const conditions = this.getQuery();
+    const portBindings = await mongoose.model('PortBinding').find(conditions);
+    await Promise.all(portBindings.map(async (portBinding: IPortBinding) => {
+        await cascadeDeleteHandler(portBinding);
+    }));
+});
+
 PortBindingSchema.pre('save', async function(next){
     try{
         if(this.isNew){
-            const updateUser = { $push: { portBindings: this._id } };
-            await mongoose.model('User').updateOne({ _id: this.user }, updateUser);
+            const update = { $push: { portBindings: this._id } };
+            await mongoose.model('User').updateOne({ _id: this.user }, update);
+            await mongoose.model('DockerContainer').updateOne({ _id: this.container }, update);
             const container = await DockerContainer.findById(this.container).select('ipAddress');
             if(container?.ipAddress && this.externalPort){
                 createProxyServer(this.externalPort, container.ipAddress, this.internalPort, /* this.protocol */);

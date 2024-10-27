@@ -104,9 +104,12 @@ DockerContainerSchema.pre('save', async function (next) {
             if(ipAddress){
                 this.ipAddress = ipAddress;
             }
-            // Should this be in the 'pre' middleware? What about the other models?
-            const updateUser = { $push: { dockerContainers: this._id } };
-            await mongoose.model('User').updateOne({ _id: this.user }, updateUser);
+            const update = { $push: { containers: this._id } };
+            await mongoose.model('User').updateOne({ _id: this.user }, update);
+            await mongoose.model('DockerImage').updateOne({ _id: this.image }, update);
+            // TODO: Implement logic to be able to deploy the container with 
+            // a different network, that is, one that can be changed.
+            await mongoose.model('DockerNetwork').updateOne({ _id: this.network }, update);
         }
         next();
     }catch(error: any){

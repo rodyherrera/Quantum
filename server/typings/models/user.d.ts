@@ -9,6 +9,7 @@ export interface IUser extends Document{
     repositories: mongoose.Types.ObjectId[];
     deployments: mongoose.Types.ObjectId[];
     containers: mongoose.Types.ObjectId[];
+    portBindings: mongoose.Types.ObjectId[];
     images: mongoose.Types.ObjectId[];
     networks: mongoose.Types.ObjectId[];
     github: mongoose.Types.ObjectId | IGithub;

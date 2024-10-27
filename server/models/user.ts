@@ -15,10 +15,8 @@
 import mongoose, { Schema, Model } from 'mongoose';
 import validator from 'validator';
 import bcrypt from 'bcryptjs';
-import logger from '@utilities/logger';
-import UserContainer from '@services/userContainer';
-import { createUserContainer } from '@services/docker/container';
 import { IUser } from '@typings/models/user';
+import { IDockerContainer } from '@typings/models/docker/container';
 
 const UserSchema: Schema<IUser> = new Schema({
     username: {
@@ -30,6 +28,10 @@ const UserSchema: Schema<IUser> = new Schema({
         lowercase: true,
         trim: true
     },
+    portBindings: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'PortBinding'
+    }],
     containers: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'DockerContainer'
@@ -118,6 +120,23 @@ const cascadeDeleteHandler = async (document: IUser): Promise<void> => {
     await mongoose.model('PortBinding').deleteMany(query);
 }
 
+const createUserContainer = async (user: IUser): Promise<IDockerContainer> => {
+    const userId = user._id.toString();
+    const image = await mongoose.model('DockerImage').create({ name: 'alpine', tag: 'latest', user: userId });
+    const network = await mongoose.model('DockerNetwork').create({ user: userId, driver: 'bridge', name: userId });
+    const container = await mongoose.model('DockerContainer').create({
+        name: userId,
+        user: userId,
+        image: image._id,
+        network: network._id,
+        isUserContainer: true
+    });
+    user.images.push(image);
+    user.networks.push(network);
+    user.containers.push(container);
+    return container;
+}
+
 UserSchema.pre('findOneAndDelete', async function(){
     const conditions = this.getQuery();
     const user = await mongoose.model('User').findOne(conditions).populate('container');
@@ -153,13 +172,18 @@ const hashPassword = async (password: string): Promise<string> => {
 
 UserSchema.pre('save', async function(next){
     try{
+        /*
+
+            TODO: GITHUB AUTH OPTIONAL!!!!!!!!!!!
+
+        */
         if(!this.isModified('password')) return next();
         this.username = removeWhitespace(this.username);
         this.password = await hashPassword(this.password);
         this.passwordConfirm = undefined;
 
         if(this.isNew){
-            this.container = await createUserContainer(this._id.toString());
+            this.container = await createUserContainer(this);
         }
         
         // Set the passwordChangedAt field if the password was 
