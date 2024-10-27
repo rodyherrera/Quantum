@@ -17,7 +17,7 @@ export const removeCreatedNetworks = async (): Promise<void> => {
         ]
     });
     const environmentNetworks = networks
-        .filter(({ Names }) => Names[0].startsWith(`/quantum-network-${environment}`));
+        .filter(({ Name }) => Name.startsWith(`quantum-network-${environment}`));
     for(let i = 0; i < environmentNetworks.length; i++){
         console.log(`${i + 1}) ${environmentNetworks[i].Name}`);
     }
