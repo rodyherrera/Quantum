@@ -60,10 +60,10 @@ class APIFeatures{
         if(this.populate){
             if(Array.isArray(this.populate)){
                 this.populate.forEach((pop) => {
-                    query = query.populate(pop);
+                    query = query.populate(pop as string);
                 });
             }else{
-                query = query.populate(this.populate);
+                query = query.populate(this.populate as PopulateOptions);
             }
         }
         const records = await query;
@@ -86,7 +86,7 @@ class APIFeatures{
         if(q){
             const escapedTerm = q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
             this.buffer.find.$text = { $search: escapedTerm };
-            this.buffer.sort = { score: { $meta: 'textScore' }, ...this.buffer.sort };
+            this.buffer.sort = { score: { $meta: 'textScore' }, ...(this.buffer.sort as object) };
             this.buffer.select += ' score';
         }
         return this;
@@ -123,7 +123,7 @@ class APIFeatures{
                 sortFields.forEach((field) => {
                     const order = field.startsWith('-') ? -1 : 1;
                     const fieldName = field.startsWith('-') ? field.substring(1) : field;
-                    this.buffer.sort[fieldName] = order;
+                    (this.buffer.sort as Record<string, any>)[fieldName] = order;
                 });
             }else{
                 this.buffer.sort = sortBy;

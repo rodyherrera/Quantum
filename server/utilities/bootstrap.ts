@@ -28,6 +28,8 @@ import { spawn } from 'child_process';
 import { IUser } from '@typings/models/user';
 import { IRepository } from '@typings/models/repository';
 import * as nginxHandler from '@services/nginx';
+import { IPortBinding } from '@typings/models/portBinding';
+import { IDockerContainer } from '@typings/models/docker/container';
 
 /**
  * Asynchronously sets up an Nginx reverse proxy configuration.
@@ -112,7 +114,7 @@ export const loadReverseProxies = async (): Promise<void> => {
                 select: 'ipAddress -_id'
             });
         await Promise.all(portBindings.map(({ internalPort, externalPort, container }) => {
-            createProxyServer(externalPort, container.ipAddress, internalPort);
+            createProxyServer(externalPort as number, (container as IDockerContainer).ipAddress as string, internalPort);
         }));
     }catch(error){
         logger.error('@utilities/bootstrap.ts (loadReverseProxies): ' + error);

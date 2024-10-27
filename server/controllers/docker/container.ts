@@ -91,8 +91,11 @@ export const randomAvailablePort = catchAsync(async (req: Request, res: Response
 // DUPLICATED CODE @controllers/repository.ts
 const getRequestedPath = async (req: Request): Promise<string> => {
     const user = req.user as IUser;
-    const container = await DockerContainer.findOne({ _id: req.params.id, user: user._id }).select('storagePath');
-    return path.join(container?.storagePath, req.params.route || '');
+    const container = await DockerContainer
+        .findOne({ _id: req.params.id, user: user._id })
+        .select('storagePath')
+        .lean();
+    return path.join(container?.storagePath || '', req.params.route || '');
 };
 
 export const storageExplorer = catchAsync(async (req: Request, res: Response) => {

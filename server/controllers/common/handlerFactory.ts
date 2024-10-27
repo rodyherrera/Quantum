@@ -10,7 +10,6 @@ import type {
 } from '@typings/controllers/handlerFactory';
 import APIFeatures from '@utilities/apiFeatures';
 import RuntimeError from '@utilities/runtimeError';
-import logger from '@utilities/logger';
 
 class HandlerFactory{
     private model: Model<any>
@@ -85,7 +84,7 @@ class HandlerFactory{
     }
 
     private createQuery(req: IRequest): object{
-        const query = filterObject(req.body, ...this.fields);
+        const query: any = filterObject(req.body, ...this.fields);
         if(this.fields.includes('user') && req.user){
             const authenticatedUser = req.user as IUser;
             query['user'] = (authenticatedUser.role === 'admin' && req.body.user)
@@ -118,8 +117,8 @@ class HandlerFactory{
         }, config);
     }
 
-    private getPopulateFromRequest(query: IRequest['query']): string | null{
-        const populate = query.populate as string | undefined;
+    private getPopulateFromRequest(query: any): string | null{
+        const populate = query.populate;
         if(!populate) return null;
         if(populate.startsWith('{') || populate.startsWith('[')){
             try{

@@ -1,6 +1,7 @@
 import mongoose, { Schema, Model } from 'mongoose';
 import { IDockerNetwork } from '@typings/models/docker/network';
 import { createNetwork, removeNetwork, randomIPv4Subnet, getSystemNetworkName } from '@services/docker/network';
+import { IUser } from '@typings/models/user';
 
 const DockerNetworkSchema: Schema<IDockerNetwork> = new Schema({
     name: {
@@ -43,7 +44,7 @@ DockerNetworkSchema.pre('save', async function(next){
     try{
         if(this.isNew){
             this.subnet = randomIPv4Subnet();
-            const userId = this.user._id.toString();
+            const userId = (this.user as IUser)._id.toString();
             this.dockerNetworkName = getSystemNetworkName(userId, this.name);
             const updateUser = { $push: { dockerNetworks: this._id } };
             await createNetwork(this.dockerNetworkName, this.driver, this.subnet);
