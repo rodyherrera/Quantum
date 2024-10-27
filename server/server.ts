@@ -30,10 +30,10 @@ const SERVER_HOST: string = process.env.SERVER_HOSTNAME || '0.0.0.0';
  * @param {Error} err - The uncaught exception.
 */
 process.on('uncaughtException', async (error:Error) => {
-    logger.error('Uncaught Exception:' + error);
+    logger.error('@server.ts: Uncaught Exception: ' + error);
     await cleanHostEnvironment();
     if(process.env.NODE_ENV !== 'production') return;
-    logger.info('Restarting server...');
+    logger.info('@server.ts: Restarting server...');
     await sendMail({
         subject: 'Critical runtime error, restarting server...',
         html: `A critical error has been registered in the execution of the platform server. This error cannot be ignored and continue executing instructions, so the server will be forcefully restarted to maintain the integrity of the platform and its hosted services. Keep in mind that the latter can get into a loop. We will leave you error information:\n${error}`
@@ -46,14 +46,14 @@ process.on('uncaughtException', async (error:Error) => {
  * @param {String} reason - The unhandled rejection.
 */
 process.on('unhandledRejection', (reason:any) => {
-    logger.error('Unhandled Promise Rejection, reason: ' + reason);
+    logger.error('@server.ts: Unhandled Promise Rejection, reason: ' + reason);
 });
 
 /**
  * Handles SIGINT (Ctrl-C) for graceful shutdown.
 */
 process.on('SIGINT', async () => {
-    logger.info('SIGINT signal received, shutting down...');
+    logger.info('@server.ts: SIGINT signal received, shutting down...');
     // await cleanHostEnvironment();
     await sendMail({
         subject: 'Quantum and hosted services have stopped successfully.',
@@ -71,7 +71,7 @@ httpServer.listen(SERVER_PORT, SERVER_HOST, async () => {
         bootstrap.validateEnvironmentVariables();
         // Establishes a connection to the MongoDB database
         await mongoConnector();
-        logger.info('Docker containers and user applications will be started. This may take a few minutes...');
+        logger.info('@server.ts: Docker containers and user applications will be started. This may take a few minutes...');
         // Loads user-defined Docker containers
         await bootstrap.loadUserContainers();
         // Load reverse proxies
@@ -83,9 +83,9 @@ httpServer.listen(SERVER_PORT, SERVER_HOST, async () => {
             subject: 'The Quantum API is now accessible!',
             html: 'Your instance has been successfully deployed within your server.'
         });
-        logger.info(`: Server running at http://${SERVER_HOST}:${SERVER_PORT}/.`);
+        logger.info(`@server.ts: Running at http://${SERVER_HOST}:${SERVER_PORT}/.`);
     }catch(error){
-        logger.error(': Error during server initialization:', error);
+        logger.error('@server.ts: Error during server initialization: ' + error);
         process.exit(1);
     }
 });

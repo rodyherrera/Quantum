@@ -50,7 +50,7 @@ export const webhook = async (req: Request, res: Response) => {
 
         res.status(200).json({ status: 'success' });
     }catch(error: any){
-        logger.error('Critical Error (at @controllers/webhook): ' + error.message);
+        logger.error('@controllers/webhook.ts: ' + error.message);
         res.status(500).json({ status: 'error' });
     }
 };

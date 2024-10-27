@@ -13,7 +13,7 @@ export const isImageAvailable = async (imageName: string, tag: string = 'latest'
         if(error.statusCode === 404){
             return false;
         }
-        logger.error('@services/dockerImage - isImageAvailable: ' + error);
+        logger.error('@services/docker/image.ts (isImageAvailable): ' + error);
         throw error;
     }
 }
@@ -31,7 +31,7 @@ export const pullImage = async (imageName: string, tag: string = 'latest'): Prom
         const isAvailable = await isImageAvailable(imageName, tag);
         if(isAvailable) return;
 
-        logger.info(`Pulling "${fullImageName}"...`);
+        logger.info(`@services/docker/image.ts (pullImage): Pulling "${fullImageName}"...`);
         await new Promise<void>((resolve, reject) => {
             docker.pull(fullImageName, (error: any, stream: NodeJS.ReadableStream) => {
                 if(error){
@@ -45,8 +45,8 @@ export const pullImage = async (imageName: string, tag: string = 'latest'): Prom
             });
         });
 
-        logger.info(`Image "${fullImageName}" downloaded.`);
+        logger.info(`@services/docker/image.ts (pullImage): Image "${fullImageName}" downloaded.`);
     }catch(error){
-        logger.error('CRITICAL ERROR (@dockerHandler - pullImage): '+ error);
+        logger.error('@services/docker/image.ts (pullImage): ' + error);
     }
 }

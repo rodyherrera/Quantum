@@ -37,7 +37,7 @@ const handleShell = async (socket: ISocket) => {
         const repositoryHandler = new RepositoryHandler(socket.repository, socket.user);
         await repositoryHandler.executeInteractiveShell(socket);
     }catch(error){
-        logger.info('Critical Error (@controllers/wsController - handleShell): ' + error);
+        logger.info('@controllers/wsController.ts (handleShell): ' + error);
     }
 };
 
@@ -50,7 +50,7 @@ const handleDockerShell = async (socket: ISocket) => {
             dockerHandler.startSocketShell(socket, '/');
         }
     }catch(error){
-        logger.info('Critical Error (@controllers/wsController - handleDockerShell): ' + error);
+        logger.info('@controllers/wsController.ts (handleDockerShell): ' + error);
     }
 };
 
@@ -59,7 +59,7 @@ const handleCloudConsole = async (socket: ISocket) => {
         const container = new UserContainer(await socket.user.populate('container'));
         await container.executeInteractiveShell(socket);
     }catch (error){
-        logger.error('Critical Error (@controllers/wsController - handleCloudConsole): ' + error);
+        logger.error('@controllers/wsController.ts (handleCloudConsole): ' + error);
     }
 };
 
@@ -72,7 +72,7 @@ export default (io: any) => {
             case 'Repository::Shell':
                 await checkRepositoryOwnership(socket, async (error) => {
                     if(!error) handleShell(socket);
-                    else logger.error('Error in repositoryShell:', error);
+                    else logger.error('@controllers/wsController.ts (default): ', error);
                 });
                 break;
             case 'Cloud::Console':

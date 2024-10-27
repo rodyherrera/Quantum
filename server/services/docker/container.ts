@@ -73,7 +73,7 @@ class DockerContainer {
                 const container = await this.createAndStartContainer();
                 return container;
             } else {
-                logger.error('Could not handle Docker container startup request: ' + error);
+                logger.error('@services/docker/container.ts (initializeContainer): Could not handle Docker container startup request: ' + error);
             }
         }
     }
@@ -95,7 +95,7 @@ class DockerContainer {
             await createLogStream(id, this.container.user.toString());
             setupSocketEvents(socket, id, this.container.user.toString(), exec);
         } catch (error) {
-            logger.info('CRITICAL ERROR (at @services/dockerHandler - startSocketShell): ' + error);
+            logger.info('@services/docker/container.ts (startSocketShell): ' + error);
         }
     }
 
@@ -114,7 +114,7 @@ class DockerContainer {
             await container.remove({ force: true });
             await fs.rm(this.getDockerStoragePath(), { recursive: true });
         } catch (error) {
-            logger.error('CRITICAL ERROR (@dockerHandler - remove): ' + error);
+            logger.error('@services/docker/container.ts (removeContainer): ' + error);
         }
     }
 
@@ -173,7 +173,7 @@ class DockerContainer {
             await container.start();
             return container;
         } catch (error) {
-            logger.error('CRITICAL ERROR (@dockerHandler - createAndStartContainer): ' + error);
+            logger.error('@services/docker/container.ts (createAndStartContainer): ' + error);
             return null;
         }
     }

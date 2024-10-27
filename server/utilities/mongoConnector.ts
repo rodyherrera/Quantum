@@ -17,7 +17,7 @@ const mongoConnector = async (): Promise<void> => {
     const databaseName = NODE_ENV === 'production'? PRODUCTION_DATABASE : DEVELOPMENT_DATABASE;
     const uri = `${MONGO_URI}/${databaseName}`;
 
-    logger.info(` -> Connecting to MongoDB (${databaseName})...`);
+    logger.info(`@utilities/mongoConnector.ts (mongoConnector): Connecting to MongoDB (${databaseName})...`);
 
     mongoose.set('strictQuery', false);
     mongoose.set('strictPopulate', false);
@@ -36,9 +36,9 @@ const mongoConnector = async (): Promise<void> => {
 
     try{
         await mongoose.connect(uri, options);
-        logger.info(` -> Connected to MongoDB (${databaseName})!`);
+        logger.info(`@utilities/mongoConnector.ts (mongoConnector): Connected to MongoDB (${databaseName}).`);
     }catch(error){
-        logger.fatal(' -> Error connecting to MongoDB:', error);
+        logger.fatal('@utilities/mongoConnector.ts (mongoConnector): Error connecting to MongoDB: ' + error);
     }
 };
 

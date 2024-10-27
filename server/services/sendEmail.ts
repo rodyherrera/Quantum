@@ -59,7 +59,7 @@ const transporter = nodemailer.createTransport({
  * @returns {Promise<void>} A promise that resolves when the email is sent.
  * @throws {Error} If there's an error during the sending process.
 */
-export const sendEmail = async({ to = process.env.WEBMASTER_MAIL, subject, html }: EmailOptions): Promise<void> => {
+const sendEmail = async({ to = process.env.WEBMASTER_MAIL, subject, html }: EmailOptions): Promise<void> => {
     if(!IS_SMTP_DEFINED) return;
     try{
         await transporter.sendMail({
@@ -69,7 +69,7 @@ export const sendEmail = async({ to = process.env.WEBMASTER_MAIL, subject, html 
             html
         });
     }catch(error){
-        logger.error('(at @services/sendEmail - sendMail):', error);
+        logger.error('@services/sendEmail.ts (sendEmail): ' + error);
     }
 };
 

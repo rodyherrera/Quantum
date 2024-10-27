@@ -27,7 +27,7 @@ export const createNetwork = async (networkName: string, driver: string, subnet:
             }
         });
     }catch(error){
-        logger.error('Error when trying to create docker network: ' + error);
+        logger.error('@services/docker/network.ts (createNetwork): Error when trying to create docker network ' + error);
     }
 }
 
@@ -36,6 +36,6 @@ export const removeNetwork = async (networkName: string): Promise<void> => {
         const network = new Network(docker.modem, networkName);
         await network.remove();
     }catch(error){
-        logger.error('Error when trying to delete docker network: ' + error);
+        logger.error('@services/docker/network.ts (removeNetwork): Error when trying to delete docker network ' + error);
     }
 }

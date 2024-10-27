@@ -32,7 +32,7 @@ import logger from '@utilities/logger';
  */
 export const getUserByToken = async (token: string): Promise<IUser> => {
     if(!process.env.SECRET_KEY){
-        logger.error('process.env.SECRET_KEY is empty!');
+        logger.error('@middlewares/authentication.ts (getUserByToken): process.env.SECRET_KEY is empty!');
         throw new RuntimeError('Authentication::SecretKey::Empty', 500);
     }
     const decodedToken = jwt.verify(token, process.env.SECRET_KEY) as IDecodedToken;

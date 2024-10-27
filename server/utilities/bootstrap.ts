@@ -44,7 +44,7 @@ export const setupNginxReverseProxy = async (): Promise<void> => {
             port: Number(process.env.SERVER_PORT) || 8000
         });
     }catch(error){
-        logger.error(' Error configuring reverse proxy:', error);
+        logger.error('@utilities/bootstrap.ts (setupNginxReverseProxy): Error configuring reverse proxy ' + error);
     }
 };
 
@@ -81,12 +81,12 @@ export const configureApp = async ({ app, routes, suffix, middlewares }: Configu
             if(router.default){
                 app.use(path, router.default);
             }else{
-                logger.error(`The module imported from './routes/${route}' does not have a default export.`);
+                logger.error(`@utilities/bootstrap.ts (configureApp): The module imported from './routes/${route}' does not have a default export.`);
             }
         });
         await Promise.all(routePromises);
     }catch(error){
-        logger.error(' -> Error setting up the application routes: ' + error);
+        logger.error('@utilities/bootstrap.ts (configureApp): Error setting up the application routes ' + error);
     }
 };
 
@@ -97,13 +97,13 @@ export const restartServer = async (): Promise<void> => {
     // "stdio: 'inherit'" -> Inherit standard flows from the main process.
     const childProcess = spawn('npm', ['run', 'start'], { stdio: 'inherit' });
     childProcess.on('close', (code) => {
-        logger.info(`Server process exited with code ${code}.`);
+        logger.info(`@utilities/bootstrap.ts (restartServer): Server process exited with code ${code}.`);
     });
 };
 
 export const loadReverseProxies = async (): Promise<void> => {
     try{
-        logger.info('Loading reverse proxies...');
+        logger.info('@utilities/bootstrap.ts (loadReverseProxies): Loading reverse proxies...');
         const portBindings = await PortBinding
             .find()
             .select('internalPort ipAddress container externalPort -_id')
@@ -115,7 +115,7 @@ export const loadReverseProxies = async (): Promise<void> => {
             createProxyServer(externalPort, container.ipAddress, internalPort);
         }));
     }catch(error){
-        logger.error('CRITICAL ERROR (at @utilities/bootstrap - loadReverseProxies): ' + error);
+        logger.error('@utilities/bootstrap.ts (loadReverseProxies): ' + error);
     }
 };
 
@@ -126,9 +126,9 @@ export const loadReverseProxies = async (): Promise<void> => {
 */
 export const loadUserContainers = async (): Promise<void> => {
     try{
-        logger.info('Loading users docker containers...');
+        logger.info('@utilities/bootstrap.ts (loadUserContainers): Loading users docker containers...');
         const users = await User.find().populate('container');
-        logger.info(`Found ${users.length} users.`);
+        logger.info(`@utilities/bootstrap.ts (loadUserContainers): Found ${users.length} users.`);
         await Promise.all(users.map(async (user) => {
             const container = new UserContainer(user);
             await container.start();
@@ -138,7 +138,7 @@ export const loadUserContainers = async (): Promise<void> => {
             html: 'The containers of all users registered on the platform were successfully mounted on the host.'
         });
     }catch(error){
-        logger.error('CRITICAL ERROR (at @utilities/bootstrap - loadUserContainers): ' + error);
+        logger.error('@utilities/bootstrap.ts (loadUserContainers):' + error);
     }
 };
 
@@ -149,15 +149,15 @@ export const loadUserContainers = async (): Promise<void> => {
 */
 export const initializeRepositories = async (): Promise<void> => {
     try{
-        logger.info('Initializing the repositories loaded on the platform...');
-        logger.info('This is a one time process, after this, the repositories will be loaded on demand.');
+        logger.info('@utilities/bootstrap.ts (initializeRepositories): Initializing the repositories loaded on the platform...');
+        logger.info('@utilities/bootstrap.ts (initializeRepositories): This is a one time process, after this, the repositories will be loaded on demand.');
         const repositories = await Repository.find()
             .populate({
                 path: 'user',
                 select: 'username',
                 populate: { path: 'github', select: 'accessToken username' }
             });
-        logger.info(`Found ${repositories.length} repositories.`);
+        logger.info(`@utilities/bootstrap.ts (initializeRepositories): Found ${repositories.length} repositories.`);
         await Promise.all(repositories.map(async (repository: IRepository) => {
             const user = repository.user as IUser;
             const repositoryHandler = new RepositoryHandler(repository, user);
@@ -168,9 +168,9 @@ export const initializeRepositories = async (): Promise<void> => {
             subject: 'All repositories accessible now!',
             html: 'The repositories were correctly initialized, within a few minutes if not now, they should be accessible to everyone.'
         });
-        logger.info('All repositories were initialized.');
+        logger.info('@utilities/bootstrap.ts (initializeRepositories): All repositories were initialized.');
     }catch(error){
-        logger.error('CRITICAL ERROR (at @utilities/bootstrap - initializeRepositories):', error);
+        logger.error('@utilities/bootstrap.ts (initializeRepositories): ' + error);
     }
 };
 
@@ -205,16 +205,16 @@ export const validateEnvironmentVariables = (): void => {
         if(!(variable.name in process.env)){
             missingVariables.push(variable.name);
         }else if(variable.validation && !variable.validation.test(process.env[variable.name]!)){
-            logger.error(`${variable.errorMessage}`);
+            logger.error(`@utilities/bootstrap.ts (validateEnvironmentVariables): ${variable.errorMessage}`);
             process.exit(1);
         }
     });
     
     if(missingVariables.length > 0){
-        logger.error('The following environment variables are missing:');
+        logger.error('@utilities/bootstrap.ts (validateEnvironmentVariables): The following environment variables are missing:');
         logger.error(missingVariables.join(', '));
         process.exit(1);
     }
 
-    logger.info('All environment variables are present and valid. Continuing with the server initialization.');
+    logger.info('@utilities/bootstrap.ts (validateEnvironmentVariables): All environment variables are present and valid. Continuing with the server initialization.');
 };

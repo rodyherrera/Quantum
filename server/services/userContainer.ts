@@ -122,7 +122,7 @@ class UserContainer extends DockerContainerService{
     }
 
     criticalErrorHandler(operation: string, error: any){
-        logger.error(`CRITICAL ERROR (at @services/userContainer - ${operation}): ` + error);
+        logger.error(`@services/userContainer.ts (${operation}): ${error}.`);
         throw error;
     }
 }

@@ -8,17 +8,17 @@ export const createProxyServer = (
 ) => {
     const ws = new WebSocket('ws://0.0.0.0:10000');
     ws.on('open', () => {
-        logger.info(`@services/proxyServer.ts - creating for ${ip_address}:${internal_port}->${external_port}...`);
+        logger.info(`@services/proxyServer.ts (createProxyServer): creating for ${ip_address}:${internal_port}->${external_port}...`);
         const proxyMessage = {
             event: 'createReverseProxy',
             data: { internal_port, external_port, ip_address }
         };
         ws.send(JSON.stringify(proxyMessage), (err: any) => {
             if(err){
-                logger.error(`Error creating reverse proxy (${ip_address}:${internal_port}->${external_port}): ` + err);
+                logger.error(`@services/proxyServer.ts (createProxyServer): Error creating reverse proxy (${ip_address}:${internal_port}->${external_port}): ` + err);
                 return;
             }
-            logger.info(`Created reverse proxy for (${ip_address}:${internal_port}->${external_port})`);
+            logger.info(`@services/proxyServer.ts (createProxyServer): Created reverse proxy for (${ip_address}:${internal_port}->${external_port})`);
         });
     });
 }

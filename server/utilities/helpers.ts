@@ -57,7 +57,7 @@ export const getPublicIPAddress = async (): Promise<string> => {
         const { data } = await axios.get('https://api.ipify.org/');
         return data;
     }catch(error){
-        logger.error('Error fetching IP address:',error);  
+        logger.error('@utilities/helper.ts (getPublicIPAddress): Error fetching IP address: ' + error);  
         return '127.0.0.1';
     }
 };
@@ -74,7 +74,7 @@ export const ensureDirectoryExists = async (directoryPath: string): Promise<void
         if(error.code === 'ENOENT'){
             await fs.promises.mkdir(directoryPath, { recursive:true });
         }else{
-            logger.error('@utilitieS/ensureDirectoryExists', error);
+            logger.error('@utilities/helper.ts (ensureDirectoryExists): ' + error);
             throw error;
         }
     }
@@ -84,15 +84,15 @@ export const ensureDirectoryExists = async (directoryPath: string): Promise<void
  * Initiates a graceful shutdown of the Quantum Cloud server by stopping all active user containers.
  */
 export const cleanHostEnvironment = async (): Promise<void> => {
-    logger.info('Cleaning up the host environment, shutting down user containers...');
+    logger.info('@utilities/helper.ts (cleanHostEnvironment): Cleaning up the host environment, shutting down user containers...');
     const { userContainers } = global as any;
     const totalContainers = Object.keys(userContainers).length;
-    logger.info(`${totalContainers} active docker instances were detected in the runtime.`);
+    logger.info(`@utilities/helper.ts (cleanHostEnvironment): ${totalContainers} active docker instances were detected in the runtime.`);
     for(const userId in userContainers){
         const container = userContainers[userId];
         await container.instance.stop();
     }
-    logger.info('Containers shut down successfully, safely shutting down the server...');
+    logger.info('@utilities/helper.ts (cleanHostEnvironment): Containers shut down successfully, safely shutting down the server...');
 };
 
 /**

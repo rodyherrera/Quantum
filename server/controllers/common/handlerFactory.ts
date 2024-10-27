@@ -126,7 +126,6 @@ class HandlerFactory{
                 const parsed = JSON.parse(populate);
                 return Array.isArray(parsed) ? parsed.join(' ') : String(parsed);
             }catch(e){
-                logger.error(e);
                 return null;
             }
         }

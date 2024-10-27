@@ -161,7 +161,7 @@ const getLog = async (logName: string, id: string): Promise<string> => {
         const content = await fs.promises.readFile(logFile, 'utf-8');
         return content;
     }catch(error){
-        logger.error('(at @services/logManager - getLog):', error);
+        logger.error('@services/logManager.ts (getLog): ' + error);
         return '';
     }
 }
@@ -172,6 +172,6 @@ const getLog = async (logName: string, id: string): Promise<string> => {
  * @param error - The error object
 */
 const criticalErrorHandler = (operation: string, error: any): void => {
-    logger.error(`CRITICAL ERROR (at @services/logManager - ${operation}):`, error);
+    logger.error(`@services/logManager.ts (${operation}): ` + error);
     throw error;
 }

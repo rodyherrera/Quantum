@@ -24,7 +24,6 @@ import { Request, Response, NextFunction } from 'express';
  * @returns {Object} An object containing 'message' (string) and 'statusCode' (number).
 */
 const parseError = (err: Error) => {
-    logger.error(err);
     const errorMap: { [key: string]: any } = {
         CastError: { message: 'Database::Cast::Error', statusCode: 400 },
         ValidationError: () => {

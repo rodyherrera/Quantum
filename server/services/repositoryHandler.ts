@@ -68,7 +68,7 @@ class RepositoryHandler{
             });
             return exec;
         }catch(error){
-            logger.error(error);
+            logger.error('@services/repositoryHandler.ts (getOrCreateShell): ' + error);
         }
     }
 
@@ -86,7 +86,7 @@ class RepositoryHandler{
             }
             shells.delete(this.repositoryId);
         }catch(error){
-            logger.error(error);
+            logger.error('@services/repositoryHandler.ts (removeFromRuntime): ' + error);
         }
     }
 
@@ -123,7 +123,7 @@ class RepositoryHandler{
             deployment.status = 'success';
             await deployment.save();
         }catch(error){
-            logger.error(error);
+            logger.error('@services/repositoryHandler.ts (start): ' + error);
         }
     }
 
@@ -170,7 +170,7 @@ class RepositoryHandler{
      * @param {Error} error - The error object.
     */
     handleCriticalError(method: string, error: Error): void{
-        logger.error(` CRITICAL ERROR (at @services/repositoryHandler - ${method}):`, error);
+        logger.error(`@services/repositoryHandler.ts (${method}): ` + error);
         throw error;
     }
 }

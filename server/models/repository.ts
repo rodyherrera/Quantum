@@ -116,7 +116,7 @@ const handleDomains = async (domains: string[], port: number, currentDomains: st
             await nginxHandler.generateSSLCert(trimmedDomain, userEmail);
             await nginxHandler.updateDomain({ domain: trimmedDomain, port, ipv4, useSSL: true });
         }catch(error){
-            logger.error(`Error processing domain (add) '${trimmedDomain}':`, error);
+            logger.error(`@models/repository.ts (handleDomains): Error processing domain (add) '${trimmedDomain}':`, error);
         }
     }));
 

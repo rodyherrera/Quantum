@@ -63,7 +63,7 @@ class Github{
             if(logPath) await fs.promises.rm(logPath);
             await fs.promises.rm(directoryPath, { recursive: true });
         }catch(error){
-            logger.error('CRITCAL ERROR -> Deletion failed:', (error as Error).message);
+            logger.error('@services/github.ts (deleteLogAndDirectory): CRITCAL ERROR -> Deletion failed: ' + (error as Error).message);
         }
     }
     
@@ -84,7 +84,7 @@ class Github{
                 : repositoryInfo.data.clone_url;
             await exec(`git clone ${cloneEndpoint} ${destinationPath}`);
         }catch(error){
-            logger.error('CRITICAL ERROR -> Cloning failed:', (error as Error).message);
+            logger.error('@services/github.ts (cloneRepository): ' + (error as Error).message);
         }
     }
 
@@ -315,7 +315,7 @@ class Github{
             });
             return response;
         }catch(error){
-            logger.error('Error deleting webhook:', (error as Error).message);
+            logger.error('@services/github.ts (deleteWebhook): Error deleting webhook: ' + (error as Error).message);
             throw error;
         }
     }
