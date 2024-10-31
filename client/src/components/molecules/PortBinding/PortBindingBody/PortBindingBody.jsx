@@ -6,10 +6,10 @@ const PortBindingBody = ({ portBinding }) => {
     const ctxMenuOpts = [
         { title: 'Delete Permanently' },
         { title: 'Edit Container' },
-        { title: 'Expose Ports' },
-        { title: 'Environment Variables' },
-        { title: 'File Explorer' },
-        { title: 'Container Terminal' },
+        { title: 'Expose Ports', to: `/port-binding/create/` },
+        { title: 'Environment Variables', to: `/docker-container/${portBinding.container._id}/environment-variables/` },
+        { title: 'File Explorer', to: `/docker-container/${portBinding.container._id}/storage` },
+        { title: 'Container Terminal', to: `/docker-container/${portBinding.container._id}/shell` },
         { title: 'Edit Container Network' },
         { title: 'Edit Container Image' }
     ];
