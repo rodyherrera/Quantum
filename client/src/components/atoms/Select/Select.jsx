@@ -9,14 +9,24 @@ const Select = forwardRef(({
     inputProps = {}, 
     placeholder, 
     helperText, 
-    onSelect 
+    onSelect, 
+    value // Nuevo parámetro para el valor actual
 }, ref) => {
+    const matchedOption = options.find(([optValue]) => optValue === value);
+    const defaultValue = matchedOption ? matchedOption[1] : ''; 
+
     const [isOpenSelect, setIsOpenSelect] = useState(false);
-    const [searchTerm, setSearchTerm] = useState('');
+    const [searchTerm, setSearchTerm] = useState(defaultValue); 
     const [selectOptions, setSelectOptions] = useState(options);
     const [selectPosition, setSelectPosition] = useState({ top: 0, left: 0, width: 0 });
     const inputRef = useRef(null);
     const optionsContainerRef = useRef(null);
+
+    useEffect(() => {
+        if (inputRef.current) {
+            inputRef.current.value = defaultValue;
+        }
+    }, [defaultValue]);
 
     const handleOpenSelect = () => {
         const rect = inputRef.current.getBoundingClientRect();
@@ -74,6 +84,7 @@ const Select = forwardRef(({
                     onChange={onChangeHandler}
                     placeholder={placeholder}
                     className='Select-Input'
+                    value={searchTerm} 
                     onClick={handleOpenSelect}
                     {...inputProps}
                 />
@@ -95,10 +106,10 @@ const Select = forwardRef(({
                     {!selectOptions.length && (
                         <p className='Select-Empty-Records-Message'>No results found.</p>
                     )}
-                    {selectOptions.map(([value, item], index) => (
+                    {selectOptions.map(([optValue, item], index) => (
                         <li 
                             className='Select-Option'
-                            onClick={() => handleOptionClick(value, item)}
+                            onClick={() => handleOptionClick(optValue, item)}
                             key={index}
                         >
                             {item}

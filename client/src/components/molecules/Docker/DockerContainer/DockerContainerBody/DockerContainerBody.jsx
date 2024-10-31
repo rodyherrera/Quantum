@@ -15,7 +15,7 @@ const DockerContainerBody = ({ container }) => {
 
     const ctxMenuOpts = [
         { title: 'Delete Permanently', onClick: deleteDockerContainer },
-        { title: 'Edit Container' },
+        { title: 'Edit Container', to: `/docker-container/${container._id}/update/?isUpdate=true`, onClick: selectContainer },
         { title: 'Expose Ports', to: '/port-binding/create/', onClick: selectContainer },
         { title: 'Environment Variables', to: `/docker-container/${container._id}/environment-variables/`, onClick: selectContainer },
         { title: 'File Explorer', to: `/docker-container/${container._id}/storage/`, onClick: selectContainer },

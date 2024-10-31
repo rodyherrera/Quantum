@@ -20,12 +20,12 @@ const ContextMenuOption = ({ to, onClick, title, ...props }) => {
     const navigate = useNavigate();
 
     const clickHandler = () => {
+        if(onClick){
+            onClick();
+        }
         if(to){
             navigate(to);
             return;
-        }
-        if(onClick){
-            onClick();
         }
     };
 
