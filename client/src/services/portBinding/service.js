@@ -19,14 +19,19 @@ import APIRequestBuilder from '@utilities/api/apiRequestBuilder';
  * @description Represents the base endpoint for server-related API requests.
  * @type {APIRequestBuilder} An instance of the APIRequestBuilder utility.
 */
-export const ServerAPI = new APIRequestBuilder('/port-binding');
+export const PortBindingAPI = new APIRequestBuilder('/port-binding');
 
-export const getMyPortBindings = ServerAPI.register({
+export const getMyPortBindings = PortBindingAPI.register({
     path: '/me/',
     method: 'GET'
 });
 
-export const createPortBinding = ServerAPI.register({
+export const deletePortBinding = PortBindingAPI.register({
+    path: '/:id/',
+    method: 'DELETE'
+});
+
+export const createPortBinding = PortBindingAPI.register({
     path: '/',
     method: 'POST'
 });

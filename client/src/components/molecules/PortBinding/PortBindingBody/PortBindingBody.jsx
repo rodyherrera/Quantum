@@ -1,10 +1,13 @@
 import React from 'react';
 import { DashboardCardBody } from '@components/atoms/DashboardCard';
 import './PortBindingBody.css';
+import useDeletePortBinding from '@hooks/api/portBinding/useDeletePortBinding';
 
 const PortBindingBody = ({ portBinding }) => {
+    const deletePortBinding = useDeletePortBinding(portBinding._id);
+ 
     const ctxMenuOpts = [
-        { title: 'Delete Permanently' },
+        { title: 'Delete Permanently', onClick: deletePortBinding },
         { title: 'Edit Container' },
         { title: 'Expose Ports', to: `/port-binding/create/` },
         { title: 'Environment Variables', to: `/docker-container/${portBinding.container._id}/environment-variables/` },

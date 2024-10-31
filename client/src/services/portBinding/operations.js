@@ -28,6 +28,23 @@ export const createPortBinding = (body, navigate) => async (dispatch) => {
     });
 };
 
+export const deletePortBinding = (id, portBindings) => async (dispatch) => {
+    const operation = createOperation(portBindingSlice, dispatch);
+    operation.on('finally', () => {
+        const updatedPortBindings = portBindings.filter((portBinding) => portBinding._id !== id);
+        dispatch(portBindingSlice.setState({
+            path: 'portBindings',
+            value: updatedPortBindings
+        }));
+    });
+    operation.use({
+        api: portBindingService.deletePortBinding,
+        loaderState: 'isOperationLoading',
+        query: { params: { id } }
+    });
+};
+
+
 export const getMyPortBindings = () => async (dispatch) => {
     const operation = createOperation(portBindingSlice, dispatch);
     operation.use({
