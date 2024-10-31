@@ -30,3 +30,8 @@ export const deleteDockerNetwork = DockerNetworkAPI.register({
     path: '/:id/',
     method: 'DELETE'
 });
+
+export const updateDockerNetwork = DockerNetworkAPI.register({
+    path: '/:id/',
+    method: 'PATCH'
+});

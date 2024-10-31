@@ -18,7 +18,6 @@ const CreateDockerContainer = () => {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        console.log(selectedDockerContainer);
         dispatch(getMyDockerNetworks());
         dispatch(getMyDockerImages());
     }, []);

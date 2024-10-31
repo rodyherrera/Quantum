@@ -28,6 +28,19 @@ export const createDockerNetwork = (body, navigate) => async (dispatch) => {
     });
 };
 
+export const updateDockerNetwork = (id, body, navigate) => async (dispatch) => {
+    const operation = createOperation(dockerNetworkSlice, dispatch);
+    operation.on('response', () => {
+        navigate('/dashboard/');
+    });
+    operation.use({
+        api: dockerNetworkService.updateDockerNetwork,
+        loaderState: 'isOperationLoading',
+        query: { params: { id } },
+        body
+    });
+};
+
 export const deleteDockerNetwork = (id, networks) => async (dispatch) => {
     const operation = createOperation(dockerNetworkSlice, dispatch);
     operation.on('finally', () => {
