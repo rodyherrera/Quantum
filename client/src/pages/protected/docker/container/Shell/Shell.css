@@ -13,7 +13,7 @@
 }
 
 .Docker-Container-Terminal-Wrapper{
-    width: 60%;
+    width: 100%;
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -36,16 +36,6 @@
     height: 97%;
 }
 
-.Docker-Terminal-Image{
-    width: 100%;
-    height: 100%;
-}
-
-.Docker-Terminal-Image-Container{
-    width: 40%;
-    filter: grayscale(100%);
-}
-
 .Docker-Terminal-Container .xterm .xterm-viewport, .xterm-text-layer{
     border-radius: 0 !important;
 }
@@ -62,10 +52,6 @@
 @media screen and (max-width: 768px){
     #Docker-Container-Terminal-Main{
         height: unset;
-    }
-
-    .Docker-Terminal-Image-Container{
-        display: none;
     }
     
     .Docker-Container-Terminal-Wrapper{

@@ -1,15 +1,15 @@
 import React, { useEffect, useRef } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { CircularProgress } from '@mui/material';
 import { useRemoteTerminal } from '@hooks/ws/';
 import { useWindowSize } from '@hooks/common/';
 import { useSelector } from 'react-redux';
-import DockerContainerTerminalImage from '@images/DockerContainerTerminal.webp';
 import AnimatedMain from '@components/atoms/AnimatedMain';
 import './Shell.css';
 
 const Shell = () => {
     const termContainerRef = useRef(null);
+    const navigate = useNavigate();
     const { width } = useWindowSize();
     const { dockerId } = useParams();
     const { selectedDockerContainer } = useSelector((state) => state.dockerContainer);
@@ -17,12 +17,16 @@ const Shell = () => {
         termContainerRef, query: { dockerId, action: 'DockerContainer::Shell' } });
         
     useEffect(() => {
+        console.log(selectedDockerContainer)
+        if(!selectedDockerContainer?._id) navigate('/dashboard/');
+    }, []);
+
+    useEffect(() => {
         if(!fitAddonRef.current) return;
         fitAddonRef.current.fit();
-        console.log(selectedDockerContainer)
     }, [width]);
 
-    return (
+    return selectedDockerContainer._id && (
         <AnimatedMain id='Docker-Container-Terminal-Main'>
             {!isConnected && (
                 <section className='Docker-Container-Terminal-Loading-Container'>
@@ -39,26 +43,9 @@ const Shell = () => {
                         <p className='Docker-Container-Nerd-Info'>{selectedDockerContainer.name}/{selectedDockerContainer.image.name}:{selectedDockerContainer.image.tag} ({selectedDockerContainer.ipAddress} - {selectedDockerContainer.network.name})</p>
                     </div>
                 </article>
-                <article className='Docker-Terminal-Image-Container'>
-                    <img className='Docker-Terminal-Image' src={DockerContainerTerminalImage} />
-                </article> 
             </section>
         </AnimatedMain>
     );
-
-    /*
-    return (
-        <AnimatedMain>
-            
-
-
-            {!isConnected && (
-                <CircularProgress className='Circular-Progress' />
-            )}
-            <img src={DockerContainerTerminalImage} />
-            <div className='Docker-Terminal-Container' ref={termContainerRef} />
-        </AnimatedMain>
-    );*/
 };
 
 export default Shell;
