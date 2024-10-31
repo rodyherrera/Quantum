@@ -1,4 +1,4 @@
-import React, { useState, useRef, forwardRef, useEffect } from 'react';
+import React, { useState, useRef, forwardRef, useEffect, useId } from 'react';
 import ReactDOM from 'react-dom';
 import { MdKeyboardArrowDown } from 'react-icons/md';
 import './Select.css';
@@ -16,6 +16,7 @@ const Select = forwardRef(({
     const [selectOptions, setSelectOptions] = useState(options);
     const [selectPosition, setSelectPosition] = useState({ top: 0, left: 0, width: 0 });
     const inputRef = useRef(null);
+    const optionsContainerRef = useRef(null);
 
     const handleOpenSelect = () => {
         const rect = inputRef.current.getBoundingClientRect();
@@ -29,7 +30,7 @@ const Select = forwardRef(({
 
     useEffect(() => {
         const handleClickOutside = (event) => {
-            if (ref.current && !ref.current.contains(event.target)) {
+            if(optionsContainerRef.current && !optionsContainerRef.current.contains(event.target)){
                 setIsOpenSelect(false);
             }
         };
@@ -37,12 +38,12 @@ const Select = forwardRef(({
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
-    }, [ref]);
+    }, [optionsContainerRef]);
 
     useEffect(() => {
-        if (!searchTerm) {
+        if(!searchTerm){
             setSelectOptions(options);
-        } else {
+        }else{
             setSelectOptions(options.filter(([_, item]) =>
                 item.toLowerCase().includes(searchTerm.toLowerCase())
             ));
@@ -55,10 +56,10 @@ const Select = forwardRef(({
     };
 
     const handleOptionClick = (value, item) => {
-        if (inputRef.current) {
+        if(inputRef.current){
             inputRef.current.value = item;
         }
-        if (onSelect) {
+        if(onSelect){
             onSelect(value);
         }
         setIsOpenSelect(false);
@@ -84,6 +85,7 @@ const Select = forwardRef(({
             {isOpenSelect && ReactDOM.createPortal(
                 <ul
                     className='Select-Options Active'
+                    ref={optionsContainerRef}
                     style={{ 
                         top: `${selectPosition.top}px`, 
                         left: `${selectPosition.left}px`,
