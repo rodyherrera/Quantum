@@ -59,12 +59,12 @@ const createAndSendToken = (res: any, statusCode: number, user: any): void => {
         expires: new Date(Date.now() + Number(process.env.JWT_EXPIRATION_DAYS) * 24 * 60 * 60 * 1000),
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax'
+        sameSite: 'strict'
     });
 
     res.status(statusCode).json({
         status: 'success',
-        data: { token, user }
+        data: { user }
     });
 };
 
@@ -130,6 +130,7 @@ export const deleteMyAccount = catchAsync(async (req: any, res: any, next: any):
     if(!requestedUser){
         return next(new Error('Authentication::Delete::UserNotFound'));
     }
+    res.clearCookie('jwt');
     res.status(204).json({
         status: 'success',
         data: requestedUser
