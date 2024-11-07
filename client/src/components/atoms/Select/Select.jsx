@@ -10,7 +10,7 @@ const Select = forwardRef(({
     placeholder, 
     helperText, 
     onSelect, 
-    value // Nuevo parámetro para el valor actual
+    value 
 }, ref) => {
     const matchedOption = options.find(([optValue]) => optValue === value);
     const defaultValue = matchedOption ? matchedOption[1] : ''; 

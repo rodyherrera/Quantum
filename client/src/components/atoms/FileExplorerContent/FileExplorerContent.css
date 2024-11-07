@@ -36,3 +36,16 @@
 .File-Explorer-File-Name{
     font-size: .8rem;
 }
+
+.File-Explorer-Empty-Files-Title{
+    font-weight: 300;
+    font-size: 1.1rem;
+}
+
+.File-Explorer-Empty-Files-Container{
+    display: flex;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+}

@@ -47,7 +47,11 @@ const FileExplorerContent = ({ loadPath, files }) => {
         });
     }, [files]);
         
-    return (
+    return !files.length ? (
+        <div className='File-Explorer-Empty-Files-Container'>
+            <h3 className='File-Explorer-Empty-Files-Title'>There are no files to display.</h3>
+        </div>
+    ) : (
         files.map(({ name, isDirectory }, index) => (
             <div
                 onClick={() => repositoryClickHandler({ name, isDirectory })}
