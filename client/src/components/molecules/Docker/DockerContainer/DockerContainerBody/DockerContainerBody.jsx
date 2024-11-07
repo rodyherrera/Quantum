@@ -1,7 +1,9 @@
 import React from 'react';
 import { DashboardCardBody } from '@components/atoms/DashboardCard';
 import { useDispatch } from 'react-redux';
-import { setState } from '@services/docker/container/slice';
+import { setState as dockerNetworkSetState } from '@services/docker/network/slice';
+import { setState as dockerImageSetState } from '@services/docker/image/slice';
+import { setState as dockerContainerSetState } from '@services/docker/container/slice';
 import useDeleteDockerContainer from '@hooks/api/docker/useDeleteDockerContainer';
 import './DockerContainerBody.css';
 
@@ -10,7 +12,15 @@ const DockerContainerBody = ({ container }) => {
     const deleteDockerContainer = useDeleteDockerContainer(container._id);
 
     const selectContainer = () => {
-        dispatch(setState({ path: 'selectedDockerContainer', value: container }))
+        dispatch(dockerContainerSetState({ path: 'selectedDockerContainer', value: container }))
+    };
+
+    const selectDockerNetwork = () => {
+        dispatch(dockerNetworkSetState({ path: 'selectedDockerNetwork', value: container.network }));
+    };
+
+    const selectDockerImage = () => {
+        dispatch(dockerImageSetState({ path: 'selectedDockerImage', value: container.image }));
     };
 
     const ctxMenuOpts = [
@@ -20,8 +30,8 @@ const DockerContainerBody = ({ container }) => {
         { title: 'Environment Variables', to: `/docker-container/${container._id}/environment-variables/`, onClick: selectContainer },
         { title: 'File Explorer', to: `/docker-container/${container._id}/storage/`, onClick: selectContainer },
         { title: 'Container Terminal', to: `/docker-container/${container._id}/shell/`, onClick: selectContainer },
-        { title: 'Edit Container Network' },
-        { title: 'Edit Container Image' }
+        { title: 'Edit Container Network', to: `/docker-network/${container.network}/update`, onClick: selectDockerNetwork },
+        { title: 'Edit Container Image', to: `/docker-image/${container.image}/update`, onClick: selectDockerImage }
     ];
 
     return (
