@@ -15,7 +15,6 @@ const PortBindingBody = ({ portBinding }) => {
         dispatch(dockerNetworkSetState({ path: 'selectedDockerNetwork', value: portBinding.container.network }));
     };
 
-
     const selectContainer = () => {
         dispatch(dockerContainerSetState({ path: 'selectedDockerContainer', value: portBinding.container }))
     };
