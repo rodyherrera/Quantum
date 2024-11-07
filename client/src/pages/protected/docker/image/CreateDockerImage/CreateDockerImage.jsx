@@ -7,6 +7,7 @@ import CreateDockerImageImage from '@images/CreateDockerImage.jpeg';
 import './CreateDockerImage.css';
 
 const CreateDockerImage = () => {
+    const { selectedDockerImage } = useSelector((state) => state.dockerImage);
     const { error, isOperationLoading } = useSelector((state) => state.dockerContainer);
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -36,6 +37,7 @@ const CreateDockerImage = () => {
                 {
                     type: 'text',
                     name: 'name',
+                    value: selectedDockerImage?.name,
                     placeholder: 'Image Name (e.g., alpine)',
                     helperText: 'The name of the image available on Docker Hub that you want to add. For example "mongo", "ubuntu", "alpine", "kalilinux/kali-rolling" etc.',
                     required: true
@@ -43,6 +45,7 @@ const CreateDockerImage = () => {
                 {
                     type: 'text',
                     name: 'tag',
+                    value: selectedDockerImage?.tag,
                     required: true,
                     placeholder: 'Tag (e.g., latest)',
                     helperText: 'Specify the image tag. If unsure, use "latest" to pull the most recent version. If left blank, the default tag will be used.',

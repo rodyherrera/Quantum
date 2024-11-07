@@ -19,6 +19,7 @@ const state = {
     error: null,
     isLoading: true,
     stats: {},
+    selectedDockerImage: {},
     isOperationLoading: false,
     dockerImages: []
 };
