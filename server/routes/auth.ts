@@ -15,11 +15,12 @@
 import express from 'express';
 import * as authenticationController from '@controllers/authentication';
 import * as authenticationMiddleware from '@middlewares/authentication';
+import rateLimiter from '@middlewares/rateLimiter';
 
 const router = express.Router();
 
-router.post('/sign-in', authenticationController.signIn);
-router.post('/sign-up', authenticationController.signUp);
+router.post('/sign-in', rateLimiter, authenticationController.signIn);
+router.post('/sign-up', rateLimiter, authenticationController.signUp);
 
 router.use(authenticationMiddleware.protect);
 router.patch('/me/update/password/', authenticationController.updateMyPassword);

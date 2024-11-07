@@ -194,7 +194,7 @@ export const validateEnvironmentVariables = (): void => {
         { name: 'SESSION_SECRET' },
         { name: 'GITHUB_CLIENT_ID' },
         { name: 'GITHUB_CLIENT_SECRET' },
-        { name: 'JWT_EXPIRATION_DAYS', validation: /^(\d+d|\d+h)$/i, errorMessage: 'JWT_EXPIRATION_DAYS must be in the format of "Xd" for days or "Xh" for hours, where X is a number.' },
+        { name: 'JWT_EXPIRATION_DAYS', validation: /^[-+]?\d+$/, errorMessage: 'JWT_EXPIRATION_DAYS must be a number.' },
         { name: 'CORS_ORIGIN' },
         { name: 'PRODUCTION_DATABASE' },
         { name: 'DEVELOPMENT_DATABASE' },

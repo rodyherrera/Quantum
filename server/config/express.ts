@@ -15,6 +15,7 @@
 import express, { Request, Response } from 'express';
 import cors from 'cors';
 import http from 'http';
+import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
 import session from 'express-session';
 import { Server } from 'socket.io';
@@ -45,12 +46,17 @@ bootstrap.configureApp({
         'server'
     ],
     middlewares: [
+        cookieParser(),
         session({
             secret: process.env.SESSION_SECRET!,
             resave: false,
             saveUninitialized: true
         }),
-        cors({ origin: process.env.CORS_ORIGIN }),
+        cors({
+            origin: process.env.NODE_ENV === 'production' ? 
+                    [process.env.CLIENT_HOST as string] : [process.env.CLIENT_DEV_HOST as string],
+            credentials: true
+        }),
         bodyParser.json(),
         bodyParser.urlencoded({ extended: true }),
         passport.initialize(),

@@ -206,7 +206,7 @@ GITHUB_CLIENT_SECRET =
 
 # JWT_EXPIRATION_DAYS: Specifies the validity duration 
 # of JWT tokens issued for user authentication.
-JWT_EXPIRATION_DAYS = 7d
+JWT_EXPIRATION_DAYS = 7
 
 # CORS_ORIGIN: Defines allowed origins for 
 # cross-origin resource sharing (CORS) requests. In 

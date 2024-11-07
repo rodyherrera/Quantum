@@ -37,8 +37,9 @@ const UserFactory = new HandlerFactory({
  * @returns {string} - The signed JWT.
  */
 const signToken = (identifier: string): string => {
+    const expiresIn = `${process.env.JWT_EXPIRATION_DAYS}d`;
     return jwt.sign({ id: identifier }, process.env.SECRET_KEY!, {
-        expiresIn: process.env.JWT_EXPIRATION_DAYS
+        expiresIn
     });
 };
 
@@ -53,6 +54,14 @@ const createAndSendToken = (res: any, statusCode: number, user: any): void => {
     const token = signToken(user._id);
     user.password = undefined;
     user.__v = undefined;
+    
+    res.cookie('jwt', token, {
+        expires: new Date(Date.now() + Number(process.env.JWT_EXPIRATION_DAYS) * 24 * 60 * 60 * 1000),
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax'
+    });
+
     res.status(statusCode).json({
         status: 'success',
         data: { token, user }

@@ -58,10 +58,8 @@ export const getUserByToken = async (token: string): Promise<IUser> => {
  */
 export const protect = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     // 1. Retrieve token from the request headers
-    let token: string | undefined;
-    if(req.headers.authorization&&req.headers.authorization.startsWith('Bearer')){
-        token = req.headers.authorization.split(' ')[1];
-    }else{
+    let token: string | undefined = req.cookies.jwt;
+    if(!token){
         return next(new RuntimeError('Authentication::Required',401));
     }
     // 2. Verify token and retrieve the user
