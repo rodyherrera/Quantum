@@ -13,18 +13,19 @@
 ****/
 
 import { defineConfig } from 'vite';
+import basicSsl from '@vitejs/plugin-basic-ssl';
 import react from '@vitejs/plugin-react-swc';
 
 export default defineConfig({
-   plugins: [react()],
+   plugins: [basicSsl(), react()],
    server: {
       host: '0.0.0.0',
-      port: 5000
+      port: 5000,
+      https: true
    },
    resolve: {
       alias: {
          '@': '/src/',
-         '@images': '/src/assets/images/',
          '@pages': '/src/pages/',
          '@components': '/src/components/',
          '@styles': '/src/assets/stylesheets/',

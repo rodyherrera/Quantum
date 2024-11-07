@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
-import { getCurrentUserToken } from '@services/authentication/localStorageService';
 
 const useWebSocket = ({ query }) => {
     const [socket, setSocket] = useState(null);

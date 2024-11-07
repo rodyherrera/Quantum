@@ -1,6 +1,5 @@
 import axios from 'axios';
 import ServerRequestBuilder from '@utilities/api/serverRequestBuilder';
-import { getCurrentUserToken } from '@services/authentication/localStorageService';
 
 class APIRequestBuilder{
     /**
@@ -11,17 +10,6 @@ class APIRequestBuilder{
     constructor(baseEndpoint){
         this.baseEndpoint = baseEndpoint;
         this.authToken = null;
-        this.setAuthorizationHeader();
-    }
-
-    /**
-     * Sets the 'Authorization' header for API requests if an authentication token is present.
-    */
-    setAuthorizationHeader(){
-        if(!this.authToken){
-            this.authToken = getCurrentUserToken();
-        }
-        axios.defaults.headers.common['Authorization'] = `Bearer ${this.authToken}`;
     }
 
     /**
@@ -67,11 +55,14 @@ class APIRequestBuilder{
     register({ path, method = 'GET' }){
         return async ({ query = {}, body = {} }) => {
             const url = this.buildUrl(path, query.params, query.queryParams);
-            // Ensure header is up-to-date
-            this.setAuthorizationHeader();
             return new ServerRequestBuilder().register({
-                callback: axios[method.toLowerCase()],
-                args: [url, body]
+                callback: axios,
+                args: [{
+                    method: method.toLowerCase(),
+                    url,
+                    data: body,
+                    withCredentials: true
+                }]
             })
         };
     }

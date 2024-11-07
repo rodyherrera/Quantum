@@ -14,7 +14,6 @@
 
 import * as authService from '@services/authentication/service';
 import * as authSlice from '@services/authentication/slice';
-import * as authLocalStorageService from '@services/authentication/localStorageService';
 import createOperation from '@utilities/api/operationHandler';
 
 /**
@@ -24,7 +23,6 @@ import createOperation from '@utilities/api/operationHandler';
  * @param {function} dispatch - Redux dispatch function.
 */
 const handleAuthResponse = (data, dispatch) => {
-    authLocalStorageService.setCurrentUserToken(data.token);
     dispatch(authSlice.setState({ path: 'user', value: data.user }));
     dispatch(authSlice.setState({ path: 'authStatus.isAuthenticated', value: true }));
 };
@@ -140,7 +138,6 @@ export const updateMyPassword = (body, navigate) => async (dispatch) => {
 */
 export const logout = () => async (dispatch) => {
     await dispatch(authSlice.setState({ path: 'authStatus.isLoading', value: false }));
-    authLocalStorageService.removeCurrentUserToken();
     await dispatch(authSlice.setState({ path: 'authStatus.isAuthenticated', value: false }));
     await dispatch(authSlice.setState({ path: 'authStatus.isLoading', value: false }));
 };
