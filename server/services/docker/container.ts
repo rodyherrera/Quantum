@@ -4,7 +4,7 @@ import path from 'path';
 import slugify from 'slugify';
 import { Socket } from 'socket.io';
 import { ensureDirectoryExists } from '@utilities/helpers';
-import { createLogStream, setupSocketEvents } from '@services/logManager';
+import { createLogStream, logs, setupSocketEvents, shells } from '@services/logManager';
 import { pullImage } from '@services/docker/image';
 import { IDockerContainer } from '@typings/models/docker/container';
 import { IDockerImage } from '@typings/models/docker/image';
@@ -110,7 +110,6 @@ class DockerContainer {
         try {
             const container = docker.getContainer(this.container.dockerContainerName);
             if (!container) return;
-            await container.stop();
             await container.remove({ force: true });
             await fs.rm(this.getDockerStoragePath(), { recursive: true });
         } catch (error) {
@@ -148,12 +147,15 @@ class DockerContainer {
         const dockerImage = await this.getDockerImage();
         const dockerNetwork = await this.getDockerNetwork();
         const networkName = getSystemNetworkName(this.container.user.toString(), dockerNetwork._id.toString());
+        const environmentVariables = Array.from(this.container.environment.variables.entries()).map(
+            ([key, value]) => `${key}=${value}`);
         const options = {
             Image: `${dockerImage.name}:${dockerImage.tag}`,
             name: this.container.dockerContainerName,
             Tty: true,
             OpenStdin: true,
             StdinOnce: true,
+            Env: environmentVariables,
             HostConfig: {
                 Binds: [`${this.getDockerStoragePath()}:/app:rw`],
                 NetworkMode: networkName,
@@ -162,6 +164,15 @@ class DockerContainer {
         };
         const container = await docker.createContainer(options);
         return container;
+    }
+
+    async recreateContainer(): Promise<any> {
+        const container = docker.getContainer(this.container.dockerContainerName);
+        if(container){
+            await container.remove({ force: true });
+        }
+        shells.delete(this.container.user.toString());
+        await this.initializeContainer();
     }
 
     async createAndStartContainer(): Promise<Dockerode.Container | null> {
