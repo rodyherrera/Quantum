@@ -1,4 +1,4 @@
-import mongoose, { Document } from 'mongoose';
+import mongoose, { Document, Schema } from 'mongoose';
 
 export interface IGithub extends Document{
     user: mongoose.Schema.Types.ObjectId;
@@ -6,4 +6,5 @@ export interface IGithub extends Document{
     accessToken: string;
     username: string;
     avatarUrl?: string;
+    getDecryptedAccessToken(): string;
 }

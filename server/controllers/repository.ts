@@ -8,7 +8,6 @@ import Github from '@services/github';
 import RuntimeError from '@utilities/runtimeError';
 import { catchAsync } from '@utilities/helpers';
 import { Response, NextFunction } from 'express';
-import { IUser } from '@typings/models/user';
 import { IRepository } from '@typings/models/repository';
 import { IRequest } from '@typings/controllers/common';
 
@@ -48,7 +47,7 @@ const filterRepositories = (githubRepositories: any[], userRepositories: any[]):
 
 export const getMyGithubRepositories = catchAsync(async (req: IRequest, res: Response) => {
     const user: any = req.user;
-    const githubRepositories = await getGithubRepositories(user.github.accessToken);
+    const githubRepositories = await getGithubRepositories(user.github.getDecryptedAccessToken());
     const sanitizedRepositories = filterRepositories(githubRepositories, user.repositories);
     res.status(200).json({ status: 'success', data: sanitizedRepositories });
 });

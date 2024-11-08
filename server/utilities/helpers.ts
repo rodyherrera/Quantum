@@ -13,6 +13,7 @@
 ****/
 
 import axios from 'axios';
+import { Response } from 'express';
 import logger from '@utilities/logger';
 import fs from 'fs';
 import net from 'net';
@@ -23,6 +24,14 @@ const getRandomPort = (): number => {
     const MIN_PORT = 10240;
     return Math.floor(Math.random() * (MAX_PORT - MIN_PORT + 1)) + MIN_PORT;
 }
+
+export const deleteJWTCookie = (res: Response) => {
+    res.clearCookie('jwt', {
+        sameSite: 'none',
+        httpOnly: true,
+        secure: true
+    });
+};
 
 export const findRandomAvailablePort = async (): Promise<number> => {
     for(let attempt = 0; attempt < 10; attempt++){

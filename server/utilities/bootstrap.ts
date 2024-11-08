@@ -199,7 +199,9 @@ export const validateEnvironmentVariables = (): void => {
         { name: 'PRODUCTION_DATABASE' },
         { name: 'DEVELOPMENT_DATABASE' },
         { name: 'LOG_PATH_MAX_SIZE', validation: /^\d+$/, errorMessage: 'LOG_PATH_MAX_SIZE must be a positive integer representing size in kilobytes.' },
-        { name: 'MONGO_URI', validation: /^mongodb(?:\+srv)?:\/\/\S+$/, errorMessage: 'MONGO_URI must be a valid MongoDB connection URI.' }
+        { name: 'MONGO_URI', validation: /^mongodb(?:\+srv)?:\/\/\S+$/, errorMessage: 'MONGO_URI must be a valid MongoDB connection URI.' },
+        { name: 'ENCRYPTION_KEY', validation: /^[0-9a-fA-F]{64}$/, errorMessage: 'ENCRYPTION_KEY must be a 64-character hexadecimal string (32 bytes). Use https://www.browserling.com/tools/random-hex.' },
+        { name: 'ENCRYPTION_IV', validation: /^[0-9a-fA-F]{32}$/, errorMessage: 'ENCRYPTION_IV must be a 32-character hexadecimal string (16 bytes). Use https://www.browserling.com/tools/random-hex.' }
     ];
 
     const missingVariables: string[] = [];

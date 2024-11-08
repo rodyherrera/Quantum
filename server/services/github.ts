@@ -47,7 +47,7 @@ class Github{
         this.user = user;
         this.repository = repository;
         this.userGithub = user.github as IGithub;
-        this.octokit = new Octokit({ auth: this.userGithub.accessToken });
+        this.octokit = new Octokit({ auth: this.userGithub.getDecryptedAccessToken() });
     }
 
     /**
@@ -80,7 +80,7 @@ class Github{
                 repo: this.repository.name 
             });
             const cloneEndpoint = repositoryInfo.data.private
-                ? repositoryInfo.data.clone_url.replace('https://', `https://${this.userGithub.accessToken}@`)
+                ? repositoryInfo.data.clone_url.replace('https://', `https://${this.userGithub.getDecryptedAccessToken()}@`)
                 : repositoryInfo.data.clone_url;
             await exec(`git clone ${cloneEndpoint} ${destinationPath}`);
         }catch(error){

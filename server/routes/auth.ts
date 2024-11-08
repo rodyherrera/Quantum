@@ -23,6 +23,7 @@ router.post('/sign-in', rateLimiter, authenticationController.signIn);
 router.post('/sign-up', rateLimiter, authenticationController.signUp);
 
 router.use(authenticationMiddleware.protect);
+router.get('/me/logout/', authenticationController.logout);
 router.patch('/me/update/password/', authenticationController.updateMyPassword);
 
 router.route('/me')
