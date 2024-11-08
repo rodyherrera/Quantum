@@ -9,10 +9,14 @@ import DockerContainer from '@models/docker/container';
 import logger from '@utilities/logger';
 
 const authenticateUser = async (socket: ISocket, next: WsNextFunction) => {
-    const { token } = socket.handshake.auth;
-    if(!token) return next(new RuntimeError('Authentication::Token::Required', 400));
+    const cookies = socket.request.headers.cookie;
+    const jwtCookie = cookies
+        ?.split('; ')
+        .find((cookie) => cookie.startsWith('jwt='))
+        ?.split('=')[1];    
+    if(!jwtCookie) return next(new RuntimeError('Authentication::Token::Required', 400));
     try{
-        socket.user = await getUserByToken(token);
+        socket.user = await getUserByToken(jwtCookie);
         next();
     }catch(error){
         next(error);

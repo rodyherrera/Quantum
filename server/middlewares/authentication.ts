@@ -31,7 +31,7 @@ import logger from '@utilities/logger';
  * @throws {RuntimeError} - If the user is not found or password has changed after 
  *                          the token was issued.
  */
-export const getUserByToken = async (token: string, res: Response): Promise<IUser> => {
+export const getUserByToken = async (token: string, res: Response | undefined = undefined): Promise<IUser> => {
     if(!process.env.SECRET_KEY){
         logger.error('@middlewares/authentication.ts (getUserByToken): process.env.SECRET_KEY is empty!');
         throw new RuntimeError('Authentication::SecretKey::Empty', 500);
@@ -40,12 +40,12 @@ export const getUserByToken = async (token: string, res: Response): Promise<IUse
     // Retrieve the user from the database
     const freshUser = await User.findById(decodedToken.id);
     if(!freshUser){
-        deleteJWTCookie(res);
+        if(res) deleteJWTCookie(res);
         throw new RuntimeError('Authentication::User::NotFound', 401);
     }
     // Check if the user's password has changed since the token was issued
     if(freshUser.isPasswordChangedAfterJWFWasIssued(decodedToken.iat)){
-        deleteJWTCookie(res);
+        if(res) deleteJWTCookie(res);
         throw new RuntimeError('Authentication::PasswordChanged', 401);
     }
     return freshUser;
@@ -59,7 +59,7 @@ export const getUserByToken = async (token: string, res: Response): Promise<IUse
  * @param {NextFunction} next - Express next function to continue.
  * @throws {RuntimeError} - If no token provided or if authentication fails.
  */
-export const protect = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+export const protect = catchAsync(async (req: Request, res: Response | undefined, next: NextFunction) => {
     // 1. Retrieve token from the request headers
     let token: string | undefined = req.cookies.jwt;
     if(!token){
