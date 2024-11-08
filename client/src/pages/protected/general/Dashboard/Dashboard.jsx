@@ -20,11 +20,15 @@ import {
     Repositories, 
     PortBindings } from '@components/molecules/DataRenderer';
 import './Dashboard.css';
+import OneClickDeploys from '@components/molecules/OneClickDeploys';
 
 
 const Dashboard = () => {
     return (
         <main id='Dashboard-Page'>
+            <section className='Dashboard-Header-Container'>
+                <OneClickDeploys />
+            </section>
             <section className='Dashboard-Modules-Container'>
                 <Repositories />
                 <DockerContainers />

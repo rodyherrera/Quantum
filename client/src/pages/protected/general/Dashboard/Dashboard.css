@@ -15,8 +15,12 @@
 #Dashboard-Page .Data-Renderer-Basic-Layout-Container > :first-child{
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;  
+    gap: 1.5rem;
     padding: 1rem;
+}
+
+#Dashboard-Page .Dashboard-Header-Container{
+    padding: 2rem;
 }
 
 #Dashboard-Page .Dashboard-Modules-Container{
@@ -25,7 +29,7 @@
     grid-template-columns: repeat(2, 1fr); 
     gap: 2rem;
     width: 100%;
-    padding: 2rem;
+    padding: 0 2rem;
 }
 
 #Dashboard-Projects-Container{
@@ -38,6 +42,7 @@
 
 #Dashboard-Page{
     display: flex;
+    flex-direction: column;
 }
 
 .Dashboard-Menu{
@@ -49,6 +54,10 @@
 @media screen and (max-width: 768px){
     #Dashboard-Page{
         height: unset;
+    }
+
+    #Dashboard-Page .Dashboard-Header-Container{
+        padding: 1rem;
     }
 
     #Dashboard-Page .Dashboard-Modules-Container{

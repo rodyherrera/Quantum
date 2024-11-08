@@ -1,0 +1,68 @@
+.One-Click-Deploy-Container{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border-radius: .2rem;
+    min-width: 300px;
+    height: 130px;
+    font-family: 'IBM Plex Sans', sans-serif;
+    color: #000000;
+    background-color: #0f62fe;
+    color: #FFFF;
+    transition: .3s;
+    cursor: pointer;
+    border: 1px solid #0f62fe;
+    padding: 1rem;
+}
+
+.One-Click-Deploy-Container:active{
+    box-shadow: 0px 0 13px 0px #0f62fe;
+}
+
+.One-Click-Deploys-Container:has(.One-Click-Deploy-Container:hover) .One-Click-Deploy-Container:not(.One-Click-Deploy-Container:hover){
+    opacity: .8;
+}
+
+.One-Click-Deploy-Container:first-child{
+    box-shadow: 0px 0 13px 0px #0f62fe;
+}
+
+.One-Click-Deploy-Footer-Container{
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.One-Click-Deploy-Service-URL{
+    cursor: pointer;
+    font-size: 1rem;
+    transition: .1s;
+}
+
+.One-Click-Deploy-Service-URL:active{
+    transform: scale(.9);
+}
+
+.One-Click-Deploy-Header-Container{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.One-Click-Deploy-Description{
+    font-size: .9rem;
+}
+
+.One-Click-Deploy-Title{
+    font-weight: 500;
+    font-size: 1rem;
+    text-decoration: underline;
+    text-underline-offset: 8px;
+}
+
+.One-Click-Deploys-Container{
+    display: flex;
+    overflow-x: scroll;
+    padding-bottom: 1rem;
+    gap: 1rem;
+}
