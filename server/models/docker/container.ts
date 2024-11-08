@@ -35,8 +35,7 @@ const DockerContainerSchema: Schema<IDockerContainer> = new Schema({
         default: 'created'
     },
     command: {
-        type: String,
-        default: '/bin/sh'
+        type: String
     },
     startedAt: {
         type: Date,
@@ -97,7 +96,7 @@ DockerContainerSchema.pre('findOneAndUpdate', async function (next){
         return next();
     }
     const modifiedPaths = Object.keys(update);
-    if(modifiedPaths.includes('environment')){
+    if(modifiedPaths.includes('environment') || modifiedPaths.includes('command')){
         const doc = await this.model.findOne(this.getQuery());
         logger.debug(`@models/docker/container.ts (findOneAndUpdate): Recreating container (${doc.dockerContainerName}) with new environment variables...`);
         if(!doc) return;

@@ -4,7 +4,7 @@ import path from 'path';
 import slugify from 'slugify';
 import { Socket } from 'socket.io';
 import { ensureDirectoryExists } from '@utilities/helpers';
-import { createLogStream, setupSocketEvents } from '@services/logManager';
+import { createLogStream, logs, setupSocketEvents, shells } from '@services/logManager';
 import { pullImage } from '@services/docker/image';
 import { IDockerContainer } from '@typings/models/docker/container';
 import { IDockerImage } from '@typings/models/docker/image';
@@ -167,13 +167,14 @@ class DockerContainer {
         return container;
     }
 
-    async recreateContainer(): Promise<Dockerode.Container> {
-        const existingContainer = await this.getExistingContainer();
-        if(existingContainer){
-            await existingContainer.stop();
-            await existingContainer.remove();
+    async recreateContainer(): Promise<any> {
+        const container = docker.getContainer(this.container.dockerContainerName);
+        if(container){
+            await container.stop();
+            await container.remove({ force: true });
         }
-        return await this.createContainer();
+        shells.delete(this.container.user.toString());
+        await this.initializeContainer();
     }
 
     async createAndStartContainer(): Promise<Dockerode.Container | null> {
