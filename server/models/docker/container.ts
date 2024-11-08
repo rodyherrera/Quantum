@@ -1,6 +1,7 @@
 import mongoose, { Schema, Model } from 'mongoose';
 import { IDockerContainer } from '@typings/models/docker/container';
 import DockerContainerService, { getContainerStoragePath, getSystemDockerName } from '@services/docker/container';
+import logger from '@utilities/logger';
 
 const DockerContainerSchema: Schema<IDockerContainer> = new Schema({
     isUserContainer: {
@@ -90,7 +91,24 @@ DockerContainerSchema.pre('deleteMany', async function(){
     }));
 });
 
-DockerContainerSchema.pre('save', async function (next) {
+DockerContainerSchema.pre('findOneAndUpdate', async function (next){
+    const update = this.getUpdate()
+    if(!update){
+        return next();
+    }
+    const modifiedPaths = Object.keys(update);
+    if(modifiedPaths.includes('environment')){
+        const doc = await this.model.findOne(this.getQuery());
+        logger.debug(`@models/docker/container.ts (findOneAndUpdate): Recreating container (${doc.dockerContainerName}) with new environment variables...`);
+        if(!doc) return;
+        Object.assign(doc.environment, update.environment);
+        const containerService = new DockerContainerService(doc);
+        await containerService.recreateContainer();
+        logger.debug(`@models/docker/container.ts (findOneAndUpdate): Recreated (${doc.dockerContainerName}).`);
+    }
+});
+
+DockerContainerSchema.pre('save', async function (next){
     try{
         if(this.isNew){
             const containerId = this._id.toString();

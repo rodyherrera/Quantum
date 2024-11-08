@@ -148,12 +148,15 @@ class DockerContainer {
         const dockerImage = await this.getDockerImage();
         const dockerNetwork = await this.getDockerNetwork();
         const networkName = getSystemNetworkName(this.container.user.toString(), dockerNetwork._id.toString());
+        const environmentVariables = Array.from(this.container.environment.variables.entries()).map(
+            ([key, value]) => `${key}=${value}`);
         const options = {
             Image: `${dockerImage.name}:${dockerImage.tag}`,
             name: this.container.dockerContainerName,
             Tty: true,
             OpenStdin: true,
             StdinOnce: true,
+            Env: environmentVariables,
             HostConfig: {
                 Binds: [`${this.getDockerStoragePath()}:/app:rw`],
                 NetworkMode: networkName,
@@ -162,6 +165,15 @@ class DockerContainer {
         };
         const container = await docker.createContainer(options);
         return container;
+    }
+
+    async recreateContainer(): Promise<Dockerode.Container> {
+        const existingContainer = await this.getExistingContainer();
+        if(existingContainer){
+            await existingContainer.stop();
+            await existingContainer.remove();
+        }
+        return await this.createContainer();
     }
 
     async createAndStartContainer(): Promise<Dockerode.Container | null> {
