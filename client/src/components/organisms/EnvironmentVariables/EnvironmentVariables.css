@@ -84,9 +84,11 @@
     width: 100%;
     gap: 1.5rem;
     text-align: center;
-    height: 100%;
+    height: calc(100% - 140px);
     display: flex;
     align-items: center;
+    padding: 1rem;
+    z-index: 100;
     justify-content: center;
     background-color: rgba(245, 245, 245, .8);
 }

@@ -9,7 +9,7 @@ import './EnvironmentVariables.css';
 const ContainerEnvironVariables = () =>{
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const { selectedDockerContainer } = useSelector((state) => state.dockerContainer);
+    const { selectedDockerContainer, isOperationLoading } = useSelector((state) => state.dockerContainer);
 
     const environUpdate = useCallback((environment) => {
         const body = { environment };
@@ -41,6 +41,7 @@ const ContainerEnvironVariables = () =>{
         title='Environment Variables'
         description='Manage environment variables for your containers simply and securely. Customize settings, manage credentials, and adjust parameters based on your environment without modifying images. Optimize your deployments with ease!'
         environment={selectedDockerContainer.environment}
+        isOperationLoading={isOperationLoading}
         handleSave={environUpdate}
         updateHandler={updateHandler}
         breadcrumbs={breadcrumbs}

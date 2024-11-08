@@ -152,14 +152,15 @@ const EnvironmentVariables = ({
                     </div>
                 </article>
             </section>
+            
+            {(isOperationLoading) && (
+                <section className='Environment-Variables-Operation-Loading-Container'>
+                    <CircularProgress className='Circular-Progress' />
+                    <p>Recreating container with the new configuration...</p>
+                </section>
+            )}
 
             <section className='Environment-Variables-Body'>
-                {(isOperationLoading) && (
-                    <div className='Environment-Variables-Operation-Loading-Container'>
-                        <CircularProgress className='Circular-Progress' />
-                    </div>
-                )}
-
                 {(isEnvironmentLoading) ? (
                     <div className='Environment-Variables-Loader-Container'>
                         <CircularProgress className='Circular-Progress' />
