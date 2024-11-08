@@ -188,6 +188,7 @@ export const validateEnvironmentVariables = (): void => {
         { name: 'SECRET_KEY' },
         { name: 'REGISTRATION_DISABLED', validation: /^(true|false)$/i, errorMessage: 'REGISTRATION_DISABLED must be either "true" or "false".' },
         { name: 'CLIENT_HOST', validation: /^http(s)?:\/\/\S+$/, errorMessage: 'CLIENT_HOST must be a valid URL starting with "http://" or "https://"' },
+        { name: 'CLIENT_DEV_HOST', validation: /^http(s)?:\/\/\S+$/, errorMessage: 'CLIENT_DEV_HOST must be a valid URL starting with "http://" or "https://"' },
         { name: 'SERVER_PORT', validation: /^\d+$/, errorMessage: 'SERVER_PORT must be a valid port number between 1 and 65535.' },
         { name: 'SERVER_HOSTNAME' },
         { name: 'LOG_LEVEL' },
