@@ -110,7 +110,6 @@ class DockerContainer {
         try {
             const container = docker.getContainer(this.container.dockerContainerName);
             if (!container) return;
-            await container.stop();
             await container.remove({ force: true });
             await fs.rm(this.getDockerStoragePath(), { recursive: true });
         } catch (error) {
@@ -170,7 +169,6 @@ class DockerContainer {
     async recreateContainer(): Promise<any> {
         const container = docker.getContainer(this.container.dockerContainerName);
         if(container){
-            await container.stop();
             await container.remove({ force: true });
         }
         shells.delete(this.container.user.toString());
