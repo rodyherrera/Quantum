@@ -10,10 +10,8 @@ const useWebSocket = ({ query }) => {
     };
 
     useEffect(() => {
-        const authToken = getCurrentUserToken();
         const newSocket = io(import.meta.env.VITE_SERVER, {
             transports: ['websocket'],
-            auth: { token: authToken },
             query
         });
         newSocket.on('connected', onConnected);
