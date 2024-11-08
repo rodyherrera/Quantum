@@ -15,7 +15,7 @@
 import jwt from 'jsonwebtoken';
 import User from '@models/user';
 import HandlerFactory from '@controllers/common/handlerFactory';
-import { catchAsync, filterObject } from '@utilities/helpers';
+import { catchAsync, deleteJWTCookie, filterObject } from '@utilities/helpers';
 import { IUser } from '@typings/models/user';
 
 const UserFactory = new HandlerFactory({
@@ -54,12 +54,12 @@ const createAndSendToken = (res: any, statusCode: number, user: any): void => {
     const token = signToken(user._id);
     user.password = undefined;
     user.__v = undefined;
-    
-    res.clearCookie('jwt');
+
+    deleteJWTCookie(res);
     res.cookie('jwt', token, {
         expires: new Date(Date.now() + Number(process.env.JWT_EXPIRATION_DAYS) * 24 * 60 * 60 * 1000),
         httpOnly: true,
-        sameSite: 'None',
+        sameSite: 'none',
         secure: true
     });
 
@@ -131,7 +131,7 @@ export const deleteMyAccount = catchAsync(async (req: any, res: any, next: any):
     if(!requestedUser){
         return next(new Error('Authentication::Delete::UserNotFound'));
     }
-    res.clearCookie('jwt');
+
     res.status(204).json({
         status: 'success',
         data: requestedUser
@@ -172,6 +172,11 @@ export const updateMyAccount = catchAsync(async (req: any, res: any, next: any):
         status: 'success',
         data: requestedUser
     });
+});
+
+export const logout = catchAsync(async (req: any, res: any, next: any): Promise<void> => {
+    deleteJWTCookie(res);
+    res.status(200).json({ status: 'success' });
 });
 
 export const deleteUser = UserFactory.deleteOne();

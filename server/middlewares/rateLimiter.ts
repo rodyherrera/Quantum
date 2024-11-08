@@ -7,7 +7,10 @@ const authLimiter = rateLimit({
     max: 100,
     message: 'Core::RateLimiter',
     standardHeaders: true,
-    legacyHeaders: false
+    legacyHeaders: false,
+    keyGenerator: (req) => {
+        return req.ip;
+    }
 });
 
 export default authLimiter;

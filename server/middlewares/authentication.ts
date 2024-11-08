@@ -17,7 +17,7 @@ import User from '@models/user';
 import RuntimeError from '@utilities/runtimeError';
 import { IDecodedToken } from '@typings/middlewares/authentication';
 import { IUser } from '@typings/models/user';
-import { catchAsync } from '@utilities/helpers';
+import { catchAsync, deleteJWTCookie } from '@utilities/helpers';
 import { Request, Response, NextFunction } from 'express';
 import logger from '@utilities/logger';
 
@@ -26,11 +26,12 @@ import logger from '@utilities/logger';
  * the corresponding user.
  *
  * @param {string} token - The JWT token to verify and decode.
+ * @param {Response} res - The Express response object.
  * @returns {Promise<object>} - The user object if found, otherwise throws an error.
  * @throws {RuntimeError} - If the user is not found or password has changed after 
  *                          the token was issued.
  */
-export const getUserByToken = async (token: string): Promise<IUser> => {
+export const getUserByToken = async (token: string, res: Response): Promise<IUser> => {
     if(!process.env.SECRET_KEY){
         logger.error('@middlewares/authentication.ts (getUserByToken): process.env.SECRET_KEY is empty!');
         throw new RuntimeError('Authentication::SecretKey::Empty', 500);
@@ -39,10 +40,12 @@ export const getUserByToken = async (token: string): Promise<IUser> => {
     // Retrieve the user from the database
     const freshUser = await User.findById(decodedToken.id);
     if(!freshUser){
+        deleteJWTCookie(res);
         throw new RuntimeError('Authentication::User::NotFound', 401);
     }
     // Check if the user's password has changed since the token was issued
     if(freshUser.isPasswordChangedAfterJWFWasIssued(decodedToken.iat)){
+        deleteJWTCookie(res);
         throw new RuntimeError('Authentication::PasswordChanged', 401);
     }
     return freshUser;
@@ -60,10 +63,10 @@ export const protect = catchAsync(async (req: Request, res: Response, next: Next
     // 1. Retrieve token from the request headers
     let token: string | undefined = req.cookies.jwt;
     if(!token){
-        return next(new RuntimeError('Authentication::Required',401));
+        return next(new RuntimeError('Authentication::Required', 401));
     }
     // 2. Verify token and retrieve the user
-    const freshUser = await getUserByToken(token);
+    const freshUser = await getUserByToken(token, res);
     // 3. Attach the user to the request object for subsequent middleware to use
     req.user = freshUser;
     next();
