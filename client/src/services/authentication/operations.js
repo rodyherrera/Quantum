@@ -137,7 +137,14 @@ export const updateMyPassword = (body, navigate) => async (dispatch) => {
  * @returns {Promise} Resolves when the logout process is complete.
 */
 export const logout = () => async (dispatch) => {
-    await dispatch(authSlice.setState({ path: 'authStatus.isLoading', value: false }));
-    await dispatch(authSlice.setState({ path: 'authStatus.isAuthenticated', value: false }));
-    await dispatch(authSlice.setState({ path: 'authStatus.isLoading', value: false }));
+    const operation = createOperation(authSlice, dispatch);
+    operation.on('response', async () => {
+        await dispatch(authSlice.setState({ path: 'authStatus.isLoading', value: false }));
+        await dispatch(authSlice.setState({ path: 'authStatus.isAuthenticated', value: false }));
+        await dispatch(authSlice.setState({ path: 'authStatus.isLoading', value: false }));
+    });
+    operation.use({
+        api: authService.logout,
+        loaderState: 'authStatus.isCachedAuthLoading'
+    });
 };
