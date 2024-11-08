@@ -84,3 +84,8 @@ export const signIn = AuthenticationAPI.register({
     path: '/sign-in/',
     method: 'POST'
 });
+
+export const logout = AuthenticationAPI.register({
+    path: '/me/logout/',
+    method: 'GET'
+});

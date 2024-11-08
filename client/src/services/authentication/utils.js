@@ -29,6 +29,7 @@ export const authenticateWithCachedToken = async (dispatch) => {
         dispatch(authSlice.setState({ path: 'user', value: authenticatedUser.data }));
         dispatch(authSlice.setState({ path: 'authStatus.isAuthenticated', value: true }));
     }catch(error){
+        if(!document.cookie.includes('jwt=')) return;
         dispatch(coreOperations.globalErrorHandler(error, authSlice));
     }finally{
         dispatch(authSlice.setState({ path: 'authStatus.isCachedAuthLoading', value: false }));
