@@ -28,6 +28,7 @@ const app = express();
 const httpServer = http.createServer(app);
 const io = new Server(httpServer, { cors: { origin: process.env.CORS_ORIGIN } });
 
+app.set('trust proxy', true);
 bootstrap.ensurePublicFolderExistence();
 
 bootstrap.configureApp({

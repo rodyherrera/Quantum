@@ -55,11 +55,12 @@ const createAndSendToken = (res: any, statusCode: number, user: any): void => {
     user.password = undefined;
     user.__v = undefined;
     
+    res.clearCookie('jwt');
     res.cookie('jwt', token, {
         expires: new Date(Date.now() + Number(process.env.JWT_EXPIRATION_DAYS) * 24 * 60 * 60 * 1000),
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict'
+        sameSite: 'None',
+        secure: true
     });
 
     res.status(statusCode).json({
