@@ -18,6 +18,8 @@ services:
       DOCKER_APK_STARTER_PACKAGES: ${DOCKER_APK_STARTER_PACKAGES:-"git nodejs npm python3 py3-pip"}
       DOMAIN: ${DOMAIN:-http://quantum-server.yourdomain.com}
       SECRET_KEY: ${SECRET_KEY}
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY}
+      ENCRYPTION_IV: ${ENCRYPTION_IV}
       LOG_LEVEL: ${LOG_LEVEL:-"info"}
       REGISTRATION_DISABLED: ${REGISTRATION_DISABLED:-"true"}
       CLIENT_HOST: ${CLIENT_HOST:-http://quantum.yourdomain.com}
