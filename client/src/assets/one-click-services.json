@@ -1,14 +1,80 @@
 [{
-    "name": "Coder",
-    "description": "Deploy development environments on your infrastructure.",
-    "website": "https://coder.com/",
+    "name": "Mongo",
+    "description": "MongoDB document databases provide high availability and easy scalability.",
+    "website": "https://www.mongodb.com/",
+    "image": {
+        "name": "mongo",
+        "tag": "latest"
+    },
+    "environment": {
+        "MONGO_INITDB_ROOT_USERNAME": "root",
+        "MONGO_INITDB_ROOT_PASSWORD": "example"
+    }
+}, {
+    "name": "PostgreSQL",
+    "description": "The PostgreSQL object-relational database system provides reliability and data integrity.",
+    "website": "https://www.postgresql.org/",
+    "image": {
+        "name": "postgres",
+        "tag": "latest"
+    },
+    "environment": {
+        "POSTGRES_PASSWORD": "example"
+    }
+}, {
+    "name": "MySQL",
+    "description": "MySQL is a widely used, open-source relational database management system (RDBMS).",
+    "website": "https://mysql.com/",
+    "image": {
+        "name": "mysql",
+        "tag": "latest"
+    },
+    "environment": {
+        "MYSQL_ROOT_PASSWORD": "my-secret-pw",
+        "MYSQL_ALLOW_EMPTY_PASSWORD": "yes",
+        "MYSQL_RANDOM_ROOT_PASSWORD": "yes"
+    }
+}, {
+    "name": "Kali Linux",
+    "description": "Penetration Testing and Ethical Hacking Linux Distribution.",
+    "website": "https://www.kali.org/",
+    "command": "/bin/sh",
+    "image": {
+        "name": "kalilinux/kali-rolling",
+        "tag": "latest"
+    }
+}, {
+    "name": "Alpine Linux",
+    "description": "Alpine Linux is a security-oriented, lightweight Linux distribution based on musl libc and busybox.",
+    "website": "https://alpinelinux.org",
+    "command": "/bin/sh",
+    "image": {
+        "name": "alpine",
+        "tag": "latest"
+    }
+}, {
+    "name": "Ubuntu",
+    "description": "Ubuntu is a Debian-based Linux operating system based on free software.",
+    "website": "https://ubuntu.com",
+    "command": "/bin/sh",
+    "image": {
+        "name": "ubuntu",
+        "tag": "latest"
+    }
+},{
+    "name": "Code Server",
+    "description": "Code on any device with a consistent development environment.",
+    "website": "https://hub.docker.com/r/linuxserver/code-server",
     "command": "/bin/sh",
     "environment": {
-        "CODER_HTTP_ADDRESS": "0.0.0.0:3000",
-        "CODER_ACCESS_URL": ""
+        "PASSWORD": "toortoor"
     },
+    "ports": [{
+        "protocol": "tcp",
+        "internalPort": 8080
+    }],
     "image": {
-        "name": "ghcr.io/coder/coder",
+        "name": "codercom/code-server",
         "tag": "latest"
     }
 }, {
