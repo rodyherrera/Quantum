@@ -33,13 +33,13 @@ const ContainerEnvironVariables = () =>{
             { title: 'Home', to: '/' },
             { title: 'Dashboard', to: '/dashboard/' },
             { title: 'Docker Containers', to: '/dashboard/' },
-            { title: 'Environment Variables', to: `/docker-container/${selectedDockerContainer._id}/environment-variables/` }
+            { title: 'Container Environment', to: `/docker-container/${selectedDockerContainer._id}/environment-variables/` }
         ];
     }, [selectedDockerContainer._id]);
 
     return <EnvironmentVariables
-        title='Environment Variables'
-        description='Manage environment variables for your containers simply and securely. Customize settings, manage credentials, and adjust parameters based on your environment without modifying images. Optimize your deployments with ease!'
+        title='Container Environment'
+        description='Set your Docker container variables. You can add new ones and edit existing ones whenever you want.'
         environment={selectedDockerContainer.environment}
         isOperationLoading={isOperationLoading}
         handleSave={environUpdate}

@@ -1,0 +1,64 @@
+[{
+    "name": "Coder",
+    "description": "Deploy development environments on your infrastructure.",
+    "website": "https://coder.com/",
+    "command": "/bin/sh",
+    "environment": {
+        "CODER_HTTP_ADDRESS": "0.0.0.0:3000",
+        "CODER_ACCESS_URL": ""
+    },
+    "image": {
+        "name": "ghcr.io/coder/coder",
+        "tag": "latest"
+    }
+}, {
+    "name": "Wordpress",
+    "husbands": [{
+        "name": "Wordpress-DB",
+        "command": "/bin/sh",
+        "image": {
+            "name": "mariadb",
+            "tag": "latest"
+        },
+        "environment": {
+            "MARIADB_PASSWORD": "secret",
+            "MARIADB_DATABASE": "wordpress",
+            "MARIADB_USER": "manager",
+            "MARIADB_ROOT_PASSWORD": "secret"
+        }
+    }],
+    "command": "/bin/sh",
+    "environment": {
+        "WORDPRESS_DB_NAME": "wordpress",
+        "WORDPRESS_DB_HOST": "husbands:Wordpress-DB",
+        "WORDPRESS_DB_USER": "manager",
+        "WORDPRESS_DB_PASSWORD": "secret"
+    },
+    "ports": [{
+        "protocol": "tcp",
+        "internalPort": 80
+    }],
+    "description": "Everything you need to build and grow any website—all in one place.",
+    "website": "https://wordpress.com/",
+    "image": {
+        "name": "wordpress",
+        "tag": "latest"
+    }
+}, {
+    "command": "/bin/sh",
+    "name": "NGINX",
+    "website": "https://nginx.org/",
+    "description": "An open source reverse proxy server for HTTP, HTTPS, SMTP, POP3, and IMAP protocols.",
+    "environment": {
+        "NGINX_PORT": "80",
+        "NGINX_HOST": ""
+    },
+    "ports": [{
+        "protocol": "tcp",
+        "internalPort": 80
+    }],
+    "image": {
+        "name": "nginx",
+        "tag": "latest"
+    }
+}]

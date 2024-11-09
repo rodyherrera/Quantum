@@ -81,9 +81,9 @@ const CreateDockerContainer = () => {
                     type: 'text',
                     name: 'command',
                     value: selectedDockerContainer.command || '',
-                    placeholder: 'e.g., /bin/bash, ollama run llama3, ...',
-                    default: '/bin/sh',
-                    helperText: 'Specify the command that you want to execute inside your Docker container. This will define what process runs when the container starts.'
+                    placeholder: 'e.g., /bin/sh, ollama run llama3, ...',
+                    default: '',
+                    helperText: 'If you are not sure. Leave this blank. Specify the command that you want to execute inside your Docker container. This will define what process runs when the container starts.'
                 }
             ]}
         />

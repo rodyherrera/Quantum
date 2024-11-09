@@ -5,7 +5,7 @@ const initialState = {
     user: {},
     authStatus: {
         isAuthenticated: false,
-        isCachedAuthLoading: false,
+        isCachedAuthLoading: true,
         isEliminatingAccount: false
     },
     loadingStatus: {
