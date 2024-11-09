@@ -22,7 +22,6 @@ import {
 import './Dashboard.css';
 import OneClickDeploys from '@components/molecules/OneClickDeploys';
 
-
 const Dashboard = () => {
     return (
         <main id='Dashboard-Page'>

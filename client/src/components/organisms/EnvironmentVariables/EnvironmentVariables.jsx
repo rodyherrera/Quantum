@@ -62,26 +62,6 @@ const EnvironmentVariables = ({
             ease: 'back(2)'
         }); 
 
-        // Add New Variable Button Animation
-        const addNewTween = gsap.to('.Environment-Variables-Create-New-Container', {
-            scale: 1.05,
-            duration: 0.5,
-            ease: 'power1.out',
-            paused: true
-        });
-
-        const handleMouseEnter = () => addNewTween.play();
-        const handleMouseLeave = () => addNewTween.reverse();
-
-        const addNewElement = document.querySelector('.Environment-Variables-Create-New-Container');
-        addNewElement.addEventListener('mouseenter', handleMouseEnter);
-        addNewElement.addEventListener('mouseleave', handleMouseLeave);
-
-        // Cleanup Event Listeners on Unmount
-        return () => {
-            addNewElement.removeEventListener('mouseenter', handleMouseEnter);
-            addNewElement.removeEventListener('mouseleave', handleMouseLeave);
-        };
     }, []);
 
     useEffect(() => {
