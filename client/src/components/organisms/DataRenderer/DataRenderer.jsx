@@ -1,7 +1,7 @@
 import React from 'react';
-import { CircularProgress } from '@mui/material';
 import Button from '@components/atoms/Button';
 import Breadcrumbs from '@components/molecules/Breadcrumbs';
+import Loader from '@components/atoms/Loader';
 import AnimatedMain from '@components/atoms/AnimatedMain';
 import './DataRenderer.css';
 
@@ -27,7 +27,7 @@ const DataRenderer = ({
         if(isLoading || isOperationLoading){
             return (
                 <div className='Data-Renderer-Loading-Container'>
-                    <CircularProgress className='Circular-Progress' />
+                    <Loader scale='0.7' />
                     {isOperationLoading && operationLoadingMessage && (
                         <p className='Data-Renderer-Operation-Loading-Message'>{operationLoadingMessage}</p>
                     )}

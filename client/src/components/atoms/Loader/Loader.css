@@ -1,0 +1,87 @@
+.Loader-Container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.Loader{
+    position: relative;
+}
+
+.Loader-Item{
+    position: absolute;
+    width: 12px;
+    height: 3px;
+    background: transparent;
+    border-radius: 1.5px;
+}
+
+.Loader-Item-1{
+    transform: translate(7.8564064606px, 6.5px) rotate(30deg);
+    animation: blink 0.6666666667s linear 0.0555555556s infinite;
+}
+
+.Loader-Item-2{
+    transform: translate(2px, 12.3564064606px) rotate(60deg);
+    animation: blink 0.6666666667s linear 0.1111111111s infinite;
+}
+
+.Loader-Item-3{
+    transform: translate(-6px, 14.5px) rotate(90deg);
+    animation: blink 0.6666666667s linear 0.1666666667s infinite;
+}
+
+.Loader-Item-4{
+    transform: translate(-14px, 12.3564064605px) rotate(120deg);
+    animation: blink 0.6666666667s linear 0.2222222222s infinite;
+}
+
+.Loader-Item-5{
+    transform: translate(-19.8564064605px, 6.5px) rotate(150deg);
+    animation: blink 0.6666666667s linear 0.2777777778s infinite;
+}
+
+.Loader-Item-6{
+    transform: translate(-21.9999999988px, -1.4999999998px) rotate(180deg);
+    animation: blink 0.6666666667s linear 0.3333333333s infinite;
+}
+
+.Loader-Item-7{
+    transform: translate(-19.8564064248px, -9.4999999943px) rotate(210deg);
+    animation: blink 0.6666666667s linear 0.3888888889s infinite;
+}
+
+.Loader-Item-8{
+    transform: translate(-13.9999993307px, -15.3564063383px) rotate(240deg);
+    animation: blink 0.6666666667s linear 0.4444444444s infinite;
+}
+
+.Loader-Item-9{
+    transform: translate(-5.9999911401px, -17.499998179px) rotate(270deg);
+    animation: blink 0.6666666667s linear 0.5s infinite;
+}
+
+.Loader-Item-10{
+    transform: translate(2.0000891502px, -15.356386087px) rotate(300deg);
+    animation: blink 0.6666666667s linear 0.5555555556s infinite;
+}
+
+.Loader-Item-11{
+    transform: translate(7.8571249178px, -9.4998192505px) rotate(330deg);
+    animation: blink 0.6666666667s linear 0.6111111111s infinite;
+}
+
+.Loader-Item-12{
+    transform: translate(10.0048195847px, -1.4986761448px) rotate(360deg);
+    animation: blink 0.6666666667s linear 0.6666666667s infinite;
+}
+
+@keyframes blink{
+    0%{ background: #ddd }
+    100%{ background: #333 }
+}
+
+@keyframes rotate{
+    0%{ transform: rotate(0deg) }
+    100%{ background: rotate(360deg) }
+}
