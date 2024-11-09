@@ -33,16 +33,15 @@ const parseEnvironVariables = async (
     if(!config.environment) return {};
     const variables: { [key: string]: string } = {};
     for(let [key, value] of Object.entries(config.environment)){
-        if(value.startsWith('husband:')){
-            const husbandName = value.split('husband:')[1];
+        if(value.startsWith('husbands:')){
+            const husbandName = value.split('husbands:')[1];
             const husband = husbands.get(husbandName);
             if(!husband?.ipAddress) continue;
             value = husband.ipAddress;
         }
         variables[key] = value;
     }
-    await DockerContainer.updateOne({ _id: parent.container._id }, { environment: { variables } });
-    return variables;
+    return await DockerContainer.findOneAndUpdate({ _id: parent.container._id }, { environment: { variables } });
 };
 
 const createParentContainer = async (user: IUser, config: IOneClickDeployConfig): Promise<any> => {

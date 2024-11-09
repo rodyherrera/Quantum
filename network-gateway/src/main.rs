@@ -1,17 +1,37 @@
+use std::{
+    collections::{HashMap, hash_map::Entry},
+    convert::Infallible,
+    net::SocketAddr,
+    num::NonZeroU32,
+    sync::Arc,
+    time::{Duration, SystemTime},
+};
+
 use futures::StreamExt;
-use hyper::{Body, Client, Request, Response, Uri, StatusCode, Server};
+use hyper::{
+    client::HttpConnector,
+    header::{CONNECTION, UPGRADE},
+    service::{make_service_fn, service_fn},
+    Body,
+    Client,
+    Request,
+    Response,
+    Server,
+    StatusCode,
+    Uri,
+};
+
 use ratelimit_meter::{DirectRateLimiter, GCRA};
 use serde::Deserialize;
-use std::collections::HashMap;
-use std::convert::Infallible;
-use std::net::SocketAddr;
-use std::sync::Arc;
-use tokio::sync::{Mutex, RwLock};
-use hyper::service::{make_service_fn, service_fn};
-use tokio_tungstenite::{accept_async, tungstenite::protocol::Message};
-use std::num::NonZeroU32;
-use std::collections::hash_map::Entry;
-use std::time::{Duration, SystemTime};
+use tokio::{
+    io,
+    sync::{Mutex, RwLock},
+};
+
+use tokio_tungstenite::{
+    accept_async,
+    tungstenite::protocol::Message,
+};
 
 const TOO_MANY_REQUESTS_HTML: &str = include_str!("templates/too_many_requests.html");
 const SERVICE_UNAVAILABLE_HTML: &str = include_str!("templates/service_unavailable.html");
@@ -101,76 +121,107 @@ async fn start_websocket_server(state: Arc<AppState>) -> Result<(), Box<dyn std:
     Ok(())
 }
 
-async fn proxy_request(
-    req: Request<Body>,
-    client_ip: String,
+fn too_many_requests_response(
+    state: &Arc<AppState>,
+) -> Result<Response<Body>, hyper::Error> {
+    Ok(Response::builder()
+        .status(StatusCode::TOO_MANY_REQUESTS)
+        .header("Content-Type", "text/html")
+        .header("Server", "QuantumCloud")
+        .body(Body::from((*state.too_many_requests_html).clone()))
+        .unwrap())
+}
+
+fn is_websocket_upgrade(req: &Request<Body>) -> bool {
+    req.headers()
+        .get(CONNECTION)
+        .map(|h| h.to_str().unwrap_or("").to_lowercase().contains("upgrade"))
+        .unwrap_or(false)
+        && req
+            .headers()
+            .get(UPGRADE)
+            .map(|h| h.to_str().unwrap_or("").eq_ignore_ascii_case("websocket"))
+            .unwrap_or(false)
+}
+
+async fn handle_websocket_upgrade(
+    mut req: Request<Body>,
     remote_ip: String,
     port: u16,
     state: Arc<AppState>,
-) -> Result<Response<Body>, hyper::Error>{
-    let mut limiters_guard = state.rate_limiters.lock().await;
-    let mut blocked_ips_guard = state.blocked_ips.lock().await;
+) -> Result<Response<Body>, hyper::Error> {
+    let on_client_upgrade = hyper::upgrade::on(&mut req);
+    let uri_string = format!(
+        "http://{}:{}{}",
+        remote_ip,
+        port,
+        req.uri().path_and_query().map(|x| x.as_str()).unwrap_or("")
+    );
+    *req.uri_mut() = uri_string.parse::<Uri>().unwrap();
 
-    if let Some(&block_until) = blocked_ips_guard.get(&client_ip){
-        let now = SystemTime::now();
-        if now < block_until{
-            // println!("@network-gateway: IP {} is blocked until {:?}", client_ip, block_until);
-            return Ok(Response::builder()
-                .status(StatusCode::TOO_MANY_REQUESTS)
-                .header("Content-Type", "text/html")
-                .header("Server", "QuantumCloud")
-                .body(Body::from((*state.too_many_requests_html).clone()))
-                .unwrap());
-        }else{
-            println!("@network-gateway: IP {} unblocked", client_ip);
-            blocked_ips_guard.remove(&client_ip);
-        }
-    }
+    let client = Client::builder()
+        .http1_preserve_header_case(true)
+        .http1_title_case_headers(true)
+        .build::<_, Body>(HttpConnector::new());
 
-    let limiter = match limiters_guard.entry(client_ip.clone()){
-        Entry::Occupied(entry) => entry.into_mut(),
-        Entry::Vacant(entry) => {
-            // println!("@network-gateway: Creating new rate limiter for IP {}", client_ip);
-            entry.insert(DirectRateLimiter::<GCRA>::new(
-                NonZeroU32::new(100).unwrap(),
-                Duration::from_secs(60),
-            ))
+    let mut resp = match client.request(req).await {
+        Ok(resp) => resp,
+        Err(err) => {
+            eprintln!("@network-gateway: Request to remote server failed. {}", err);
+            return service_unavailable_response(&state);
         }
     };
 
-    match limiter.check(){
-        Ok(_) => {
-            // println!("@network-gateway: Request allowed for IP {}", client_ip)
-        },
-        Err(_) => {
-            let block_time = SystemTime::now() + Duration::from_secs(60);
-            blocked_ips_guard.insert(client_ip.clone(), block_time);
-
-            // println!("@network-gateway: Rate limit exceeded for IP {}. Blocked until {:?}", client_ip, block_time);
-            return Ok(Response::builder()
-                .status(StatusCode::TOO_MANY_REQUESTS)
-                .header("Content-Type", "text/html")
-                .header("Server", "QuantumCloud")
-                .body(Body::from((*state.too_many_requests_html).clone()))
-                .unwrap());
-        }
+    if resp.status() == StatusCode::SWITCHING_PROTOCOLS {
+        let on_server_upgrade = hyper::upgrade::on(&mut resp);
+        let response = resp;
+        tokio::spawn(async move {
+            match on_client_upgrade.await {
+                Ok(mut client_upgraded) => {
+                    match on_server_upgrade.await {
+                        Ok(mut server_upgraded) => {
+                            if let Err(e) = io::copy_bidirectional(
+                                &mut client_upgraded,
+                                &mut server_upgraded,
+                            )
+                            .await
+                            {
+                                eprintln!("@network-gateway: Error transferring data between client and server. {}", e);
+                            }
+                        }
+                        Err(e) => {
+                            eprintln!("@network-gateway: Server upgrade failed. {}", e);
+                        }
+                    }
+                }
+                Err(e) => {
+                    eprintln!("@network-gateway: Client upgrade failed. {}", e);
+                }
+            }
+        });
+        Ok(response)
+    } else {
+        service_unavailable_response(&state)
     }
+}
 
-    drop(limiters_guard);
-    drop(blocked_ips_guard);
-
+async fn proxy_standard_request(
+    req: Request<Body>,
+    remote_ip: String,
+    port: u16,
+    state: Arc<AppState>,
+) -> Result<Response<Body>, hyper::Error> {
     let remote_server = format!("http://{}:{}", remote_ip, port);
-    let uri_string = format!("{}{}", remote_server, req.uri().path_and_query().map(|x| x.as_str()).unwrap_or(""));
+    let uri_string = format!(
+        "{}{}",
+        remote_server,
+        req.uri().path_and_query().map(|x| x.as_str()).unwrap_or("")
+    );
 
-    let uri = match uri_string.parse::<Uri>(){
+    let uri = match uri_string.parse::<Uri>() {
         Ok(parsed_uri) => parsed_uri,
         Err(_) => {
-            return Ok(Response::builder()
-                .status(StatusCode::SERVICE_UNAVAILABLE)
-                .header("Content-Type", "text/html")
-                .header("Server", "QuantumCloud")
-                .body(Body::from((*state.service_unavailable_html).clone()))
-                .unwrap());
+            return service_unavailable_response(&state);
         }
     };
 
@@ -184,31 +235,91 @@ async fn proxy_request(
     {
         Ok(req) => req,
         Err(_) => {
-            return Ok(Response::builder()
-                .status(StatusCode::SERVICE_UNAVAILABLE)
-                .header("Content-Type", "text/html")
-                .header("Server", "QuantumCloud")
-                .body(Body::from((*state.service_unavailable_html).clone()))
-                .unwrap());
+            return service_unavailable_response(&state);
         }
     };
 
     *proxy_req.headers_mut() = headers;
 
-    match client.request(proxy_req).await{
+    match client.request(proxy_req).await {
         Ok(mut response) => {
             response.headers_mut().insert(
                 hyper::header::SERVER,
                 hyper::header::HeaderValue::from_static("QuantumCloud"),
             );
             Ok(response)
-        },
-        Err(_) => Ok(Response::builder()
-            .status(StatusCode::SERVICE_UNAVAILABLE)
-            .header("Content-Type", "text/html")
-            .header("Server", "QuantumCloud")
-            .body(Body::from((*state.service_unavailable_html).clone()))
-            .unwrap()),
+        }
+        Err(_) => service_unavailable_response(&state),
+    }
+}
+
+fn service_unavailable_response(
+    state: &Arc<AppState>,
+) -> Result<Response<Body>, hyper::Error> {
+    Ok(Response::builder()
+        .status(StatusCode::SERVICE_UNAVAILABLE)
+        .header("Content-Type", "text/html")
+        .header("Server", "QuantumCloud")
+        .body(Body::from((*state.service_unavailable_html).clone()))
+        .unwrap())
+}
+
+async fn check_rate_limit(client_ip: &str, state: &Arc<AppState>) -> bool{
+    let mut limiters_guard = state.rate_limiters.lock().await;
+    let limiter = match limiters_guard.entry(client_ip.to_string()){
+        Entry::Occupied(entry) => entry.into_mut(),
+        Entry::Vacant(entry) => {
+            entry.insert(DirectRateLimiter::<GCRA>::new(
+                NonZeroU32::new(100).unwrap(),
+                Duration::from_secs(60),
+            ))
+        }
+    };
+
+    match limiter.check(){
+        Ok(_) => true,
+        Err(_) => {
+            let block_time = SystemTime::now() + Duration::from_secs(60);
+            let mut blocked_ips_guard = state.blocked_ips.lock().await;
+            blocked_ips_guard.insert(client_ip.to_string(), block_time);
+            false
+        }
+    }
+}
+
+async fn is_ip_blocked(client_ip: &str, state: &Arc<AppState>) -> bool {
+    let mut blocked_ips_guard = state.blocked_ips.lock().await;
+    if let Some(&block_until) = blocked_ips_guard.get(client_ip) {
+        if SystemTime::now() < block_until{
+            return true;
+        }else{
+            blocked_ips_guard.remove(client_ip);
+            println!("@network-gateway: IP {} unblocked", client_ip);
+        }
+    }
+    false
+}
+
+async fn proxy_request(
+    req: Request<Body>,
+    client_ip: String,
+    remote_ip: String,
+    port: u16,
+    state: Arc<AppState>,
+) -> Result<Response<Body>, hyper::Error> {
+    if is_ip_blocked(&client_ip, &state).await{
+        return too_many_requests_response(&state);
+    }
+
+    if !check_rate_limit(&client_ip, &state).await{
+        return too_many_requests_response(&state);
+    }
+
+    let is_ws_upgrade = is_websocket_upgrade(&req);
+    if is_ws_upgrade{
+        return handle_websocket_upgrade(req, remote_ip, port, state).await;
+    }else{
+        return proxy_standard_request(req, remote_ip, port, state).await;
     }
 }
 

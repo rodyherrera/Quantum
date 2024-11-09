@@ -22,11 +22,6 @@ export const removeContainers = async (containers: any[]): Promise<void> => {
     for(const container of containers){
         try{
             const cont = docker.getContainer(container.Id);
-            const containerDetails = await cont.inspect();
-            if(containerDetails.State.Running){
-                await cont.stop();
-                console.log(`Stopped container: ${container.Names[0]}`);
-            }
             await cont.remove({ force: true });
             console.log(`Deleted container: ${container.Names[0]}`);
         }catch(error){
