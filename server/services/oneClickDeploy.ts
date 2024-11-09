@@ -86,12 +86,12 @@ const createHusbandContainer = async (user: IUser, config: IOneClickDeployConfig
     return husband;
 };
 
-export const parseConfigAndDeploy = async (user: IUser, config: IOneClickDeployConfig) => {
+export const parseConfigAndDeploy = async (user: IUser, config: IOneClickDeployConfig): Promise<any> => {
     const parent = await createParentContainer(user, config);
     const husbands = new Map<string, IDockerContainer>();
     for(const husbandEntity of config.husbands ?? []){
         const container = await createHusbandContainer(user, husbandEntity, parent);
         husbands.set(husbandEntity.name, container);
     }
-    await parseEnvironVariables(parent, husbands, config);
+    return await parseEnvironVariables(parent, husbands, config);
 };

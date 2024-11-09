@@ -129,6 +129,7 @@ const createUserContainer = async (user: IUser): Promise<IDockerContainer> => {
         user: userId,
         image: image._id,
         network: network._id,
+        command: '/bin/sh',
         isUserContainer: true
     });
     user.images.push(image);

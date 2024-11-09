@@ -71,6 +71,8 @@ DockerContainerSchema.index({ user: 1, name: 1 }, { unique: true });
 
 const cascadeDeleteHandler = async (document: IDockerContainer): Promise<void> => {
     const { user, network, image, _id } = document;
+    const containerService = new DockerContainerService(document);
+    await containerService.removeContainer();
     const update = { $pull: { containers: _id } };
     await mongoose.model('User').updateOne({ _id: user }, update);
     await mongoose.model('DockerNetwork').updateOne({ _id: network }, update);

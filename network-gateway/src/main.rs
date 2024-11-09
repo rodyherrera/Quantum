@@ -144,6 +144,66 @@ fn is_websocket_upgrade(req: &Request<Body>) -> bool {
             .unwrap_or(false)
 }
 
+async fn proxy_standard_request(
+    req: Request<Body>,
+    remote_ip: String,
+    port: u16,
+    state: Arc<AppState>,
+) -> Result<Response<Body>, hyper::Error> {
+    let remote_server = format!("http://{}:{}", remote_ip, port);
+    let uri_string = format!(
+        "{}{}",
+        remote_server,
+        req.uri().path_and_query().map(|x| x.as_str()).unwrap_or("")
+    );
+
+    let uri = match uri_string.parse::<Uri>() {
+        Ok(parsed_uri) => parsed_uri,
+        Err(_) => {
+            return service_unavailable_response(&state);
+        }
+    };
+
+    let client = &state.client;
+    let headers = req.headers().clone();
+
+    let mut proxy_req = match Request::builder()
+        .method(req.method())
+        .uri(uri)
+        .body(req.into_body())
+    {
+        Ok(req) => req,
+        Err(_) => {
+            return service_unavailable_response(&state);
+        }
+    };
+
+    *proxy_req.headers_mut() = headers;
+
+    match client.request(proxy_req).await {
+        Ok(mut response) => {
+            response.headers_mut().insert(
+                hyper::header::SERVER,
+                hyper::header::HeaderValue::from_static("QuantumCloud"),
+            );
+            Ok(response)
+        }
+        Err(_) => service_unavailable_response(&state),
+    }
+}
+
+fn service_unavailable_response(
+    state: &Arc<AppState>,
+) -> Result<Response<Body>, hyper::Error> {
+    Ok(Response::builder()
+        .status(StatusCode::SERVICE_UNAVAILABLE)
+        .header("Content-Type", "text/html")
+        .header("Server", "QuantumCloud")
+        .body(Body::from((*state.service_unavailable_html).clone()))
+        .unwrap())
+}
+
+
 async fn handle_websocket_upgrade(
     mut req: Request<Body>,
     remote_ip: String,
@@ -203,65 +263,6 @@ async fn handle_websocket_upgrade(
     } else {
         service_unavailable_response(&state)
     }
-}
-
-async fn proxy_standard_request(
-    req: Request<Body>,
-    remote_ip: String,
-    port: u16,
-    state: Arc<AppState>,
-) -> Result<Response<Body>, hyper::Error> {
-    let remote_server = format!("http://{}:{}", remote_ip, port);
-    let uri_string = format!(
-        "{}{}",
-        remote_server,
-        req.uri().path_and_query().map(|x| x.as_str()).unwrap_or("")
-    );
-
-    let uri = match uri_string.parse::<Uri>() {
-        Ok(parsed_uri) => parsed_uri,
-        Err(_) => {
-            return service_unavailable_response(&state);
-        }
-    };
-
-    let client = &state.client;
-    let headers = req.headers().clone();
-
-    let mut proxy_req = match Request::builder()
-        .method(req.method())
-        .uri(uri)
-        .body(req.into_body())
-    {
-        Ok(req) => req,
-        Err(_) => {
-            return service_unavailable_response(&state);
-        }
-    };
-
-    *proxy_req.headers_mut() = headers;
-
-    match client.request(proxy_req).await {
-        Ok(mut response) => {
-            response.headers_mut().insert(
-                hyper::header::SERVER,
-                hyper::header::HeaderValue::from_static("QuantumCloud"),
-            );
-            Ok(response)
-        }
-        Err(_) => service_unavailable_response(&state),
-    }
-}
-
-fn service_unavailable_response(
-    state: &Arc<AppState>,
-) -> Result<Response<Body>, hyper::Error> {
-    Ok(Response::builder()
-        .status(StatusCode::SERVICE_UNAVAILABLE)
-        .header("Content-Type", "text/html")
-        .header("Server", "QuantumCloud")
-        .body(Body::from((*state.service_unavailable_html).clone()))
-        .unwrap())
 }
 
 async fn check_rate_limit(client_ip: &str, state: &Arc<AppState>) -> bool{
