@@ -1,17 +1,37 @@
+use std::{
+    collections::{HashMap, hash_map::Entry},
+    convert::Infallible,
+    net::SocketAddr,
+    num::NonZeroU32,
+    sync::Arc,
+    time::{Duration, SystemTime},
+};
+
 use futures::StreamExt;
-use hyper::{Body, Client, Request, Response, Uri, StatusCode, Server};
+use hyper::{
+    client::HttpConnector,
+    header::{CONNECTION, UPGRADE},
+    service::{make_service_fn, service_fn},
+    Body,
+    Client,
+    Request,
+    Response,
+    Server,
+    StatusCode,
+    Uri,
+};
+
 use ratelimit_meter::{DirectRateLimiter, GCRA};
 use serde::Deserialize;
-use std::collections::HashMap;
-use std::convert::Infallible;
-use std::net::SocketAddr;
-use std::sync::Arc;
-use tokio::sync::{Mutex, RwLock};
-use hyper::service::{make_service_fn, service_fn};
-use tokio_tungstenite::{accept_async, tungstenite::protocol::Message};
-use std::num::NonZeroU32;
-use std::collections::hash_map::Entry;
-use std::time::{Duration, SystemTime};
+use tokio::{
+    io,
+    sync::{Mutex, RwLock},
+};
+
+use tokio_tungstenite::{
+    accept_async,
+    tungstenite::protocol::Message,
+};
 
 const TOO_MANY_REQUESTS_HTML: &str = include_str!("templates/too_many_requests.html");
 const SERVICE_UNAVAILABLE_HTML: &str = include_str!("templates/service_unavailable.html");
@@ -102,7 +122,7 @@ async fn start_websocket_server(state: Arc<AppState>) -> Result<(), Box<dyn std:
 }
 
 async fn proxy_request(
-    req: Request<Body>,
+    mut req: Request<Body>,
     client_ip: String,
     remote_ip: String,
     port: u16,
@@ -158,6 +178,73 @@ async fn proxy_request(
 
     drop(limiters_guard);
     drop(blocked_ips_guard);
+
+    let is_ws_upgrade = req.headers().get(CONNECTION)
+        .map(|h| h.to_str().unwrap_or("").to_lowercase().contains("upgrade"))
+        .unwrap_or(false) &&
+        req.headers().get(UPGRADE)
+        .map(|h| h.to_str().unwrap_or("").to_lowercase() == "websocket")
+        .unwrap_or(false);
+
+    if is_ws_upgrade{
+        let on_client_upgrade = hyper::upgrade::on(&mut req);
+        let uri_string = format!(
+            "http://{}:{}{}",
+            remote_ip,
+            port,
+            req.uri().path_and_query().map(|x| x.as_str()).unwrap_or("")
+        );
+        *req.uri_mut() = uri_string.parse::<Uri>().unwrap();
+        let client = Client::builder()
+            .http1_preserve_header_case(true)
+            .http1_title_case_headers(true)
+            .build::<_, Body>(HttpConnector::new());
+        let mut resp = match client.request(req).await{
+            Ok(resp) => resp,
+            Err(err) => {
+                eprintln!("@network-gateway: Request to remote server failed. {}", err);
+                // TODO: DUPLICATED CODE 
+                return Ok(Response::builder()
+                    .status(StatusCode::SERVICE_UNAVAILABLE)
+                    .header("Content-Type", "text/html")
+                    .header("Server", "QuantumCloud")
+                    .body(Body::from((*state.service_unavailable_html).clone()))
+                    .unwrap());
+            }
+        };
+        if resp.status() == StatusCode::SWITCHING_PROTOCOLS{
+            let on_server_upgrade = hyper::upgrade::on(&mut resp);
+            let response = resp;
+            tokio::spawn(async move{
+                match on_client_upgrade.await{
+                    Ok(mut client_upgraded) => {
+                        match on_server_upgrade.await{
+                            Ok(mut server_upgraded) => {
+                                if let Err(e) = io::copy_bidirectional(&mut client_upgraded, &mut server_upgraded).await{
+                                    eprintln!("@network-gateway: Error transferring data between client and server. {}", e);
+                                }
+                            }
+                            Err(e) => {
+                                eprintln!("@network-gatway: Server update failed. {}", e);
+                            }
+                        }
+                    }
+                    Err(e) => {
+                        eprintln!("@network-gateway: Client update failed. {}", e);
+                    }
+                }
+            });
+            return Ok(response);
+        }else{
+            // TODO: DUPLICATED CODE 
+            return Ok(Response::builder()
+                .status(StatusCode::SERVICE_UNAVAILABLE)
+                .header("Content-Type", "text/html")
+                .header("Server", "QuantumCloud")
+                .body(Body::from((*state.service_unavailable_html).clone()))
+                .unwrap());
+        }
+    }
 
     let remote_server = format!("http://{}:{}", remote_ip, port);
     let uri_string = format!("{}{}", remote_server, req.uri().path_and_query().map(|x| x.as_str()).unwrap_or(""));
