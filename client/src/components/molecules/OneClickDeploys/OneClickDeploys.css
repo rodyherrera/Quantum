@@ -3,6 +3,7 @@
     flex-direction: column;
     justify-content: space-between;
     border-radius: .2rem;
+    max-width: 300px;
     min-width: 300px;
     height: 130px;
     font-family: 'IBM Plex Sans', sans-serif;
