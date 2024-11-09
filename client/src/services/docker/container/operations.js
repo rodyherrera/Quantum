@@ -13,6 +13,9 @@
 ****/
 
 import createOperation from '@utilities/api/operationHandler';
+import { getMyDockerImages } from '@services/docker/image/operations';
+import { getMyDockerNetworks } from '@services/docker/network/operations';
+import { getMyPortBindings } from '@services/portBinding/operations';
 import * as dockerContainerSlice from '@services/docker/container/slice';
 import * as dockerContainerService from '@services/docker/container/service'
 
@@ -97,6 +100,13 @@ export const getRandomAvailablePort = () => async (dispatch) => {
 
 export const oneClickDeploy = (body) => async (dispatch) => {
     const operation = createOperation(dockerContainerSlice, dispatch);
+    operation.on('response', () => {
+        dispatch(getMyDockerContainers());
+        dispatch(getMyDockerNetworks());
+        dispatch(getMyPortBindings());
+        dispatch(getMyDockerImages());
+
+    });
     operation.use({
         api: dockerContainerService.oneClickDeploy,
         loaderState: 'isOneClickDeployLoading',
