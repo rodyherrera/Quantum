@@ -12,6 +12,7 @@ router.get('/random-available-port/', dockerContainerController.randomAvailableP
 router.use(authMiddleware.protect);
 router.get('/me/', dockerContainerController.getMyDockerContainers);
 router.post('/', dockerContainerController.createDockerContainer);
+router.post('/one-click-deploy/', dockerContainerController.oneClickDeploy);
 
 router.get('/storage/:id/explore/:route?', ownership, dockerContainerController.storageExplorer);
 router.get('/storage/:id/read/:route?', ownership, dockerContainerController.readContainerFile);

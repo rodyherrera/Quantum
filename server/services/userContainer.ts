@@ -84,7 +84,7 @@ class UserContainer extends DockerContainerService{
             await this.start(false);
             if(!this.instance) return;
             const exec = await this.instance.exec({
-                Cmd: ['/bin/sh'],
+                Cmd: ['/bin/sh', command],
                 AttachStdout: true,
                 WorkingDir: workDir,
                 AttachStderr: true,

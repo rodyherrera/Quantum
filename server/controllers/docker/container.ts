@@ -13,6 +13,7 @@ import { isImageAvailable } from '@services/docker/image';
 import { catchAsync, findRandomAvailablePort } from '@utilities/helpers';
 import { NextFunction, Request, Response } from 'express';
 import { IUser } from '@typings/models/user';
+import { parseConfigAndDeploy } from '@services/oneClickDeploy';
 
 const DockerContainerFactory = new HandlerFactory({
     model: DockerContainer,
@@ -36,12 +37,12 @@ const findOrCreateImage = async (
     next: NextFunction
 ): Promise<IDockerImage | null> => {
     let containerImage = null;
-    if (mongoose.isValidObjectId(image)) {
+    if(mongoose.isValidObjectId(image)){
         containerImage = await DockerImage.findById(image).select('_id');
     }
-    if (!containerImage) {
+    if(!containerImage){
         const { name, tag } = image as IRequestDockerImage;
-        if (!isImageAvailable(name, tag)) {
+        if(!isImageAvailable(name, tag)){
             next(new RuntimeError('DockerContainer::CreateDocker::ImageNotFound', 404));
             return null;
         }
@@ -55,10 +56,10 @@ const findOrCreateNetwork = async (
     userId: string,
 ): Promise<IDockerNetwork | null> => {
     let containerNetwork = null;
-    if (mongoose.isValidObjectId(network)) {
+    if(mongoose.isValidObjectId(network)){
         containerNetwork = await DockerNetwork.findById(network).select('_id');
     }
-    if (!containerNetwork) {
+    if(!containerNetwork){
         containerNetwork = await DockerNetwork.create({
             user: userId,
             driver: 'bridge',
@@ -79,7 +80,7 @@ export const updateDockerContainer = DockerContainerFactory.updateOne();
 
 export const randomAvailablePort = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const port = await findRandomAvailablePort();
-    if (port === -1) {
+    if(port === -1){
         // "ManyFailedAttempts" comes from the fact that, if the function finds that 
         // a port is busy, it will try another 9 times to look for a free one. 
         // If all attempts fail (10), it will return -1.
@@ -97,6 +98,14 @@ const getRequestedPath = async (req: Request): Promise<string> => {
         .lean();
     return path.join(container?.storagePath || '', req.params.route || '');
 };
+
+export const oneClickDeploy = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const { config } = req.body;
+    if(!config){
+        return next(new RuntimeError('Docker::Container::OneClickDeploy::MissingConfig', 400));
+    }
+    parseConfigAndDeploy(req.user as IUser, config);
+});
 
 export const storageExplorer = catchAsync(async (req: Request, res: Response) => {
     const requestedPath = await getRequestedPath(req);
@@ -128,7 +137,7 @@ export const readContainerFile = catchAsync(async (req: Request, res: Response) 
 
 export const createDockerContainer = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const { image, name, network, command } = req.body;
-    if (!image || !name) {
+    if(!image || !name){
         return next(new RuntimeError('DockerContainer::CreateDocker::MissingParams', 400));
     }
     const user = req.user as IUser;
@@ -136,7 +145,7 @@ export const createDockerContainer = catchAsync(async (req: Request, res: Respon
 
     const containerImage = await findOrCreateImage(image, userId, next);
     const containerNetwork = await findOrCreateNetwork(network, userId);
-    if (!containerNetwork || !containerImage) {
+    if(!containerNetwork || !containerImage){
         return next(new RuntimeError('DockerContainer::CreateDocker::ImageOrNetworkError', 500));
     }
 
