@@ -104,7 +104,8 @@ export const oneClickDeploy = catchAsync(async (req: Request, res: Response, nex
     if(!config){
         return next(new RuntimeError('Docker::Container::OneClickDeploy::MissingConfig', 400));
     }
-    parseConfigAndDeploy(req.user as IUser, config);
+    const container = await parseConfigAndDeploy(req.user as IUser, config);
+    res.status(200).json({ status: 'success', data: container });
 });
 
 export const storageExplorer = catchAsync(async (req: Request, res: Response) => {
