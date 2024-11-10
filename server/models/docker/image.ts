@@ -29,6 +29,7 @@ const DockerImageSchema: Schema<IDockerImage> = new Schema({
 DockerImageSchema.index({ name: 1, tag: 1, user: 1 }, { unique: true });
 
 const cascadeDeleteHandler = async (document: IDockerImage): Promise<void> => {
+    if(!document) return;
     const { _id } = document;
     await mongoose.model('DockerContainer').deleteMany({ image: _id });
     await mongoose.model('User').updateOne({ user: document.user }, { $pull: { images: _id } })

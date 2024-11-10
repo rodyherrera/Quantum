@@ -41,6 +41,7 @@ const DockerNetworkSchema: Schema<IDockerNetwork> = new Schema({
 DockerNetworkSchema.index({ user: 1, name: 1 }, { unique: true });
 
 const cascadeDeleteHandler = async (document: IDockerNetwork): Promise<void> => {
+    if(!document) return;
     await removeNetwork(document.dockerNetworkName);
     // TODO: Allow a container to function without having an assigned network.
     await mongoose.model('DockerContainer').deleteMany({ network: document._id });

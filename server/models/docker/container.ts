@@ -70,6 +70,7 @@ const DockerContainerSchema: Schema<IDockerContainer> = new Schema({
 DockerContainerSchema.index({ user: 1, name: 1 }, { unique: true });
 
 const cascadeDeleteHandler = async (document: IDockerContainer): Promise<void> => {
+    if(!document) return;
     const { user, network, image, _id } = document;
     const containerService = new DockerContainerService(document);
     await containerService.removeContainer();

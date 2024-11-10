@@ -57,6 +57,7 @@ const DeploymentSchema = new mongoose.Schema<IDeployment>({
 DeploymentSchema.index({ environment: 'text', commit: 'text', url: 'text' });
 
 const cascadeDeleteHandler = async (document: IDeployment): Promise<void> => {
+    if(!document) return;
     const { user, repository, _id } = document;
     await mongoose.model('User').updateOne({ _id: user }, { $pull: { deployments: _id } });
     await mongoose.model('Repository').updateOne({ _id: repository }, { $pull: { deployments: _id } });

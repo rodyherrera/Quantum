@@ -29,7 +29,13 @@ const DockerContainerFactory = new HandlerFactory({
     ]
 });
 
-export const deleteDockerContainer = DockerContainerFactory.deleteOne({});
+export const deleteDockerContainer = DockerContainerFactory.deleteOne({
+    middlewares: {
+        pre: [async (): Promise<any> => {
+            return { isUserContainer: false };
+        }]
+    }
+});
 
 const findOrCreateImage = async (
     image: string | IRequestDockerImage,

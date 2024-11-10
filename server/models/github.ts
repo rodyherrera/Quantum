@@ -41,6 +41,7 @@ const GithubSchema = new mongoose.Schema<IGithub>({
 GithubSchema.index({ username: 'text' });
 
 const cascadeDeleteHandler = async (document: IGithub): Promise<void> => {
+    if(!document) return;
     await mongoose.model('User').findByIdAndUpdate(document.user, { $unset: { github: 1 } });
 };
 

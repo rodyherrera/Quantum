@@ -40,7 +40,7 @@ class HandlerFactory{
         return catchAsync(async (req: IRequest, res: Response, next: NextFunction) => {
             const { middlewares } = config;
             if(middlewares?.pre?.length){
-                req.handlerData = await this.applyMiddlewares(middlewares.pre, req, req.body);
+                req.handlerData = await this.applyMiddlewares(middlewares.pre, req, req?.body);
             }
             await operation(req, res, next);
             if(res.locals.data && middlewares?.post?.length){
@@ -57,7 +57,7 @@ class HandlerFactory{
 
     deleteOne(config: HandlerFactoryMethodConfig = {}): RequestHandler{
         return this.createHandler(async (req, res, next) => {
-            const query = checkIfSlugOrId(req.params.id);
+            const query = { ...checkIfSlugOrId(req.params.id), ...req.handlerData };
             const record = await this.model.findOneAndDelete(query).lean();
             if(!record){
                 return next(new RuntimeError('Core::DeleteOne::RecordNotFound', 404));
@@ -84,7 +84,7 @@ class HandlerFactory{
     }
 
     private createQuery(req: IRequest): object{
-        const query: any = filterObject(req.body, ...this.fields);
+        const query: any = { ...filterObject(req.body, ...this.fields), ...req.handlerData };
         if(this.fields.includes('user') && req.user){
             const authenticatedUser = req.user as IUser;
             query['user'] = (authenticatedUser.role === 'admin' && req.body.user)
@@ -134,7 +134,7 @@ class HandlerFactory{
     getOne(config: HandlerFactoryMethodConfig = {}): RequestHandler{
         return this.createHandler(async (req, res, next) => {
             const populate = this.getPopulateFromRequest(req.query);
-            let query = checkIfSlugOrId(req.params.id);
+            let query = { ...checkIfSlugOrId(req.params.id), ...req.handlerData };
             let queryObj = this.model.findOne(query).lean();
             if(populate) queryObj = queryObj.populate(populate);
             let record = await queryObj.exec();

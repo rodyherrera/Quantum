@@ -98,6 +98,7 @@ const performCleanupTasks = async (deletedDoc: IRepository, repositoryUser: any,
 };
 
 const deleteRepositoryHandler = async (deletedDoc: IRepository) => {
+    if(!deletedDoc) return;
     const repositoryUser = await removeRepositoryReference(deletedDoc);
     const deployments = await getAndDeleteDeployments(deletedDoc._id as mongoose.Types.ObjectId);
     await nginxHandler.removeDomainList(deletedDoc.domains);

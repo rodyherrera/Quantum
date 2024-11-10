@@ -110,6 +110,7 @@ const UserSchema: Schema<IUser> = new Schema({
 UserSchema.index({ username: 'text', fullname: 'text', email: 'text' });
 
 const cascadeDeleteHandler = async (document: IUser): Promise<void> => {
+    if(!document) return;
     const query = { user: document._id };
     // check for errors (cascade in the others models)
     await mongoose.model('Repository').deleteMany(query);
