@@ -96,7 +96,7 @@ class APIFeatures{
      * Applies a filter based on the request query string parameters, excluding specific fields.
      * @returns {APIFeatures} The current instance of APIFeatures.
     */
-     filter(): APIFeatures{
+     filter(auxFilter: any = {}): APIFeatures{
         const excludedFields = ['page', 'sort', 'limit', 'fields', 'populate'];
         const query = Object.keys(this.requestQueryString)
             .filter(key => !excludedFields.includes(key))
@@ -106,7 +106,7 @@ class APIFeatures{
             }, {} as Record<string, any>);
 
         const filter = filterObject(query, ...this.fields);
-        Object.assign(this.buffer.find, filter);
+        Object.assign(this.buffer.find, { ...filter, ...auxFilter });
         return this;
     }
 

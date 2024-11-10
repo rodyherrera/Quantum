@@ -3,6 +3,6 @@ import { IUser } from '@typings/models/user';
 
 export interface IRequest extends Request{
     user?: null;
-    handlerData?: null;
+    handlerData?: {};
     query: any
 }

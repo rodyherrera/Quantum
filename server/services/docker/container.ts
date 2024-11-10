@@ -3,8 +3,9 @@ import fs from 'fs/promises';
 import path from 'path';
 import slugify from 'slugify';
 import { Socket } from 'socket.io';
+import { existsSync } from 'fs';
 import { ensureDirectoryExists } from '@utilities/helpers';
-import { createLogStream, logs, setupSocketEvents, shells } from '@services/logManager';
+import { createLogStream, setupSocketEvents, shells } from '@services/logManager';
 import { pullImage } from '@services/docker/image';
 import { IDockerContainer } from '@typings/models/docker/container';
 import { IDockerImage } from '@typings/models/docker/image';
@@ -107,12 +108,15 @@ class DockerContainer {
     }
 
     async removeContainer() {
-        try {
+        try{
             const container = docker.getContainer(this.container.dockerContainerName);
-            if (!container) return;
+            if(!container) return;
             await container.remove({ force: true });
-            await fs.rm(this.getDockerStoragePath(), { recursive: true });
-        } catch (error) {
+            const storagePath = this.getDockerStoragePath();
+            if(existsSync(storagePath)){
+                await fs.rm(this.getDockerStoragePath(), { recursive: true });
+            }
+        }catch (error){
             logger.error('@services/docker/container.ts (removeContainer): ' + error);
         }
     }

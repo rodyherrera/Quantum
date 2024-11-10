@@ -154,7 +154,7 @@ class HandlerFactory{
                 model: this.model,
                 fields: this.fields,
                 populate: populate
-            }).filter().sort().limitFields().search();
+            }).filter(req.handlerData).sort().limitFields().search();
             await operations.paginate();
             const { records, skippedResults, totalResults, page, limit, totalPages } = await operations.perform();
             res.locals.data = records;

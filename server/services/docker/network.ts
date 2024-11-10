@@ -33,8 +33,15 @@ export const createNetwork = async (networkId: string, driver: string, subnet: s
 
 export const removeNetwork = async (networkName: string): Promise<void> => {
     try{
-        const network = new Network(docker.modem, networkName);
-        await network.remove();
+        const networks = await docker.listNetworks({
+            filters: {
+                name: [networkName]
+            }
+        });
+        if(networks.length > 0){
+            const network = new Network(docker.modem, networkName);
+            await network.remove();
+        }
     }catch(error){
         logger.error('@services/docker/network.ts (removeNetwork): Error when trying to delete docker network ' + error);
     }
