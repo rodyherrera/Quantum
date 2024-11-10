@@ -82,7 +82,10 @@ const ERROR_CODES = {
     'Database::Duplicated::Fields': 'Duplicate fields found in the database. This error indicates an attempt to insert or update data that would result in duplicate entries for unique fields.',
 
     'JWT::Error': 'Error encountered while processing the JSON Web Token (JWT) for authentication. This could be due to various issues such as invalid token format or signature.',
-    'JWT::Expired': 'The JSON Web Token (JWT) used for authentication has expired. Authentication tokens have a limited lifespan for security reasons, and this error indicates that the token is no longer valid due to expiration.'
+    'JWT::Expired': 'The JSON Web Token (JWT) used for authentication has expired. Authentication tokens have a limited lifespan for security reasons, and this error indicates that the token is no longer valid due to expiration.',
+
+    'Docker::Network::ActiveUserContainers': 'You cannot delete a network that your primary container depends on.',
+    'Docker::Image::ActiveUserContainers': 'You cannot delete a image that your primary container depends on.'
 };
 
 /**
