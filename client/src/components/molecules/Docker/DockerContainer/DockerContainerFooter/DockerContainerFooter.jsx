@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { IoCloudOutline } from 'react-icons/io5';
 import { CiServer } from 'react-icons/ci';
 import { PiDatabaseThin } from 'react-icons/pi';
@@ -21,7 +21,7 @@ const DockerContainerFooter = ({ container }) => {
     };
     
     const options = [
-        ['Terminal', GoTerminal, `/docker-container/${container._id}/shell/`, selectContainerHandler],
+        ['Terminal', GoTerminal, `/docker-container/${container._id}/shell/`, selectContainerHandler, !container?.command],
         ['Expose Port', IoCloudOutline, '/port-binding/create/', selectContainerHandler],
         ['Environment Variables', PiDatabaseThin, `/docker-container/${container._id}/environment-variables/`, selectContainerHandler],
         ['File Explorer', CiServer, `/docker-container/${container._id}/storage/`, selectContainerHandler]

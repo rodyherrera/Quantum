@@ -5,7 +5,7 @@ import { setState as dockerNetSetState } from '@services/docker/network/slice';
 
 const useUserDockerNetworks = () => {
     const dispatch = useDispatch();
-    const { dockerNetworks, isLoading, error, stats } = useSelector((state) => state.dockerNetwork);
+    const { dockerNetworks, isLoading, error, stats, isOperationLoading } = useSelector((state) => state.dockerNetwork);
 
     useEffect(() => {
         dispatch(getMyDockerNetworks());
@@ -14,7 +14,7 @@ const useUserDockerNetworks = () => {
         }
     }, []);
 
-    return { dockerNetworks, isLoading, error, stats };
+    return { dockerNetworks, isLoading, error, stats, isOperationLoading };
 };
 
 export default useUserDockerNetworks;

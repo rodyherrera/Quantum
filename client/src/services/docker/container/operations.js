@@ -29,14 +29,13 @@ export const getMyDockerContainers = () => async (dispatch) => {
     });
 };
 
-export const deleteDockerContainer = (id, containers) => async (dispatch) => {
+export const deleteDockerContainer = (id) => async (dispatch) => {
     const operation = createOperation(dockerContainerSlice, dispatch);
     operation.on('finally', () => {
-        const updatedContainers = containers.filter((container) => container._id !== id);
-        dispatch(dockerContainerSlice.setState({
-            path: 'dockerContainers',
-            value: updatedContainers
-        }));
+        dispatch(getMyDockerContainers());
+        dispatch(getMyDockerNetworks());
+        dispatch(getMyPortBindings());
+        dispatch(getMyDockerImages());
     });
     operation.use({
         api: dockerContainerService.deleteDockerContainer,

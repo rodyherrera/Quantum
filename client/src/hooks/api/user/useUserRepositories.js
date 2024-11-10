@@ -20,7 +20,7 @@ const useUserRepositories = () => {
         }
     }, []);
 
-    return { repositories, isLoading, isOperationLoading, error, stats };
+    return { repositories, isLoading, isOperationLoading, error, stats, isOperationLoading };
 };
 
 export default useUserRepositories;

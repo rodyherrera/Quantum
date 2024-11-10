@@ -5,4 +5,30 @@
     justify-content: space-between;
     border: 1px solid #dfdfdf;
     border-radius: .5rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.Dashboard-Module-Container .Data-Renderer-Basic-Layout-Container:has(.Data-Renderer-Error-Container){
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+
+.Dashboard-Module-Container .Data-Renderer-Error-Container{
+    background-color: unset;
+}
+
+.Dashboard-Module-Operation-Loading-Container{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 200;
+    backdrop-filter: blur(1px);
+    background-color: rgba(245, 245, 245, .4);
 }

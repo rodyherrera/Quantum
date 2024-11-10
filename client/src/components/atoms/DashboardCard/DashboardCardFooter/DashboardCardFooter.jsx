@@ -8,9 +8,10 @@ const DashboardCardFooter = ({ options }) => {
     return (
         <div className='Dashboard-Card-Container-Footer'>
             <div className='Dashboard-Card-Container-Footer-Left-Container'>
-                {options.map(([ item, Icon, to = '/', handleOnClick = () => {} ], index) => (
+                {options.map(([ item, Icon, to = '/', handleOnClick = () => {}, isDisabled = false], index) => (
                     <div 
                         className='Dashboard-Card-Container-Footer-Option-Container' 
+                        data-disabled={isDisabled}
                         onClick={() => {
                             handleOnClick();
                             if(to){

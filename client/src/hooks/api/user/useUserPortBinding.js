@@ -5,7 +5,7 @@ import { setState as portBindingSetState } from '@services/portBinding/slice';
 
 const useUserPortBinding = () => {
     const dispatch = useDispatch();
-    const { portBindings, isLoading, error, stats } = useSelector((state) => state.portBinding);
+    const { portBindings, isLoading, error, stats, isOperationLoading } = useSelector((state) => state.portBinding);
    
     useEffect(() => {
         dispatch(getMyPortBindings());
@@ -14,7 +14,7 @@ const useUserPortBinding = () => {
         };
     }, []);
 
-    return { portBindings, isLoading, error, stats };
+    return { portBindings, isLoading, error, stats, isOperationLoading };
 };
 
 export default useUserPortBinding;

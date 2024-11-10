@@ -13,6 +13,9 @@
 ****/
 
 import createOperation from '@utilities/api/operationHandler';
+import { getMyDockerImages } from '@services/docker/image/operations';
+import { getMyDockerContainers } from '@services/docker/container/operations';
+import { getMyPortBindings } from '@services/portBinding/operations';
 import * as dockerNetworkSlice from '@services/docker/network/slice';
 import * as dockerNetworkService from '@services/docker/network/service'
 
@@ -41,14 +44,13 @@ export const updateDockerNetwork = (id, body, navigate) => async (dispatch) => {
     });
 };
 
-export const deleteDockerNetwork = (id, networks) => async (dispatch) => {
+export const deleteDockerNetwork = (id) => async (dispatch) => {
     const operation = createOperation(dockerNetworkSlice, dispatch);
     operation.on('finally', () => {
-        const updatedNetworks = networks.filter((network) => network._id !== id);
-        dispatch(dockerNetworkSlice.setState({
-            path: 'dockerNetworks',
-            value: updatedNetworks
-        }));
+        dispatch(getMyDockerNetworks());
+        dispatch(getMyDockerContainers());
+        dispatch(getMyPortBindings());
+        dispatch(getMyDockerImages());
     });
     operation.use({
         api: dockerNetworkService.deleteDockerNetwork,

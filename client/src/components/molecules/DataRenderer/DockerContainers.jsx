@@ -6,12 +6,13 @@ import { IoLogoDocker } from 'react-icons/io5';
 import { DockerContainer } from '@components/organisms/Docker';
 
 const DockerContainers = ({ ...props }) => {
-    const { dockerContainers, isLoading, error, stats } = useUserDockerContainers();
+    const { dockerContainers, isLoading, error, stats, isOperationLoading } = useUserDockerContainers();
 
     return (
         <DashboardModule
             title='Docker Containers'
             Icon={IoLogoDocker}
+            isOperationLoading={isOperationLoading}
             alias='container(s)'
             createLink='/docker-container/create/'
             results={stats?.results?.total}

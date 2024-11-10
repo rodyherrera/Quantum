@@ -1,4 +1,5 @@
 import React from 'react';
+import Loader from '@components/atoms/Loader';
 import {
     DashboardModuleHeader,
     DashboardModuleFooter,
@@ -13,10 +14,16 @@ const DashboardModule = ({
     results,
     createLink,
     RenderComponent,
+    isOperationLoading = false,
     alias = 'document(s)'
 }) => {
     return (
         <div className='Dashboard-Module-Container'>
+            {(isOperationLoading && results >= 1) && (
+                <div className='Dashboard-Module-Operation-Loading-Container'>
+                    <Loader scale='0.7' />
+                </div>
+            )}
             <DashboardModuleHeader Icon={Icon} title={title} createLink={createLink} />
             <DashboardModuleBody RenderComponent={RenderComponent} />
             <DashboardModuleFooter results={results} total={total} alias={alias} />

@@ -6,11 +6,12 @@ import DashboardModule from '@components/molecules/DashboardModule';
 import { FiGithub } from 'react-icons/fi';
 
 const RepositoriesDataRenderer = ({ ...props }) => {
-    const { repositories, isLoading, error, stats } = useUserRepositories();
+    const { repositories, isLoading, error, stats, isOperationLoading } = useUserRepositories();
 
     return (
         <DashboardModule
             title='Your Github Repositories'
+            isOperationLoading={isOperationLoading}
             Icon={FiGithub}
             createLink='/repository/create/'
             alias='repositorie(s)'

@@ -4,6 +4,11 @@
     align-items: center;
 }
 
+.Dashboard-Card-Container-Footer-Option-Container[data-disabled='true']{
+    cursor: not-allowed;
+    opacity: .5;
+}
+
 .Dashboard-Card-Container-Footer{
     padding: 0 1rem;
 }

@@ -6,11 +6,12 @@ import DashboardModule from '@components/molecules/DashboardModule';
 import { IoLogoDocker } from 'react-icons/io5';
 
 const PortBindings = ({ ...props }) => {
-    const { portBindings, isLoading, error, stats } = useUserPortBindings();
+    const { portBindings, isLoading, error, stats, isOperationLoading } = useUserPortBindings();
 
     return (
         <DashboardModule
             title='Port Bindings'
+            isOperationLoading={isOperationLoading}
             createLink='/port-binding/create/'
             Icon={IoLogoDocker}
             alias='network(s)'
