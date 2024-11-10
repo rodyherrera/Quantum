@@ -47,9 +47,10 @@ const ContextMenu = ({ options, children, ...props }) => {
                         }}
                     >
                         <ul className='Context-Menu-Options'>
-                            {options.map(({ title, onClick, extend, to }, index) => (
+                            {options.map(({ title, onClick, disabled, extend, to }, index) => (
                                 <ContextMenuOption
                                     key={index}
+                                    disabled={disabled}
                                     title={title}
                                     onClick={onClick}
                                     extend={extend}

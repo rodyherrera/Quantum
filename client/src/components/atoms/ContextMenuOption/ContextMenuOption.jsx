@@ -16,10 +16,11 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import './ContextMenuOption.css';
 
-const ContextMenuOption = ({ to, onClick, title, ...props }) => {
+const ContextMenuOption = ({ to, onClick, title, disabled = false, ...props }) => {
     const navigate = useNavigate();
 
     const clickHandler = () => {
+        if(disabled) return;
         if(onClick){
             onClick();
         }
@@ -34,6 +35,7 @@ const ContextMenuOption = ({ to, onClick, title, ...props }) => {
             <li 
                 className='Context-Menu-Option' 
                 onClick={clickHandler}
+                data-disabled={disabled}
                 {...props}
             >
                 <span className='Context-Menu-Option-Title'>{title}</span>
