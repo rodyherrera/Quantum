@@ -17,7 +17,7 @@ import { useQuery } from '@hooks/common/';
 import AnimatedMain from '@components/atoms/AnimatedMain';
 import { useSelector, useDispatch } from 'react-redux';
 import { createAccount } from '@services/github/operations';
-import { CircularProgress } from '@mui/material';
+import Loader from '@components/atoms/Loader';
 import './Authenticate.css';
 
 const Authenticate = () => {
@@ -44,7 +44,7 @@ const Authenticate = () => {
 
     return (
         <AnimatedMain id='Github-Authenticate-Main'>
-            <CircularProgress className='Circular-Progress' />
+            <Loader scale='0.7' />
             <p>Connecting to your Github account...</p>
         </AnimatedMain>
     );

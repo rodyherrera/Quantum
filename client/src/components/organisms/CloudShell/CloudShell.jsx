@@ -1,10 +1,10 @@
 import React, { useRef } from 'react';
+import Loader from '@components/atoms/Loader';
 import ResizableInAxisY from '@components/atoms/ResizableInAxisY';
 import { useRemoteTerminal } from '@hooks/ws/';
 import { VscGithubAlt } from 'react-icons/vsc';
 import { BiBookAlt } from 'react-icons/bi';
 import { AiOutlineClose } from 'react-icons/ai';
-import { CircularProgress } from '@mui/material';
 import { BsTerminal } from 'react-icons/bs';
 import { PiDotsSixBold } from 'react-icons/pi';
 import { useDispatch } from 'react-redux';
@@ -68,7 +68,7 @@ const CloudConsole = () => {
                 <article className='Cloud-Shell-Body-Container'>
                     {!isConnected && (
                         <div className='Cloud-Shell-Loading-Container'>
-                            <CircularProgress className='Circular-Progress' />
+                            <Loader scale='0.7' />
                         </div>
                     )}
 

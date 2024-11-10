@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
-import { CircularProgress } from '@mui/material';
 import { gsap } from 'gsap'; 
+import Loader from '@components/atoms/Loader';
 import Breadcrumbs from '@components/molecules/Breadcrumbs';
 import EnvironmentVariable from '@components/atoms/EnvironmentVariable';
 import AnimatedMain from '@components/atoms/AnimatedMain';
@@ -135,15 +135,15 @@ const EnvironmentVariables = ({
             
             {(isOperationLoading) && (
                 <section className='Environment-Variables-Operation-Loading-Container'>
-                    <CircularProgress className='Circular-Progress' />
-                    <p>Recreating container with the new configuration...</p>
+                    <Loader scale='0.6' />
+                    <p className='Environment-Variables-Operation-Loading-Title'>Recreating container with the new configuration...</p>
                 </section>
             )}
 
             <section className='Environment-Variables-Body'>
                 {(isEnvironmentLoading) ? (
                     <div className='Environment-Variables-Loader-Container'>
-                        <CircularProgress className='Circular-Progress' />
+                        <Loader scale='0.7' />
                     </div>
                 ) : (
                     (environment.variables.length === 0) ? (

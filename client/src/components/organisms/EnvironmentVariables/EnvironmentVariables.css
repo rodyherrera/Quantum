@@ -83,7 +83,7 @@
 .Environment-Variables-Operation-Loading-Container{
     position: absolute;
     width: 100%;
-    gap: 1.5rem;
+    gap: 2.5rem;
     text-align: center;
     height: calc(100% - 140px);
     display: flex;
@@ -130,6 +130,10 @@
 .Environment-Variables-Create-New-Container:hover{
     background-color: #000000;
     color: #F5F5F5;
+}
+
+.Environment-Variables-Operation-Loading-Title{
+    font-size: .96rem;
 }
 
 .Environment-Variables-Create-New-Title{

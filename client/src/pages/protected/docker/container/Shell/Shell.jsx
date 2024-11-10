@@ -1,9 +1,9 @@
 import React, { useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { CircularProgress } from '@mui/material';
 import { useRemoteTerminal } from '@hooks/ws/';
 import { useWindowSize } from '@hooks/common/';
 import { useSelector } from 'react-redux';
+import Loader from '@components/atoms/Loader';
 import AnimatedMain from '@components/atoms/AnimatedMain';
 import './Shell.css';
 
@@ -30,7 +30,7 @@ const Shell = () => {
         <AnimatedMain id='Docker-Container-Terminal-Main'>
             {!isConnected && (
                 <section className='Docker-Container-Terminal-Loading-Container'>
-                    <CircularProgress className='Circular-Progress' />
+                    <Loader scale='0.7' />
                     <p className='Docker-Container-Terminal-Loading-Message'>Connecting to your container...</p>
                 </section>
             )}

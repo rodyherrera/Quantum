@@ -14,8 +14,8 @@
 
 import React from 'react';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
-import { CircularProgress } from '@mui/material';
 import { useSelector } from 'react-redux';
+import Loader from '@components/atoms/Loader';
 import './ProtectedRoute.css';
 
 const ProtectedRoute = ({ mode, restrictTo = undefined }) => {
@@ -24,7 +24,7 @@ const ProtectedRoute = ({ mode, restrictTo = undefined }) => {
 
     return (authStatus.isCachedAuthLoading) ? (
         <main className='Authentication-Loading-Main'>
-            <CircularProgress className='Circular-Progress' />
+            <Loader scale='0.7' />
         </main>
     ) : restrictTo !== undefined ? (
         user && user.Role.toLowerCase().includes(restrictTo.toLowerCase()) ?

@@ -14,9 +14,9 @@
 
 import React, { useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
-import { CircularProgress } from '@mui/material';
 import { useWindowSize } from '@hooks/common/';
 import { useRemoteTerminal } from '@hooks/ws/';
+import Loader from '@components/atoms/Loader';
 import RelatedRepositorySections from '@components/molecules/RelatedRepositorySections';
 import Breadcrumbs from '@components/molecules/Breadcrumbs';
 import AnimatedMain from '@components/atoms/AnimatedMain'
@@ -57,7 +57,7 @@ const Shell = () => {
                     <div id='Repository-Shell'>
                         {(!isConnected) && (
                             <aside id='Socket-Connection-Loading-Container'>
-                                <CircularProgress className='Circular-Progress' />
+                                <Loader scale='0.7' />
                             </aside>
                         )}
 

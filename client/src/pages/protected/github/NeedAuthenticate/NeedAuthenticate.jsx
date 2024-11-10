@@ -17,7 +17,7 @@ import { BsArrowRight } from 'react-icons/bs';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { authenticate } from '@services/github/operations';
-import { CircularProgress } from '@mui/material';
+import Loader from '@components/atoms/Loader';
 import Button from '@components/atoms/Button';
 import AnimatedMain from '@components/atoms/AnimatedMain';
 import './NeedAuthenticate.css';
@@ -34,7 +34,7 @@ const NeedAuthenticate = () => {
 
     return (isLoading) ? (
         <AnimatedMain id='Github-Need-Authenticate-Loading-Main'>
-            <CircularProgress className='Circular-Progress' />
+            <Loader scale='0.7' />
             <p>Connecting to your Github account...</p>
         </AnimatedMain>
     ) : (

@@ -13,7 +13,7 @@
 ****/
 
 import React, { useEffect } from 'react';
-import { CircularProgress } from '@mui/material';
+import Loader from '@components/atoms/Loader';
 import { useDispatch, useSelector } from 'react-redux';
 import { getServerHealth } from '@services/core/operations';
 import { FaCheckCircle } from 'react-icons/fa';
@@ -72,7 +72,9 @@ const ServiceStatus = () => {
             </section>
 
             {isServerHealthLoading ? (
-                <CircularProgress className='Circular-Progress' />
+                <section id='Service-Status-Loader-Container'>
+                    <Loader scale='0.7' />
+                </section>
             ) : (
                 <React.Fragment>
                 <section id='Service-Status-Body-Container'>

@@ -15,8 +15,8 @@
 import React, { useEffect } from 'react';
 import { gsap } from 'gsap';
 import { useSearchParams } from 'react-router-dom';
-import { CircularProgress } from '@mui/material';
 import { useDispatch } from 'react-redux';
+import Loader from '@components/atoms/Loader';
 import CodeEditor from '@uiw/react-textarea-code-editor';
 import FileExplorerHeader from '@components/molecules/FileExplorerHeader';
 import FileExplorerContent from '@components/atoms/FileExplorerContent';
@@ -83,7 +83,7 @@ const FileExplorer = ({
 
     return isOperationLoading ? (
         <div className='File-Explorer-Loading-Container'>
-            <CircularProgress className='Circular-Progress' />
+            <Loader scale='0.7' />
         </div>
     ) : (
         <div className='File-Explorer-Body-Container'>
