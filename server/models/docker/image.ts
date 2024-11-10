@@ -33,12 +33,34 @@ const cascadeDeleteHandler = async (document: IDockerImage): Promise<void> => {
     const { _id } = document;
     await mongoose.model('DockerContainer').deleteMany({ image: _id });
     await mongoose.model('User').updateOne({ user: document.user }, { $pull: { images: _id } })
-}
+};
 
-DockerImageSchema.pre('deleteMany', async function() {
+const hasActiveMainContainers = async (document: IDockerImage): Promise<boolean> => {
+    const containers = await mongoose.model('DockerContainer').find({ image: document._id, isUserContainer: true });
+    const hasActiveMainContainers = containers.length >= 1;
+    return hasActiveMainContainers;
+};
+
+DockerImageSchema.pre('deleteMany', async function(next){
     const conditions = this.getQuery();
     const images = await mongoose.model('DockerImage').find(conditions);
-    await Promise.all(images.map(async (image) => await cascadeDeleteHandler(image)));
+    await Promise.all(images.map(async (image) => {
+        if(await hasActiveMainContainers(image)){
+            next(new Error('Docker::Image::ActiveUserContainers'));
+            return;
+        }
+        await cascadeDeleteHandler(image);
+    }));
+    next();
+});
+
+DockerImageSchema.pre('findOneAndDelete', async function(next){
+    const image = await this.model.findOne(this.getQuery());
+    if(await hasActiveMainContainers(image)){
+        next(new Error('Docker::Image::ActiveUserContainers'));
+        return;
+    }
+    next();
 });
 
 DockerImageSchema.post('findOneAndDelete', async function(deletedDoc){

@@ -63,16 +63,39 @@ DockerNetworkSchema.pre('save', async function(next){
     }
 });
 
+const hasActiveMainContainers = async (document: IDockerNetwork): Promise<boolean> => {
+    const containers = await mongoose.model('DockerContainer').find({ 
+        network: document._id, 
+        isUserContainer: true 
+    });
+    const hasActiveMainContainers = containers.length >= 1;
+    return hasActiveMainContainers;
+};
+
+DockerNetworkSchema.pre('findOneAndDelete', async function(next){
+    const network = await this.model.findOne(this.getQuery());
+    if(await hasActiveMainContainers(network)){
+        next(new Error('Docker::Network::ActiveUserContainers'));
+        return;
+    }
+    next();
+});
+
 DockerNetworkSchema.post('findOneAndDelete', async function(doc){
     await cascadeDeleteHandler(doc);
 });
 
-DockerNetworkSchema.pre('deleteMany', async function(){
+DockerNetworkSchema.pre('deleteMany', async function(next){
     const conditions = this.getQuery();
     const networks = await mongoose.model('DockerNetwork').find(conditions);
     await Promise.all(networks.map(async (network) => {
+        if(await hasActiveMainContainers(network)){
+            next(new Error('Docker::Network::ActiveUserContainers'));
+            return;
+        }
         await cascadeDeleteHandler(network);
     }));
+    next();
 });
 
 const DockerNetwork: Model<IDockerNetwork> = mongoose.model('DockerNetwork', DockerNetworkSchema);
