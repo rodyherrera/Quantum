@@ -18,5 +18,6 @@ import * as serverController from '@controllers/server';
 const router = express.Router();
 
 router.get('/health', serverController.health);
+router.get('/ip/', serverController.getServerIP)
 
 export default router;

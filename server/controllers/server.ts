@@ -61,5 +61,13 @@ export const health = catchAsync(async (req: Request, res: Response) => {
             status: 'success',
             data: { serverStatus, cpuStatus, ramStatus }
         });
-    }, 100); // Delay for a more representative CPU usage calculation 
+        // Delay for a more representative CPU usage calculation 
+    }, 100); 
+});
+
+export const getServerIP = catchAsync(async (req: Request, res: Response) => {
+    res.status(200).json({
+        status: 'success',
+        data: process.env.SERVER_IP
+    })
 });
