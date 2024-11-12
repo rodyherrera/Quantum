@@ -123,7 +123,7 @@ class HandlerFactory{
         if(populate.startsWith('{') || populate.startsWith('[')){
             try{
                 const parsed = JSON.parse(populate);
-                return Array.isArray(parsed) ? parsed.join(' ') : parsed;
+                return Array.isArray(parsed) ? parsed.join(' ') : String(parsed);
             }catch(e){
                 return null;
             }
