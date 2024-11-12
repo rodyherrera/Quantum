@@ -195,6 +195,7 @@ export const validateEnvironmentVariables = (): void => {
         { name: 'SESSION_SECRET' },
         { name: 'GITHUB_CLIENT_ID' },
         { name: 'GITHUB_CLIENT_SECRET' },
+        { name: 'SERVER_IP', validation: /^(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])(\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])){3}$/, errorMessage: 'SERVER_IP must be a valid IPv4 address.' },
         { name: 'JWT_EXPIRATION_DAYS', validation: /^[-+]?\d+$/, errorMessage: 'JWT_EXPIRATION_DAYS must be a number.' },
         { name: 'CORS_ORIGIN' },
         { name: 'PRODUCTION_DATABASE' },

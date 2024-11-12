@@ -20,6 +20,7 @@ services:
       SECRET_KEY: ${SECRET_KEY}
       ENCRYPTION_KEY: ${ENCRYPTION_KEY}
       ENCRYPTION_IV: ${ENCRYPTION_IV}
+      SERVER_IP: ${SERVER_IP}
       LOG_LEVEL: ${LOG_LEVEL:-"info"}
       REGISTRATION_DISABLED: ${REGISTRATION_DISABLED:-"true"}
       CLIENT_HOST: ${CLIENT_HOST:-http://quantum.yourdomain.com}
