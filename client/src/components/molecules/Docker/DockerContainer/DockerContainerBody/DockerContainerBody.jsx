@@ -1,14 +1,17 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { DashboardCardBody } from '@components/atoms/DashboardCard';
+import { MdOutlineArrowOutward } from 'react-icons/md';
 import { useDispatch } from 'react-redux';
 import { setState as dockerNetworkSetState } from '@services/docker/network/slice';
 import { setState as dockerImageSetState } from '@services/docker/image/slice';
 import { setState as dockerContainerSetState } from '@services/docker/container/slice';
 import useDeleteDockerContainer from '@hooks/api/docker/useDeleteDockerContainer';
+import useServerIP from '@hooks/api/server/useServerIP';
 import './DockerContainerBody.css';
 
 const DockerContainerBody = ({ container }) => {
     const dispatch = useDispatch();
+    const { serverIP } = useServerIP();
     const deleteDockerContainer = useDeleteDockerContainer(container._id);
 
     const selectContainer = () => {
@@ -37,7 +40,11 @@ const DockerContainerBody = ({ container }) => {
     return (
         <DashboardCardBody
             name={container?.isUserContainer ? 'Main Docker Container' : container.name}
-            headerBadges={container.portBindings.map(({ externalPort }) => ({ title: externalPort }))}
+            headerBadges={container.portBindings.map(({ externalPort }) => ({ 
+                title: externalPort, 
+                Icon: MdOutlineArrowOutward, 
+                onClick: () => window.open(`http://${serverIP}:${externalPort}`, '_blank').focus()
+            }))}
             ctxMenuOpts={ctxMenuOpts}
             createdAt={container.createdAt}
             updatedAt={container.updatedAt}

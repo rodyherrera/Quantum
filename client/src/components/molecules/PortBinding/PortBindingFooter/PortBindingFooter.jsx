@@ -9,7 +9,6 @@ const PortBindingFooter = ({ portBinding }) => {
     const { serverIP } = useServerIP();
 
     const visitHandler = () => {
-        console.log(serverIP)
         const url = `http://${serverIP}:${portBinding.externalPort}`;
         window.open(url, '_blank').focus();
     };

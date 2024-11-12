@@ -29,8 +29,8 @@ export const getMyDockerContainers = () => async (dispatch) => {
         query: {
             queryParams: {
                 populate: JSON.stringify({
-                    path: 'portBindings',
-                    select: 'externalPort'
+                    path: 'portBindings image',
+                    select: 'externalPort name tag size'
                 })
             }
         }

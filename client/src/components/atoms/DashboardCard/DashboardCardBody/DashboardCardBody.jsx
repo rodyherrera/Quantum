@@ -13,9 +13,14 @@ const DashboardCardBody = ({ name, headerBadges = null, ctxMenuOpts, updatedAt, 
                     <h3 className='Dashboard-Card-Name'>{name}</h3>
                     {headerBadges && (
                         <div className='Dashboard-Card-Header-Badges'>
-                            {headerBadges.map(({ title }, index) => (
-                                <div className='Dashboard-Card-Header-Badge-Container' key={index}>
+                            {headerBadges.map(({ title, Icon, onClick = () => {} }, index) => (
+                                <div className='Dashboard-Card-Header-Badge-Container' onClick={onClick} key={index}>
                                     <span className='Dashboard-Card-Header-Badge'>{title}</span>
+                                    {Icon && (
+                                        <i className='Dashboard-Card-Header-Badge-Icon'>
+                                            <Icon />
+                                        </i>
+                                    )}
                                 </div>
                             ))}
                         </div>

@@ -5,6 +5,10 @@
     gap: .5rem;
 }
 
+.Dashboard-Card-Header-Badge-Icon{
+    font-size: .8rem;
+}
+
 .Dashboard-Card-Header-Left-Container{
     display: flex;
     justify-content: space-between;
