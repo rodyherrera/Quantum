@@ -56,7 +56,7 @@ const DockerContainerSchema: Schema<IDockerContainer> = new Schema({
     },
     portBindings: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'PortBindings'
+        ref: 'PortBinding'
     }],
     // can't change later
     name: {

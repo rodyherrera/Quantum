@@ -75,10 +75,13 @@ const findOrCreateNetwork = async (
     return containerNetwork;
 };
 
-export const getMyDockerContainers = catchAsync(async (req: Request, res: Response) => {
-    const user = req.user as IUser;
-    const containers = await DockerContainer.find({ user: user._id }).populate('network image');
-    res.status(200).json({ status: 'success', data: containers });
+export const getMyDockerContainers = DockerContainerFactory.getAll({
+    middlewares: {
+        pre: [(req, query) => {
+            query.user = req.user;
+            return query;
+        }]
+    }
 });
 
 // verify ownership!!!!!
