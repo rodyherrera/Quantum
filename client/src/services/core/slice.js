@@ -21,6 +21,8 @@ const state = {
     errors: [],
     isServerHealthLoading: true,
     serverHealth: null,
+    isServerIPLoading: false,
+    serverIP: null,
     error: null
 };
 

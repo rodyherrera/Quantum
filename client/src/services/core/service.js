@@ -30,3 +30,8 @@ export const getServerHealth = ServerAPI.register({
     path: '/health',
     method: 'GET'
 });
+
+export const getServerIP = ServerAPI.register({
+    path: '/ip',
+    method: 'GET'
+});

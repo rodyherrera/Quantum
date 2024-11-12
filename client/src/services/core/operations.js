@@ -63,6 +63,15 @@ export const resetErrorForAllSlices = () => (dispatch) => {
     }
 };
 
+export const getServerIP = () => async (dispatch) => {
+    const operation = createOperation(coreSlice, dispatch);
+    operation.use({
+        api: coreService.getServerIP,
+        responseState: 'serverIP',
+        loaderState: 'isServerIPLoading'
+    });
+};
+
 /**
  * @function getServerHealth
  * @description Fetches the health status of the Quantum Cloud server.
