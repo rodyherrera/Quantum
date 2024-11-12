@@ -25,7 +25,15 @@ export const getMyDockerContainers = () => async (dispatch) => {
         api: dockerContainerService.getMyDockerContainers,
         responseState: 'dockerContainers',
         loaderState: 'isLoading',
-        statsState: 'stats'
+        statsState: 'stats',
+        query: {
+            queryParams: {
+                populate: JSON.stringify({
+                    path: 'portBindings',
+                    select: 'externalPort'
+                })
+            }
+        }
     });
 };
 

@@ -5,6 +5,41 @@
     gap: .5rem;
 }
 
+.Dashboard-Card-Header-Left-Container{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+.Dashboard-Card-Header-Badges{
+    display: flex;
+    gap: .5rem;
+    align-items: center;
+}
+
+.Dashboard-Card-Header-Badge-Container{
+    display: flex;
+    align-items: center;
+    color: #FFF;
+    font-size: .7rem;
+    font-family: 'IBM Plex Sans';
+    gap: .5rem;
+    background-color: #0f62fe;
+    cursor: pointer;
+    padding: .25rem .5rem;
+    border-radius: 1rem;
+    transition: .1s;
+}
+
+.Dashboard-Card-Header-Badge-Container:hover{
+    opacity: .8;
+}
+
+.Dashboard-Card-Header-Badge-Container:active{
+    transform: scale(.95);
+}
+
 .Dashboard-Card-Name-Container{
     display: flex;
     justify-content: space-between;

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { DashboardCardBody } from '@components/atoms/DashboardCard';
 import { useDispatch } from 'react-redux';
 import { setState as dockerNetworkSetState } from '@services/docker/network/slice';
@@ -37,6 +37,7 @@ const DockerContainerBody = ({ container }) => {
     return (
         <DashboardCardBody
             name={container?.isUserContainer ? 'Main Docker Container' : container.name}
+            headerBadges={container.portBindings.map(({ externalPort }) => ({ title: externalPort }))}
             ctxMenuOpts={ctxMenuOpts}
             createdAt={container.createdAt}
             updatedAt={container.updatedAt}
