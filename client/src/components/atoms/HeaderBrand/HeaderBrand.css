@@ -21,7 +21,7 @@
     gap: .8rem;
     padding: 1.5rem 3rem;
     cursor: pointer;
-    border-right: 1px solid #000000;
+    border-right: 1px solid #dfdfdf;
 }
 
 .Header-Brand-Container:hover{

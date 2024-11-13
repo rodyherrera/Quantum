@@ -17,7 +17,7 @@
     bottom: 0;
     height: 100%;
     width: 100vw;
-    background-color: rgba(245, 245, 245);
+    background-color: #FFF;
     z-index: 90;
     display: flex;
     flex-direction: column;

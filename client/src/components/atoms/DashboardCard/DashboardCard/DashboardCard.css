@@ -5,4 +5,9 @@
     padding-bottom: 1rem;
     border-radius: .5rem;
     border: 1px solid #dfdfdf;
+    transition: .1s;
+}
+
+.Dashboard-Card-Container:hover{
+    border: 1px solid #0f62fe;
 }

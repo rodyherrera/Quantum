@@ -13,7 +13,7 @@
 ****/
 
 .Header-Navigation-Item-Container{
-    border-left: 1px solid #000000;
+    border-left: 1px solid #dfdfdf;
     display: flex;
     font-size: 1.1rem;
     cursor: pointer;

@@ -21,7 +21,7 @@
 .Header{
     justify-content: space-between;
     height: 79px;
-    border-bottom: 1px solid #000000;
+    border-bottom: 1px solid #dfdfdf;
     backdrop-filter: blur(4px);
     width: 100%;
 }
