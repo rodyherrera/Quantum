@@ -129,9 +129,7 @@ class APIFeatures{
                 this.buffer.sort = sortBy;
             }
         }else{
-            if(typeof this.buffer.sort !== 'object'){
-                this.buffer.sort = '-createdAt';
-            }
+            this.buffer.sort = '-createdAt';
         }
         return this;
     }
