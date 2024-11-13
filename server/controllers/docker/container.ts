@@ -178,7 +178,7 @@ export const containerStatus = catchAsync(async (req: Request, res: Response, ne
         return next(new RuntimeError('DockerContainer::Status::Invalid', 400));
     }
 
-    const containerId = req.params._id;
+    const containerId = req.params.id;
     const container = await DockerContainer.findById(containerId);
 
     if(!container){
