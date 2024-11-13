@@ -18,11 +18,7 @@ const getDockerOrCreateDockerImage = async (image: IRequestDockerImage, userId: 
         throw new RuntimeError('OneClickDeploy::Image::NotFound', 400);
     }
     const query = { user: userId, name, tag };
-    const dockerImage = await DockerImage.findOne(query);
-    if(!dockerImage){
-        return await DockerImage.create(query)
-    }
-    return dockerImage;
+    return await DockerImage.findOneAndUpdate(query, query, { upsert: true, new: true });
 };
 
 const parseEnvironVariables = async (
@@ -48,8 +44,10 @@ const createParentContainer = async (user: IUser, config: IOneClickDeployConfig)
     const randAlias = v4().slice(0, 4);
     const containerName = `${config.name}-${randAlias}`;
     const networkName = `${containerName}-network`;
-    const image = await getDockerOrCreateDockerImage(config.image as IRequestDockerImage, user._id);
-    const network = await DockerNetwork.create({ name: networkName, user: user._id });
+    const [image, network] = await Promise.all([
+        getDockerOrCreateDockerImage(config.image as IRequestDockerImage, user._id),
+        DockerNetwork.create({ name: networkName, user: user._id })
+    ]);
     const container = await DockerContainer.create({
         user: user._id,
         image: image._id,
@@ -57,17 +55,18 @@ const createParentContainer = async (user: IUser, config: IOneClickDeployConfig)
         name: containerName,
         command: config.command,
     });
-    for(const port of config.ports ?? []){
+    const portBindings = config.ports?.map(async (port) => {
         const { internalPort, protocol } = port;
         const externalPort = await findRandomAvailablePort();
-        await PortBinding.create({
+        return await PortBinding.create({
             container: container._id,
             user: user._id,
             internalPort,
             protocol,
             externalPort
         });
-    }
+    }) ?? [];
+    await Promise.all(portBindings);
     return { network, container };
 };
 
