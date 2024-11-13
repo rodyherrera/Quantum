@@ -3,6 +3,7 @@ import RuntimeError from '@utilities/runtimeError';
 import DockerImage from '@models/docker/image';
 import DockerNetwork from '@models/docker/network';
 import HandlerFactory from '@controllers/common/handlerFactory';
+import DockerContainerService from '@services/docker/container';
 import mongoose from 'mongoose';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -36,6 +37,17 @@ export const deleteDockerContainer = DockerContainerFactory.deleteOne({
         }]
     }
 });
+
+export const getMyDockerContainers = DockerContainerFactory.getAll({
+    middlewares: {
+        pre: [(req, query) => {
+            query.user = req.user;
+            return query;
+        }]
+    }
+});
+
+export const updateDockerContainer = DockerContainerFactory.updateOne();
 
 const findOrCreateImage = async (
     image: string | IRequestDockerImage,
@@ -74,18 +86,6 @@ const findOrCreateNetwork = async (
     }
     return containerNetwork;
 };
-
-export const getMyDockerContainers = DockerContainerFactory.getAll({
-    middlewares: {
-        pre: [(req, query) => {
-            query.user = req.user;
-            return query;
-        }]
-    }
-});
-
-// verify ownership!!!!!
-export const updateDockerContainer = DockerContainerFactory.updateOne();
 
 export const randomAvailablePort = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const port = await findRandomAvailablePort();
@@ -168,4 +168,39 @@ export const createDockerContainer = catchAsync(async (req: Request, res: Respon
     });
 
     res.status(200).json({ status: 'success', data: container });
+});
+
+export const containerStatus = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const { status } = req.body;
+    const VALID_STATUS = ['stop', 'restart', 'start'];
+
+    if(!VALID_STATUS.includes(status)){
+        return next(new RuntimeError('DockerContainer::Status::Invalid', 400));
+    }
+
+    const containerId = req.params._id;
+    const container = await DockerContainer.findById(containerId);
+
+    if(!container){
+        return next(new RuntimeError('DockerContainer::Status::NotFound', 400));
+    }
+    
+    const containerService = new DockerContainerService(container);
+    const statusMap: Record<string, () => Promise<void>> = {
+        async stop(){
+            await containerService.stop();
+        },
+        async restart(){
+            await containerService.restart();
+        },
+        async start(){
+            await containerService.start();
+        }
+    };
+    await statusMap[status]();
+
+    res.status(200).json({
+        status: 'success',
+        data: container
+    });
 });

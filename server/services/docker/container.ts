@@ -43,21 +43,21 @@ export const getSystemDockerName = (containerId: string): string => {
     return `quantum-container-${process.env.NODE_ENV}-${formattedName}`;
 }
 
-class DockerContainer {
+class DockerContainer{
     private container: IDockerContainer;
     private dockerImage: IDockerImage | null;
     private dockerNetwork: IDockerNetwork | null;
 
-    constructor(container: IDockerContainer) {
+    constructor(container: IDockerContainer){
         this.container = container;
         this.dockerImage = null;
         this.dockerNetwork = null;
     }
 
-    async getIpAddress(): Promise<string | null> {
+    async getIpAddress(): Promise<string | null>{
         const container = await this.getExistingContainer();
         const network = await DockerNetwork.findById(this.container.network).select('dockerNetworkName');
-        if (!network?.dockerNetworkName) {
+        if(!network?.dockerNetworkName){
             return null;
         }
         const data = await container.inspect();
@@ -65,24 +65,24 @@ class DockerContainer {
         return ipAddress;
     }
 
-    async initializeContainer() {
-        try {
+    async initializeContainer(){
+        try{
             const container = await this.getExistingContainer();
             return container;
-        } catch (error: any) {
-            if (error.statusCode === 404) {
+        }catch(error: any){
+            if(error.statusCode === 404){
                 const container = await this.createAndStartContainer();
                 return container;
-            } else {
+            }else{
                 logger.error('@services/docker/container.ts (initializeContainer): Could not handle Docker container startup request: ' + error);
             }
         }
     }
 
     async startSocketShell(socket: Socket, workDir: string = '/app') {
-        try {
+        try{
             const container = await this.initializeContainer();
-            if (!container) return;
+            if(!container) return;
             const exec = await container.exec({
                 Cmd: [this.container.command],
                 AttachStdout: true,
@@ -95,13 +95,13 @@ class DockerContainer {
             // TODO: check for storagePath usage
             await createLogStream(id, this.container.user.toString());
             setupSocketEvents(socket, id, this.container.user.toString(), exec);
-        } catch (error) {
+        }catch(error){
             logger.info('@services/docker/container.ts (startSocketShell): ' + error);
         }
     }
 
     getDockerStoragePath(): string {
-        if (!this.container.storagePath) {
+        if(!this.container.storagePath){
             throw Error('The container does not have a storage directory.');
         }
         return this.container.storagePath;
@@ -124,24 +124,24 @@ class DockerContainer {
     async getExistingContainer(): Promise<Dockerode.Container> {
         const container = docker.getContainer(this.container.dockerContainerName);
         const { State } = await container.inspect();
-        if (!State.Running) await container.start();
+        if(!State.Running) await container.start();
         return container;
     }
 
     async getDockerImage(): Promise<IDockerImage> {
-        if (this.dockerImage) return this.dockerImage;
+        if(this.dockerImage) return this.dockerImage;
         const dockerImage = await DockerImage.findById(this.container.image).select('name tag');
-        if (dockerImage === null) {
+        if(dockerImage === null){
             throw Error("Can't create a container that does not have any images configured.");
         }
         return dockerImage;
     }
 
     async getDockerNetwork(): Promise<IDockerNetwork> {
-        if (this.dockerNetwork) return this.dockerNetwork;
+        if(this.dockerNetwork) return this.dockerNetwork;
 
         let dockerNetwork = await DockerNetwork.findById(this.container.network).select('name');
-        if (dockerNetwork === null) {
+        if(dockerNetwork === null){
             throw Error('Trying to create a container that does not have any network configured yet.');
         }
         return dockerNetwork;
@@ -179,15 +179,69 @@ class DockerContainer {
         await this.initializeContainer();
     }
 
+    async stop(): Promise<void>{
+        try{
+            const container = docker.getContainer(this.container.dockerContainerName);
+            const { State } = await container.inspect();
+            if(!State.Running){
+                logger.info(`@services/docker/container.ts (stopContainer): Container ${this.container.dockerContainerName} is already stopped.`);
+                return;
+            }
+            await container.stop();
+            await this.container.updateOne({ status: 'stopped' });
+            logger.info(`@services/docker/container.ts (stopContainer): Successfully stopped container ${this.container.dockerContainerName}.`);
+        }catch(error){
+            logger.error(`@services/docker/container.ts (stopContainer): Failed to stop container ${this.container.dockerContainerName}. Error: ${error}`);
+            throw error;
+        }
+    }
+
+    async restart(): Promise<void>{
+        try{
+            const container = docker.getContainer(this.container.dockerContainerName);
+            logger.info(`@services/docker/container.ts (restartContainer): Restarting container ${this.container.dockerContainerName}...`);
+            const { State } = await container.inspect();
+            if(State.Running){
+                await container.stop();
+                logger.info(`@services/docker/container.ts (restartContainer): Stopped container ${this.container.dockerContainerName}.`);
+            }
+            await this.container.updateOne({ status: 'restarting' });
+            await container.start();
+            await this.container.updateOne({ status: 'running' });
+            logger.info(`@services/docker/container.ts (restartContainer): Successfully restarted container ${this.container.dockerContainerName}.`);
+        }catch(error){
+            logger.error(`@services/docker/container.ts (restartContainer): Failed to restart container ${this.container.dockerContainerName}. Error: ${error}`);
+            throw error;
+        }
+    }
+
+    async start(): Promise<void>{
+        try{
+            const container = docker.getContainer(this.container.dockerContainerName);
+            const { State } = await container.inspect();
+            if(State.Running){
+                logger.info(`@services/docker/container.ts (startContainer): Container ${this.container.dockerContainerName} is already running.`);
+                return;
+            }
+            await container.start();
+            await this.container.updateOne({ status: 'running' });
+            logger.info(`@services/docker/container.ts (startContainer): Successfully started container ${this.container.dockerContainerName}.`);
+        }catch(error){
+            logger.error(`@services/docker/container.ts (startContainer): Failed to start container ${this.container.dockerContainerName}. Error: ${error}`);
+            throw error;
+        }
+    }
+
     async createAndStartContainer(): Promise<Dockerode.Container | null> {
-        try {
+        try{
             const dockerImage = await this.getDockerImage();
             await pullImage(dockerImage.name, dockerImage.tag);
             await ensureDirectoryExists(this.getDockerStoragePath());
             const container = await this.createContainer();
             await container.start();
+            await this.container.updateOne({ status: 'running' });
             return container;
-        } catch (error) {
+        }catch(error){
             logger.error('@services/docker/container.ts (createAndStartContainer): ' + error);
             return null;
         }

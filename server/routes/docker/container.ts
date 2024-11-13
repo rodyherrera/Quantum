@@ -13,6 +13,7 @@ router.use(authMiddleware.protect);
 router.get('/me/', dockerContainerController.getMyDockerContainers);
 router.post('/', dockerContainerController.createDockerContainer);
 router.post('/one-click-deploy/', dockerContainerController.oneClickDeploy);
+router.post('/:id/status/', ownership, dockerContainerController.containerStatus);
 
 router.get('/storage/:id/explore/:route?', ownership, dockerContainerController.storageExplorer);
 router.get('/storage/:id/read/:route?', ownership, dockerContainerController.readContainerFile);
