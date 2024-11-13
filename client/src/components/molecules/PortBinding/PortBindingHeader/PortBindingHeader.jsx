@@ -6,7 +6,7 @@ const PortBindingHeader = ({ portBinding }) => {
     const options = [
         `Protocol: ${portBinding.protocol.toUpperCase()}`,
         `Container: ${portBinding.container.name} (${portBinding.container.ipAddress})`,
-        `Network Id: ${portBinding.container.network}`
+        `Network: ${portBinding.container.network}`
     ];
 
     return <DashboardCardHeader options={options} />

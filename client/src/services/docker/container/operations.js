@@ -37,6 +37,19 @@ export const getMyDockerContainers = () => async (dispatch) => {
     });
 };
 
+export const setDockerStatus = (id, status) => async (dispatch) => {
+    const operation = createOperation(dockerContainerSlice, dispatch);
+    operation.on('finally', () => {
+        dispatch(getMyDockerContainers());
+    });
+    operation.use({
+        api: dockerContainerService.setContainerStatus,
+        loaderState: 'isOperationLoading',
+        query: { params: { id } },
+        body: { status }
+    });
+};
+
 export const deleteDockerContainer = (id) => async (dispatch) => {
     const operation = createOperation(dockerContainerSlice, dispatch);
     operation.on('finally', () => {

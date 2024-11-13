@@ -60,3 +60,8 @@ export const updateContainerFile = DockerContainerAPI.register({
     path: '/storage/:id/overwrite/:route/',
     method: 'POST'
 });
+
+export const setContainerStatus = DockerContainerAPI.register({
+    path: '/:id/status/',
+    method: 'POST'
+});
