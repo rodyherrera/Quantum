@@ -52,6 +52,6 @@ export const getMyDockerImages = () => async (dispatch) => {
         api: dockerImageService.getMyDockerImages,
         responseState: 'dockerImages',
         loaderState: 'isLoading',
-        statsState: 'stats'
+        statsState: 'imageStats'
     });
 };

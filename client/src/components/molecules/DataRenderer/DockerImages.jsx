@@ -6,7 +6,7 @@ import { IoLogoDocker } from 'react-icons/io5';
 import { DockerImage } from '@components/organisms/Docker';
 
 const DockerImages = ({ ...props }) => {
-    const { dockerImages, isLoading, error, stats, isOperationLoading } = useUserDockerImages();
+    const { dockerImages, isLoading, error, imageStats, isOperationLoading } = useUserDockerImages();
 
     return (
         <DashboardModule
@@ -15,7 +15,7 @@ const DockerImages = ({ ...props }) => {
             Icon={IoLogoDocker}
             alias='image(s)'
             createLink='/docker-image/create/'
-            results={stats?.results?.total}
+            results={imageStats?.results?.total || 0}
             total={dockerImages?.length}
             RenderComponent={() => (
                 <DataRenderer

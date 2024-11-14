@@ -25,7 +25,7 @@ export const getMyDockerContainers = () => async (dispatch) => {
         api: dockerContainerService.getMyDockerContainers,
         responseState: 'dockerContainers',
         loaderState: 'isLoading',
-        statsState: 'stats',
+        statsState: 'containerStats',
         query: {
             queryParams: {
                 populate: JSON.stringify({

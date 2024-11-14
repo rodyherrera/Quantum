@@ -58,8 +58,8 @@ class OperationHandler extends EventManager{
             if(loaderState) this.updateState(loaderState, true);
             const { data, page, results } = await api({ query, body });
             this.emit('response', data);
-            if(statsState) this.updateState(statsState, { page, results });
             if(responseState) this.updateState(responseState, data);
+            if(statsState) this.updateState(statsState, { page, results });
         }catch(error){
             this.dispatch(globalErrorHandler(error, this.slice));
             this.emit('error', error);

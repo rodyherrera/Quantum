@@ -15,7 +15,7 @@ const RepositoriesDataRenderer = ({ ...props }) => {
             Icon={FiGithub}
             createLink='/repository/create/'
             alias='repositorie(s)'
-            results={stats?.results?.total}
+            results={stats?.results?.total || 0}
             total={repositories?.length}
             RenderComponent={() => (
                 <DataRenderer

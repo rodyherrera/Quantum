@@ -17,7 +17,6 @@ const Shell = () => {
         termContainerRef, query: { dockerId, action: 'DockerContainer::Shell' } });
         
     useEffect(() => {
-        console.log(selectedDockerContainer)
         if(!selectedDockerContainer?._id) navigate('/dashboard/');
     }, []);
 

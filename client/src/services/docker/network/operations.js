@@ -65,6 +65,6 @@ export const getMyDockerNetworks = () => (dispatch) => {
         api: dockerNetworkService.getMyDockerNetworks,
         responseState: 'dockerNetworks',
         loaderState: 'isLoading',
-        statsState: 'stats'
+        statsState: 'networkStats'
     });
 };

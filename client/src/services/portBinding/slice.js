@@ -19,7 +19,8 @@ const state = {
     error: null,
     isLoading: true,
     isOperationLoading: false,
-    portBindings: []
+    portBindings: [],
+    portBindingStats: {}
 };
 
 const portBindingSlice = createSlice({

@@ -21,7 +21,7 @@ const state = {
     randomAvailablePort: 0,
     isRandomAvailablePortLoading: true,
     isOperationLoading: false,
-    stats: {},
+    containerStats: {},
     isOneClickDeployLoading: false,
     dockerContainers: [],
     containerFiles: [],

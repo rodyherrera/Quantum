@@ -51,6 +51,7 @@ export const getMyPortBindings = () => async (dispatch) => {
         api: portBindingService.getMyPortBindings,
         responseState: 'portBindings',
         loaderState: 'isLoading',
+        statsState: 'portBindingStats',
         query: {
             queryParams: {
                 populate: 'container',

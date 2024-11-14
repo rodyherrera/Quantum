@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { TfiWorld } from "react-icons/tfi";
 import { BsArrowRight } from 'react-icons/bs';
 import { useDispatch, useSelector } from 'react-redux';
@@ -10,10 +10,6 @@ import './OneClickDeploys.css';
 const OneClickDeploys = () => {
     const dispatch = useDispatch();
     const { isOneClickDeployLoading } = useSelector((state) => state.dockerContainer);
-
-    useEffect(() => {
-        console.log(isOneClickDeployLoading);
-    }, [isOneClickDeployLoading]);
 
     const deployHandler = (config) => {
         dispatch(oneClickDeploy({ config }));
