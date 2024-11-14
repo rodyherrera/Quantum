@@ -18,7 +18,11 @@ const getDockerOrCreateDockerImage = async (image: IRequestDockerImage, userId: 
         throw new RuntimeError('OneClickDeploy::Image::NotFound', 400);
     }
     const query = { user: userId, name, tag };
-    return await DockerImage.findOneAndUpdate(query, query, { upsert: true, new: true });
+    const dockerImage = await DockerImage.findOne(query);
+    if(!dockerImage){
+        return await DockerImage.create(query)
+    }
+    return dockerImage;
 };
 
 const parseEnvironVariables = async (
