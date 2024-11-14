@@ -56,7 +56,7 @@
 
 .Cloud-Shell-Header-Container{
     width: 100%;
-    height: 60px;
+    height: 50px;
     display: flex;
     padding: 1rem 2rem;
     justify-content: space-between;
@@ -97,6 +97,7 @@
 .Cloud-Shell-Header-Left-Title-Container{
     display: flex;
     flex-direction: column;
+    font-family: 'IBM Plex Sans';
     line-height: .8rem;
 }
 
@@ -107,11 +108,11 @@
 .Cloud-Shell-Header-Left-Title{
     opacity: .6;
     text-transform: uppercase;
-    font-size: .75rem;
+    font-size: .65rem;
 }
 
 .Cloud-Shell-Header-Left-Subtitle{
-    font-size: .8rem;
+    font-size: .7rem;
 }
 
 @media screen and (max-width: 768px){

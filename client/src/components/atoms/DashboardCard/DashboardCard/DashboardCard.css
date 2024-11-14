@@ -5,6 +5,8 @@
     padding-bottom: 1rem;
     border-radius: .5rem;
     border: 1px solid #dfdfdf;
+    background-color: rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(1px);
     transition: .1s;
 }
 

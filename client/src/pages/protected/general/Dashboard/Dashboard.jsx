@@ -20,12 +20,13 @@ import {
     Repositories, 
     PortBindings } from '@components/molecules/DataRenderer';
 import { useDocumentTitle } from '@hooks/common';
+import UserStickyFooterStats from '@components/molecules/UserStickyFooterStats';
 import OneClickDeploys from '@components/molecules/OneClickDeploys';
 import './Dashboard.css';
 
 const Dashboard = () => {
     useDocumentTitle('Dashboard');
-    
+
     return (
         <main id='Dashboard-Page'>
             <section className='Dashboard-Header-Container'>
@@ -38,6 +39,7 @@ const Dashboard = () => {
                 <DockerImages />
                 <PortBindings />
             </section>
+            <UserStickyFooterStats />
         </main>
     );
 };

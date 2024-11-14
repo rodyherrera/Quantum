@@ -42,6 +42,8 @@
 
 #Dashboard-Page{
     display: flex;
+    padding-bottom: 3rem;
+    overflow-y: scroll;
     flex-direction: column;
 }
 

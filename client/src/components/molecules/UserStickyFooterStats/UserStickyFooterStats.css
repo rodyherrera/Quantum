@@ -1,0 +1,62 @@
+.User-Sticky-Footer-Stats-Container{
+    margin-top: 1rem;
+    padding: .5rem 2rem;
+    border-top: 1px solid #e0e0e0;
+    position: fixed;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(1px);
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+
+.User-Sticky-Footer-Stats-Item.Hover-Opacity:hover{
+    cursor: pointer;
+    opacity: .9;
+}
+
+.User-Sticky-Footer-Stats-Item.Hover-Underline:hover,
+.User-Sticky-Footer-Stats-Item-Content.Hover-Underline:hover{
+    cursor: pointer;
+    text-decoration: underline;
+    opacity: .9;
+    text-underline-offset: 5px;
+}
+
+.User-Sticky-Footer-Stats-Item-Icon{
+    font-size: .9rem;
+}
+
+.User-Sticky-Footer-Stats-Group .User-Sticky-Footer-Stats-Item-Content::after{
+    content: '/';
+    margin: 0 .5rem;
+}
+
+.User-Sticky-Footer-Stats-Group .User-Sticky-Footer-Stats-Item-Content{
+    color: #000000;
+    font-weight: 400;
+    font-size: .8rem;
+    font-family: 'IBM Plex Sans';
+}
+
+.User-Sticky-Footer-Stats-Group{
+    display: flex;
+    align-items: center;
+}
+
+.User-Sticky-Footer-Stats-Item{
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+}
+
+.User-Sticky-Footer-Stats-Item-Content{
+    font-size: .9rem;
+}
+
+@media screen and (max-width: 768px){
+    .User-Sticky-Footer-Stats-Container{
+        display: none;
+    }
+}
