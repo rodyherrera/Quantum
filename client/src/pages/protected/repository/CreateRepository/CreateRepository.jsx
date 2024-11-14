@@ -19,12 +19,14 @@ import { gsap } from 'gsap';
 import { useNavigate } from 'react-router-dom';
 import DataRenderer from '@components/organisms/DataRenderer';
 import RepositoryBasicItem from '@components/atoms/RepositoryBasicItem';
+import { useDocumentTitle } from '@hooks/common';
 import RelatedRepositorySections from '@components/molecules/RelatedRepositorySections';
 import './CreateRepository.css';
 
 const CreateRepository = () => {
     const { githubRepositories, isLoading, isOperationLoading, error } = useSelector(state => state.repository);
     const { user } = useSelector(state => state.auth);
+    useDocumentTitle('Create Repository');
 
     const dispatch = useDispatch();
     const navigate = useNavigate();

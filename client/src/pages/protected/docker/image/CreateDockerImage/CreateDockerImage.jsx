@@ -3,6 +3,7 @@ import MinimalForm from '@components/organisms/MinimalForm';
 import { createDockerImage } from '@services/docker/image/operations';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { useDocumentTitle } from '@hooks/common';
 import CreateDockerImageImage from '@images/CreateDockerImage.jpeg';
 import './CreateDockerImage.css';
 
@@ -11,6 +12,7 @@ const CreateDockerImage = () => {
     const { error, isOperationLoading } = useSelector((state) => state.dockerContainer);
     const navigate = useNavigate();
     const dispatch = useDispatch();
+    useDocumentTitle('Docker Image');
 
     const handleFormSubmit = (formValues) => {
         dispatch(createDockerImage(formValues, navigate));

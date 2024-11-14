@@ -17,6 +17,7 @@ import MinimalForm from '@components/organisms/MinimalForm'
 import { getMyProfile, updateMyProfile } from '@services/authentication/operations';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { useDocumentTitle } from '@hooks/common';
 import AuthenticatedUserRelatedSections from '@components/organisms/AuthenticatedUserRelatedSections'
 import './Account.css';
 
@@ -27,6 +28,7 @@ const AccountPage = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const { user, error, loadingStatus } = useSelector((state) => state.auth);
+    useDocumentTitle('My Account');
 
     useEffect(() => {
         dispatch(getMyProfile());

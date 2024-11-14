@@ -17,6 +17,7 @@ import MinimalForm from '@components/organisms/MinimalForm';
 import AuthenticatedUserRelatedSections from '@components/organisms/AuthenticatedUserRelatedSections'
 import { updateMyPassword } from '@services/authentication/operations';
 import { useSelector, useDispatch } from 'react-redux'; 
+import { useDocumentTitle } from '@hooks/common';
 import { useNavigate } from 'react-router-dom';
 import './ChangePassword.css';
 
@@ -24,6 +25,7 @@ const ChangePassword = () => {
     const { error, loadingStatus } = useSelector((state) => state.auth);
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    useDocumentTitle('Change Password');
 
     const handleFormSubmit = (formValues) => {
         dispatch(updateMyPassword(formValues, navigate));

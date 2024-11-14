@@ -3,14 +3,16 @@ import Storage from '@components/organisms/Storage';
 import { setState } from '@services/docker/container/slice';
 import { useSelector, useDispatch } from 'react-redux';
 import { storageExplorer, readContainerFile, updateContainerFile } from '@services/docker/container/operations';
+import { useDocumentTitle } from '@hooks/common';
 
-const RepositoryStorage = () => {
+const DockerContainerStorage = () => {
     const { 
         selectedDockerContainer,
         containerFiles,
         selectedContainerFile, 
         isOperationLoading } = useSelector((state) => state.dockerContainer);
     const dispatch = useDispatch();
+    useDocumentTitle('Docker Container Storage');
 
     const updateSelectedFile = (value) => {
         dispatch(setState({ path: 'selectedContainerFile', value }));
@@ -31,4 +33,4 @@ const RepositoryStorage = () => {
     />
 };
 
-export default RepositoryStorage;
+export default DockerContainerStorage;

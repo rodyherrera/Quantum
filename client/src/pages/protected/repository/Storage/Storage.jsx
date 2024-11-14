@@ -5,6 +5,8 @@ import { useParams } from 'react-router-dom';
 import { setState } from '@services/repository/slice';
 import { useDispatch, useSelector } from 'react-redux';
 import { storageExplorer, readRepositoryFile, updateRepositoryFile } from '@services/repository/operations';
+import { useDocumentTitle } from '@hooks/common';
+import './Storage.css';
 
 const RepositoryStorage = () => {
     const { repositoryAlias } = useParams();
@@ -14,6 +16,7 @@ const RepositoryStorage = () => {
         selectedRepositoryFile, 
         isOperationLoading } = useSelector((state) => state.repository);
     const dispatch = useDispatch();
+    useDocumentTitle('Repository Storage');
 
     const updateSelectedFile = (value) => {
         dispatch(setState({ path: 'selectedRepositoryFile', value }));

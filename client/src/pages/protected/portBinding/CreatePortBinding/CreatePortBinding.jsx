@@ -5,6 +5,7 @@ import CreatePortBindingImage from '@images/CreatePortBinding.jpeg';
 import { useDispatch, useSelector } from 'react-redux';
 import { createPortBinding } from '@services/portBinding/operations';
 import { useNavigate } from 'react-router-dom';
+import { useDocumentTitle } from '@hooks/common';
 import { getRandomAvailablePort } from '@services/docker/container/operations';
 import './CreatePortBinding.css';
 
@@ -17,6 +18,7 @@ const CreatePortBinding = () => {
     const { dockerContainers } = useUserDockerContainers();
     const navigate = useNavigate();
     const dispatch = useDispatch();
+    useDocumentTitle('Port Binding');
 
     useEffect(() => {
         dispatch(getRandomAvailablePort());

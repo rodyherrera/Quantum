@@ -18,6 +18,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { HiOutlineArrowRight } from 'react-icons/hi';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { useDocumentTitle } from '@hooks/common';
 import WelcomeSection from '@components/molecules/WelcomeSection';
 import Button from '@components/atoms/Button';
 import AnimatedMain from '@components/atoms/AnimatedMain';
@@ -30,6 +31,7 @@ gsap.registerPlugin(ScrollTrigger);
 const HomePage = () => {
     const { authStatus } = useSelector(state => state.auth);
     const navigate = useNavigate();
+    useDocumentTitle('Home');
 
     useEffect(() => {
         // Title Animation Setup

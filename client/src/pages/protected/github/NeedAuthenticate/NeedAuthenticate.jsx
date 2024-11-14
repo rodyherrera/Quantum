@@ -17,6 +17,7 @@ import { BsArrowRight } from 'react-icons/bs';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { authenticate } from '@services/github/operations';
+import { useDocumentTitle } from '@hooks/common';
 import Loader from '@components/atoms/Loader';
 import Button from '@components/atoms/Button';
 import AnimatedMain from '@components/atoms/AnimatedMain';
@@ -26,6 +27,7 @@ const NeedAuthenticate = () => {
     const { isLoading } = useSelector(state => state.github);
     const { user } = useSelector(state => state.auth);
     const navigate = useNavigate();
+    useDocumentTitle('Github Authentication');
 
     useEffect(() => {
         if(user?.github?._id)

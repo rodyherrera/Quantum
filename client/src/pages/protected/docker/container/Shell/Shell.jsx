@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useRemoteTerminal } from '@hooks/ws/';
 import { useWindowSize } from '@hooks/common/';
 import { useSelector } from 'react-redux';
+import { useDocumentTitle } from '@hooks/common';
 import Loader from '@components/atoms/Loader';
 import AnimatedMain from '@components/atoms/AnimatedMain';
 import './Shell.css';
@@ -15,6 +16,7 @@ const Shell = () => {
     const { selectedDockerContainer } = useSelector((state) => state.dockerContainer);
     const { isConnected, fitAddonRef } = useRemoteTerminal({
         termContainerRef, query: { dockerId, action: 'DockerContainer::Shell' } });
+    useDocumentTitle('Docker Container Shell');
         
     useEffect(() => {
         if(!selectedDockerContainer?._id) navigate('/dashboard/');

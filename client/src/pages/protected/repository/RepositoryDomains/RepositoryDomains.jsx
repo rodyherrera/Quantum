@@ -4,12 +4,14 @@ import RelatedRepositorySections from '@components/molecules/RelatedRepositorySe
 import { useSelector, useDispatch } from 'react-redux';
 import { updateRepository } from '@services/repository/operations';
 import { useNavigate } from 'react-router-dom';
+import { useDocumentTitle } from '@hooks/common';
 import './RepositoryDomains.css';
 
 const RepositoryDomains = () => {
     const { isOperationLoading, error, selectedRepository } = useSelector((state) => state.repository);
     const navigate = useNavigate();
     const dispatch = useDispatch();
+    useDocumentTitle('Manage Repository Domains');
 
     const handleFormSubmit = (formValues) => {
         formValues.domains = formValues.domains.split(',');

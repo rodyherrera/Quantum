@@ -18,6 +18,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getServerHealth } from '@services/core/operations';
 import { FaCheckCircle } from 'react-icons/fa';
 import { gsap } from 'gsap';
+import { useDocumentTitle } from '@hooks/common';
 import Button from '@components/atoms/Button';
 import AnimatedMain from '@components/atoms/AnimatedMain';
 import './ServiceStatus.css';
@@ -25,6 +26,7 @@ import './ServiceStatus.css';
 const ServiceStatus = () => {
     const dispatch = useDispatch();
     const { serverHealth, isServerHealthLoading } = useSelector((state) => state.core);
+    useDocumentTitle('Service Status');
 
     useEffect(() => {
         dispatch(getServerHealth());

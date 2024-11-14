@@ -17,6 +17,7 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateRepository } from '@services/repository/operations';
 import MinimalForm from '@components/organisms/MinimalForm';
+import { useDocumentTitle } from '@hooks/common';
 import RelatedRepositorySections from '@components/molecules/RelatedRepositorySections';
 import './SetupDeployment.css';
 
@@ -24,6 +25,7 @@ const SetupDeployment = () => {
     const { isOperationLoading, error, selectedRepository } = useSelector((state) => state.repository);
     const navigate = useNavigate();
     const dispatch = useDispatch();
+    useDocumentTitle('Build & Development Setting');
 
     const handleFormSubmit = (formValues) => {
         dispatch(updateRepository(selectedRepository._id, formValues, navigate));

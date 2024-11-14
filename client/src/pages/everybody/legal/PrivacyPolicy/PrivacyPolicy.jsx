@@ -15,10 +15,13 @@
 import React, { useRef, useEffect } from 'react';
 import PolicyArticle from '@components/molecules/PolicyArticle';
 import AnimatedMain from '@components/atoms/AnimatedMain';
+import { useDocumentTitle } from '@hooks/common';
 import { gsap } from 'gsap';
 import './PrivacyPolicy.css';
 
 const PrivacyPolicy = () => {
+    useDocumentTitle('Privacy Policy');
+
     const policies = [
         {
             title: 'Information We Collect Directly From You',

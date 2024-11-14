@@ -4,12 +4,14 @@ import * as dockerContainerSlice from '@services/docker/container/slice';
 import { useSelector, useDispatch } from 'react-redux';
 import { updateDockerContainer } from '@services/docker/container/operations';
 import { useNavigate } from 'react-router-dom';
+import { useDocumentTitle } from '@hooks/common';
 import './EnvironmentVariables.css';
 
 const ContainerEnvironVariables = () =>{
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const { selectedDockerContainer, isOperationLoading } = useSelector((state) => state.dockerContainer);
+    useDocumentTitle('Container Environment');
 
     const environUpdate = useCallback((environment) => {
         const body = { environment };

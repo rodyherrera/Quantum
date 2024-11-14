@@ -4,6 +4,7 @@ import { useUserDockerContainers } from '@hooks/api/user/';
 import { createDockerNetwork, updateDockerNetwork } from '@services/docker/network/operations';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useDocumentTitle } from '@hooks/common';
 import CreateDockerNetworkImage from '@images/CreateDockerNetwork.jpeg';
 import './CreateDockerNetwork.css';
 
@@ -13,6 +14,7 @@ const CreateDockerNetwork = () => {
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
     const dispatch = useDispatch();
+    useDocumentTitle('Docker Network');
 
     const handleFormSubmit = (formValues) => {
         dispatch(createDockerNetwork(formValues, navigate));

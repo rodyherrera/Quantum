@@ -17,12 +17,14 @@ import MinimalForm from '@components/organisms/MinimalForm';
 import AuthSignInRelatedSections from '@components/molecules/AuthSignInRelatedSections';
 import WhenCreatingAccount from '@components/organisms/WhenCreatingAccount';
 import { useSelector, useDispatch } from 'react-redux';
+import { useDocumentTitle } from '@hooks/common';
 import { signUp } from '@services/authentication/operations';
 import './SignUp.css';
 
 const SignUp = () => {
     const { loadingStatus, error } = useSelector(state => state.auth);
     const dispatch = useDispatch();
+    useDocumentTitle('Sign Up');
 
     const handleFormSubmit = (formValues) => {
         dispatch(signUp(formValues));

@@ -16,6 +16,7 @@ import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { gsap } from 'gsap';
 import { useDispatch, useSelector } from 'react-redux';
+import { useDocumentTitle } from '@hooks/common';
 import DeploymentItem from '@components/organisms/DeploymentItem';
 import DataRenderer from '@components/organisms/DataRenderer';
 import RelatedRepositorySections from '@components/molecules/RelatedRepositorySections';
@@ -28,6 +29,7 @@ const RepositoryDeployments = () => {
     const { selectedRepository } = useSelector(state => state.repository);
     const { deployments, isLoading, isOperationLoading, error } = useSelector(state => state.deployment);
     const { user } = useSelector(state => state.auth);
+    useDocumentTitle('Repository Deployments');
 
     useEffect(() => {
         dispatch(deploymentOperations.getRepositoryDeployments(selectedRepository.name));

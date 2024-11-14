@@ -6,6 +6,7 @@ import { getMyDockerImages } from '@services/docker/image/operations';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { humanFileSize } from '@utilities/common/fileUtils';
+import { useDocumentTitle } from '@hooks/common';
 import CreateDockerContainerImage from '@images/CreateDockerContainer.jpeg';
 import './CreateDockerContainer.css';
 
@@ -16,6 +17,7 @@ const CreateDockerContainer = () => {
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
     const dispatch = useDispatch();
+    useDocumentTitle('Docker Container');
 
     useEffect(() => {
         dispatch(getMyDockerNetworks());

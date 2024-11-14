@@ -18,12 +18,14 @@ import AnimatedMain from '@components/atoms/AnimatedMain';
 import { useSelector, useDispatch } from 'react-redux';
 import { createAccount } from '@services/github/operations';
 import Loader from '@components/atoms/Loader';
+import { useDocumentTitle } from '@hooks/common';
 import './Authenticate.css';
 
 const Authenticate = () => {
     const query = useQuery();
     const dispatch = useDispatch();
     const { user } = useSelector(state => state.auth);
+    useDocumentTitle('Authenticating Github Account');
 
     const handleAccountCreation = async () => {
         const accessToken = query.get('accessToken');

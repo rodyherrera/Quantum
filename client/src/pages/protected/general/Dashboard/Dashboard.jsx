@@ -19,10 +19,13 @@ import {
     DockerNetworks, 
     Repositories, 
     PortBindings } from '@components/molecules/DataRenderer';
-import './Dashboard.css';
+import { useDocumentTitle } from '@hooks/common';
 import OneClickDeploys from '@components/molecules/OneClickDeploys';
+import './Dashboard.css';
 
 const Dashboard = () => {
+    useDocumentTitle('Dashboard');
+    
     return (
         <main id='Dashboard-Page'>
             <section className='Dashboard-Header-Container'>

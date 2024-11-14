@@ -14,7 +14,7 @@
 
 import React, { useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
-import { useWindowSize } from '@hooks/common/';
+import { useWindowSize, useDocumentTitle } from '@hooks/common/';
 import { useRemoteTerminal } from '@hooks/ws/';
 import Loader from '@components/atoms/Loader';
 import RelatedRepositorySections from '@components/molecules/RelatedRepositorySections';
@@ -28,6 +28,7 @@ const Shell = () => {
     const { repositoryAlias } = useParams();
     const { isConnected, fitAddonRef } = useRemoteTerminal({ 
         termContainerRef, query: { repositoryAlias, action: 'Repository::Shell' } });
+    useDocumentTitle('Repository Shell');
 
     useEffect(() => {
         if(!fitAddonRef.current) return;

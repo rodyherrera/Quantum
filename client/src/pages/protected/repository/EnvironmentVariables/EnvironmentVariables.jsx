@@ -15,6 +15,7 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+import { useDocumentTitle } from '@hooks/common';
 import EnvironmentVariables from '@components/organisms/EnvironmentVariables';
 import * as deploymentSlice from '@services/deployment/slice';
 import * as deploymentOperations from '@services/deployment/operations';
@@ -29,6 +30,7 @@ const EnvironVariables = () => {
         isEnvironmentLoading, 
         isOperationLoading, 
         environment } = useSelector((state) => state.deployment);
+    useDocumentTitle('Environment Variables');
 
     const initEnviron = useCallback(() => {
         if(!selectedRepository){
