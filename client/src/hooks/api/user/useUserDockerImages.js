@@ -5,7 +5,7 @@ import { setState as dockerImgSetState } from '@services/docker/image/slice';
 
 const useUserDockerImages = () => {
     const dispatch = useDispatch();
-    const { dockerImages, isLoading, error, imageStats, isOperationLoading } = useSelector((state) => state.dockerImage);
+    const { dockerImages, isLoading, error, stats, isOperationLoading } = useSelector((state) => state.dockerImage);
     
     useEffect(() => {
         dispatch(getMyDockerImages());
@@ -14,7 +14,7 @@ const useUserDockerImages = () => {
         };
     }, []);
 
-    return { dockerImages, isLoading, error, imageStats, isOperationLoading };
+    return { dockerImages, isLoading, error, stats, isOperationLoading };
 };
 
 export default useUserDockerImages;

@@ -21,7 +21,7 @@ const state = {
     isOperationLoading: false,
     selectedDockerNetwork: {},
     dockerNetworks: [],
-    networkStats: {},
+    stats: {},
 };
 
 const dockerNetworkSlice = createSlice({
