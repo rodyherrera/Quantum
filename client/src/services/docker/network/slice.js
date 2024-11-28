@@ -25,7 +25,7 @@ const state = {
 };
 
 const dockerNetworkSlice = createSlice({
-    name: 'dockerContainer',
+    name: 'dockerNetwork',
     initialState: state,
     reducers: {
         setState: reduxUtils.setState

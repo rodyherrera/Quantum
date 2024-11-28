@@ -25,7 +25,7 @@ const state = {
 };
 
 const dockerImageSlice = createSlice({
-    name: 'dockerContainer',
+    name: 'dockerImageSlice',
     initialState: state,
     reducers: {
         setState: reduxUtils.setState
