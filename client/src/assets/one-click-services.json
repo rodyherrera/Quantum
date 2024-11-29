@@ -6,6 +6,10 @@
         "name": "mongo",
         "tag": "latest"
     },
+    "notification": {
+        "title": "Your Mongo Deployment",
+        "message": "Successfully deployed. The default credentials are username: \"root\" and password: \"example\". You can update these credentials by modifying the environment variables as needed."
+    },
     "ports": [{
         "protocol": "tcp",
         "internalPort": 27017
@@ -75,6 +79,10 @@
     }
 },{
     "name": "Code Server",
+    "notification": {
+        "title": "Code Server Deployment",
+        "message": "Your default password to log in to your Code Server instance is \"toortoor\", which you can change in container environment variables."
+    },
     "description": "Code on any device with a consistent development environment.",
     "website": "https://hub.docker.com/r/linuxserver/code-server",
     "command": "/bin/sh",

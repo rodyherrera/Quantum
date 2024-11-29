@@ -120,14 +120,14 @@ export const getRandomAvailablePort = () => async (dispatch) => {
     });
 };
 
-export const oneClickDeploy = (body) => async (dispatch) => {
+export const oneClickDeploy = (body, onResponse = () => {}) => async (dispatch) => {
     const operation = createOperation(dockerContainerSlice, dispatch);
     operation.on('response', () => {
         dispatch(getMyDockerContainers());
         dispatch(getMyDockerNetworks());
         dispatch(getMyPortBindings());
         dispatch(getMyDockerImages());
-
+        onResponse();
     });
     operation.use({
         api: dockerContainerService.oneClickDeploy,

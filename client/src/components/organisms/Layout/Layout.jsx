@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { authenticateWithCachedToken } from '@services/authentication/utils';
 import { resetErrorForAllSlices } from '@services/core/operations';
+import Toast from '@components/atoms/Toast';
 import CloudShell from '@components/organisms/CloudShell';
 import Waves from '@components/atoms/Waves';
 import ClickSpark from '@components/atoms/ClickSpark';
@@ -49,6 +50,7 @@ const Layout = () => {
     return (
         <React.Fragment>
             <ClickSpark />
+            <Toast />
             {isCloudConsoleEnabled && <CloudShell />}
             {isMenuEnabled && width <= 768 ? (
                 <Menu />

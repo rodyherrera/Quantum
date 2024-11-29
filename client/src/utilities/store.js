@@ -21,6 +21,7 @@ import githubReducer from '@services/github/slice';
 import repositoryReducer from '@services/repository/slice';
 import deploymentReducer from '@services/deployment/slice';
 import coreReducer from '@services/core/slice';
+import toastReducer from '@services/core/toastSlice';
 import portBindingReducer from '@services/portBinding/slice';
 
 /**
@@ -40,7 +41,8 @@ const store = configureStore({
         github: githubReducer,
         repository: repositoryReducer,
         portBinding: portBindingReducer,
-        deployment: deploymentReducer
+        deployment: deploymentReducer,
+        toast: toastReducer
     }
 });
 

@@ -14,6 +14,7 @@
     cursor: pointer;
     border: 1px solid #0f62fe;
     padding: 1rem;
+    will-change: transform;
 }
 
 .One-Click-Deploy-Loading-Container{
