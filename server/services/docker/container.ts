@@ -202,11 +202,6 @@ class DockerContainer{
     async stop(): Promise<void>{
         try{
             const container = docker.getContainer(this.container.dockerContainerName);
-            const { State } = await container.inspect();
-            if(!State.Running){
-                logger.info(`@services/docker/container.ts (stopContainer): Container ${this.container.dockerContainerName} is already stopped.`);
-                return;
-            }
             await container.stop();
             await this.container.updateOne({ status: 'stopped' });
             logger.info(`@services/docker/container.ts (stopContainer): Successfully stopped container ${this.container.dockerContainerName}.`);
