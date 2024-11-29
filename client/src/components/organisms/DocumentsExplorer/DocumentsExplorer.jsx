@@ -2,12 +2,20 @@ import React from 'react';
 import { GoArrowDownLeft } from 'react-icons/go';
 import { Pagination } from '@mui/material';
 import Loader from '@components/atoms/Loader';
-import useUserDockerContainers from '@hooks/api/user/useUserDockerContainers';
 import './DocumentsExplorer.css';
 
-const DocumentsExplorer = () => {
-    const { dockerContainers, isLoading, error, stats, isOperationLoading, page, setPage } = useUserDockerContainers();
-
+const DocumentsExplorer = ({
+    title,
+    documents,
+    isLoading,
+    error,
+    stats,
+    isOperationLoading,
+    page,
+    setPage,
+    Render,
+    rowsTitles
+}) => {
     return (
         <main className='Documents-Explorer-Main'>
             <section className='Documents-Sidebar-Container'>
@@ -16,7 +24,7 @@ const DocumentsExplorer = () => {
                         <i className='Documents-Sidebar-Header-Back-Icon-Container'>
                             <GoArrowDownLeft />
                         </i>
-                        <h3 className='Documents-Sidebar-Header-Title'>Your Docker Containers</h3>
+                        <h3 className='Documents-Sidebar-Header-Title'>{title}</h3>
                     </article>
                 </article>
 
@@ -33,28 +41,14 @@ const DocumentsExplorer = () => {
                 )}
 
                 <article className='Table-Row-Container Table-Header-Container'>
-                    {[
-                        'Name',
-                        'Image',
-                        'Status',
-                        'IP Address',
-                        'Port Bindings',
-                        'Created At',
-                        'Updated At'
-                    ].map((title, index) => (
+                    {rowsTitles.map((title, index) => (
                         <div className='Table-Row-Item' key={index}>{title}</div>
                     ))}
                 </article>
                 <article className='Table-Body-Container'>
-                    {dockerContainers.map(({ name, image, status, portBindings, ipAddress, createdAt, updatedAt, network }, index) => (
+                    {documents.map((fields, index) => (
                         <article className='Table-Row-Container' key={index}>
-                            <div className='Table-Row-Item'>{name}</div>
-                            <div className='Table-Row-Item'>{image.name}:{image.tag}</div>
-                            <div className='Table-Row-Item'>{status}</div>
-                            <div className='Table-Row-Item'>{ipAddress}</div>
-                            <div className='Table-Row-Item'>{portBindings.length}</div>
-                            <div className='Table-Row-Item'>{createdAt}</div>
-                            <div className='Table-Row-Item'>{updatedAt}</div>
+                            <Render {...fields} />
                         </article>
                     ))}
                 </article>

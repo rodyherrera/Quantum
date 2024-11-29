@@ -2,12 +2,12 @@ import CreateDockerContainer from './CreateDockerContainer';
 import Shell from './Shell';
 import EnvironmentVariables from './EnvironmentVariables';
 import Storage from './Storage';
-import DocumentsExplorer from './DocumentsExplorer';
+import Explorer from './Explorer';
 
 const pages = {
     CreateDockerContainer,
     EnvironmentVariables,
-    DocumentsExplorer,
+    Explorer,
     Storage,
     Shell
 };

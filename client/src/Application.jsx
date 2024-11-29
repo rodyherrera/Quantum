@@ -36,7 +36,7 @@ const Application = () => {
 
                     <Route path='/docker-container'>
                         <Route path='create' element={<pages.protected.docker.container.CreateDockerContainer />} />
-                        <Route path='explore' element={<pages.protected.docker.container.DocumentsExplorer />} />
+                        <Route path='explore' element={<pages.protected.docker.container.Explorer />} />
                         <Route path=':dockerId'>
                             <Route path='update' element={<pages.protected.docker.container.CreateDockerContainer />} />
                             <Route path='shell' element={<pages.protected.docker.container.Shell />} />
