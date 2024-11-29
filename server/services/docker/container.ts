@@ -2,6 +2,7 @@ import Dockerode from 'dockerode';
 import fs from 'fs/promises';
 import path from 'path';
 import slugify from 'slugify';
+import PortBinding from '@models/portBinding';
 import { Socket } from 'socket.io';
 import { existsSync } from 'fs';
 import { ensureDirectoryExists } from '@utilities/helpers';
@@ -10,6 +11,7 @@ import { pullImage } from '@services/docker/image';
 import { IDockerContainer } from '@typings/models/docker/container';
 import { IDockerImage } from '@typings/models/docker/image';
 import { IDockerNetwork } from '@typings/models/docker/network';
+import { IPortBinding } from '@typings/models/portBinding';
 import { getSystemNetworkName } from '@services/docker/network';
 import { IContainerStoragePath } from '@typings/services/dockerContainer';
 import DockerImage from '@models/docker/image';
@@ -137,6 +139,13 @@ class DockerContainer{
         return dockerImage;
     }
 
+    async getPortBindings(): Promise<IPortBinding[]>{
+        const portBindings = await PortBinding
+            .find({ container: this.container._id })
+            .select('internalPort externalPort protocol');
+        return portBindings;
+    };
+
     async getDockerNetwork(): Promise<IDockerNetwork> {
         if(this.dockerNetwork) return this.dockerNetwork;
 
@@ -150,22 +159,40 @@ class DockerContainer{
     async createContainer(): Promise<Dockerode.Container> {
         const dockerImage = await this.getDockerImage();
         const dockerNetwork = await this.getDockerNetwork();
+        const portBindings = await this.getPortBindings();
+        const exposedPorts = {};
+        const portBindingsConfig = {};
+
+        // Crear las estructuras adecuadas
+        portBindings.forEach(({ internalPort, protocol, externalPort }) => {
+            const key = `${internalPort}/${protocol}`;
+
+            // ExposedPorts espera un objeto donde las claves son los puertos expuestos
+            exposedPorts[key] = {};
+
+            // PortBindings espera un objeto donde las claves son los puertos internos
+            portBindingsConfig[key] = [{ HostPort: `${externalPort}` }];
+        });
+
         const networkName = getSystemNetworkName(this.container.user.toString(), dockerNetwork._id.toString());
         const environmentVariables = Array.from(this.container.environment.variables.entries()).map(
             ([key, value]) => `${key}=${value}`);
-        const options = {
-            Image: `${dockerImage.name}:${dockerImage.tag}`,
-            name: this.container.dockerContainerName,
-            Tty: true,
-            OpenStdin: true,
-            StdinOnce: true,
-            Env: environmentVariables,
-            HostConfig: {
-                Binds: [`${this.getDockerStoragePath()}:/app:rw`],
-                NetworkMode: networkName,
-                RestartPolicy: { Name: 'always' }
-            }
-        };
+            const options = {
+                Image: `${dockerImage.name}:${dockerImage.tag}`,
+                name: this.container.dockerContainerName,
+                Tty: true,
+                OpenStdin: true,
+                StdinOnce: true,
+                Env: environmentVariables,
+                ExposedPorts: exposedPorts,
+                HostConfig: {
+                    PortBindings: portBindingsConfig,
+                    Binds: [`${this.getDockerStoragePath()}:/app:rw`],
+                    NetworkMode: networkName,
+                    RestartPolicy: { Name: 'always' }
+                }
+            };
+            
         const container = await docker.createContainer(options);
         return container;
     }

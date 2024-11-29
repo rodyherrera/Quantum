@@ -74,8 +74,6 @@ httpServer.listen(SERVER_PORT, SERVER_HOST, async () => {
         logger.info('@server.ts: Docker containers and user applications will be started. This may take a few minutes...');
         // Loads user-defined Docker containers
         await bootstrap.loadUserContainers();
-        // Load reverse proxies
-        await bootstrap.loadReverseProxies();
         // Initializes user repositories (presumably for Git interaction)
         await bootstrap.initializeRepositories();
         // Email to WEBMASTER_MAIL to notify about the correct opening of the server.

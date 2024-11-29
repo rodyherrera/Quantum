@@ -22,13 +22,11 @@ import RepositoryHandler from '@services/repositoryHandler';
 import PortBinding from '@models/portBinding';
 import sendMail from '@services/sendEmail';
 import logger from '@utilities/logger';
-import { createProxyServer } from '@services/proxyServer';
 import { ConfigureAppParams } from '@typings/utilities/bootstrap';
 import { spawn } from 'child_process';
 import { IUser } from '@typings/models/user';
 import { IRepository } from '@typings/models/repository';
 import * as nginxHandler from '@services/nginx';
-import { IPortBinding } from '@typings/models/portBinding';
 import { IDockerContainer } from '@typings/models/docker/container';
 
 /**
@@ -101,24 +99,6 @@ export const restartServer = async (): Promise<void> => {
     childProcess.on('close', (code) => {
         logger.info(`@utilities/bootstrap.ts (restartServer): Server process exited with code ${code}.`);
     });
-};
-
-export const loadReverseProxies = async (): Promise<void> => {
-    try{
-        logger.info('@utilities/bootstrap.ts (loadReverseProxies): Loading reverse proxies...');
-        const portBindings = await PortBinding
-            .find()
-            .select('internalPort ipAddress container externalPort -_id')
-            .populate({
-                path: 'container',
-                select: 'ipAddress -_id'
-            });
-        await Promise.all(portBindings.map(({ internalPort, externalPort, container }) => {
-            createProxyServer(externalPort as number, (container as IDockerContainer).ipAddress as string, internalPort);
-        }));
-    }catch(error){
-        logger.error('@utilities/bootstrap.ts (loadReverseProxies): ' + error);
-    }
 };
 
 /**
