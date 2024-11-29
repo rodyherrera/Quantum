@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { LuGithub } from "react-icons/lu";
 import { BsTerminalPlus } from "react-icons/bs";
 import { TbServerBolt } from "react-icons/tb";
+import { useNavigate } from 'react-router-dom';
 import { gsap } from 'gsap';
 import { setState as coreSetState } from '@services/core/slice';
 import './UserStickyFooterStats.css';
@@ -12,6 +13,7 @@ const UserStickyFooterStats = () => {
     const { isCloudConsoleEnabled } = useSelector(state => state.core);
     const dispatch = useDispatch();
     const containerRef = useRef(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const mainRef = document.querySelector('main');
@@ -93,12 +95,12 @@ const UserStickyFooterStats = () => {
                 </div>
             </div>
 
-            <div className='User-Sticky-Footer-Stats-Item'>
+            <div className='User-Sticky-Footer-Stats-Item' onClick={() => navigate('/docker-container/create/')}>
                 <p className='User-Sticky-Footer-Stats-Item-Content Hover-Underline'>+ Create Container</p>
                 <i className='User-Sticky-Footer-Stats-Item-Icon'><TbServerBolt /></i>
             </div>
 
-            <div className='User-Sticky-Footer-Stats-Item'>
+            <div className='User-Sticky-Footer-Stats-Item' onClick={() => navigate('/repository/create/')}>
                 <p className='User-Sticky-Footer-Stats-Item-Content Hover-Underline'>+ Deploy Repository</p>
                 <i className='User-Sticky-Footer-Stats-Item-Icon'><LuGithub /></i>
             </div>
