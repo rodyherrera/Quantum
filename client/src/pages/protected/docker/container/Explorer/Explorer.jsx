@@ -14,7 +14,7 @@ const Explorer = () => {
         isOperationLoading={isOperationLoading}
         page={page}
         setPage={setPage}
-        Render={({ name, image, status, ipAddress, portBindings, createdAt, updatedAt }) => (
+        Render={({ name, image, status, ipAddress, portBindings, createdAt, updatedAt, _id }) => (
             <React.Fragment>
                 <div className='Table-Row-Item'>{name}</div>
                 <div className='Table-Row-Item'>{image.name + ':' + image.tag}</div>
@@ -23,6 +23,7 @@ const Explorer = () => {
                 <div className='Table-Row-Item'>{portBindings.length}</div>
                 <div className='Table-Row-Item'>{createdAt}</div>
                 <div className='Table-Row-Item'>{updatedAt}</div>
+                <div className='Table-Row-Item'>{_id}</div>
             </React.Fragment>
         )}
         rowsTitles={[
@@ -32,7 +33,8 @@ const Explorer = () => {
             'IP Address',
             'Port Bindings',
             'Created At',
-            'Updated At'
+            'Updated At',
+            'ID'
         ]}
     />
 };

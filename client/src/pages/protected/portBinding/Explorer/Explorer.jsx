@@ -14,7 +14,7 @@ const Explorer = () => {
         isOperationLoading={isOperationLoading}
         page={page}
         setPage={setPage}
-        Render={({ externalPort, internalPort, container, protocol, createdAt, updatedAt }) => (
+        Render={({ externalPort, internalPort, container, protocol, createdAt, updatedAt, _id }) => (
             <React.Fragment>
                 <div className='Table-Row-Item'>{externalPort}</div>
                 <div className='Table-Row-Item'>{internalPort}</div>
@@ -22,6 +22,7 @@ const Explorer = () => {
                 <div className='Table-Row-Item'>{protocol}</div>
                 <div className='Table-Row-Item'>{createdAt}</div>
                 <div className='Table-Row-Item'>{updatedAt}</div>
+                <div className='Table-Row-Item'>{_id}</div>
             </React.Fragment>
         )}
         rowsTitles={[
@@ -30,7 +31,8 @@ const Explorer = () => {
             'Container',
             'Protocol',
             'Created At',
-            'Updated At'
+            'Updated At',
+            'ID'
         ]}
     />
 };

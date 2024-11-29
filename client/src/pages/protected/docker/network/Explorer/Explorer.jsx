@@ -14,19 +14,21 @@ const Explorer = () => {
         isOperationLoading={isOperationLoading}
         page={page}
         setPage={setPage}
-        Render={({ name, containers, createdAt, updatedAt }) => (
+        Render={({ name, containers, createdAt, updatedAt, _id }) => (
             <React.Fragment>
                 <div className='Table-Row-Item'>{name}</div>
                 <div className='Table-Row-Item'>{containers.length}</div>
                 <div className='Table-Row-Item'>{createdAt}</div>
                 <div className='Table-Row-Item'>{updatedAt}</div>
+                <div className='Table-Row-Item'>{_id}</div>
             </React.Fragment>
         )}
         rowsTitles={[
             'Name',
             'Containers',
             'Created At',
-            'Updated At'
+            'Updated At',
+            'ID'
         ]}
     />
 };
