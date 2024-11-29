@@ -9,7 +9,7 @@ const useUserDockerContainers = () => {
     const { dockerContainers, isLoading, error, stats, isOperationLoading } = useSelector((state) => state.dockerContainer);
 
     useEffect(() => {
-        dispatch(getMyDockerContainers({ page, limit: 100 }));
+        dispatch(getMyDockerContainers({ page }));
     }, [page]);
 
     useEffect(() => {

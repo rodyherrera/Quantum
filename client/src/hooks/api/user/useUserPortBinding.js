@@ -1,20 +1,24 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getMyPortBindings } from '@services/portBinding/operations';
 import { setState as portBindingSetState } from '@services/portBinding/slice';
 
 const useUserPortBinding = () => {
     const dispatch = useDispatch();
-    const { portBindings, isLoading, error, portBindingStats, isOperationLoading } = useSelector((state) => state.portBinding);
-   
+    const [page, setPage] = useState();
+    const { portBindings, isLoading, error, stats, portBindingStats, isOperationLoading } = useSelector((state) => state.portBinding);
+
     useEffect(() => {
-        dispatch(getMyPortBindings());
+        dispatch(getMyPortBindings({ page }));
+    }, [page]);
+
+    useEffect(() => {
         return () => {
             dispatch(portBindingSetState({ path: 'portBindings', value: [] }));
         };
     }, []);
 
-    return { portBindings, isLoading, error, portBindingStats, isOperationLoading };
+    return { portBindings, isLoading, stats, error, portBindingStats, isOperationLoading, page, setPage };
 };
 
 export default useUserPortBinding;

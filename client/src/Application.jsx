@@ -45,10 +45,14 @@ const Application = () => {
                         </Route>
                     </Route>
 
-                    <Route path='/port-binding/create' element={<pages.protected.portBinding.CreatePortBinding />} />
+                    <Route path='/port-binding'>
+                        <Route path='create' element={<pages.protected.portBinding.CreatePortBinding />} />
+                        <Route path='explore' element={<pages.protected.portBinding.Explorer />} />
+                    </Route>
 
                     <Route path='/docker-image'>
                         <Route path='create' element={<pages.protected.docker.image.CreateDockerImage />} />
+                        <Route path='explore' element={<pages.protected.docker.image.Explorer />} />
                         <Route path=':networkId'>
                             <Route path='update' element={<pages.protected.docker.image.CreateDockerImage />} />
                         </Route>  
@@ -56,6 +60,7 @@ const Application = () => {
 
                     <Route path='/docker-network'>
                         <Route path='create' element={<pages.protected.docker.network.CreateDockerNetwork />} />
+                        <Route path='explore' element={<pages.protected.docker.network.Explorer />} />
                         <Route path=':networkId'>
                             <Route path='update' element={<pages.protected.docker.network.CreateDockerNetwork />} />
                         </Route>

@@ -15,6 +15,7 @@ const DockerNetworks = ({ ...props }) => {
             Icon={IoLogoDocker}
             isOperationLoading={isOperationLoading}
             alias='network(s)'
+            viewAll='/docker-network/explore/'
             results={stats?.results?.total || 0}
             total={dockerNetworks?.length}
             RenderComponent={() => (

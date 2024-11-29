@@ -9,6 +9,7 @@
     display: flex;
     align-items: center;
     gap: .5rem;
+    cursor: pointer;
 }
 
 .Dashboard-Module-Bottom-Results-View-All-Icon-Container{

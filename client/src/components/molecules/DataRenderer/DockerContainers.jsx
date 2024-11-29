@@ -14,6 +14,7 @@ const DockerContainers = ({ ...props }) => {
             Icon={IoLogoDocker}
             isOperationLoading={isOperationLoading}
             alias='container(s)'
+            viewAll='/docker-container/explore/'
             createLink='/docker-container/create/'
             results={stats?.results?.total || 0}
             total={dockerContainers?.length}

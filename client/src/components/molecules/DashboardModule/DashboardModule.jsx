@@ -14,6 +14,7 @@ const DashboardModule = ({
     results,
     createLink,
     RenderComponent,
+    viewAll,
     isOperationLoading = false,
     alias = 'document(s)'
 }) => {
@@ -26,7 +27,7 @@ const DashboardModule = ({
             )}
             <DashboardModuleHeader Icon={Icon} title={title} createLink={createLink} />
             <DashboardModuleBody RenderComponent={RenderComponent} />
-            <DashboardModuleFooter results={results} total={total} alias={alias} />
+            <DashboardModuleFooter viewAll={viewAll} results={results} total={total} alias={alias} />
         </div>
     );
 };

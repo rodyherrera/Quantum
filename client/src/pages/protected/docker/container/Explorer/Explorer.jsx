@@ -14,7 +14,6 @@ const Explorer = () => {
         isOperationLoading={isOperationLoading}
         page={page}
         setPage={setPage}
-        fieldsToRender={['name', 'image.name', 'status', 'ipAddress', 'portBindings', 'createdAt', 'updatedAt']}
         Render={({ name, image, status, ipAddress, portBindings, createdAt, updatedAt }) => (
             <React.Fragment>
                 <div className='Table-Row-Item'>{name}</div>
@@ -23,7 +22,6 @@ const Explorer = () => {
                 <div className='Table-Row-Item'>{ipAddress}</div>
                 <div className='Table-Row-Item'>{portBindings.length}</div>
                 <div className='Table-Row-Item'>{createdAt}</div>
-                <div className='Table-Row-Item'>{status}</div>
                 <div className='Table-Row-Item'>{updatedAt}</div>
             </React.Fragment>
         )}

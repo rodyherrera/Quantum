@@ -15,6 +15,7 @@ const PortBindings = ({ ...props }) => {
             createLink='/port-binding/create/'
             Icon={IoLogoDocker}
             alias='port(s)'
+            viewAll='/port-binding/explore/'
             results={portBindingStats?.results?.total || 0}
             total={portBindings?.length}
             RenderComponent={() => (

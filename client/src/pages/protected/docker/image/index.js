@@ -1,7 +1,9 @@
 import CreateDockerImage from './CreateDockerImage';
+import Explorer from './Explorer';
 
 const pages = {
-    CreateDockerImage
+    CreateDockerImage,
+    Explorer
 };
 
 export default pages;
