@@ -19,7 +19,7 @@ import { getMyPortBindings } from '@services/portBinding/operations';
 import * as dockerContainerSlice from '@services/docker/container/slice';
 import * as dockerContainerService from '@services/docker/container/service'
 
-export const getMyDockerContainers = () => async (dispatch) => {
+export const getMyDockerContainers = ({ page = 1, limit = 50 } = {}) => async (dispatch) => {
     const operation = createOperation(dockerContainerSlice, dispatch);
     operation.use({
         api: dockerContainerService.getMyDockerContainers,
@@ -28,6 +28,8 @@ export const getMyDockerContainers = () => async (dispatch) => {
         statsState: 'stats',
         query: {
             queryParams: {
+                page,
+                limit,
                 populate: JSON.stringify({
                     path: 'portBindings image',
                     select: 'externalPort name tag size'

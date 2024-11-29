@@ -1,0 +1,150 @@
+.Documents-Explorer-Main{
+    display: flex;
+    width: 100%;
+}
+
+.Table-Row-Container{
+    display: flex;
+    gap: 1rem;
+    width: max-content;
+}
+
+.Table-Row-Item{
+    max-width: 200px;
+    min-width: 200px;
+}
+
+.Table-Header-Container{
+    position: sticky;
+    top: 0;
+    background-color: rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(2px);
+}
+
+.Table-Header-Container .Table-Row-Item{
+    font-weight: 500;
+    padding: .5rem 2rem;
+    font-size: .8rem;
+    font-family: 'IBM Plex Sans';
+}
+
+.Table-Body-Container .Table-Row-Container:hover{
+    border-color: #0f62fe;
+}
+
+.Table-Body-Container .Table-Row-Container{
+    border: 1px solid #f5f5f5;
+    border-right: unset;
+    cursor: pointer;
+    padding: 1rem 2rem;
+    border-left: unset;
+}
+
+.Table-Body-Container{
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+}
+
+.Documents-Explorer-Main .Highlight-Text{
+    color: #0f62fe;
+}
+
+.Documents-Loader-Container{
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    z-index: 200;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(2px);
+}
+
+.Table-Footer-Container{
+    position: sticky;
+    bottom: 0;
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(2px);
+    padding: .5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.Documents-Container{
+    width: 70%;
+    overflow-x: scroll;
+    display: flex;
+    position: relative;
+    border: 1px solid #dadada;
+    border-top: unset;
+    flex-direction: column;
+}
+
+.Documents-Sidebar-Container{
+    width: 30%;
+    height: 80vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 1rem;
+}
+
+.Documents-Sidebar-Top-Container{
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.Documents-Sidebar-Header-Container{
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.Documents-Sidebar-Header-Back-Icon-Container{
+    display: flex;
+    font-size: 1.3rem;
+    align-items: center;
+    justify-content: center;
+}
+
+.Documents-Sidebar-Header-Title{
+    cursor: pointer;
+    font-family: 'IBM Plex Sans';
+    font-size: 1.4rem;
+    font-weight: 300;
+}
+
+.Documents-Total-Results{
+    font-weight: 300;
+    font-family: 'IBM Plex Sans';
+    font-size: 2.5rem;
+    line-height: 3.5rem;
+}
+
+@media screen and (max-width: 768px){
+    .Documents-Explorer-Main{
+        flex-direction: column;
+        height: unset;
+    }
+
+    .Documents-Total-Results{
+        line-height: 2.5rem;
+        font-size: 2rem;
+    }
+    
+    .Documents-Sidebar-Container{
+        height: auto;
+        gap: 2rem;
+        width: 100%;
+    }
+
+    .Documents-Container{
+        width: 100%;
+        height: 800px;
+    }
+}
