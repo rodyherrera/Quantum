@@ -28,13 +28,14 @@ const PortBindingSchema: Schema<IPortBinding> = new Schema({
     externalPort: {
         type: Number,
         required: [true, 'PortBinding::ExternalPort::Required'],
-        unique: true,
         min: 1,
         max: 65535
     }
 }, {
     timestamps: true
 });
+
+PortBindingSchema.index({ container: 1, externalPort: 1, internalPort: 1 }, { unique: true });
 
 const cascadeDeleteHandler = async (document: IPortBinding): Promise<void> => {
     if(!document) return;

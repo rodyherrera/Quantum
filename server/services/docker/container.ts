@@ -139,11 +139,18 @@ class DockerContainer{
         return dockerImage;
     }
 
-    async getPortBindings(): Promise<IPortBinding[]>{
+    async getPortBindings(): Promise<any>{
         const portBindings = await PortBinding
             .find({ container: this.container._id })
             .select('internalPort externalPort protocol');
-        return portBindings;
+        const exposedPorts: any = {};
+        const bindings: any = {};
+        for(const { internalPort, protocol, externalPort } of portBindings){
+            const key = `${internalPort}/${protocol}`;
+            exposedPorts[key] = {};
+            bindings[key] = [{ HostPort: `${externalPort}` }];
+        }
+        return { exposedPorts, bindings };
     };
 
     async getDockerNetwork(): Promise<IDockerNetwork> {
@@ -159,22 +166,8 @@ class DockerContainer{
     async createContainer(): Promise<Dockerode.Container> {
         const dockerImage = await this.getDockerImage();
         const dockerNetwork = await this.getDockerNetwork();
-        const portBindings = await this.getPortBindings();
-        const exposedPorts = {};
-        const portBindingsConfig = {};
-
-        // Crear las estructuras adecuadas
-        portBindings.forEach(({ internalPort, protocol, externalPort }) => {
-            const key = `${internalPort}/${protocol}`;
-
-            // ExposedPorts espera un objeto donde las claves son los puertos expuestos
-            exposedPorts[key] = {};
-
-            // PortBindings espera un objeto donde las claves son los puertos internos
-            portBindingsConfig[key] = [{ HostPort: `${externalPort}` }];
-        });
-
         const networkName = getSystemNetworkName(this.container.user.toString(), dockerNetwork._id.toString());
+        const { exposedPorts, bindings } = await this.getPortBindings();
         const environmentVariables = Array.from(this.container.environment.variables.entries()).map(
             ([key, value]) => `${key}=${value}`);
             const options = {
@@ -186,7 +179,7 @@ class DockerContainer{
                 Env: environmentVariables,
                 ExposedPorts: exposedPorts,
                 HostConfig: {
-                    PortBindings: portBindingsConfig,
+                    PortBindings: bindings,
                     Binds: [`${this.getDockerStoragePath()}:/app:rw`],
                     NetworkMode: networkName,
                     RestartPolicy: { Name: 'always' }
