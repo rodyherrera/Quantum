@@ -215,11 +215,8 @@ class DockerContainer{
         try{
             const container = docker.getContainer(this.container.dockerContainerName);
             logger.info(`@services/docker/container.ts (restartContainer): Restarting container ${this.container.dockerContainerName}...`);
-            const { State } = await container.inspect();
-            if(State.Running){
-                await container.stop();
-                logger.info(`@services/docker/container.ts (restartContainer): Stopped container ${this.container.dockerContainerName}.`);
-            }
+            await container.stop();
+            logger.info(`@services/docker/container.ts (restartContainer): Stopped container ${this.container.dockerContainerName}.`);
             await this.container.updateOne({ status: 'restarting' });
             await container.start();
             await this.container.updateOne({ status: 'running' });
