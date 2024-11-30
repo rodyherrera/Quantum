@@ -43,3 +43,12 @@
     text-decoration: underline;
     text-underline-offset: 3px;
 }
+
+@media screen and (max-width: 768px){
+    .Toast-Container{
+        position: fixed;
+        width: 100%;
+        bottom: 0;
+        left: 0;
+    }
+}

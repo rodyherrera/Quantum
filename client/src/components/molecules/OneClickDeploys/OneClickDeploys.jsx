@@ -14,7 +14,7 @@ const OneClickDeploys = () => {
 
     const deployHandler = (config) => {
         const onResponse = () => {
-            console.log(config);
+            if(!config?.notification) return;
             dispatch(addToast({
                 persistent: true,
                 title: config.notification.title,
