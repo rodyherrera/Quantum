@@ -9,3 +9,4 @@ server/.env
 
 setup-utility/client/node_modules/
 setup-utility/client/package-lock.json
+setup-utility/server/venv/
