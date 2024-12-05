@@ -23,3 +23,10 @@
     gap: 1.5rem;
     max-width: 500px;
 }
+
+@media screen and (max-width: 768px){
+    #Setup-Utility-Main{
+        flex-direction: column;
+        gap: 2rem;
+    }
+}
