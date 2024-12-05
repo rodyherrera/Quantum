@@ -2,6 +2,7 @@ import StepContainer from '@components/atoms/StepContainer';
 import StepsContainer from '@components/molecules/StepsContainer';
 import Input from '@components/atoms/Input';
 import Button from '@components/atoms/Button';
+import DeployOutput from '@components/molecules/DeployOutput';
 import './Setup.css';
 
 const SetupPage = () => {
@@ -58,6 +59,8 @@ const SetupPage = () => {
                     <Button text='Deploy' />
                 </form>
             </section>
+
+            <DeployOutput />
         </main>
     );
 };

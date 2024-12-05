@@ -1,0 +1,12 @@
+.Setup-Utility-Deploy-Output{
+    margin-top: 2rem;
+    padding: 1rem;
+    background-color: #f4f4f4;
+    border: 1px solid #ccc;
+    border-radius: 0.5rem;
+    max-height: 500px;
+    min-width: 400px;
+    max-width: 400px;
+    overflow-y: auto;
+    font-family: monospace;
+}
