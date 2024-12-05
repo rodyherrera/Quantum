@@ -1,0 +1,37 @@
+.Optional-Environ-Variables-Container{
+    display: flex;
+    gap: 1rem;
+    border: 1px solid #dadada;
+    border-radius: .5rem;
+    cursor: pointer;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.Optional-Environ-Variables-Header{
+    display: flex;
+    padding: .5rem 1rem;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+.Optional-Environ-Variables-Content{
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem;
+}
+
+.Optional-Environ-Variables-Header:hover{
+    background-color: #f5f5f5;
+}
+
+.Optional-Environ-Variables-Header:hover .Optional-Environ-Variables-Title{
+    text-decoration: underline;
+}
+
+.Optional-Environ-Variables-Title{
+    font-size: 1rem;
+    font-weight: 400;
+}

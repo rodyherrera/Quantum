@@ -12,7 +12,7 @@ const Input: React.FC<InputProps> = ({ helperText, ...props }) => {
             </div>
 
             {helperText && (
-                <p className='Input-Helper-Text'>{helperText}.</p>
+                <p className='Input-Helper-Text'>{helperText}</p>
             )}
         </div>
     );

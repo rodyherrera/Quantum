@@ -23,27 +23,3 @@
     gap: 1.5rem;
     max-width: 500px;
 }
-
-.Setup-Utility-Form-Optional-Container{
-    display: flex;
-    gap: 1rem;
-    align-items: center;
-    border: 1px solid #dadada;
-    border-radius: .5rem;
-    padding: .5rem 1rem;
-    cursor: pointer;
-    justify-content: space-between;
-}
-
-.Setup-Utility-Form-Optional-Container:hover{
-    background-color: #f5f5f5;
-}
-
-.Setup-Utility-Form-Optional-Container:hover .Setup-Utility-Form-Optional-Title{
-    text-decoration: underline;
-}
-
-.Setup-Utility-Form-Optional-Title{
-    font-size: 1rem;
-    font-weight: 400;
-}
