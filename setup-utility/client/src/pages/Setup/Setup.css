@@ -16,3 +16,10 @@
     font-size: 1.5rem;
     font-weight: 400;
 }
+
+.Setup-Utility-Form-Container{
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    max-width: 500px;
+}

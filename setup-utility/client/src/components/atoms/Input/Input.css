@@ -1,0 +1,28 @@
+.Input-Container:hover .Input{
+    border-color: #0f62fe;
+}
+
+.Input-Container{
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+}
+
+.Input{
+    border: 1px solid #dadada;
+    padding: 2px;
+    border-radius: .5rem;
+}
+
+input{
+    outline: none;
+    border: none;
+    width: 100%;
+    padding: .3rem 1rem;
+}
+
+.Input-Helper-Text{
+    opacity: .8;
+    padding-left: 1.5rem;
+    font-size: .8rem;
+}
