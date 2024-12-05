@@ -1,6 +1,7 @@
 import StepContainer from '@components/atoms/StepContainer';
 import StepsContainer from '@components/molecules/StepsContainer';
 import Input from '@components/atoms/Input';
+import Button from '@components/atoms/Button';
 import './Setup.css';
 
 const SetupPage = () => {
@@ -53,6 +54,8 @@ const SetupPage = () => {
                         placeholder='Github Client Secret (e.g. 0987654321)'
                         helperText='The client secret of your GitHub OAuth application.'
                     />
+
+                    <Button text='Deploy' />
                 </form>
             </section>
         </main>

@@ -1,0 +1,12 @@
+.Button-Message{
+    font-size: .95rem;
+}
+
+.Button-Container{
+    background: #1f1f1f;
+    color: #FFF;
+    cursor: pointer;
+    padding: .5rem 2rem;
+    width: fit-content;
+    border-radius: .25rem;
+}
