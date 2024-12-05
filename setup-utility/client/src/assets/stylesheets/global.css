@@ -38,3 +38,9 @@ body{
 #root, html, body{
     height: 100%;
 }
+
+.Icon-Container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
