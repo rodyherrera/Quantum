@@ -7,5 +7,5 @@ server/node_modules/
 server/package-lock.json
 server/.env
 
-network-gateway/target/
-network-gateway/Cargo.lock
+setup-utility/client/node_modules/
+setup-utility/client/package-lock.json
