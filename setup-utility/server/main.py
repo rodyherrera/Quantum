@@ -1,8 +1,8 @@
-from fastapi import FastAPI, WebSocket, Request, HTTPException
+from fastapi import FastAPI, WebSocket, Request, HTTPException, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv, dotenv_values
 from pathlib import Path
-import requests
+import aiohttp
 import os
 
 app = FastAPI()
@@ -30,35 +30,32 @@ async def set_env(request: Request):
             for key, value in new_vars.items():
                 env_file.write(f'{key} = {value}\n')
                 os.environ[key] = value
-        return {
-            'status': 'success'
-        }
+        return {'status': 'success'}
     except Exception as e:
-        raise HTTPException(status_code = 500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.get('/host-ip') 
 async def get_host_ip():
-    try:
-        response = requests.get('https://api.ipify.org?format=json')
-        response.raise_for_status()
-        
-        return {
-            'status': 'success',
-            'data': {
-                'ip': response.json()['ip']
+    async with aiohttp.ClientSession() as session:
+        try:
+            async with session.get('https://api.ipify.org?format=json') as response:
+                response.raise_for_status()
+                data = await response.json()
+                return {
+                    'status': 'success',
+                    'data': {'ip': data['ip']}
+                }
+        except aiohttp.ClientError as e:
+            return {
+                'status': 'error',
+                'data': str(e)
             }
-        }
-    except requests.RequestException as e:
-        return {
-            'status': 'error',
-            'data': str(e)
-        }
-    
+
 @app.websocket('/ws')
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
     try:
         while True:
-            pass
-    except:
+            await websocket.receive_text()  # Mantén la conexión activa
+    except WebSocketDisconnect:
         await websocket.close()
