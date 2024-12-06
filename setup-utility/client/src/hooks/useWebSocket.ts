@@ -12,34 +12,52 @@ const useWebSocket = () => {
     const dispatch = useDispatch();
 
     const connect = useCallback(() => {
-        const socket = new WebSocket(`${import.meta.env.VITE_SERVER}/ws`);
-        socketRef.current = socket;
+        let server = import.meta.env.VITE_SERVER || '';
 
-        socket.onopen = () => {
-            setIsConnected(true);
-        };
+        server = server.replace(/^https?:\/\//, '');
 
-        socket.onmessage = (event) => {
-            setMessages((prev) => [...prev, event.data]);
-        };
+        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        const wsUrl = `${protocol}//${server}/ws`;
 
-        socket.onclose = () => {
-            setIsConnected(false);
+        console.log('Connecting to WebSocket URL:', wsUrl);
+
+        try{
+            const socket = new WebSocket(wsUrl);
+            socketRef.current = socket;
+
+            socket.onopen = () => {
+                console.log('WebSocket connection established.');
+                setIsConnected(true);
+            };
+
+            socket.onmessage = (event) => {
+                setMessages((prev) => [...prev, event.data]);
+            };
+
+            socket.onclose = (event) => {
+                console.warn('WebSocket connection closed:', event);
+                setIsConnected(false);
+                setTimeout(() => {
+                    connect();
+                }, RECONNECT_DELAY);
+            };
+
+            socket.onerror = (error) => {
+                console.error('WebSocket Error:', error);
+                socket.close();
+            };
+        }catch(err){
+            console.error('Failed to create WebSocket connection:', err);
             setTimeout(() => {
                 connect();
             }, RECONNECT_DELAY);
-        };
-
-        socket.onerror = (error) => {
-            console.error('WebSocket Error:', error);
-            socket.close();
-        };
+        }
     }, []);
 
     useEffect(() => {
         connect();
         return () => {
-            if(socketRef.current){
+            if (socketRef.current) {
                 socketRef.current.close();
             }
         };
@@ -47,14 +65,14 @@ const useWebSocket = () => {
 
     useEffect(() => {
         const interval = setInterval(() => {
-            if(!isConnected){
+            if (!isConnected) {
                 dispatch(addToast({
                     id: `connection-timeout-${Date.now()}`,
                     message: 'Connection timed out. Verify VITE_SERVER in @setup-utility/client/.env',
                     type: 'warning',
                     duration: 5000
                 }));
-            }else{
+            } else {
                 clearInterval(interval);
             }
         }, CHECK_INTERVAL);
@@ -67,6 +85,8 @@ const useWebSocket = () => {
     const sendMessage = (message: string) => {
         if(socketRef.current && socketRef.current.readyState === WebSocket.OPEN){
             socketRef.current.send(message);
+        }else{
+            console.warn('WebSocket is not open. Unable to send message:', message);
         }
     };
 

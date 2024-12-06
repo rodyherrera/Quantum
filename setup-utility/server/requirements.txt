@@ -3,3 +3,4 @@ uvicorn[standard]
 requests
 python-dotenv
 aiohttp
+anyio>=3.4.0
