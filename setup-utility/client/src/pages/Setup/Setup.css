@@ -17,6 +17,11 @@
     font-weight: 400;
 }
 
+.Setup-Utility-Container[data-isformsubmitted='true']{
+    opacity: .6;
+    pointer-events: none;
+}
+
 .Setup-Utility-Form-Container{
     display: flex;
     flex-direction: column;

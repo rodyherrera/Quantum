@@ -1,7 +1,8 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useMutation } from 'react-query';
 import { setEnvironVariables } from '@services/env/slice';
+import Loader from '@components/atoms/Loader';
 import StepContainer from '@components/atoms/StepContainer';
 import StepsContainer from '@components/molecules/StepsContainer';
 import Button from '@components/atoms/Button';
@@ -24,10 +25,12 @@ const updateEnvVariables = async (variables: any) => {
 const SetupPage = () => {
     const dispatch = useDispatch();
     const { environVariables, isLoading } = useEnvironVariables();
+    const [isFormSubmitted, setIsFormSubmitted] = useState(false); 
 
     const mutation = useMutation(updateEnvVariables, {
         onSuccess: (data) => {
             console.log('Variables updated successfully:', data);
+            setIsFormSubmitted(true);
         },
         onError: (error) => {
             console.error('Error updating variables:', error);
@@ -60,16 +63,19 @@ const SetupPage = () => {
                 </StepsContainer>
             </section>
 
-            <section className='Setup-Utility-Container'>
+            <section 
+                className='Setup-Utility-Container'
+                data-isformsubmitted={isFormSubmitted}
+            >
                 <h3 className='Setup-Utility-Header-Title'>Deploying your Quantum instance.</h3>
 
                 <form className='Setup-Utility-Form-Container' onSubmit={handleFormSubmit}>
                     <EnvironVariables />
                     <OptionalEnvironVariables />
-                    <Button text='Deploy' />
+                    {mutation.isLoading ? <Loader scale={0.5} /> : <Button text='Deploy' />}
                 </form>
             </section>
-
+                
             <DeployOutput />
         </main>
     );
