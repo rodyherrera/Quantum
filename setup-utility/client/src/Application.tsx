@@ -1,5 +1,5 @@
 import { Routes, Route } from 'react-router-dom';
-import pages from '@pages';
+import pages from '@pages/index';
 import Layout from '@components/organisms/Layout';
 import '@styles/global.css';
 

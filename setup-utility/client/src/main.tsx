@@ -1,5 +1,5 @@
 import ReactDOM from 'react-dom/client';
-import Application from '@/Application.tsx';
+import Application from '@/Application';
 import store from '@services/store';
 import MultiProvider from '@components/atoms/MultiProvider';
 import { Provider } from 'react-redux';
@@ -16,13 +16,14 @@ const queryClient = new QueryClient({
 });
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
-    <MultiProvider
-        providers={[
-            <BrowserRouter />,
-            <Provider store={store} />,
-            <QueryClientProvider client={queryClient} />
-        ]}
-    >
-        <Application />
-    </MultiProvider>
+    <Provider store={store}>
+        <MultiProvider
+            providers={[
+                <BrowserRouter />,
+                <QueryClientProvider client={queryClient} />
+            ]}
+        >
+            <Application />
+        </MultiProvider>
+    </Provider>
 );

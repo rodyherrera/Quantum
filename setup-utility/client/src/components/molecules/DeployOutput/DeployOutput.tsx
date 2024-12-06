@@ -5,7 +5,7 @@ import './DeployOutput.css';
 
 const DeployOutput = () => {
     const { isConnected, messages } = useWebSocket();
-    const messagesEndRef = useRef(null);
+    const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });

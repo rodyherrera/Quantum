@@ -36,8 +36,13 @@ if [ -z "$UVICORN_PATH" ]; then
     exit 1
 fi
 
-# Production settings
-sudo $UVICORN_PATH main:app \
+if command -v sudo >/dev/null 2>&1; then
+    SUDO="sudo"
+else
+    SUDO=""
+fi
+
+$SUDO $UVICORN_PATH main:app \
     --host "$HOST" \
     --port "$PORT" \
     --log-level critical \

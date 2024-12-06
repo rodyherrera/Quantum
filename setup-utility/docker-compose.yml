@@ -1,0 +1,22 @@
+services:
+  server:
+    build:
+      context: ../
+      dockerfile: setup-utility/server/Dockerfile
+    ports:
+      - "${SERVER_PORT:-8000}:8000"
+    environment:
+      - SERVER_PORT=${SERVER_PORT:-8000}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    ports:
+      - "${CLIENT_PORT:-3300}:3300"
+    environment:
+      - CLIENT_PORT=${CLIENT_PORT:-3300}
+    volumes:
+      - ./client:/app
