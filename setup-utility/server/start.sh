@@ -27,7 +27,17 @@ else
     echo "@setup-utility: requirements already installed."
 fi
 
-uvicorn main:app \
+# Get the path of uvicorn
+UVICORN_PATH=$(which uvicorn)
+
+# Check if uvicorn is found
+if [ -z "$UVICORN_PATH" ]; then
+    echo "uvicorn not found. Please ensure it is installed and in your PATH."
+    exit 1
+fi
+
+# Production settings
+sudo $UVICORN_PATH main:app \
     --host "$HOST" \
     --port "$PORT" \
     --log-level critical \

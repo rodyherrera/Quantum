@@ -1,0 +1,3 @@
+DEBIAN_FRONTEND=noninteractive
+
+bash install_docker.sh

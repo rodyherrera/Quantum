@@ -33,6 +33,7 @@ def generate_default_env_variables():
 async def execute_deploy_script():
     process = await asyncio.create_subprocess_shell(
         f'bash {deploy_script_path}',
+        cwd=deploy_script_path.parent,
         stdout=asyncio.subprocess.PIPE,
         stderr=asyncio.subprocess.PIPE
     )

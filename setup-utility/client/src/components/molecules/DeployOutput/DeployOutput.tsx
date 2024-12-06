@@ -8,7 +8,7 @@ const DeployOutput = () => {
         <div className='Setup-Utility-Deploy-Output'>
             {isConnected ? <p>Connected to server</p> : <p>Connecting to server...</p>}
             {messages.map((message, index) => (
-                <pre key={index}>{message}</pre>
+                <p key={index}>{message}</p>
             ))}
         </div>
     );
