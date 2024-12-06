@@ -3,10 +3,6 @@
 # Exit immediately if a command exits with a non-zero status.
 set -e
 
-# Get number of CPU cores for workers
-CORES=$(nproc)
-WORKERS=$(( 2 * CORES + 1 ))
-
 # Define host and port variables
 HOST="0.0.0.0"
 PORT="8000"
@@ -31,11 +27,9 @@ else
     echo "@setup-utility: requirements already installed."
 fi
 
-# Production settings
 uvicorn main:app \
     --host "$HOST" \
     --port "$PORT" \
-    --workers "$WORKERS" \
     --log-level critical \
     --proxy-headers \
     --forwarded-allow-ips '*' \
