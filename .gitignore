@@ -10,3 +10,5 @@ server/.env
 setup-utility/client/node_modules/
 setup-utility/client/package-lock.json
 setup-utility/server/venv/
+setup-utility/server/__pycache__/
+setup-utility/server/.requirements_hash

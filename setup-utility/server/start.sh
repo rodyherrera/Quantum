@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Exit immediately if a command exits with a non-zero status.
+set -e
+
 # Get number of CPU cores for workers
 CORES=$(nproc)
 WORKERS=$(( 2 * CORES + 1 ))
@@ -9,18 +12,30 @@ HOST="0.0.0.0"
 PORT="8000"
 
 # Check if requirements.txt has already been installed
-if ! pip check > /dev/null 2>&1; then
+REQUIREMENTS_FILE="requirements.txt"
+HASH_FILE=".requirements_hash"
+
+if [ -f "$HASH_FILE" ]; then
+    PREV_HASH=$(cat "$HASH_FILE")
+else
+    PREV_HASH=""
+fi
+
+CURRENT_HASH=$(sha256sum "$REQUIREMENTS_FILE" | awk '{print $1}')
+
+if [ "$PREV_HASH" != "$CURRENT_HASH" ]; then
     echo "@setup-utility: installing requirements..."
-    pip install -r requirements.txt
+    pip install -r "$REQUIREMENTS_FILE"
+    echo "$CURRENT_HASH" > "$HASH_FILE"
 else
     echo "@setup-utility: requirements already installed."
 fi
 
 # Production settings
 uvicorn main:app \
-    --host $HOST \
-    --port $PORT \
-    --workers $WORKERS \
+    --host "$HOST" \
+    --port "$PORT" \
+    --workers "$WORKERS" \
     --log-level critical \
     --proxy-headers \
     --forwarded-allow-ips '*' \
