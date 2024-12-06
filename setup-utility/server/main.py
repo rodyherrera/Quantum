@@ -1,24 +1,41 @@
 from fastapi import FastAPI, WebSocket
-import socket
+from fastapi.middleware.cors import CORSMiddleware
+import requests
 
 app = FastAPI()
 
-@app.get('/host_ip')
-async def get_host_ip():
-    hostname = socket.gethostname()
-    ip_address = socket.gethostbyname(hostname)
-    return {
-        'status': 'success',
-        'data': ip_address
-    }
+# Configure CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=['*'],
+    allow_credentials=True,
+    allow_methods=['*'],
+    allow_headers=['*'],
+)
 
+@app.get('/host-ip') 
+async def get_host_ip():
+    try:
+        response = requests.get('https://api.ipify.org?format=json')
+        response.raise_for_status()
+        
+        return {
+            'status': 'success',
+            'data': {
+                'ip': response.json()['ip']
+            }
+        }
+    except requests.RequestException as e:
+        return {
+            'status': 'error',
+            'data': str(e)
+        }
+    
 @app.websocket('/ws')
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
     try:
         while True:
             pass
-            # data = await websocket.receive_text()
-            # await websocket.send_text(f'')
     except:
-            await websocket.close()
+        await websocket.close()
