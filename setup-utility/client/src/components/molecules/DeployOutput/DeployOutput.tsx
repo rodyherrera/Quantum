@@ -11,6 +11,9 @@ const DeployOutput = () => {
     };
 
     useEffect(() => {
+        if(!messages.length){
+            return;
+        }
         scrollToBottom();
     }, [messages]);
 
