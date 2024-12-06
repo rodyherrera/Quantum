@@ -38,7 +38,7 @@ const SetupPage: React.FC = () => {
 
     const handleFormSubmit = useCallback((event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        if (environVariables) {
+        if(environVariables){
             mutate(environVariables);
         }
     }, [environVariables, mutate]);

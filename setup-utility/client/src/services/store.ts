@@ -1,9 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit';
 import envReducer from '@services/env/slice';
+import toastReducer from '@services/toast/slice';
 
 export const store = configureStore({
     reducer: {
-        env: envReducer
+        env: envReducer,
+        toast: toastReducer
     }
 });
 
