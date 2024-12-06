@@ -4,7 +4,13 @@
 os=$(uname -s)
 
 # Feature to install Docker on Linux
-function install_docker_linux() {
+function install_docker_linux(){
+  # Check if Docker is already installed
+  if command -v docker &> /dev/null; then
+    echo "@install_docker.sh: Docker already installed. Skipping installation."
+    return
+  fi
+
   # Update package list
   sudo apt update
 
@@ -27,11 +33,17 @@ function install_docker_linux() {
   # Restart the Docker service
   sudo systemctl restart docker
 
-  echo "[Quantum (install_docker.sh)]: Docker installed correctly."
+  echo "@install_docker.sh: Docker installed correctly."
 }
 
 # Feature to install Docker on macOS (not tested yet)
 function install_docker_macos() {
+  # Check if Docker is already installed
+  if command -v docker &> /dev/null; then
+    echo "@install_docker.sh: Docker already installed. Skipping installation."
+    return
+  fi
+
   # Download the latest version of Docker Desktop
   curl -fsSL https://get.docker.com/Macintosh/Docker.dmg -o Docker.dmg
 
@@ -44,11 +56,17 @@ function install_docker_macos() {
   # Unmount disk image
   hdiutil detach /Volumes/Docker
 
-  echo "[Quantum (install_docker.sh)]: Docker installed correctly."
+  echo "@install_docker.sh: Docker installed correctly."
 }
 
 # Function to install Docker Compose
-function install_docker_compose() {
+function install_docker_compose(){
+  # Check if Docker Compose is already installed
+  if command -v docker-compose &> /dev/null; then
+    echo "@install_docker.sh: Docker Compose already installed. Skipping installation."
+    return
+  fi
+
   # Download the latest version of Docker Compose
   curl -L https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m) -o docker-compose
 
@@ -58,7 +76,7 @@ function install_docker_compose() {
   # Move the file to the /usr/local/bin folder
   sudo mv docker-compose /usr/local/bin
 
-  echo "[Quantum (install_docker.sh)]: docker-compose installed correctly."
+  echo "install_docker.sh: Docker Compose installed correctly."
 }
 
 # Run the installation function based on the operating system
@@ -67,11 +85,11 @@ if [[ "$os" == "Linux" ]]; then
 elif [[ "$os" == "Darwin" ]]; then
   install_docker_macos
 else
-  echo "[Quantum (install_docker.sh)]: Are you seriously trying to run this on Windows?."
+  echo "@install_docker.sh: Windows is not supported yet."
   exit 1
 fi
 
 # Install Docker Compose
 install_docker_compose
 
-echo "[Quantum (install_docker.sh)]: **Ready! Docker and Docker Compose are installed and ready to use.**"
+echo "@install_docker.sh: Ready! Docker and Docker Compose are installed and ready to use."
