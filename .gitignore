@@ -1,3 +1,6 @@
+__pycache__/
+*.py[cod]
+
 client/node_modules/
 client/package-lock.json
 client/dist/
