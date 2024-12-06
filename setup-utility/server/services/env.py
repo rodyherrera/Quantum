@@ -1,10 +1,17 @@
 import os
-from pathlib import Path
+import secrets
 from dotenv import dotenv_values
-from core.config import get_env_path, generate_default_env_variables
+from core.config import env_path
+
+def generate_default_env_variables():
+    return {
+        "SECRET_KEY": secrets.token_hex(32),
+        "SESSION_SECRET": secrets.token_hex(16),
+        "ENCRYPTION_KEY": secrets.token_hex(32),
+        "ENCRYPTION_IV": secrets.token_hex(16)
+    }
 
 def get_env_values():
-    env_path = Path(__file__).resolve().parent.parent.parent.parent / '.env'
     return dotenv_values(env_path)
 
 def update_env_variables(new_vars: dict):
@@ -17,7 +24,7 @@ def update_env_variables(new_vars: dict):
         if not current_vars.get(key):
             current_vars[key] = value
 
-    with open(get_env_path(), 'w') as env_file:
+    with open(env_path, 'w') as env_file:
         for key, value in current_vars.items():
             env_file.write(f'{key}={value}\n')
             os.environ[key] = value

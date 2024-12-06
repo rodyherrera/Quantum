@@ -10,3 +10,13 @@
     padding: .5rem 1rem;
     border: 1px solid #dddddd;
 }
+
+@media screen and (max-width: 768px){
+    .Toast-Container{
+        top: unset;
+        bottom: 2rem;
+        width: 90%;
+        right: 1rem;
+        left: 1rem;
+    }
+}
