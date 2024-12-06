@@ -1,7 +1,7 @@
 import { useQuery } from 'react-query';
 import axios from 'axios';
 
-interface ServerIPResponse{
+interface ServerIPResponse {
     status: string;
     data: {
         ip: string;
@@ -10,7 +10,7 @@ interface ServerIPResponse{
 
 const useServerIP = () => {
     const { data, isLoading, error } = useQuery<ServerIPResponse>('serverIP', async () => {
-        const response = await axios.get(`${import.meta.env.VITE_SERVER}/host-ip`);
+        const response = await axios.get<ServerIPResponse>(`${import.meta.env.VITE_SERVER}/host-ip`);
         return response.data;
     });
 

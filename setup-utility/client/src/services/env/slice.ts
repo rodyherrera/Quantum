@@ -1,6 +1,11 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { EnvVariables } from '@services/env/api';
 
-const initialState = {
+interface EnvState{
+    environVariables: EnvVariables;
+}
+
+const initialState: EnvState = {
     environVariables: {}
 };
 
@@ -8,7 +13,7 @@ const envSlice = createSlice({
     name: 'env',
     initialState,
     reducers: {
-        setEnvironVariables(state, action) {
+        setEnvironVariables(state, action: PayloadAction<EnvVariables>) {
             state.environVariables = action.payload;
         }
     }
