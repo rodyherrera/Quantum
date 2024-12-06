@@ -1,0 +1,12 @@
+.Toast-Container{
+    position: fixed;
+    top: 2rem;
+    right: 2rem;
+    z-index: 500;
+    background-color: rgba(243, 243, 243, 0.5);
+    backdrop-filter: blur(2px);
+    width: 350px;
+    border-radius: 2rem;
+    padding: .5rem 1rem;
+    border: 1px solid #dddddd;
+}

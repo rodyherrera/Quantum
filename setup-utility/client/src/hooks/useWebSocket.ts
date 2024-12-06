@@ -50,7 +50,7 @@ const useWebSocket = () => {
             if(!isConnected){
                 dispatch(addToast({
                     id: `connection-timeout-${Date.now()}`,
-                    message: 'The connection to the server has not yet been established.',
+                    message: 'Connection timed out. Verify VITE_SERVER in @setup-utility/client/.env',
                     type: 'warning',
                     duration: 5000
                 }));

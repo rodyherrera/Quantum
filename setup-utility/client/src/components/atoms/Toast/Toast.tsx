@@ -25,7 +25,7 @@ const Toast: React.FC<ToastProps> = ({ toast }) => {
 
     return (
         <div className={`Toast Toast-${toast.type}`}>
-            {toast.message}
+            <p className='Toast-Message'>{toast.message}</p>
         </div>
     );
 };
