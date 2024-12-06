@@ -1,5 +1,5 @@
-import { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { setEnvironVariables } from '@services/env/slice';
 import StepContainer from '@components/atoms/StepContainer';
 import StepsContainer from '@components/molecules/StepsContainer';
@@ -8,17 +8,42 @@ import DeployOutput from '@components/molecules/DeployOutput';
 import OptionalEnvironVariables from '@components/molecules/OptionalEnvironVariables';
 import EnvironVariables from '@components/molecules/EnvironVariables';
 import useEnvironVariables from '@hooks/useEnvironVariables';
+import { useMutation } from 'react-query';
+import axios from 'axios';
 import './Setup.css';
+
+const updateEnvVariables = async (variables: any) => {
+    const response = await axios.post(`${import.meta.env.VITE_SERVER}/env`, variables, {
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    });
+    return response.data;
+};
 
 const SetupPage = () => {
     const dispatch = useDispatch();
     const { environVariables, isLoading } = useEnvironVariables();
 
+    const mutation = useMutation(updateEnvVariables, {
+        onSuccess: (data) => {
+            console.log('Variables updated successfully:', data);
+        },
+        onError: (error) => {
+            console.error('Error updating variables:', error);
+        }
+    });
+
     useEffect(() => {
         if(!isLoading && environVariables){
             dispatch(setEnvironVariables(environVariables));
         }
-    }, [isLoading]);
+    }, [isLoading, environVariables]);
+
+    const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        mutation.mutate(environVariables);
+    };
 
     return (
         <main id='Setup-Utility-Main'>
@@ -38,7 +63,7 @@ const SetupPage = () => {
             <section className='Setup-Utility-Container'>
                 <h3 className='Setup-Utility-Header-Title'>Deploying your Quantum instance.</h3>
 
-                <form className='Setup-Utility-Form-Container'>
+                <form className='Setup-Utility-Form-Container' onSubmit={handleFormSubmit}>
                     <EnvironVariables />
                     <OptionalEnvironVariables />
                     <Button text='Deploy' />

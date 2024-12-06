@@ -26,10 +26,17 @@ async def get_env():
 async def set_env(request: Request):
     try:
         new_vars = await request.json()
+        current_vars = dotenv_values(env_path)
+
+        # Update current variables with new values
+        current_vars.update(new_vars)
+
+        # Write updated variables back to .env file
         with open(env_path, 'w') as env_file:
-            for key, value in new_vars.items():
-                env_file.write(f'{key} = {value}\n')
+            for key, value in current_vars.items():
+                env_file.write(f'{key}={value}\n')
                 os.environ[key] = value
+        
         return {'status': 'success'}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -56,6 +63,6 @@ async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
     try:
         while True:
-            await websocket.receive_text()  # Mantén la conexión activa
+            await websocket.receive_text() 
     except WebSocketDisconnect:
         await websocket.close()

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setEnvironVariables } from '@services/env/slice';
 import Input from '@components/atoms/Input';
