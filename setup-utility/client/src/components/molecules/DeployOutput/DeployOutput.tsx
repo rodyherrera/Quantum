@@ -1,8 +1,18 @@
+import { useEffect, useRef } from 'react';
 import useWebSocket from '@hooks/useWebSocket';
 import './DeployOutput.css';
 
 const DeployOutput = () => {
     const { isConnected, messages } = useWebSocket();
+    const messagesEndRef = useRef(null);
+
+    const scrollToBottom = () => {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    };
+
+    useEffect(() => {
+        scrollToBottom();
+    }, [messages]);
 
     return (
         <div className='Setup-Utility-Deploy-Output'>
@@ -10,6 +20,7 @@ const DeployOutput = () => {
             {messages.map((message, index) => (
                 <p key={index}>{message}</p>
             ))}
+            <div ref={messagesEndRef} />
         </div>
     );
 };
