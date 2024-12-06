@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { useMutation } from 'react-query';
 import { setEnvironVariables } from '@services/env/slice';
 import StepContainer from '@components/atoms/StepContainer';
 import StepsContainer from '@components/molecules/StepsContainer';
@@ -8,7 +9,6 @@ import DeployOutput from '@components/molecules/DeployOutput';
 import OptionalEnvironVariables from '@components/molecules/OptionalEnvironVariables';
 import EnvironVariables from '@components/molecules/EnvironVariables';
 import useEnvironVariables from '@hooks/useEnvironVariables';
-import { useMutation } from 'react-query';
 import axios from 'axios';
 import './Setup.css';
 
