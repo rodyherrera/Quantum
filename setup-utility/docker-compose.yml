@@ -18,5 +18,3 @@ services:
       - "${CLIENT_PORT:-3300}:3300"
     environment:
       - CLIENT_PORT=${CLIENT_PORT:-3300}
-    volumes:
-      - ./client:/app

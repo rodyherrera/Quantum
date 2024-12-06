@@ -4,7 +4,8 @@ WORKDIR /app
 
 COPY . .
 
-RUN npm install && npm install serve
+RUN npm install
+RUN npm install serve
 
 RUN npm run build
 
