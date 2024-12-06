@@ -4,6 +4,7 @@ from dotenv import load_dotenv, dotenv_values
 from pathlib import Path
 import aiohttp
 import os
+import secrets
 
 app = FastAPI()
 env_path = Path(__file__).resolve().parent.parent.parent / '.env'
@@ -17,6 +18,14 @@ app.add_middleware(
     allow_headers=['*'],
 )
 
+def generate_default_env_variables():
+    return {
+        "SECRET_KEY": secrets.token_hex(32),
+        "SESSION_SECRET": secrets.token_hex(16), 
+        "ENCRYPTION_KEY": secrets.token_hex(32),
+        "ENCRYPTION_IV": secrets.token_hex(16)
+    }
+
 @app.get('/env')
 async def get_env():
     env_vars = dotenv_values(env_path)
@@ -27,11 +36,15 @@ async def set_env(request: Request):
     try:
         new_vars = await request.json()
         current_vars = dotenv_values(env_path)
+        
+        default_vars = generate_default_env_variables()
 
-        # Update current variables with new values
+        for key, value in default_vars.items():
+            if len(current_vars.get(key, '')) == 0:
+                current_vars[key] = value
+
         current_vars.update(new_vars)
 
-        # Write updated variables back to .env file
         with open(env_path, 'w') as env_file:
             for key, value in current_vars.items():
                 env_file.write(f'{key}={value}\n')
@@ -40,7 +53,7 @@ async def set_env(request: Request):
         return {'status': 'success'}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
+    
 @app.get('/host-ip') 
 async def get_host_ip():
     async with aiohttp.ClientSession() as session:
