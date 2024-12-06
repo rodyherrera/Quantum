@@ -1,12 +1,24 @@
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { setEnvironVariables } from '@services/env/slice';
 import StepContainer from '@components/atoms/StepContainer';
 import StepsContainer from '@components/molecules/StepsContainer';
 import Button from '@components/atoms/Button';
 import DeployOutput from '@components/molecules/DeployOutput';
 import OptionalEnvironVariables from '@components/molecules/OptionalEnvironVariables';
 import EnvironVariables from '@components/molecules/EnvironVariables';
+import useEnvironVariables from '@hooks/useEnvironVariables';
 import './Setup.css';
 
 const SetupPage = () => {
+    const dispatch = useDispatch();
+    const { environVariables, isLoading } = useEnvironVariables();
+
+    useEffect(() => {
+        if(!isLoading && environVariables){
+            dispatch(setEnvironVariables(environVariables));
+        }
+    }, [isLoading]);
 
     return (
         <main id='Setup-Utility-Main'>

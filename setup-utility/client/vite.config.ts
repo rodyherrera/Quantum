@@ -13,7 +13,8 @@ export default defineConfig({
       '@pages': '/src/pages',
       '@styles': '/src/assets/stylesheets',
       '@components': '/src/components',
-      '@hooks': '/src/hooks'
+      '@hooks': '/src/hooks',
+      '@services': '/src/services'
     }
   }
 })
