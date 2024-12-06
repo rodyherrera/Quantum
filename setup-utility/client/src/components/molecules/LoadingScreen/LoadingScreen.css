@@ -1,0 +1,19 @@
+.Loading-Screen-Container{
+    position: fixed;
+    top: 0;
+    right: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    gap: 2rem;
+    flex-direction: column;
+    backdrop-filter: blur(2px);
+    background-color: rgba(255, 255, 255, 0.5);
+}
+
+.Loading-Screen-Message{
+    font-family: 'IBM Plex Sans', sans-serif !important;
+    font-size: .9rem;
+}
