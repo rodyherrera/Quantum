@@ -60,14 +60,12 @@ async def set_env(request: Request):
     try:
         new_vars = await request.json()
         current_vars = dotenv_values(env_path)
-        
         default_vars = generate_default_env_variables()
-
-        for key, value in default_vars.items():
-            if len(current_vars.get(key, '')) == 0:
-                current_vars[key] = value
-
         current_vars.update(new_vars)
+        
+        for key, value in default_vars.items():
+            if not len(current_vars[key]):
+                current_vars[key] = value
 
         with open(env_path, 'w') as env_file:
             for key, value in current_vars.items():
