@@ -29,6 +29,24 @@
     max-width: 500px;
 }
 
+.Setup-Utility-Documentation-Helper-Text{
+    font-size: .8rem;
+}
+
+.Setup-Utility-Quantum-Copyright{
+    font-size: .8rem;
+}
+
+.Setup-Utility-Left-Container{
+    display: flex;
+    flex-direction: column;
+    position: sticky;
+    top: 2rem;
+    width: 220px;
+    height: max-content;
+    gap: 1rem;
+}
+
 @media screen and (max-width: 768px){
     #Setup-Utility-Main{
         flex-direction: column;

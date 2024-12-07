@@ -51,6 +51,8 @@ const SetupPage: React.FC = () => {
                         <StepContainer key={index} title={title} />
                     ))}
                 </StepsContainer>
+                <p className='Setup-Utility-Documentation-Helper-Text'>If you have problems during the installation, reading the <a href='https://github.com/rodyherrera/Quantum/'>documentation</a> can be of great help.</p>
+                <p className='Setup-Utility-Quantum-Copyright'>© {new Date().getFullYear()} - Quantum Cloud.</p>
             </section>
 
             <section 

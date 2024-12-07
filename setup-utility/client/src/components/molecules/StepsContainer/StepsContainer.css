@@ -1,17 +1,8 @@
-.Setup-Utility-Left-Container{
-    display: flex;
-    flex-direction: column;
-    position: sticky;
-    top: 2rem;
-    height: max-content;
-    border-left: 1px solid #dadada;
-    padding-left: 1rem;
-    gap: 1rem;
-}
-
 .Setup-Utility-Steps-Container{
     display: flex;
     flex-direction: column;
+    padding-left: 1rem;
+    border-left: 1px solid #dadada;
     gap: .5rem;
 }
 

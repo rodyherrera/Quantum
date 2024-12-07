@@ -2,3 +2,7 @@
     font-weight: 400;
     font-size: .9rem;
 }
+
+.Setup-Utility-Step-Title:hover{
+    opacity: .8;
+}

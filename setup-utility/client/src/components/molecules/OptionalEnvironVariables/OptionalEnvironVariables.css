@@ -32,6 +32,7 @@
 }
 
 .Optional-Environ-Variables-Title{
-    font-size: 1rem;
+    font-size: .8rem;
+    text-transform: uppercase;
     font-weight: 400;
 }
