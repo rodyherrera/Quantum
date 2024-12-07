@@ -4,9 +4,9 @@ services:
       context: ../
       dockerfile: setup-utility/server/Dockerfile
     ports:
-      - "${SERVER_PORT:-8000}:8000"
+      - "${SERVER_PORT:-9080}:9080"
     environment:
-      - SERVER_PORT=${SERVER_PORT:-8000}
+      - SERVER_PORT=${SERVER_PORT:-9080}
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
 
@@ -14,7 +14,9 @@ services:
     build:
       context: ./client
       dockerfile: Dockerfile
+      args:
+        - VITE_SERVER=http://${SERVER_IP:-0.0.0.0}:${SERVER_PORT:-9080}
     ports:
-      - "${CLIENT_PORT:-3300}:3300"
+      - "${CLIENT_PORT:-3080}:3080"
     environment:
-      - CLIENT_PORT=${CLIENT_PORT:-3300}
+      - CLIENT_PORT=${CLIENT_PORT:-3080}

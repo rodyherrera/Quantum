@@ -5,7 +5,7 @@ set -e
 
 # Define host and port variables
 HOST="0.0.0.0"
-PORT="8000"
+PORT="9080"
 
 # Check if requirements.txt has already been installed
 REQUIREMENTS_FILE="requirements.txt"
