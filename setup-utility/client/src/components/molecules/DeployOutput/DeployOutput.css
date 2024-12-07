@@ -1,7 +1,8 @@
 .Setup-Utility-Deploy-Output{
     margin-top: 2rem;
     padding: 1rem;
-    background-color: #f4f4f4;
+    background-color: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(2px);
     border: 1px solid #ccc;
     border-radius: 0.5rem;
     width: 400px;
