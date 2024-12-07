@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { addToast } from '@services/toast/slice';
 import { useDispatch } from 'react-redux';
 import useWebSocket from '@hooks/useWebSocket';
@@ -67,18 +67,20 @@ const DeployOutput = () => {
         }
 
         scrollToBottom();
-    }, [messages]);
+    }, [messages, dispatch]);
 
     return (
-        <div className='Setup-Utility-Deploy-Output' ref={containerRef}>
+        <React.Fragment>
             {!isConnected && (
                 <LoadingScreen message='Trying to establish communication with server...' />
             )}
-            {isConnected ? <p>Connected to server</p> : <p>Connecting to server...</p>}
-            {messages.map((message, index) => (
-                <p key={index}>{message}</p>
-            ))}
-        </div>
+            <div className='Setup-Utility-Deploy-Output' ref={containerRef}>
+                {isConnected ? <p>Connected to server</p> : <p>Connecting to server...</p>}
+                {messages.map((message, index) => (
+                    <p key={index}>{message}</p>
+                ))}
+            </div>
+        </React.Fragment>
     );
 };
 
