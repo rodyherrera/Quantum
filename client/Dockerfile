@@ -28,7 +28,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install project dependencies
-RUN npm install --force --silent
+RUN npm install --force
 
 # Copy all files from the current directory to the working directory
 COPY . .

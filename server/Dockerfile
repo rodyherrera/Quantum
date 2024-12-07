@@ -11,7 +11,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install project dependencies
-RUN npm install --force --silent
+RUN npm install --force 
 
 # Update package list and install necessary tools and dependencies
 RUN apt-get update && \
