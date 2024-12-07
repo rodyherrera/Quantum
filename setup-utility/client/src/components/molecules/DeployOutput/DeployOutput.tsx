@@ -5,10 +5,12 @@ import './DeployOutput.css';
 
 const DeployOutput = () => {
     const { isConnected, messages } = useWebSocket();
-    const messagesEndRef = useRef<HTMLDivElement | null>(null);
+    const containerRef = useRef<HTMLDivElement | null>(null);
 
     const scrollToBottom = () => {
-        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+        if(containerRef.current){
+            containerRef.current.scrollTop = containerRef.current.scrollHeight;
+        }
     };
 
     useEffect(() => {
@@ -19,7 +21,7 @@ const DeployOutput = () => {
     }, [messages]);
 
     return (
-        <div className='Setup-Utility-Deploy-Output'>
+        <div className='Setup-Utility-Deploy-Output' ref={containerRef}>
             {!isConnected && (
                 <LoadingScreen message='Trying to establish communication with server...' />
             )}
@@ -27,7 +29,6 @@ const DeployOutput = () => {
             {messages.map((message, index) => (
                 <p key={index}>{message}</p>
             ))}
-            <div ref={messagesEndRef} />
         </div>
     );
 };

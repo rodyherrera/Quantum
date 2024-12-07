@@ -4,18 +4,18 @@
     background-color: #f4f4f4;
     border: 1px solid #ccc;
     border-radius: 0.5rem;
-    max-height: 500px;
-    min-width: 400px;
-    max-width: 400px;
-    overflow-y: auto;
+    width: 400px;
     font-family: monospace;
-    padding: 1rem;
+    height: 500px; 
+    overflow-y: auto;
+    white-space: normal;
+    word-wrap: break-word;
+    word-break: break-word;
 }
 
 @media screen and (max-width: 768px){
     .Setup-Utility-Deploy-Output{
-        max-width: 100%;
-        min-width: 100%;
+        width: 100%;
         min-height: 100px;
     }
 }
