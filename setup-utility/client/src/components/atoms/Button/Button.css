@@ -1,12 +1,22 @@
 .Button-Message{
-    font-size: .95rem;
+    font-size: .85rem;
+    text-transform: uppercase;
 }
 
 .Button-Container{
     background: #1f1f1f;
     color: #FFF;
     cursor: pointer;
-    padding: .5rem 2rem;
+    padding: .5rem 1.5rem;
     width: fit-content;
     border-radius: .25rem;
+    transition: .2s;
+}
+
+.Button-Container:hover{
+    opacity: .8;
+}
+
+.Button-Container:active{
+    transform: scale(.95);
 }
