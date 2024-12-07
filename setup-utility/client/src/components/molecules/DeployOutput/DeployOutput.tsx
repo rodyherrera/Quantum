@@ -1,4 +1,6 @@
 import { useEffect, useRef } from 'react';
+import { addToast } from '@services/toast/slice';
+import { useDispatch } from 'react-redux';
 import useWebSocket from '@hooks/useWebSocket';
 import LoadingScreen from '@components/molecules/LoadingScreen';
 import './DeployOutput.css';
@@ -6,6 +8,7 @@ import './DeployOutput.css';
 const DeployOutput = () => {
     const { isConnected, messages } = useWebSocket();
     const containerRef = useRef<HTMLDivElement | null>(null);
+    const dispatch = useDispatch();
 
     const scrollToBottom = () => {
         if(containerRef.current){
@@ -16,6 +19,14 @@ const DeployOutput = () => {
     useEffect(() => {
         if(!messages.length){
             return;
+        }
+        if(messages.length == 1){
+            dispatch(addToast({
+                id: 'deploying',
+                type: 'info',
+                message: 'Running @deploy.sh using the provided environment variables. Deploying Quantum in Docker...',
+                duration: 5000000
+            }));
         }
         scrollToBottom();
     }, [messages]);
