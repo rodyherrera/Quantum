@@ -60,6 +60,8 @@ const DeployOutput = () => {
                 {
                     right: targetRight,
                     width: targetWidth,
+                    height: '90%',
+                    top: 0,
                     duration: 1.5,
                     ease: 'power2.out',
                 }

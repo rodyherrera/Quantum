@@ -6,8 +6,8 @@ print_message(){
     echo -e "\n#########################"
     echo -e "# $message"
     echo -e "#########################\n"
-    echo "Waiting 3 seconds..."
-    sleep 3
+    echo "Waiting 1.5 seconds..."
+    sleep 1.5
 }
 
 print_message "Installing Docker & Docker Compose"

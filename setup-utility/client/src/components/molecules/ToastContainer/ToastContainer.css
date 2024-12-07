@@ -3,10 +3,10 @@
     top: 2rem;
     right: 2rem;
     z-index: 500;
-    background-color: rgba(243, 243, 243, 0.5);
+    background-color: rgb(255 255 255 / 50%);
     backdrop-filter: blur(2px);
     width: 350px;
-    border-radius: 1.5rem;
+    border-radius: .5rem;
     padding: .5rem 1rem;
     border: 1px solid #dddddd;
 }
