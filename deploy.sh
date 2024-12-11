@@ -1,4 +1,5 @@
 #!/bin/bash
+
 export DEBIAN_FRONTEND=noninteractive
 
 print_message(){
@@ -12,12 +13,13 @@ print_message(){
 
 print_message "Installing Docker & Docker Compose"
 
+
 apt-get update
 apt-get install -y ca-certificates curl gnupg
 
 install -m 0755 -d /etc/apt/keyrings
 
-curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg --yes
 chmod a+r /etc/apt/keyrings/docker.gpg
 
 echo \
@@ -32,5 +34,7 @@ apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin do
 print_message "Docker & Docker Compose installed successfully"
 print_message "Building Quantum docker image..."
 
-docker compose --build
-docker compose up -d
+systemctl start docker
+
+docker compose down
+docker compose up --build
