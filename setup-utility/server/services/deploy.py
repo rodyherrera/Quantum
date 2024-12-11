@@ -8,7 +8,7 @@ import psutil
 import re
 
 connected_clients = []
-deploy_script_path = Path(__file__).resolve().parent.parent.parent.parent / 'deploy.sh'
+deploy_script_path = Path(__file__).resolve().parent.parent.parent.parent / 'scripts/deploy.sh'
 
 def kill_port(port):
     try:

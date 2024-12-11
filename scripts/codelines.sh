@@ -15,6 +15,6 @@
 # * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 echo "[Quantum Cloud]: Counting lines of code..."
 
-cloc --exclude-list=.clocignore .
+cloc --exclude-list=scripts/.clocignore .
 
 echo "[Quantum Cloud]: Happy hacking!"
