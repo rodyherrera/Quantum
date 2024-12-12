@@ -8,8 +8,7 @@ def generate_default_env_variables():
         "SECRET_KEY": secrets.token_hex(32),
         "SESSION_SECRET": secrets.token_hex(16),
         "ENCRYPTION_KEY": secrets.token_hex(32),
-        "ENCRYPTION_IV": secrets.token_hex(16),
-        "LOG_LEVEL": "info"
+        "ENCRYPTION_IV": secrets.token_hex(16)
     }
 
 def get_env_values():
@@ -19,7 +18,6 @@ def update_env_variables(new_vars: dict):
     current_vars = get_env_values()
     default_vars = generate_default_env_variables()
 
-    current_vars['CLIENT_DEV_HOST'] = new_vars['CLIENT_HOST']
     current_vars.update(new_vars)
     
     for key, value in default_vars.items():

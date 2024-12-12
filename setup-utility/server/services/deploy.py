@@ -65,4 +65,4 @@ async def execute_deploy_script():
 
     return_code = await process.wait()
     if return_code != 0:
-        await send_message_to_clients(f"Script falló con código de retorno {return_code}")
+        await send_message_to_clients(f"Error {return_code}")

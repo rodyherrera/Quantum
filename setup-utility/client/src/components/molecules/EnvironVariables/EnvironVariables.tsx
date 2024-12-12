@@ -10,14 +10,14 @@ const EnvironVariables = () => {
     const { environVariables } = useSelector((state: any) => state.env);
     const { serverIP } = useServerIP();
 
-    const handleInputChange = useCallback((name: string, value: string) => {
+    const handleInputChange = (name: string, value: string) => {
         dispatch(setEnvironVariables({ ...environVariables, [name]: value }));
-    }, []);
+    };
 
     useEffect(() => {
         if(!serverIP) return;
-        handleInputChange('SERVER_IP', serverIP);
-    }, [serverIP, handleInputChange]);
+        dispatch(setEnvironVariables({ ...environVariables, SERVER_IP: serverIP }));
+    }, [dispatch, serverIP]);
 
     return (
         <React.Fragment>

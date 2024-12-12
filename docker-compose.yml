@@ -11,6 +11,7 @@ services:
       # REQUIRED
       SERVER_IP: ${SERVER_IP}
       CLIENT_HOST: ${CLIENT_HOST}
+      CLIENT_DEV_HOST: ${CLIENT_HOST}
       DOMAIN: ${DOMAIN}
       MONGO_URI: mongodb://${MONGO_DB_USER}:${MONGO_DB_PASSWORD}@mongodb:${MONGO_DB_PORT}
       SECRET_KEY: ${SECRET_KEY}
@@ -29,7 +30,7 @@ services:
       WEBMASTER_MAIL: ${WEBMASTER_MAIL}
 
       NODE_ENV: ${NODE_ENV:-production}
-      LOG_LEVEL: ${LOG_LEVEL:-"info"}
+      LOG_LEVEL: info
 
       SERVER_PORT: 80
       SERVER_HOST: 0.0.0.0
