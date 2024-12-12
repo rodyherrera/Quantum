@@ -78,7 +78,8 @@ services:
       - ./client:/app
     
     depends_on:
-      - server
+      server:
+        condition: service_started
     
     networks:
       - quantum_network
