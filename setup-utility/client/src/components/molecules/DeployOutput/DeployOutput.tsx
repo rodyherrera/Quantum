@@ -3,11 +3,12 @@ import { addToast } from '@services/toast/slice';
 import { useDispatch } from 'react-redux';
 import useWebSocket from '@hooks/useWebSocket';
 import LoadingScreen from '@components/molecules/LoadingScreen';
+import Loader from '@components/atoms/Loader';
 import gsap from 'gsap';
 import './DeployOutput.css';
 
 const DeployOutput = () => {
-    const { isConnected, messages } = useWebSocket();
+    const { isConnected, messages, currentStep } = useWebSocket();
     const containerRef = useRef<HTMLDivElement | null>(null);
     const dispatch = useDispatch();
 
@@ -73,6 +74,31 @@ const DeployOutput = () => {
 
     return (
         <React.Fragment>
+            <div className='Setup-Utility-Deploy-Steps-Container'>
+                {currentStep === 0 && (
+                    <div className='Setup-Utility-Deploy-Steps-Not-Yet-Container'>
+                        <p className='Setup-Utility-Deploy-Steps-Not-Yet-Description'>You will be able to see the list of steps in which the deployment is from start to finish.</p>
+                    </div>
+                )}
+                {[
+                    'Setting up Docker repository and installing dependencies',
+                    'Updating package lists',
+                    'Installing Docker components',
+                    'Starting Docker service',
+                    'Ensuring port availability',
+                    'Building and bringing up Docker Compose services'
+                ].map((stepName, index) => (
+                    <div className='Setup-Utility-Deploy-Step-Container' key={index}>
+                        {(currentStep === (index + 1)) && (
+                            <div className='Setup-Utility-Deploy-Step-Loading-Container'>
+                                <Loader scale={0.4} />
+                            </div>
+                        )}
+                        <h3 className='Setup-Utility-Deploy-Step'>{stepName}</h3>
+                    </div>
+                ))}
+            </div>
+
             {!isConnected && (
                 <LoadingScreen message='Trying to establish communication with server...' />
             )}
