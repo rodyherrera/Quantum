@@ -74,7 +74,7 @@ const DeployOutput = () => {
 
     return (
         <React.Fragment>
-            <div className='Setup-Utility-Deploy-Steps-Container'>
+            <div className='Setup-Utility-Deploy-Steps-Container' data-currentstep={currentStep}>
                 {currentStep === 0 && (
                     <div className='Setup-Utility-Deploy-Steps-Not-Yet-Container'>
                         <p className='Setup-Utility-Deploy-Steps-Not-Yet-Description'>You will be able to see the list of steps in which the deployment is from start to finish.</p>

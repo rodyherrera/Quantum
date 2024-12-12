@@ -76,4 +76,22 @@
         width: 100%;
         min-height: 100px;
     }
+
+    .Setup-Utility-Left-Container{
+        position: initial !important;
+    }
+
+    .Setup-Utility-Deploy-Steps-Container[data-currentstep='0']{
+        display: none !important;
+    }
+
+    .Setup-Utility-Deploy-Steps-Container:not([data-currentstep='0']) {
+        position: fixed !important;
+        bottom: 1rem;
+        background-color: rgba(255, 255, 255, 0.9);
+        left: 50%;
+        transform: translateX(-50%);
+        width: calc(100% - 2rem);
+        z-index: 500;
+    }
 }
