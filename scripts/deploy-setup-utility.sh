@@ -32,6 +32,10 @@ if [ -z "$CLIENT_PORT" ]; then
   exit 1
 fi
 
+echo "@deploy-setup-utility.sh: killing processes using ports $SERVER_PORT and $CLIENT_PORT..."
+
+fuser -k ${SERVER_PORT}/tcp > /dev/null 2>&1
+fuser -k ${CLIENT_PORT}/tcp > /dev/null 2>&1
 
 echo "@deploy-setup-utility.sh: deploying via docker compose..."
 sleep 2
