@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { addToast } from '@services/toast/slice';
 import { useDispatch } from 'react-redux';
 import useWebSocket from '@hooks/useWebSocket';

@@ -8,6 +8,7 @@ const RECONNECT_DELAY = 1000;
 const useWebSocket = () => {
     const [messages, setMessages] = useState<string[]>([]);
     const [isConnected, setIsConnected] = useState(false);
+    const [currentStep, setCurrentStep] = useState<number>(0);
     const socketRef = useRef<WebSocket | null>(null);
     const dispatch = useDispatch();
 
@@ -31,6 +32,15 @@ const useWebSocket = () => {
             };
 
             socket.onmessage = (event) => {
+                // TODO: is not correct implement this logic here.
+                const message = event.data;
+                const regex = /@deploy\.sh: STEP (\d+)/;
+                const match = message.match(regex);
+                if(match){
+                    const stepNumber = parseInt(match[1], 10);
+                    console.log('Step Number:', stepNumber);
+                    setCurrentStep(stepNumber);
+                }
                 setMessages((prev) => [...prev, event.data]);
             };
 
@@ -90,7 +100,7 @@ const useWebSocket = () => {
         }
     };
 
-    return { messages, isConnected, sendMessage };
+    return { messages, isConnected, currentStep, sendMessage };
 };
 
 export default useWebSocket;

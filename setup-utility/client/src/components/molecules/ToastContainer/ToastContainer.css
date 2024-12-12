@@ -3,12 +3,13 @@
     top: 2rem;
     right: 2rem;
     z-index: 500;
-    background-color: rgb(255 255 255 / 50%);
+    background-color: rgb(255 255 255 / 60%);
+    border: 1px solid #f1f1f1;
     backdrop-filter: blur(2px);
     width: 350px;
+    color: #1f1f1f;
     border-radius: .5rem;
     padding: .5rem 1rem;
-    border: 1px solid #dddddd;
 }
 
 @media screen and (max-width: 768px){
