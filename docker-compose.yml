@@ -68,7 +68,7 @@ services:
       context: ./client
       dockerfile: Dockerfile
       args:
-        VITE_SERVER: ${VITE_SERVER:-http://${SERVER_IP}:${SERVER_PORT}}
+        VITE_SERVER: ${VITE_SERVER:-${DOMAIN}}
         VITE_API_SUFFIX: ${VITE_API_SUFFIX:-/api/v1}
 
     ports:

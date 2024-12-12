@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setEnvironVariables } from '@services/env/slice';
 import Input from '@components/atoms/Input';
@@ -10,15 +10,20 @@ const EnvironVariables = () => {
     const { environVariables } = useSelector((state: any) => state.env);
     const { serverIP } = useServerIP();
 
-    const handleInputChange = (name: string, value: string) => {
+    const handleInputChange = useCallback((name: string, value: string) => {
         dispatch(setEnvironVariables({ ...environVariables, [name]: value }));
-    };
+    }, []);
+
+    useEffect(() => {
+        if(!serverIP) return;
+        handleInputChange('SERVER_IP', serverIP);
+    }, [serverIP, handleInputChange]);
 
     return (
         <React.Fragment>
             <Input
                 type='text'
-                value={serverIP || environVariables.SERVER_IP || ''}
+                value={environVariables.SERVER_IP || ''}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('SERVER_IP', e.target.value)}
                 placeholder='Server IP address (e.g. 152.53.39.92)'
                 helperText='* The IP address of your server. It must be the IP of your VPS. If you try to deploy within Google IDX, Gitpod, Github Codespace or related you will have errors.'
