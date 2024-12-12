@@ -6,9 +6,12 @@ import './ToastContainer.css';
 const ToastContainer: React.FC = () => {
     const toasts = useSelector((state: RootState) => state.toast.toasts);
 
-    return toasts.length >= 1 && (
+    // TODO: do it better.
+    const visibleToasts = toasts.slice(-1);
+
+    return visibleToasts.length >= 1 && (
         <div className='Toast-Container'>
-            {toasts.map((toast) => (
+            {visibleToasts.map((toast) => (
                 <Toast key={toast.id} toast={toast} />
             ))}
         </div>
