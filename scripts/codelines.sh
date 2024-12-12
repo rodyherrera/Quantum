@@ -13,8 +13,8 @@
 # * All your applications, just in one place. 
 # *
 # * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-echo "[Quantum Cloud]: Counting lines of code..."
+echo "@codelines.sh: counting lines of code..."
 
 cloc --exclude-list=scripts/.clocignore .
 
-echo "[Quantum Cloud]: Happy hacking!"
+echo "@codelines.sh: happy hacking."
