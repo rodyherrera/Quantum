@@ -55,9 +55,7 @@ async def execute_deploy_script():
             if not output:
                 break
             message = output.decode('utf-8', errors='ignore')
-            # Eliminar códigos ANSI de la salida
             clean_message = ansi_escape.sub('', message)
-            print(clean_message)
             await send_message_to_clients(clean_message)
     finally:
         os.close(master_fd)
