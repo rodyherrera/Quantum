@@ -11,7 +11,6 @@ import { pullImage } from '@services/docker/image';
 import { IDockerContainer } from '@typings/models/docker/container';
 import { IDockerImage } from '@typings/models/docker/image';
 import { IDockerNetwork } from '@typings/models/docker/network';
-import { IPortBinding } from '@typings/models/portBinding';
 import { getSystemNetworkName } from '@services/docker/network';
 import { IContainerStoragePath } from '@typings/services/dockerContainer';
 import DockerImage from '@models/docker/image';
@@ -25,19 +24,6 @@ export const getContainerStoragePath = (userId: string, containerId: string, nam
     const userContainerPath = path.join('/var/lib/quantum', process.env.NODE_ENV as string, 'containers', userId);
     const containerStoragePath = path.join(userContainerPath, 'docker-containers', `${slugify(name)}-${containerId}`);
     return { userContainerPath, containerStoragePath };
-}
-
-export const createUserContainer = async (userId: string): Promise<IDockerContainer> => {
-    const image = await DockerImage.create({ name: 'alpine', tag: 'latest', user: userId });
-    const network = await DockerNetwork.create({ user: userId, driver: 'bridge', name: userId });
-    const container = await DockerContainerModel.create({
-        name: userId,
-        user: userId,
-        image: image._id,
-        network: network._id,
-        isUserContainer: true
-    });
-    return container;
 }
 
 export const getSystemDockerName = (containerId: string): string => {
@@ -54,6 +40,32 @@ class DockerContainer{
         this.container = container;
         this.dockerImage = null;
         this.dockerNetwork = null;
+    }
+
+    async executeCommand(command: string, workDir: string = '/'): Promise<void>{
+        try{
+            const container = await this.getExistingContainer();
+            console.log('Container:', container, command);
+            const exec = await container.exec({
+                Cmd: ['/bin/sh', '-c', command],
+                AttachStdout: true,
+                AttachStderr: true,
+                WorkingDir: workDir,
+                Tty: false
+            });
+            await exec.start({ stdin: true, hijack: true });
+        }catch(error){
+            logger.error('@services/docker/container.ts (executeCommand): ' + error);
+        }
+    }
+
+    async installDefaultPackages(){
+        try{
+            await this.executeCommand('apk update');
+            await this.executeCommand(`apk add --no-cache ${process.env.DOCKER_APK_STARTER_PACKAGES}`);
+        }catch(error){
+            logger.error('@services/docker/container.ts (installDefaultPackages): ' + error);
+        }
     }
 
     async getIpAddress(): Promise<string | null>{

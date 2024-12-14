@@ -51,51 +51,14 @@ class UserContainer extends DockerContainerService{
         }
     }
 
-    async start(installPkgs: boolean = true){
+    async start(){
         const container = await this.initializeContainer();
         if(!container){
             throw new Error("Unable to start the user's container.")
         }
         this.instance = container;
-        if(installPkgs) await this.installPackages();
     }
     
-    /**
-     * Installs the required packages in the container.
-     */
-    async installPackages(){
-        try{
-            await this.executeCommand('apk update');
-            await this.executeCommand(`apk add --no-cache ${process.env.DOCKER_APK_STARTER_PACKAGES}`);
-        }catch(error){
-            this.criticalErrorHandler('installPackages', error);
-        }
-    }
-
-    /**
-     * Executes a command within the container.
-     * 
-     * @param command - The command to execute.
-     * @param workDir - Path to the working directory (optional).
-     * @returns The command output.
-     */
-    async executeCommand(command: string, workDir: string = '/'): Promise<void>{
-        try{
-            await this.start(false);
-            if(!this.instance) return;
-            const exec = await this.instance.exec({
-                Cmd: ['/bin/sh', command],
-                AttachStdout: true,
-                WorkingDir: workDir,
-                AttachStderr: true,
-                Tty: false
-            });
-            exec.start({ stdin: true, hijack: true });
-        }catch(error){
-            this.criticalErrorHandler('executeCommand', error);
-        }
-    }
-
     /**
      * Run an interactive terminal inside the container.
      * @param socket 
@@ -103,7 +66,7 @@ class UserContainer extends DockerContainerService{
      */
     async executeInteractiveShell(socket: Socket, workDir: string = '/app'){
         try{
-            await this.start(false);
+            await this.start();
             if(!this.instance) return;
             const exec = await this.instance.exec({
                 Cmd: ['/bin/sh'],

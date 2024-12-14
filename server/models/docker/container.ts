@@ -1,6 +1,7 @@
 import mongoose, { Schema, Model } from 'mongoose';
 import { IDockerContainer } from '@typings/models/docker/container';
 import DockerContainerService, { getContainerStoragePath, getSystemDockerName } from '@services/docker/container';
+import UserContainerService from '@services/userContainer';
 import logger from '@utilities/logger';
 
 const DockerContainerSchema: Schema<IDockerContainer> = new Schema({
@@ -120,6 +121,9 @@ DockerContainerSchema.pre('save', async function (next){
             this.storagePath = this.isUserContainer ? userContainerPath : containerStoragePath;
             const containerService = new DockerContainerService(this);
             await containerService.createAndStartContainer();
+            if(this.isUserContainer){
+                await containerService.installDefaultPackages();
+            }
             const ipAddress = await containerService.getIpAddress();
             if(ipAddress){
                 this.ipAddress = ipAddress;
