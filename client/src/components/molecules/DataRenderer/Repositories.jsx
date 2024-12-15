@@ -8,10 +8,6 @@ import { FiGithub } from 'react-icons/fi';
 const RepositoriesDataRenderer = ({ ...props }) => {
     const { repositories, isLoading, error, stats, isOperationLoading } = useUserRepositories();
     
-    useEffect(() => {
-        console.log(stats)
-    }, [stats]);
-
     return (
         <DashboardModule
             title='Your Github Repositories'

@@ -85,6 +85,7 @@ const repositoryOperationHandler = async (repository: any, action: string) => {
             case 'restart':
                 await containerService.restart();
                 await githubService.updateDeploymentStatus(githubDeploymentId, 'success');
+                currentDeployment.status = 'success';
                 break;
             case 'stop':
                 await containerService.stop();
