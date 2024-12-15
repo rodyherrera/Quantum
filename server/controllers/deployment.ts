@@ -57,7 +57,6 @@ const repositoryOperationHandler = async (repository: any, action: string) => {
         select: 'username container',
         populate: { path: 'github', select: 'accessToken username' }
     });
-    const repositoryHandler = new RepositoryHandler(repository);
     const container = await DockerContainer.findOne({ repository });
     const containerService = new DockerContainerService(container);
     const github = new Github(repository.user, repository);
@@ -73,7 +72,6 @@ const repositoryOperationHandler = async (repository: any, action: string) => {
     switch(action){
         case 'restart':
             await containerService.restart();
-            repositoryHandler.start(github);
             // TODO: Can be refactored using mongoose middlewares
             github.updateDeploymentStatus(githubDeploymentId, 'success');
             break;
@@ -85,7 +83,6 @@ const repositoryOperationHandler = async (repository: any, action: string) => {
             break;
         case 'start':
             await containerService.start();
-            repositoryHandler.start(github);
             github.updateDeploymentStatus(githubDeploymentId, 'success');
             break;
         default:

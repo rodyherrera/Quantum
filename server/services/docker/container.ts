@@ -16,6 +16,10 @@ import { IContainerStoragePath } from '@typings/services/dockerContainer';
 import DockerImage from '@models/docker/image';
 import logger from '@utilities/logger';
 import DockerNetwork from '@models/docker/network';
+import { IRepository } from '@typings/models/repository';
+import Repository from '@models/repository';
+import RepositoryService from '@services/repositoryHandler';
+import Github from '@services/github';
 
 const docker = new Dockerode();
 
@@ -33,6 +37,7 @@ export const getSystemDockerName = (containerId: string): string => {
 
 class DockerContainer{
     private container: IDockerContainer;
+    private repository: IRepository;
     private dockerImage: IDockerImage | null;
     private dockerNetwork: IDockerNetwork | null;
 
@@ -40,6 +45,26 @@ class DockerContainer{
         this.container = container;
         this.dockerImage = null;
         this.dockerNetwork = null;
+        this.repository = null;
+    }
+
+    async getRepository(){
+        if(this.repository) return this.repository;
+        this.repository = await Repository
+            .findById(this.container.repository)
+            .populate({
+                path: 'user',
+                select: 'username',
+                populate: { path: 'github', select: 'accessToken username' }
+            });
+        return this.repository;
+    }
+
+    async deployRepository(){
+        const repository = await this.getRepository();
+        const repositoryService = new RepositoryService(repository);
+        const githubService = new Github(repository.user, repository);
+        await repositoryService.start(githubService);
     }
 
     async executeCommand(command: string, workDir: string = '/'): Promise<void>{
@@ -213,7 +238,7 @@ class DockerContainer{
     async stop(): Promise<void>{
         try{
             const container = docker.getContainer(this.container.dockerContainerName);
-            await container.stop();
+            await container.stop({ t: 0 });
             await this.container.updateOne({ status: 'stopped' });
             logger.info(`@services/docker/container.ts (stopContainer): Successfully stopped container ${this.container.dockerContainerName}.`);
         }catch(error){
@@ -226,12 +251,13 @@ class DockerContainer{
         try{
             const container = docker.getContainer(this.container.dockerContainerName);
             logger.info(`@services/docker/container.ts (restartContainer): Restarting container ${this.container.dockerContainerName}...`);
-            await container.stop();
+            await container.stop({ t: 0 });
             logger.info(`@services/docker/container.ts (restartContainer): Stopped container ${this.container.dockerContainerName}.`);
             await this.container.updateOne({ status: 'restarting' });
             await container.start();
             if(this.container.isRepositoryContainer){
-                this.installDefaultPackages();
+                await this.installDefaultPackages();
+                await this.deployRepository();
             }
             await this.container.updateOne({ status: 'running' });
             logger.info(`@services/docker/container.ts (restartContainer): Successfully restarted container ${this.container.dockerContainerName}.`);
@@ -251,7 +277,8 @@ class DockerContainer{
             }
             await container.start();
             if(this.container.isRepositoryContainer){
-                this.installDefaultPackages();
+                await this.installDefaultPackages();
+                await this.deployRepository();
             }
             await this.container.updateOne({ status: 'running' });
             logger.info(`@services/docker/container.ts (startContainer): Successfully started container ${this.container.dockerContainerName}.`);
