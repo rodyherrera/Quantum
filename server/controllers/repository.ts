@@ -77,14 +77,10 @@ export const getMyRepositories = RepositoryFactory.getAll({
     }
 });
 
-const getRequestedPath = (req: IRequest): string => {
-    const env = process.env.NODE_ENV || 'development';
-    const user: any = req.user;
-    return path.join('/var/lib/quantum', env, `/containers/${user._id}/github-repos/`, req.params.id, req.params.route || '');
-};
-
+// refactor this and avoid duplicated code with containers.
 export const storageExplorer = catchAsync(async (req: IRequest, res: Response) => {
-    const requestedPath = getRequestedPath(req);
+    const repository = await Repository.findById(req.params.id).populate('container');
+    const requestedPath = repository?.container.storagePath;
     const files = fs.readdirSync(requestedPath).map(file => ({
         name: file,
         isDirectory: fs.statSync(path.join(requestedPath, file)).isDirectory()
@@ -93,7 +89,8 @@ export const storageExplorer = catchAsync(async (req: IRequest, res: Response) =
 });
 
 export const updateRepositoryFile = catchAsync(async (req: IRequest, res: Response, next: NextFunction) => {
-    const requestedPath = getRequestedPath(req);
+    const repository = await Repository.findById(req.params.id).populate('container');
+    const requestedPath = repository?.container.storagePath;
     if(!fs.existsSync(requestedPath)) return next(new RuntimeError('Repository::File::NotExists', 404));
     if(!req.body.content) return next(new RuntimeError('Repository::File::UpdateContentRequired', 400));
     fs.writeFileSync(requestedPath, req.body.content, 'utf-8');
@@ -101,7 +98,8 @@ export const updateRepositoryFile = catchAsync(async (req: IRequest, res: Respon
 });
 
 export const readRepositoryFile = catchAsync(async (req: IRequest, res: Response) => {
-    const requestedPath = getRequestedPath(req);
+    const repository = await Repository.findById(req.params.id).populate('container');
+    const requestedPath = repository?.container.storagePath;
     res.status(200).json({
         status: 'success',
         data: {
