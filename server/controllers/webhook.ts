@@ -10,6 +10,7 @@ import { IUser } from '@typings/models/user';
 import mongoose from 'mongoose';
 import DockerContainerService from '@services/docker/container';
 import { IDockerContainer } from '@typings/models/docker/container';
+import sendEmail from '@services/sendEmail';
 
 /**
  * Handles push event webhooks from GitHub.
@@ -26,7 +27,7 @@ export const webhook = async (req: Request, res: Response) => {
             .findById(repositoryId)
             .populate({
                 path: 'user',
-                select: 'username',
+                select: 'username email',
                 populate: { path: 'github', select: 'accessToken username' }
             })
             .populate('container');
@@ -53,6 +54,12 @@ export const webhook = async (req: Request, res: Response) => {
         // Start the repository
         const repositoryHandler = new RepositoryHandler(repository);
         await repositoryHandler.start(githubService);
+
+        sendEmail({
+            to: repository.user.email,
+            subject: `Deployment for "${repository.alias}" completed successfully.`,
+            html: `Hello @${repository.user.username}. The "${repository.alias}" repository has been updated and we have deployed the new version. It should be available in a few moments.`
+        });
 
         res.status(200).json({ status: 'success' });
     }catch(error: any){

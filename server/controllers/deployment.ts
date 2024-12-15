@@ -17,14 +17,13 @@ import Repository from '@models/repository';
 import HandlerFactory from '@controllers/common/handlerFactory';
 import RuntimeError from '@utilities/runtimeError';
 import Github from '@services/github';
-import RepositoryHandler from '@services/repositoryHandler';
 import DockerContainerService from '@services/docker/container';
 import DockerContainer from '@models/docker/container';
 import { catchAsync } from '@utilities/helpers';
 import { Request, Response } from 'express';
-import { IDeployment } from '@typings/models/deployment';
 import { IRepository } from '@typings/models/repository';
 import { ActiveDeploymentEnvironment, ActiveDeploymentRepositoryDocument } from '@typings/controllers/deployment';
+import sendEmail from '@services/sendEmail';
 
 const DeploymentFactory = new HandlerFactory({
     model: Deployment,
@@ -54,7 +53,7 @@ export const deleteDeployment = DeploymentFactory.deleteOne();
 const repositoryOperationHandler = async (repository: any, action: string) => {
     await repository.populate({
         path: 'user',
-        select: 'username container',
+        select: 'username container email',
         populate: { path: 'github', select: 'accessToken username' }
     });
 
@@ -86,16 +85,31 @@ const repositoryOperationHandler = async (repository: any, action: string) => {
                 await containerService.restart();
                 await githubService.updateDeploymentStatus(githubDeploymentId, 'success');
                 currentDeployment.status = 'success';
+                sendEmail({
+                    to: repository.user.email,
+                    subject: `You have successfully restarted "${repository.alias}"`,
+                    html: `Hello @${repository.user.username}, the container is currently restarting, the services will be redeployed and the installation, construction and execution commands will be executed.`
+                });
                 break;
             case 'stop':
                 await containerService.stop();
                 await githubService.updateDeploymentStatus(githubDeploymentId, 'inactive');
                 currentDeployment.status = 'stopped';
+                sendEmail({
+                    to: repository.user.email,
+                    subject: `Container "${repository.alias}" shut down successfully.`,
+                    html: `Hi @${repository.user.username}, the container has been shut down successfully.`
+                });
                 break;
             case 'start':
                 await containerService.start();
                 await githubService.updateDeploymentStatus(githubDeploymentId, 'success');
                 currentDeployment.status = 'success';
+                sendEmail({
+                    to: repository.user.email,
+                    subject: `Starting and deploying "${repository.alias}"`,
+                    html: `Hi @${repository.user.username}, the construction commands will be executed to proceed with the deployment.`
+                });
                 break;
             default:
                 throw new RuntimeError('Deployment::Invalid::Action', 400);
