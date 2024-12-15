@@ -14,11 +14,11 @@ const RepositoryBody = ({ repository }) => {
     const ctxMenuOpts = [
         { title: 'Delete', onClick: () => setIsDeleteModalActive(true) },
         { title: 'Manage Domains', onClick: () => handleRepositorySelection(`/repository/${repository.alias}/domains/`) },
-        { title: 'Build & Dev Settings',  onClick: () => handleRepositorySelection() },
-        { title: 'Environment Variables',  onClick: () => handleRepositorySelection() },
-        { title: 'File Explorer',  onClick: () => handleRepositorySelection() },
-        { title: 'Shell', onClick: () => handleRepositorySelection() },
-        { title: 'Deployments', onClick: () => handleRepositorySelection() }
+        { title: 'Build & Dev Settings',  onClick: () => handleRepositorySelection(`/repository/${repository.alias}/deployment/setup/`) },
+        { title: 'Environment Variables',  onClick: () => handleRepositorySelection(`/repository/${repository.alias}/deployment/environment-variables/`) },
+        { title: 'File Explorer',  onClick: () => handleRepositorySelection(`/repository/${repository.alias}/storage/`) },
+        { title: 'Shell', onClick: () => handleRepositorySelection(`/repository/${repository.alias}/shell/`) },
+        { title: 'Deployments', onClick: () => handleRepositorySelection(`/repository/${repository.alias}/deployments/`) }
     ];
 
     const handleRepositorySelection = (path) => {
