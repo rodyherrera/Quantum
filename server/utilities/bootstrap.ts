@@ -13,21 +13,18 @@
 ****/
 
 import Repository from '@models/repository';
-import User from '@models/user';
 import Github from '@services/github';
 import fs from 'fs';
 import path from 'path';
-import UserContainer from '@services/userContainer';
 import RepositoryHandler from '@services/repositoryHandler';
-import PortBinding from '@models/portBinding';
 import sendMail from '@services/sendEmail';
 import logger from '@utilities/logger';
 import { ConfigureAppParams } from '@typings/utilities/bootstrap';
 import { spawn } from 'child_process';
-import { IUser } from '@typings/models/user';
 import { IRepository } from '@typings/models/repository';
 import * as nginxHandler from '@services/nginx';
-import { IDockerContainer } from '@typings/models/docker/container';
+import DockerContainer from '@models/docker/container';
+import DockerContainerService from '@services/docker/container';
 
 /**
  * Asynchronously sets up an Nginx reverse proxy configuration.
@@ -101,58 +98,35 @@ export const restartServer = async (): Promise<void> => {
     });
 };
 
-/**
- * Loads and initializes Docker containers for all registered users.
- *
- * @returns {Promise<void>}
-*/
-export const loadUserContainers = async (): Promise<void> => {
+export const deployContainers = async (): Promise<void> => {
     try{
-        logger.info('@utilities/bootstrap.ts (loadUserContainers): Loading users docker containers...');
-        const users = await User.find().populate('container');
-        logger.info(`@utilities/bootstrap.ts (loadUserContainers): Found ${users.length} users.`);
-        await Promise.all(users.map(async (user) => {
-            const container = new UserContainer(user);
-            await container.start();
-        }));
+        logger.info('@utilities/bootstrap.ts (deployContainers): Loading containers...');
+        const containers = await DockerContainer.find({ });
+        logger.info(`@utilities/bootstrap.ts (deployContainers): Found ${containers.length} containers.`);
+        const promises = containers.map(async (container) => {
+            const containerService = new DockerContainerService(container);
+            await containerService.start();
+            if(container.isRepositoryContainer){
+                const repository = await Repository
+                    .findById({ _id: container.repository })
+                    .populate({
+                        path: 'user',
+                        select: 'username',
+                        populate: { path: 'github', select: 'accessToken username' }
+                    }) as IRepository;
+                const user = repository.user;
+                const repositoryService = new RepositoryHandler(repository, user);
+                const githubService = new Github(user, repository);
+                await repositoryService.start(githubService);
+            }
+        });
+        await Promise.all(promises);
         await sendMail({
-            subject: "Let's gooo, user containers loaded correctly!",
-            html: 'The containers of all users registered on the platform were successfully mounted on the host.'
+            subject: 'Containers loaded correctly!',
+            html: 'The containers registered on the platform were successfully mounted on the host.'
         });
     }catch(error){
-        logger.error('@utilities/bootstrap.ts (loadUserContainers):' + error);
-    }
-};
-
-/**
- * Initializes repositories on the platform by cloning and building them.
- *
- * @returns {Promise<void>}
-*/
-export const initializeRepositories = async (): Promise<void> => {
-    try{
-        logger.info('@utilities/bootstrap.ts (initializeRepositories): Initializing the repositories loaded on the platform...');
-        logger.info('@utilities/bootstrap.ts (initializeRepositories): This is a one time process, after this, the repositories will be loaded on demand.');
-        const repositories = await Repository.find()
-            .populate({
-                path: 'user',
-                select: 'username container',
-                populate: { path: 'github', select: 'accessToken username' }
-            });
-        logger.info(`@utilities/bootstrap.ts (initializeRepositories): Found ${repositories.length} repositories.`);
-        await Promise.all(repositories.map(async (repository: IRepository) => {
-            const user = repository.user as IUser;
-            const repositoryHandler = new RepositoryHandler(repository, user);
-            const github = new Github(user, repository);
-            await repositoryHandler.start(github);
-        }));
-        await sendMail({
-            subject: 'All repositories accessible now!',
-            html: 'The repositories were correctly initialized, within a few minutes if not now, they should be accessible to everyone.'
-        });
-        logger.info('@utilities/bootstrap.ts (initializeRepositories): All repositories were initialized.');
-    }catch(error){
-        logger.error('@utilities/bootstrap.ts (initializeRepositories): ' + error);
+        logger.error('@utilities/bootstrap.ts (deployContainers): ' + error);
     }
 };
 

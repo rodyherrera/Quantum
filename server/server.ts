@@ -72,10 +72,8 @@ httpServer.listen(SERVER_PORT, SERVER_HOST, async () => {
         // Establishes a connection to the MongoDB database
         await mongoConnector();
         logger.info('@server.ts: Docker containers and user applications will be started. This may take a few minutes...');
-        // Loads user-defined Docker containers
-        await bootstrap.loadUserContainers();
-        // Initializes user repositories (presumably for Git interaction)
-        await bootstrap.initializeRepositories();
+        // Loads Docker containers
+        await bootstrap.deployContainers();
         // Email to WEBMASTER_MAIL to notify about the correct opening of the server.
         await sendMail({
             subject: 'The Quantum API is now accessible!',

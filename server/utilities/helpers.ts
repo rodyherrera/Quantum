@@ -95,14 +95,18 @@ export const ensureDirectoryExists = async (directoryPath: string): Promise<void
  * Initiates a graceful shutdown of the Quantum Cloud server by stopping all active user containers.
  */
 export const cleanHostEnvironment = async (): Promise<void> => {
-    logger.info('@utilities/helper.ts (cleanHostEnvironment): Cleaning up the host environment, shutting down user containers...');
-    const containers = await DockerContainer.find({});
-    const promises = containers.map((container) => {
-        const containerService = new DockerContainerService(container);
-        return containerService.stop();
-    });
-    await Promise.all(promises);
-    logger.info('@utilities/helper.ts (cleanHostEnvironment): Containers shut down successfully, safely shutting down the server...');
+    try{
+        logger.info('@utilities/helper.ts (cleanHostEnvironment): Cleaning up the host environment, shutting down user containers...');
+        const containers = await DockerContainer.find({});
+        const promises = containers.map((container) => {
+            const containerService = new DockerContainerService(container);
+            return containerService.stop();
+        });
+        await Promise.all(promises);
+        logger.info('@utilities/helper.ts (cleanHostEnvironment): Containers shut down successfully, safely shutting down the server...');
+    }catch(error){
+        logger.error('@utilities/helper.ts (cleanHostEnvironment): ' + error);
+    }
 };
 
 /**
