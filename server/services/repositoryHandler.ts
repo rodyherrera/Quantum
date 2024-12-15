@@ -79,6 +79,7 @@ class RepositoryHandler{
         const userId = this.container.user.toString();
         const containerId = this.container._id.toString();
         const id = this.container.user.toString();
+        await createLogStream(userId, containerId);
         let stream = shells.get(id);
         if(!stream){
             const exec = await container.exec({

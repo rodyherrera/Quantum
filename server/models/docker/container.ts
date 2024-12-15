@@ -90,7 +90,7 @@ const cascadeDeleteHandler = async (document: IDockerContainer): Promise<void> =
         await mongoose.model('DockerNetwork').updateOne({ _id: network }, update);
     }
     await mongoose.model('DockerImage').updateOne({ _id: image }, update);
-    await mongoose.model('PortBinding').deleteOne({ container: _id });
+    await mongoose.model('PortBinding').deleteMany({ container: _id });
 };
 
 DockerContainerSchema.post('findOneAndDelete', async function (deletedDoc: IDockerContainer){

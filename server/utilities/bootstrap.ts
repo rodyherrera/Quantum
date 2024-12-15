@@ -114,6 +114,7 @@ export const deployContainers = async (): Promise<void> => {
                         select: 'username',
                         populate: { path: 'github', select: 'accessToken username' }
                     }) as IRepository;
+                if(!repository) return;
                 const user = repository.user;
                 const repositoryService = new RepositoryHandler(repository, user);
                 const githubService = new Github(user, repository);

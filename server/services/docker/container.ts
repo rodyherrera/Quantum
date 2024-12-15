@@ -12,11 +12,12 @@ import { IDockerContainer } from '@typings/models/docker/container';
 import { IDockerImage } from '@typings/models/docker/image';
 import { IDockerNetwork } from '@typings/models/docker/network';
 import { getSystemNetworkName } from '@services/docker/network';
+import { IUser } from '@typings/models/user';
+import { IRepository } from '@typings/models/repository';
 import { IContainerStoragePath } from '@typings/services/dockerContainer';
 import DockerImage from '@models/docker/image';
 import logger from '@utilities/logger';
 import DockerNetwork from '@models/docker/network';
-import { IRepository } from '@typings/models/repository';
 import Repository from '@models/repository';
 import RepositoryService from '@services/repositoryHandler';
 import Github from '@services/github';
@@ -37,7 +38,7 @@ export const getSystemDockerName = (containerId: string): string => {
 
 class DockerContainer{
     private container: IDockerContainer;
-    private repository: IRepository;
+    private repository: IRepository | null;
     private dockerImage: IDockerImage | null;
     private dockerNetwork: IDockerNetwork | null;
 
@@ -64,25 +65,64 @@ class DockerContainer{
         const repository = await this.getRepository();
         if(!repository) return;
         const repositoryService = new RepositoryService(repository);
-        const githubService = new Github(repository.user, repository);
+        const githubService = new Github(repository.user as IUser, repository);
         await repositoryService.start(githubService);
     }
 
-    async executeCommand(command: string, workDir: string = '/'): Promise<void>{
-        try{
-            const container = await this.getExistingContainer();
-            const exec = await container.exec({
-                Cmd: ['/bin/sh', '-c', command],
-                AttachStdout: true,
-                AttachStderr: true,
-                WorkingDir: workDir,
-                Tty: false
+    async executeCommand(command: string, workDir: string = '/'): Promise<void> {
+        const container = await this.getExistingContainer();
+    
+        // En lugar de lanzar solamente /bin/sh, concatena el comando con '-c' para ejecutarlo completamente.
+        const exec = await container.exec({
+            Cmd: ['/bin/sh', '-c', command],
+            AttachStdout: true,
+            AttachStderr: true,
+            WorkingDir: workDir,
+            Tty: false,
+        });
+    
+        // exec.start() retorna un stream; podemos “encadenar” la resolución de la Promesa en función de los eventos.
+        const stream = await exec.start({ hijack: true });
+    
+        return new Promise<void>((resolve, reject) => {
+            // Acumuladores de datos (si quisieras guardar logs o capturar salida).
+            const stdoutChunks: Buffer[] = [];
+            const stderrChunks: Buffer[] = [];
+    
+            stream.on('data', (chunk: Buffer) => {
+                // Ojo: Dockerode a veces mezcla stdout y stderr en el mismo stream con prefijos,
+                // pero por simplicidad asumimos que va llegando intercalado.
+                stdoutChunks.push(chunk);
             });
-            await exec.start({ stdin: true, hijack: true });
-        }catch(error){
-            logger.error('@services/docker/container.ts (executeCommand): ' + error);
-        }
+    
+            stream.on('error', (err: Error) => {
+                reject(err);
+            });
+    
+            stream.on('end', async () => {
+                // Una vez que el stream termina, usamos exec.inspect() para ver exit code y estado final
+                try {
+                    const execInspect = await exec.inspect();
+    
+                    // Si exitCode es 0, se considera que el comando terminó OK
+                    if (execInspect.ExitCode === 0) {
+                        // Si quisieras obtener la salida, podrías hacer algo con stdoutChunks/stderrChunks aquí
+                        resolve();
+                    } else {
+                        const stderrOutput = Buffer.concat(stderrChunks).toString();
+                        reject(
+                            new Error(
+                                `Command "${command}" failed with exit code ${execInspect.ExitCode}. Stderr: ${stderrOutput}`
+                            )
+                        );
+                    }
+                } catch (inspectError) {
+                    reject(inspectError);
+                }
+            });
+        });
     }
+    
 
     async installDefaultPackages(){
         try{
@@ -232,7 +272,6 @@ class DockerContainer{
         if(container){
             await container.remove({ force: true });
         }
-        shells.delete(this.container.user.toString());
         await this.initializeContainer();
     }
 

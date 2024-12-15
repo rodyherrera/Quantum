@@ -41,6 +41,7 @@ const cascadeDeleteHandler = async (document: IPortBinding): Promise<void> => {
     if(!document) return;
     const update = { $pull: { portBindings: document._id } };
     const container = await mongoose.model('DockerContainer').findOneAndUpdate({ _id: document.container }, update);
+    if(!container) return;
     const containerService = new DockerContainerService(container);
     await containerService.recreateContainer();
     await mongoose.model('User').updateOne({ _id: document.user }, update);
@@ -58,17 +59,20 @@ PortBindingSchema.pre('deleteMany', async function(){
     }));
 });
 
+PortBindingSchema.post('save', async function(){
+    const container = await DockerContainer.findById(this.container);
+    if(container?.ipAddress && this.externalPort){
+        const containerService = new DockerContainerService(container);
+        await containerService.recreateContainer();
+    }
+});
+
 PortBindingSchema.pre('save', async function(next){
     try{
         if(this.isNew){
             const update = { $push: { portBindings: this._id } };
             await mongoose.model('User').updateOne({ _id: this.user }, update);
             await mongoose.model('DockerContainer').updateOne({ _id: this.container }, update);
-            const container = await DockerContainer.findById(this.container);
-            if(container?.ipAddress && this.externalPort){
-                const containerService = new DockerContainerService(container);
-                await containerService.recreateContainer();
-            }
         }
         next();
     }catch(error: any){

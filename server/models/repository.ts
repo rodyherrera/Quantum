@@ -21,6 +21,7 @@ import { IDockerContainer } from '@typings/models/docker/container';
 import Github from '@services/github';
 import logger from '@utilities/logger';
 import RepositoryHandler from '@services/repositoryHandler';
+import DockerContainerService from '@services/docker/container';
 import * as nginxHandler from '@services/nginx';
 
 const RepositorySchema: Schema<IRepository> = new Schema({

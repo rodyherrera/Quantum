@@ -109,8 +109,8 @@ const handleDisconnect = (id: string, socket: Socket, shell: Duplex | undefined,
     removeLogStream(id);
 }
 
-export const appendLog = async (logName: string, id: string, data: string): Promise<void> => {
-    await checkLogFileStatus(logName, id);
+export const appendLog = async (userId: string, id: string, data: string): Promise<void> => {
+    await checkLogFileStatus(userId, id);
     const stream = logs.get(id);
     if(!stream) return;
     stream.write(data);
