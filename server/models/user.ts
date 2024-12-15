@@ -115,8 +115,8 @@ const cascadeDeleteHandler = async (document: IUser): Promise<void> => {
     // check for errors (cascade in the others models)
     await mongoose.model('Repository').deleteMany(query);
     await mongoose.model('Github').findOneAndDelete(query);
-    await mongoose.model('DockerNetwork').deleteMany(query);
     await mongoose.model('DockerContainer').deleteMany(query);
+    await mongoose.model('DockerNetwork').deleteMany(query);
     await mongoose.model('DockerImage').deleteMany(query);
     await mongoose.model('PortBinding').deleteMany(query);
 };

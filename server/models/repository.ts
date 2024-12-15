@@ -87,13 +87,7 @@ const getAndDeleteDeployments = async (repositoryId: mongoose.Types.ObjectId) =>
 const performCleanupTasks = async (deletedDoc: IRepository, repositoryUser: any, deployments: any[]) => {
     const github = new Github(repositoryUser, deletedDoc);
     await mongoose.model('DockerContainer').findOneAndDelete({ repository: deletedDoc._id });
-    await Promise.all([
-        Github.deleteLogAndDirectory(
-            `/var/lib/quantum/${process.env.NODE_ENV}/containers/${repositoryUser._id}/logs/${deletedDoc._id}.log`,
-            `/var/lib/quantum/${process.env.NODE_ENV}/containers/${repositoryUser._id}/github-repos/${deletedDoc._id}/`
-        ),
-        github.deleteWebhook()
-    ]);
+    await github.deleteWebhook();
     const currentDeploymentId = deployments[0].githubDeploymentId;
     await github.updateDeploymentStatus(currentDeploymentId, 'inactive');
     await Promise.all(deployments.map(deployment => (
