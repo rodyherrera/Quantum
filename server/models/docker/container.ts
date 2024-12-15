@@ -121,9 +121,6 @@ DockerContainerSchema.pre('save', async function (next){
             this.storagePath = this.isUserContainer ? userContainerPath : containerStoragePath;
             const containerService = new DockerContainerService(this);
             await containerService.createAndStartContainer();
-            if(this.isUserContainer){
-                await containerService.installDefaultPackages();
-            }
             const ipAddress = await containerService.getIpAddress();
             if(ipAddress){
                 this.ipAddress = ipAddress;

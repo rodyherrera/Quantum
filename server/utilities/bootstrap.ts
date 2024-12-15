@@ -136,7 +136,7 @@ export const initializeRepositories = async (): Promise<void> => {
         const repositories = await Repository.find()
             .populate({
                 path: 'user',
-                select: 'username',
+                select: 'username container',
                 populate: { path: 'github', select: 'accessToken username' }
             });
         logger.info(`@utilities/bootstrap.ts (initializeRepositories): Found ${repositories.length} repositories.`);

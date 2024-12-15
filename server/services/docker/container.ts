@@ -45,7 +45,6 @@ class DockerContainer{
     async executeCommand(command: string, workDir: string = '/'): Promise<void>{
         try{
             const container = await this.getExistingContainer();
-            console.log('Container:', container, command);
             const exec = await container.exec({
                 Cmd: ['/bin/sh', '-c', command],
                 AttachStdout: true,
@@ -263,6 +262,9 @@ class DockerContainer{
             await ensureDirectoryExists(this.getDockerStoragePath());
             const container = await this.createContainer();
             await container.start();
+            if(this.container.isUserContainer){
+                this.installDefaultPackages();
+            }
             await this.container.updateOne({ status: 'running' });
             return container;
         }catch(error){

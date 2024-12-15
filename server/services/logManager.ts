@@ -83,8 +83,14 @@ export const setupSocketEvents = async (socket: Socket, logName: string, id: str
         const logHistory = await getLog(logName, id);
         let shell = shells.get(id);
         if(!shell){
-            shell = await exec.start({ Tty: true, stdin: true, hijack: true });
-            shells.set(id, shell);
+            // TODO: Very ugly solution to a simple error. FIX.
+            try{
+                shell = await exec.start({ Tty: true, stdin: true, hijack: true });
+                shells.set(id, shell);
+            }catch(error){
+                shell = exec;
+                shells.set(logName, exec);
+            }
         }
         const handleShellData = (chunk: Buffer) => {
             const data = chunk.toString('utf8');
