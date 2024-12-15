@@ -102,7 +102,7 @@ export const deployContainers = async (): Promise<void> => {
             await containerService.start();
             if(container.isRepositoryContainer){
                 const repository = await Repository
-                    .findById({ _id: container.repository })
+                    .findById(container.repository)
                     .populate({
                         path: 'user',
                         select: 'username',

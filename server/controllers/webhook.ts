@@ -9,6 +9,8 @@ import { Request, Response } from 'express';
 import { IRepository } from '@typings/models/repository';
 import { IUser } from '@typings/models/user';
 import mongoose from 'mongoose';
+import DockerContainer from '@services/docker/container';
+import { IDockerContainer } from '@typings/models/docker/container';
 
 /**
  * Handles push event webhooks from GitHub.
@@ -21,13 +23,19 @@ export const webhook = async (req: Request, res: Response) => {
         if(!pusher) return res.status(200).json({ status: 'success' });
 
         const { repositoryId } = req.params;
-        const requestedRepository = await Repository.findById(repositoryId) as IRepository;
-        if(!requestedRepository) throw new RuntimeError('Repository::Not::Found', 404);
+        const repository = await Repository
+            .findById(repositoryId)
+            .populate({
+                path: 'user',
+                select: 'username',
+                populate: { path: 'github', select: 'accessToken username' }
+            })
+            .populate('container');
+        if(!repository) throw new RuntimeError('Repository::Not::Found', 404);
+            
+        const githubService = new Github(repository.user as IUser, repository);
+        const container = repository.container as IDockerContainer;    
 
-        const repositoryUser = await User.findById(requestedRepository.user).populate('github') as IUser;
-        const github = new Github(repositoryUser, requestedRepository);
-
-        // Stop existing container if running
         const shell = shells.get(repositoryId);
         if(shell){
             shell.write('\x03');
@@ -35,20 +43,20 @@ export const webhook = async (req: Request, res: Response) => {
         }
 
         // Clean up old deployment and deploy new version
-        await Github.deleteLogAndDirectory('', `/var/lib/quantum/${process.env.NODE_ENV}/containers/${repositoryUser._id}/github-repos/${requestedRepository._id}/`);
-        const deployment = await github.deployRepository();
+        await Github.deleteLogAndDirectory('', container.storagePath);
+        const deployment = await githubService.deployRepository();
 
         // Update database records
         await Promise.all([
-            User.updateOne({ _id: repositoryUser._id }, { $push: { deployments: deployment._id } }),
-            Repository.updateOne({ _id: requestedRepository._id }, { $push: { deployments: deployment._id } }),
+            User.updateOne({ _id: repository.user._id }, { $push: { deployments: deployment._id } }),
+            Repository.updateOne({ _id: repository._id }, { $push: { deployments: deployment._id } }),
         ]);
 
-        requestedRepository.deployments.push(deployment._id as mongoose.Types.ObjectId);
+        repository.deployments.push(deployment._id as mongoose.Types.ObjectId);
 
         // Start the repository
-        const repositoryHandler = new RepositoryHandler(requestedRepository);
-        await repositoryHandler.start(github);
+        const repositoryHandler = new RepositoryHandler(repository);
+        await repositoryHandler.start(githubService);
 
         res.status(200).json({ status: 'success' });
     }catch(error: any){
