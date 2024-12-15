@@ -291,10 +291,9 @@ class DockerContainer{
         try{
             const container = docker.getContainer(this.container.dockerContainerName);
             logger.info(`@services/docker/container.ts (restartContainer): Restarting container ${this.container.dockerContainerName}...`);
-            await container.stop({ t: 0 });
-            logger.info(`@services/docker/container.ts (restartContainer): Stopped container ${this.container.dockerContainerName}.`);
             await this.container.updateOne({ status: 'restarting' });
-            await container.start();
+            await container.restart({ });
+            logger.info(`@services/docker/container.ts (restartContainer): Stopped container ${this.container.dockerContainerName}.`);
             if(this.container.isRepositoryContainer){
                 await this.installDefaultPackages();
                 await this.deployRepository();
@@ -337,7 +336,7 @@ class DockerContainer{
             await container.start();
             if(this.container.isRepositoryContainer){
                 await this.installDefaultPackages();
-                await this.deployRepository();
+                this.deployRepository();
             }
             await this.container.updateOne({ status: 'running' });
             return container;

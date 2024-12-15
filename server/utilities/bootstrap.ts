@@ -20,10 +20,12 @@ import RepositoryHandler from '@services/repositoryHandler';
 import sendMail from '@services/sendEmail';
 import logger from '@utilities/logger';
 import { ConfigureAppParams } from '@typings/utilities/bootstrap';
+import { IUser } from '@typings/models/user';
 import { IRepository } from '@typings/models/repository';
 import DockerContainer from '@models/docker/container';
 import DockerContainerService from '@services/docker/container';
 import * as nginxHandler from '@services/nginx';
+
 /**
  * Asynchronously sets up an Nginx reverse proxy configuration.
  *
@@ -107,7 +109,7 @@ export const deployContainers = async (): Promise<void> => {
                         populate: { path: 'github', select: 'accessToken username' }
                     }) as IRepository;
                 if(!repository) return;
-                const user = repository.user;
+                const user = repository.user as IUser;
                 const repositoryService = new RepositoryHandler(repository, user);
                 const githubService = new Github(user, repository);
                 await repositoryService.start(githubService);
