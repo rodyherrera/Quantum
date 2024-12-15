@@ -119,7 +119,7 @@ const cascadeDeleteHandler = async (document: IUser): Promise<void> => {
     await mongoose.model('DockerContainer').deleteMany(query);
     await mongoose.model('DockerImage').deleteMany(query);
     await mongoose.model('PortBinding').deleteMany(query);
-}
+};
 
 const createUserContainer = async (user: IUser): Promise<IDockerContainer> => {
     const userId = user._id.toString();
@@ -133,11 +133,12 @@ const createUserContainer = async (user: IUser): Promise<IDockerContainer> => {
         command: '/bin/sh',
         isUserContainer: true
     });
+    // push?
     user.images.push(image);
     user.networks.push(network);
     user.containers.push(container);
     return container;
-}
+};
 
 UserSchema.pre('findOneAndDelete', async function(){
     const conditions = this.getQuery();

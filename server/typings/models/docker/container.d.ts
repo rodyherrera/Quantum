@@ -13,6 +13,8 @@ export interface IDockerContainerPortBindings{
 export interface IDockerContainer extends Document{
     _id: mongoose.Schema.Types.ObjectId,
     user: mongoose.Schema.Types.ObjectId,
+    repository: mongoose.Schema.Types.ObjectId,
+    isRepositoryContainer: boolean;
     portBindings: IDockerContainerPortBindings[];
     network: mongoose.Schema.Types.ObjectId,
     image: mongoose.Schema.Types.ObjectId,

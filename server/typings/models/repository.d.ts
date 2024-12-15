@@ -1,6 +1,7 @@
 import mongoose, { Document } from 'mongoose';
 import { IUser } from './user';
 import { IDeployment } from './deployment';
+import { IDockerContainer } from './docker/container';
 
 export interface IRepository extends Document{
     alias: string;
@@ -11,6 +12,7 @@ export interface IRepository extends Document{
     installCommand?: string;
     startCommand?: string;
     rootDirectory?: string;
+    container: mongoose.Schema.Types.ObjectId | IDockerContainer;
     user: mongoose.Schema.Types.ObjectId | IUser;
     url: string;
     activeDeployment?: IDeployment,

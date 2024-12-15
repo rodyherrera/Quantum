@@ -40,7 +40,9 @@ PortBindingSchema.index({ container: 1, externalPort: 1, internalPort: 1 }, { un
 const cascadeDeleteHandler = async (document: IPortBinding): Promise<void> => {
     if(!document) return;
     const update = { $pull: { portBindings: document._id } };
-    await mongoose.model('DockerContainer').updateOne({ _id: document.container }, update);
+    const container = await mongoose.model('DockerContainer').findOneAndUpdate({ _id: document.container }, update);
+    const containerService = new DockerContainerService(container);
+    await containerService.recreateContainer();
     await mongoose.model('User').updateOne({ _id: document.user }, update);
 };
 

@@ -17,6 +17,7 @@ import { IRepository } from '@typings/models/repository';
 import { IUser } from '@typings/models/user';
 import { v4 } from 'uuid';
 import { getPublicIPAddress } from '@utilities/helpers';
+import { IDockerContainer } from '@typings/models/docker/container';
 import Github from '@services/github';
 import logger from '@utilities/logger';
 import RepositoryHandler from '@services/repositoryHandler';
@@ -31,6 +32,10 @@ const RepositorySchema: Schema<IRepository> = new Schema({
     name: {
         type: String,
         required: [true, 'Repository::Name::Required']
+    },
+    container: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'DockerContainer'
     },
     webhookId: String,
     buildCommand: { type: String, default: '' },
@@ -81,6 +86,7 @@ const getAndDeleteDeployments = async (repositoryId: mongoose.Types.ObjectId) =>
 
 const performCleanupTasks = async (deletedDoc: IRepository, repositoryUser: any, deployments: any[]) => {
     const github = new Github(repositoryUser, deletedDoc);
+    await mongoose.model('DockerContainer').findOneAndDelete({ repository: deletedDoc._id });
     const repositoryHandler = new RepositoryHandler(deletedDoc, repositoryUser);
     repositoryHandler.removeFromRuntime();
     await Promise.all([
@@ -167,6 +173,27 @@ const handleUpdateCommands = async (context: any) => {
     }
 };
 
+// TODO: refactor with @models/user.ts - createUserContainer
+const createRepositoryContainer = async (repository: IRepository): Promise<IDockerContainer> => {
+    // TODO: Image SHOULD exists, because the main user container uses it.
+    const image = await mongoose.model('DockerImage').findOne({ name: 'alpine', tag: 'latest' });
+    const network = await mongoose.model('DockerNetwork').create({
+        user: repository.user,
+        driver: 'bridge',
+        name: repository.name
+    });
+    const container = await mongoose.model('DockerContainer').create({
+        name: repository.name,
+        user: repository.user,
+        repository: repository._id,
+        image: image._id,
+        network: network._id,
+        command: '/bin/sh',
+        isRepositoryContainer: true
+    });
+    return container;
+};
+
 RepositorySchema.methods.updateAliasIfNeeded = async function(){
     const existingRepository = await mongoose.model('Repository')
         .findOne({ alias: this.alias, user: this.user });
@@ -197,6 +224,8 @@ RepositorySchema.pre('save', async function(next){
         await this.updateAliasIfNeeded();
 
         if(this.isNew){
+            this.container = await createRepositoryContainer(this);
+
             const repositoryUser = await this.getUserWithGithubData();
             const github = new Github(repositoryUser, this);
             const deployment = await github.deployRepository();

@@ -1,7 +1,6 @@
 import mongoose, { Schema, Model } from 'mongoose';
 import { IDockerContainer } from '@typings/models/docker/container';
 import DockerContainerService, { getContainerStoragePath, getSystemDockerName } from '@services/docker/container';
-import UserContainerService from '@services/userContainer';
 import logger from '@utilities/logger';
 
 const DockerContainerSchema: Schema<IDockerContainer> = new Schema({
@@ -9,8 +8,16 @@ const DockerContainerSchema: Schema<IDockerContainer> = new Schema({
         type: Boolean,
         default: false
     },
+    isRepositoryContainer: {
+        type: Boolean,
+        default: false
+    },
     dockerContainerName: {
         type: String
+    },
+    repository: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Repository'
     },
     user: {
         type: mongoose.Schema.Types.ObjectId,

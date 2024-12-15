@@ -52,7 +52,7 @@ export const deleteDeployment = DeploymentFactory.deleteOne();
 const repositoryOperationHandler = async (repository: any, action: string) => {
     await repository.populate({
         path: 'user',
-        select: 'username',
+        select: 'username container',
         populate: { path: 'github', select: 'accessToken username' }
     });
     const repositoryHandler = new RepositoryHandler(repository, repository.user);
