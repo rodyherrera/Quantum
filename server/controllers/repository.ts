@@ -21,6 +21,7 @@ const RepositoryFactory = new HandlerFactory({
         'user', 
         'alias', 
         'deployments', 
+        'container',
         'buildCommand',
         'domains', 
         'port', 
@@ -58,7 +59,7 @@ export const getMyRepositories = RepositoryFactory.getAll({
     middlewares: {
         pre: [async (req: IRequest): Promise<void> => { 
             req.query.user = req.user;
-            req.query.populate = 'deployments'; 
+            req.query.populate = 'deployments container'; 
         }]
     },
     async responseInterceptor(req: IRequest, res: Response, body): Promise<void>{

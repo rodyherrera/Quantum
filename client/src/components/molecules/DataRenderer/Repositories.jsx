@@ -1,5 +1,5 @@
-import React from 'react';
-import Project from '@components/organisms/Project';
+import React, { useEffect } from 'react';
+import Repository from '@components/organisms/Repository';
 import useUserRepositories from '@hooks/api/user/useUserRepositories';
 import DataRenderer from '@components/organisms/DataRenderer';
 import DashboardModule from '@components/molecules/DashboardModule';
@@ -7,6 +7,10 @@ import { FiGithub } from 'react-icons/fi';
 
 const RepositoriesDataRenderer = ({ ...props }) => {
     const { repositories, isLoading, error, stats, isOperationLoading } = useUserRepositories();
+    
+    useEffect(() => {
+        console.log(stats)
+    }, [stats]);
 
     return (
         <DashboardModule
@@ -15,7 +19,7 @@ const RepositoriesDataRenderer = ({ ...props }) => {
             Icon={FiGithub}
             createLink='/repository/create/'
             alias='repositorie(s)'
-            results={stats?.results?.total || 0}
+            results={1}
             total={repositories?.length}
             RenderComponent={() => (
                 <DataRenderer
@@ -33,7 +37,7 @@ const RepositoriesDataRenderer = ({ ...props }) => {
                 >
                     <div id='Dashboard-Projects-Container'>
                         {repositories.map((repository, index) => (
-                            <Project key={index} repository={repository} />
+                            <Repository key={index} repository={repository} />
                         ))}
                     </div>
                 </DataRenderer>

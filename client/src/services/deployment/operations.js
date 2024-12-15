@@ -16,6 +16,7 @@ import * as deploymentService from '@services/deployment/service';
 import * as deploymentSlice from '@services/deployment/slice';
 import * as repositorySlice from '@services/repository/slice';
 import createOperation from '@utilities/api/operationHandler';
+import { setState as repoSetState } from '@services/repository/slice';
 
 /** 
  * @function getRepositoryDeployments
@@ -101,19 +102,22 @@ export const updateDeployment = (id, body, navigate) => async (dispatch) => {
  * @param {Object} body - Action data (e.g., the action type to perform).
  * @returns {Promise} Resolves when the deployment operation is complete.
 */
-export const repositoryActions = (repositoryAlias, loaderState, body) => async (dispatch) => {
-    loaderState(true);
+export const repositoryActions = (repositoryAlias, body) => async (dispatch) => {
     const operation = createOperation(deploymentSlice, dispatch);
+    dispatch(repoSetState({ path: 'isOperationLoading', value: true }));
 
     operation.on('response', ({ status, repository }) => {
         dispatch(repositorySlice.updateRepositories({ repository, status }));
     });
 
-    operation.on('finally', () => loaderState(false));
+    operation.on('finally', () => {
+        dispatch(repoSetState({ path: 'isOperationLoading', value: false }))
+    });
 
     operation.use({
         api: deploymentService.repositoryOperations,
         query: { params: { repositoryAlias } },
+        loaderState: 'isOperationLoading',
         body
     });
 };

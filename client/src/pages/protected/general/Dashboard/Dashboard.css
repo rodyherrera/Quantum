@@ -32,13 +32,6 @@
     padding: 0 2rem;
 }
 
-#Dashboard-Projects-Container{
-    display: flex;
-    flex-wrap: wrap;
-    overflow-y: scroll;
-    padding-right: 2rem;
-    gap: 2rem;
-}
 
 #Dashboard-Page{
     display: flex;

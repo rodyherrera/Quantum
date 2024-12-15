@@ -11,6 +11,7 @@
 
 .Dashboard-Card-Container-Footer{
     padding: 0 1rem;
+    overflow-x: scroll;
 }
 
 .Dashboard-Card-Container-Footer-Left-Container{
@@ -22,6 +23,7 @@
     cursor: pointer;
     display: flex;
     align-items: center;
+    min-width: fit-content;
     gap: .5rem;
     border-radius: 1rem;
 }
