@@ -39,15 +39,17 @@ const checkRepositoryOwnership = async (socket: ISocket, next: WsNextFunction) =
 const handleDockerShell = async (socket: ISocket) => {
     try{
         let dockerContainer;
+        let workDir = '/';
         if(socket.repository){
             dockerContainer = await DockerContainer.findOne({ repository: socket.repository });
+            workDir = `/app/${socket.repository.rootDirectory}`;
         }else{
             const { dockerId } = socket.handshake.query;
             dockerContainer = await DockerContainer.findById(dockerId);
         }
         if(dockerContainer){
             const dockerHandler = new DockerContainerService(dockerContainer);
-            dockerHandler.startSocketShell(socket, '/');
+            dockerHandler.startSocketShell(socket, workDir);
         }
     }catch(error){
         logger.info('@controllers/wsController.ts (handleDockerShell): ' + error);

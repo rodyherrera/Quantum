@@ -87,8 +87,6 @@ const getAndDeleteDeployments = async (repositoryId: mongoose.Types.ObjectId) =>
 const performCleanupTasks = async (deletedDoc: IRepository, repositoryUser: any, deployments: any[]) => {
     const github = new Github(repositoryUser, deletedDoc);
     await mongoose.model('DockerContainer').findOneAndDelete({ repository: deletedDoc._id });
-    const repositoryHandler = new RepositoryHandler(deletedDoc, repositoryUser);
-    repositoryHandler.removeFromRuntime();
     await Promise.all([
         Github.deleteLogAndDirectory(
             `/var/lib/quantum/${process.env.NODE_ENV}/containers/${repositoryUser._id}/logs/${deletedDoc._id}.log`,
@@ -163,7 +161,7 @@ const handleUpdateCommands = async (context: any) => {
 
     if(buildCommand || installCommand || startCommand || rootDirectory){
         const document = { user, name, deployments, buildCommand, installCommand, startCommand, rootDirectory, _id } as IRepository;
-        const repositoryHandler = new RepositoryHandler(document, user as IUser);
+        const repositoryHandler = new RepositoryHandler(document);
         const githubHandler = new Github(user as IUser, document);
         repositoryHandler.start(githubHandler);
     }

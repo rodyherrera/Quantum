@@ -14,6 +14,8 @@
 
 import axios from 'axios';
 import { Response } from 'express';
+import DockerContainer from '@models/docker/container';
+import DockerContainerService from '@services/docker/container';
 import logger from '@utilities/logger';
 import fs from 'fs';
 import net from 'net';
@@ -94,13 +96,12 @@ export const ensureDirectoryExists = async (directoryPath: string): Promise<void
  */
 export const cleanHostEnvironment = async (): Promise<void> => {
     logger.info('@utilities/helper.ts (cleanHostEnvironment): Cleaning up the host environment, shutting down user containers...');
-    const { userContainers } = global as any;
-    const totalContainers = Object.keys(userContainers).length;
-    logger.info(`@utilities/helper.ts (cleanHostEnvironment): ${totalContainers} active docker instances were detected in the runtime.`);
-    for(const userId in userContainers){
-        const container = userContainers[userId];
-        await container.instance.stop();
-    }
+    const containers = await DockerContainer.find({});
+    const promises = containers.map((container) => {
+        const containerService = new DockerContainerService(container);
+        return containerService.stop();
+    });
+    await Promise.all(promises);
     logger.info('@utilities/helper.ts (cleanHostEnvironment): Containers shut down successfully, safely shutting down the server...');
 };
 

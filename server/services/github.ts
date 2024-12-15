@@ -143,8 +143,6 @@ class Github{
      * @returns {Promise<Deployment>} - The newly created Deployment object.
     */
     async createNewDeployment(githubDeploymentId: number): Promise<IDeployment>{
-        const repositoryHandler = new RepositoryHandler(this.repository, this.repository.user as IUser);
-        repositoryHandler.removeFromRuntime();
         const environmentVariables = await this.readEnvironmentVariables();
         const currentDeployment = this.repository.deployments.pop();
         if(currentDeployment){

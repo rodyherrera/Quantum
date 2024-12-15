@@ -76,9 +76,10 @@ class UserContainer extends DockerContainerService{
                 WorkingDir: workDir,
                 Tty: true
             });
-            const id = this.user._id.toString();
-            await createLogStream(id, id);
-            setupSocketEvents(socket, id, id, exec);
+            const userId = this.user._id.toString();
+            const containerId = this.user.container._id.toString();
+            await createLogStream(userId, containerId);
+            setupSocketEvents(socket, userId, containerId, exec);
         }catch(error){
             this.criticalErrorHandler('executeInteractiveShell', error);
         }

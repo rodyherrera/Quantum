@@ -54,7 +54,7 @@ process.on('unhandledRejection', (reason:any) => {
 */
 process.on('SIGINT', async () => {
     logger.info('@server.ts: SIGINT signal received, shutting down...');
-    // await cleanHostEnvironment();
+    await cleanHostEnvironment();
     await sendMail({
         subject: 'Quantum and hosted services have stopped successfully.',
         html: 'The server has safely completed execution. A certain signal has been received and all services hosted on the platform have been terminated. After sending this email, the server will be closed. See you later!'

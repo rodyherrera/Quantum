@@ -18,6 +18,8 @@ import HandlerFactory from '@controllers/common/handlerFactory';
 import RuntimeError from '@utilities/runtimeError';
 import Github from '@services/github';
 import RepositoryHandler from '@services/repositoryHandler';
+import DockerContainerService from '@services/docker/container';
+import DockerContainer from '@models/docker/container';
 import { catchAsync } from '@utilities/helpers';
 import { Request, Response } from 'express';
 import { IDeployment } from '@typings/models/deployment';
@@ -55,30 +57,34 @@ const repositoryOperationHandler = async (repository: any, action: string) => {
         select: 'username container',
         populate: { path: 'github', select: 'accessToken username' }
     });
-    const repositoryHandler = new RepositoryHandler(repository, repository.user);
+    const repositoryHandler = new RepositoryHandler(repository);
+    const container = await DockerContainer.findOne({ repository });
+    const containerService = new DockerContainerService(container);
     const github = new Github(repository.user, repository);
     const currentDeploymentId = repository.deployments[0];
     const currentDeployment = await Deployment.findById(currentDeploymentId) as IDeployment;
     const { githubDeploymentId } = currentDeployment;
-    if(!currentDeployment)
+    if(!currentDeployment){
         throw new RuntimeError('Deployment::Not::Found', 404);
+    }
     currentDeployment.status = 'queued';
     github.updateDeploymentStatus(githubDeploymentId, 'queued');
     await currentDeployment.save();
     switch(action){
         case 'restart':
-            repositoryHandler.removeFromRuntime();
+            await containerService.restart();
             repositoryHandler.start(github);
             // TODO: Can be refactored using mongoose middlewares
             github.updateDeploymentStatus(githubDeploymentId, 'success');
             break;
         case 'stop':
-            repositoryHandler.removeFromRuntime();
+            await containerService.stop();
             currentDeployment.status = 'stopped';
             await currentDeployment.save();
             github.updateDeploymentStatus(githubDeploymentId, 'inactive');
             break;
         case 'start':
+            await containerService.start();
             repositoryHandler.start(github);
             github.updateDeploymentStatus(githubDeploymentId, 'success');
             break;

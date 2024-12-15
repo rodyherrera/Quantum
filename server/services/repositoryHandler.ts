@@ -1,45 +1,20 @@
 import Deployment from '@models/deployment';
 import logger from '@utilities/logger';
-import mongoose from 'mongoose';
-import { setupSocketEvents, createLogStream } from '@services/logManager';
-import { IUser } from '@typings/models/user';
-import { Socket } from 'socket.io';
-import { shells } from '@services/logManager';
 import { IRepository } from '@typings/models/repository';
 import GithubService from '@services/github';
 import DockerContainerService from '@services/docker/container';
+import DockerContainer from '@models/docker/container';
+import { appendLog, createLogStream, shells } from '@services/logManager';
+import { IDockerContainer } from '@typings/models/docker/container';
 
 class RepositoryHandler{
     private repository: IRepository;
     private repositoryId: string;
-    private userId: string;
-    private user: IUser;
-    private workingDir: string;
+    private container: IDockerContainer;
 
-    constructor(repository: IRepository, user: IUser){
+    constructor(repository: IRepository){
         this.repository = repository;
         this.repositoryId = this.repository._id.toString();
-        this.user = user;
-        this.userId = this.user._id.toString();
-        this.workingDir = `/app/github-repos/${repository._id}${repository.rootDirectory}`;
-    }
-
-    async executeInteractiveShell(socket: Socket): Promise<void>{
-        const shell = await this.getShell();
-        setupSocketEvents(socket, this.repositoryId, this.userId, shell);
-    }
-
-    async removeFromRuntime(): Promise<void>{
-        try{
-            const shell = shells.get(this.repositoryId);
-            if(shell){
-                shell.write('\x03');
-                shell.end();
-            }
-            shells.delete(this.repositoryId);
-        }catch(error){
-            logger.error('@services/repositoryHandler.ts (removeFromRuntime): ' + error);
-        }
     }
 
     getValidCommands(): string[]{
@@ -54,29 +29,10 @@ class RepositoryHandler{
             .select('environment githubDeploymentId status');
     }
 
-    async getShell(): Promise<any>{
-        const currentShell = shells.get(this.repositoryId);
-        if(currentShell){
-            return currentShell;
-        }
-        await createLogStream(this.repositoryId, this.userId);
-        const userContainer = await mongoose.model('DockerContainer').findOne({
-            _id: this.user.container,
-            isUserContainer: true
-        });
-        const containerService = new DockerContainerService(userContainer);
-        const container = await containerService.getExistingContainer();
-        const exec = await container.exec({
-            Cmd: ['/bin/sh'],
-            AttachStdout: true,
-            AttachStderr: true,
-            AttachStdin: true,
-            WorkingDir: this.workingDir,
-            Tty: true
-        });
-        const shell = await exec.start({ Tty: true, stdin: true, hijack: true });
-        shells.set(this.repositoryId, shell);
-        return shell;
+    async getContainer(): Promise<IDockerContainer>{
+        if(this.container) return this.container;
+        this.container = await DockerContainer.findOne({ repository: this.repositoryId });
+        return this.container;
     }
 
     async start(githubService: GithubService): Promise<void>{
@@ -85,8 +41,7 @@ class RepositoryHandler{
             if(commands.length === 0) return;
             const deployment = await this.getCurrentDeployment();
             const environment = deployment.getFormattedEnvironment();
-            const shell = await this.getShell();
-            this.executeCommands(commands, environment, shell);
+            await this.deploy(commands, environment);
             const { githubDeploymentId } = deployment;
             await githubService.updateDeploymentStatus(githubDeploymentId, 'success');
             deployment.status = 'success';
@@ -95,11 +50,57 @@ class RepositoryHandler{
             logger.error('@services/repositoryHandler.ts (start): ' + error);
         }
     }
+   
+    private async waitForCommandCompletion(stream: NodeJS.ReadWriteStream): Promise<void>{
+        return new Promise((resolve) => {
+            let timer: NodeJS.Timeout;
+            const onData = (chunk: Buffer) => {
+                const output = chunk.toString('utf8');
+                if(output.includes('$ ') || output.includes('# ')){
+                    stream.removeListener('data', onData);
+                    clearTimeout(timer);
+                    resolve();
+                }
+            };
 
-    executeCommands(commands: string[], formattedEnvironment: string, repositoryShell: any): void{
-        for(const command of commands){
-            const formattedCommand = `${formattedEnvironment} ${command}\r\n`;
-            repositoryShell.write(formattedCommand);
+            timer = setTimeout(() => {
+                stream.removeListener('data', onData);
+                resolve();
+            }, 5000);
+
+            stream.on('data', onData);
+        });
+    }
+
+    private async deploy(buildCommands: string[], environ: string): Promise<void>{
+        const repositoryContainer = await this.getContainer();
+        const containerService = new DockerContainerService(repositoryContainer);
+        const container = await containerService.getExistingContainer();
+        const userId = this.container.user.toString();
+        const containerId = this.container._id.toString();
+        const id = this.container.user.toString();
+        let stream = shells.get(id);
+        if(!stream){
+            const exec = await container.exec({
+                Cmd: [repositoryContainer.command],
+                AttachStdout: true,
+                AttachStderr: true,
+                AttachStdin: true,
+                WorkingDir: `/app/${this.repository.rootDirectory}`,
+                Tty: true
+            });
+            stream = await exec.start({ hijack: true, stdin: true, Tty: true });
+            await createLogStream(userId, containerId);
+            shells.set(containerId, stream);
+        }
+        stream.on('data', (chunk: Buffer) => {
+            const output = chunk.toString('utf8');
+            appendLog(userId, containerId, output);
+        });
+        for(const command of buildCommands){
+            const formattedCommand = `${environ} ${command}\n`;
+            stream.write(formattedCommand);
+            await this.waitForCommandCompletion(stream);
         }
     }
 }

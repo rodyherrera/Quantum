@@ -104,10 +104,10 @@ class DockerContainer{
                 WorkingDir: workDir,
                 Tty: true
             });
-            const id = this.container._id.toString();
-            // TODO: check for storagePath usage
-            await createLogStream(id, this.container.user.toString());
-            setupSocketEvents(socket, id, this.container.user.toString(), exec);
+            const userId = this.container.user.toString();
+            const containerId = this.container._id.toString();
+            await createLogStream(userId, containerId);
+            setupSocketEvents(socket, userId, containerId, exec);
         }catch(error){
             logger.info('@services/docker/container.ts (startSocketShell): ' + error);
         }
@@ -230,6 +230,9 @@ class DockerContainer{
             logger.info(`@services/docker/container.ts (restartContainer): Stopped container ${this.container.dockerContainerName}.`);
             await this.container.updateOne({ status: 'restarting' });
             await container.start();
+            if(this.container.isRepositoryContainer){
+                this.installDefaultPackages();
+            }
             await this.container.updateOne({ status: 'running' });
             logger.info(`@services/docker/container.ts (restartContainer): Successfully restarted container ${this.container.dockerContainerName}.`);
         }catch(error){
@@ -247,6 +250,9 @@ class DockerContainer{
                 return;
             }
             await container.start();
+            if(this.container.isRepositoryContainer){
+                this.installDefaultPackages();
+            }
             await this.container.updateOne({ status: 'running' });
             logger.info(`@services/docker/container.ts (startContainer): Successfully started container ${this.container.dockerContainerName}.`);
         }catch(error){
