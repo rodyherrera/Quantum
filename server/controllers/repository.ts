@@ -56,6 +56,7 @@ export const getMyGithubRepositories = catchAsync(async (req: IRequest, res: Res
 export const getMyRepositories = RepositoryFactory.getAll({
     middlewares: {
         pre: [async (req: IRequest): Promise<void> => { 
+            req.query.user = req.user;
             req.query.populate = 'deployments'; 
         }]
     },
