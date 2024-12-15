@@ -89,7 +89,7 @@ class RepositoryHandler{
                 AttachStdout: true,
                 AttachStderr: true,
                 AttachStdin: true,
-                WorkingDir: `/app/${this.repository.rootDirectory}`,
+                WorkingDir: `/app${this.repository.rootDirectory}`,
                 Tty: true
             });
             stream = await exec.start({ hijack: true, stdin: true, Tty: true });

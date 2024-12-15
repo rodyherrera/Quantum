@@ -4,7 +4,6 @@ import UserContainer from '@services/userContainer';
 import RuntimeError from '@utilities/runtimeError';
 import DockerContainerService from '@services/docker/container';
 import Repository from '@models/repository';
-import RepositoryHandler from '@services/repositoryHandler';
 import DockerContainer from '@models/docker/container';
 import logger from '@utilities/logger';
 

@@ -6,10 +6,9 @@ import RepositoryHandler from '@services/repositoryHandler';
 import logger from '@utilities/logger';
 import { shells } from '@services/logManager';
 import { Request, Response } from 'express';
-import { IRepository } from '@typings/models/repository';
 import { IUser } from '@typings/models/user';
 import mongoose from 'mongoose';
-import DockerContainer from '@services/docker/container';
+import DockerContainerService from '@services/docker/container';
 import { IDockerContainer } from '@typings/models/docker/container';
 
 /**
@@ -36,11 +35,8 @@ export const webhook = async (req: Request, res: Response) => {
         const githubService = new Github(repository.user as IUser, repository);
         const container = repository.container as IDockerContainer;    
 
-        const shell = shells.get(repositoryId);
-        if(shell){
-            shell.write('\x03');
-            shell.end();
-        }
+        const containerService = new DockerContainerService(container);
+        await containerService.stop();
 
         // Clean up old deployment and deploy new version
         await Github.deleteLogAndDirectory('', container.storagePath);
