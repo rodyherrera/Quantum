@@ -262,7 +262,7 @@ class DockerContainer{
             await ensureDirectoryExists(this.getDockerStoragePath());
             const container = await this.createContainer();
             await container.start();
-            if(this.container.isUserContainer){
+            if(this.container.isRepositoryContainer){
                 this.installDefaultPackages();
             }
             await this.container.updateOne({ status: 'running' });
