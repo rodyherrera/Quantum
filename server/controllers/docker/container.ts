@@ -26,6 +26,7 @@ const DockerContainerFactory = new HandlerFactory({
         'command',
         'network',
         'environment',
+        'isRepositoryContainer',
         'name'
     ]
 });

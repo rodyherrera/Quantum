@@ -104,7 +104,7 @@ class APIFeatures{
                 obj[key] = this.requestQueryString[key];
                 return obj;
             }, {} as Record<string, any>);
-
+        
         const filter = filterObject(query, ...this.fields);
         Object.assign(this.buffer.find, { ...filter, ...auxFilter });
         return this;

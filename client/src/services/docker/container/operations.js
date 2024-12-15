@@ -30,6 +30,7 @@ export const getMyDockerContainers = ({ page = 1, limit = 50 } = {}) => async (d
             queryParams: {
                 page,
                 limit,
+                isRepositoryContainer: false,
                 populate: JSON.stringify({
                     path: 'portBindings image',
                     select: 'externalPort name tag size'

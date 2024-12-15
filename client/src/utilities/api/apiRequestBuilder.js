@@ -40,7 +40,6 @@ class APIRequestBuilder{
                 url.searchParams.append(key, queryParams[key]);
             }
         });
-        
         return url.toString();
     }
 
