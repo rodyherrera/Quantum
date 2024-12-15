@@ -151,6 +151,7 @@ DockerContainerSchema.pre('save', async function (next){
             // TODO: Implement logic to be able to deploy the container with 
             // a different network, that is, one that can be changed.
             await mongoose.model('DockerNetwork').updateOne({ _id: this.network }, update);
+            this.status = 'running';
         }
         next();
     }catch(error: any){

@@ -15,6 +15,7 @@ import { catchAsync, findRandomAvailablePort } from '@utilities/helpers';
 import { NextFunction, Request, Response } from 'express';
 import { IUser } from '@typings/models/user';
 import { parseConfigAndDeploy } from '@services/oneClickDeploy';
+import sendEmail from '@services/sendEmail';
 
 const DockerContainerFactory = new HandlerFactory({
     model: DockerContainer,
@@ -168,6 +169,12 @@ export const createDockerContainer = catchAsync(async (req: Request, res: Respon
         network: containerNetwork._id
     });
 
+    sendEmail({
+        to: user.email,
+        subject: `"${container.name}" (${containerImage.name}:${containerImage.tag}) created successfully.`,
+        html: `Hello ${user.username}!, you have created the container "${container.name}" correctly. Currently, it should be deploying. The image used is "${containerImage.name}:${containerImage.tag}" and the network created for the container is "${containerNetwork.name}".`
+    });
+
     res.status(200).json({ status: 'success', data: container });
 });
 
@@ -190,12 +197,27 @@ export const containerStatus = catchAsync(async (req: Request, res: Response, ne
     const statusMap: Record<string, () => Promise<void>> = {
         async stop(){
             await containerService.stop();
+            sendEmail({
+                to: req.user.email,
+                subject: `Container "${container.name}" shut down successfully.`,
+                html: `Hi @${req.user.username}, the container has been shut down successfully.`
+            });
         },
         async restart(){
             await containerService.restart();
+            sendEmail({
+                to: req.user.email,
+                subject: `You have successfully restarted "${container.name}"`,
+                html: `Hello @${req.user.username}, the container is currently restarting, the services will be redeployed and the installation, construction and execution commands will be executed.`
+            });
         },
         async start(){
             await containerService.start();
+            sendEmail({
+                to: req.user.email,
+                subject: `Starting and deploying "${container.name}"`,
+                html: `Hi @${req.user.username}, your container is deploying...`
+            });
         }
     };
     await statusMap[status]();
