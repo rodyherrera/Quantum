@@ -1,17 +1,12 @@
 import axios from 'axios';
-import fs from 'fs';
-import path from 'path';
 import Repository from '@models/repository';
 import HandlerFactory from '@controllers/common/handlerFactory';
 import Deployment from '@models/deployment';
 import Github from '@services/github';
-import RuntimeError from '@utilities/runtimeError';
 import { catchAsync } from '@utilities/helpers';
-import { Response, NextFunction } from 'express';
+import { Response } from 'express';
 import { IRepository } from '@typings/models/repository';
 import { IRequest } from '@typings/controllers/common';
-import DockerContainer from '@models/docker/container';
-import { IDockerContainer } from '@typings/models/docker/container';
 
 const RepositoryFactory = new HandlerFactory({
     model: Repository,
@@ -83,48 +78,4 @@ export const getMyRepositories = RepositoryFactory.getAll({
             data: enrichedData
         });
     }
-});
-
-// refactor this and avoid duplicated code with containers.
-export const storageExplorer = catchAsync(async (req: IRequest, res: Response) => {
-    const repository = await Repository.findById(req.params.id).populate('container');
-    if(!repository){
-        throw new RuntimeError('Repository::StorageExplorer::NotFound', 404);
-    }
-    const container = repository.container as IDockerContainer;
-    const requestedPath = path.join(container.storagePath, req.params.route || '');
-    const files = fs.readdirSync(requestedPath).map(file => ({
-        name: file,
-        isDirectory: fs.statSync(path.join(requestedPath, file)).isDirectory()
-    }));
-    res.status(200).json({ status: 'success', data: files });
-});
-
-export const updateRepositoryFile = catchAsync(async (req: IRequest, res: Response, next: NextFunction) => {
-    const repository = await Repository.findById(req.params.id).populate('container');
-    if(!repository){
-        throw new RuntimeError('Repository::StorageExplorer::NotFound', 404);
-    }
-    const container = repository.container as IDockerContainer;
-    const requestedPath = path.join(container.storagePath, req.params.route || '');
-    if(!fs.existsSync(requestedPath)) return next(new RuntimeError('Repository::File::NotExists', 404));
-    if(!req.body.content) return next(new RuntimeError('Repository::File::UpdateContentRequired', 400));
-    fs.writeFileSync(requestedPath, req.body.content, 'utf-8');
-    res.status(200).json({ status: 'success' });
-});
-
-export const readRepositoryFile = catchAsync(async (req: IRequest, res: Response) => {
-    const repository = await Repository.findById(req.params.id).populate('container');
-    if(!repository){
-        throw new RuntimeError('Repository::StorageExplorer::NotFound', 404);
-    }
-    const container = repository.container as IDockerContainer;
-    const requestedPath = path.join(container.storagePath, req.params.route || '');
-    res.status(200).json({
-        status: 'success',
-        data: {
-            name: path.basename(requestedPath),
-            content: fs.readFileSync(requestedPath, 'utf-8')
-        }
-    });
 });

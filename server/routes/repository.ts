@@ -16,10 +16,12 @@ import express from 'express';
 import * as repositoryController from '@controllers/repository';
 import * as authMiddleware from '@middlewares/authentication';
 import * as githubMiddleware from '@middlewares/github';
-import Repository from '@models/repository';
 import { verifyOwnership } from '@middlewares/common';
+import Repository from '@models/repository';
+import DockerFS from '@controllers/common/dockerFS';
 
 const router = express.Router();
+const repositoryFS = new DockerFS(true);
 const ownership = verifyOwnership(Repository);
 
 router.use(authMiddleware.protect);
@@ -36,9 +38,9 @@ router.get('/me/',
 
 router.post('/',repositoryController.createRepository);
 
-router.get('/storage/:id/explore/:route?', ownership, repositoryController.storageExplorer);
-router.get('/storage/:id/read/:route?', ownership, repositoryController.readRepositoryFile);
-router.post('/storage/:id/overwrite/:route?', ownership, repositoryController.updateRepositoryFile);
+router.get('/storage/:id/explore/:route?', ownership, repositoryFS.storageExplorer);
+router.get('/storage/:id/read/:route?', ownership, repositoryFS.readContainerFile);
+router.post('/storage/:id/overwrite/:route?', ownership, repositoryFS.updateContainerFile);
 
 router.route('/:id')
     .get(ownership, repositoryController.getRepository)

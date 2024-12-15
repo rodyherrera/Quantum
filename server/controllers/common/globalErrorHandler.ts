@@ -14,7 +14,6 @@
 
 import RuntimeError from '@utilities/runtimeError';
 import sendMail from '@services/sendEmail';
-import logger from '@utilities/logger';
 import { Request, Response, NextFunction } from 'express';
 
 /**

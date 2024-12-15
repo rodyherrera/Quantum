@@ -130,8 +130,8 @@ export const storageExplorer = catchAsync(async (req: Request, res: Response) =>
 
 export const updateContainerFile = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const requestedPath = await getRequestedPath(req);
-    if(!fs.existsSync(requestedPath)) return next(new RuntimeError('Docker::Container::File::NotExists', 404));
-    if(!req.body.content) return next(new RuntimeError('Docker::Container::File::UpdateContentRequired', 400));
+    if(!fs.existsSync(requestedPath)) 
+    if(!req.body.content) 
     fs.writeFileSync(requestedPath, req.body.content, 'utf-8');
     res.status(200).json({ status: 'success' });
 });
@@ -212,7 +212,7 @@ export const containerStatus = catchAsync(async (req: Request, res: Response, ne
             });
         },
         async start(){
-            await containerService.start();
+
             sendEmail({
                 to: req.user.email,
                 subject: `Starting and deploying "${container.name}"`,
