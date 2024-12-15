@@ -15,7 +15,6 @@ import { getSystemNetworkName } from '@services/docker/network';
 import { IContainerStoragePath } from '@typings/services/dockerContainer';
 import DockerImage from '@models/docker/image';
 import logger from '@utilities/logger';
-import DockerContainerModel from '@models/docker/container';
 import DockerNetwork from '@models/docker/network';
 
 const docker = new Dockerode();
@@ -23,7 +22,8 @@ const docker = new Dockerode();
 export const getContainerStoragePath = (userId: string, containerId: string, name: string): IContainerStoragePath => {
     const userContainerPath = path.join('/var/lib/quantum', process.env.NODE_ENV as string, 'containers', userId);
     const containerStoragePath = path.join(userContainerPath, 'docker-containers', `${slugify(name)}-${containerId}`);
-    return { userContainerPath, containerStoragePath };
+    const repositoryContainerPath = path.join(userContainerPath, 'github-repos', `${slugify(name)}-${containerId}`);
+    return { userContainerPath, containerStoragePath, repositoryContainerPath };
 }
 
 export const getSystemDockerName = (containerId: string): string => {

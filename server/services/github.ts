@@ -20,6 +20,7 @@ import { IUser } from '@typings/models/user';
 import { IGithub } from '@typings/models/github';
 import { IDeployment } from '@typings/models/deployment';
 import { DeploymentState } from '@typings/services/github';
+import { IDockerContainer } from '@typings/models/docker/container';
 import simpleGit from 'simple-git';
 import logger from '@utilities/logger';
 import RepositoryHandler from '@services/repositoryHandler';
@@ -27,6 +28,7 @@ import Deployment from '@models/deployment';
 import RuntimeError from '@utilities/runtimeError';
 import mongoose from 'mongoose';
 import fs from 'fs';
+import DockerContainer from '@models/docker/container';
 
 const exec = promisify(execCallback);
 
@@ -41,6 +43,7 @@ class Github{
     private user: IUser;
     private repository: IRepository;
     private userGithub: IGithub;
+    private container: IDockerContainer;
     private octokit: Octokit;
 
     constructor(user: IUser, repository: IRepository){
@@ -66,6 +69,12 @@ class Github{
             logger.error('@services/github.ts (deleteLogAndDirectory): CRITCAL ERROR -> Deletion failed: ' + (error as Error).message);
         }
     }
+
+    async getContainer(): Promise<IDockerContainer>{
+        if(this.container) return this.container;
+        this.container = await DockerContainer.findOne({ repository: this.repository._id });
+        return this.container;
+    }
     
     /**
      * Clones a GitHub repository into a local directory.
@@ -73,7 +82,7 @@ class Github{
      * @returns {Promise<void>} - Resolves if the cloning process is successful, rejects with an error if not.
     */
     async cloneRepository(): Promise<void>{
-        const destinationPath = `/var/lib/quantum/${process.env.NODE_ENV}/containers/${this.user._id}/github-repos/${this.repository._id}`;
+        const container = await this.getContainer();
         try{
             const repositoryInfo = await this.octokit.repos.get({ 
                 owner: this.userGithub.username, 
@@ -82,7 +91,7 @@ class Github{
             const cloneEndpoint = repositoryInfo.data.private
                 ? repositoryInfo.data.clone_url.replace('https://', `https://${this.userGithub.getDecryptedAccessToken()}@`)
                 : repositoryInfo.data.clone_url;
-            await exec(`git clone ${cloneEndpoint} ${destinationPath}`);
+            await exec(`git clone ${cloneEndpoint} ${container.storagePath}`);
         }catch(error){
             logger.error('@services/github.ts (cloneRepository): ' + (error as Error).message);
         }
@@ -94,11 +103,12 @@ class Github{
      * @returns {Promise<Object>} - An object containing key-value pairs of environment variables. 
     */
     async readEnvironmentVariables(): Promise<Record<string, string>>{
-        const files = await simpleGit(`/var/lib/quantum/${process.env.NODE_ENV}/containers/${this.user._id}/github-repos/${this.repository._id}`).raw(['ls-tree', 'HEAD', '-r', '--name-only']);
+        const container = await this.getContainer();
+        const files = await simpleGit(container.storagePath).raw(['ls-tree', 'HEAD', '-r', '--name-only']);
         const envFiles = files.split('\n').filter(file => file.includes('.env'));
         const environmentVariables: Record<string, string> = {};
         for(const envFile of envFiles){
-            const file = await simpleGit(`/var/lib/quantum/${process.env.NODE_ENV}/containers/${this.user._id}/github-repos/${this.repository._id}`).raw(['show', 'HEAD:' + envFile]);
+            const file = await simpleGit(container.storagePath).raw(['show', 'HEAD:' + envFile]);
             const lines = file.split('\n');
             lines.forEach(line => {
                 if(line.trim() === '' || line.trim().startsWith('#')){

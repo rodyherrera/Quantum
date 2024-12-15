@@ -225,7 +225,6 @@ RepositorySchema.pre('save', async function(next){
 
         if(this.isNew){
             this.container = await createRepositoryContainer(this);
-
             const repositoryUser = await this.getUserWithGithubData();
             const github = new Github(repositoryUser, this);
             const deployment = await github.deployRepository();

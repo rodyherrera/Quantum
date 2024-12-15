@@ -84,7 +84,11 @@ const cascadeDeleteHandler = async (document: IDockerContainer): Promise<void> =
     await containerService.removeContainer();
     const update = { $pull: { containers: _id } };
     await mongoose.model('User').updateOne({ _id: user }, update);
-    await mongoose.model('DockerNetwork').updateOne({ _id: network }, update);
+    if(document.isRepositoryContainer){
+        await mongoose.model('DockerNetwork').deleteOne({ _id: network });
+    }else{
+        await mongoose.model('DockerNetwork').updateOne({ _id: network }, update);
+    }
     await mongoose.model('DockerImage').updateOne({ _id: image }, update);
     await mongoose.model('PortBinding').deleteOne({ container: _id });
 };
@@ -123,9 +127,15 @@ DockerContainerSchema.pre('save', async function (next){
         if(this.isNew){
             const containerId = this._id.toString();
             const userId = this.user.toString();
-            const { containerStoragePath, userContainerPath } = getContainerStoragePath(userId, containerId, userId);
+            const paths = getContainerStoragePath(userId, containerId, userId);
             this.dockerContainerName = getSystemDockerName(containerId);
-            this.storagePath = this.isUserContainer ? userContainerPath : containerStoragePath;
+            if(this.isUserContainer){
+                this.storagePath = paths.userContainerPath;
+            }else if(this.isRepositoryContainer){
+                this.storagePath = paths.repositoryContainerPath;
+            }else{
+                this.storagePath = paths.containerStoragePath;
+            }
             const containerService = new DockerContainerService(this);
             await containerService.createAndStartContainer();
             const ipAddress = await containerService.getIpAddress();
