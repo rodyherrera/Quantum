@@ -100,16 +100,6 @@ export const randomAvailablePort = catchAsync(async (req: Request, res: Response
     res.status(200).json({ status: 'success', data: port });
 });
 
-// DUPLICATED CODE @controllers/repository.ts
-const getRequestedPath = async (req: Request): Promise<string> => {
-    const user = req.user as IUser;
-    const container = await DockerContainer
-        .findOne({ _id: req.params.id, user: user._id })
-        .select('storagePath')
-        .lean();
-    return path.join(container?.storagePath || '', req.params.route || '');
-};
-
 export const oneClickDeploy = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const { config } = req.body;
     if(!config){
@@ -117,34 +107,6 @@ export const oneClickDeploy = catchAsync(async (req: Request, res: Response, nex
     }
     const container = await parseConfigAndDeploy(req.user as IUser, config);
     res.status(200).json({ status: 'success', data: container });
-});
-
-export const storageExplorer = catchAsync(async (req: Request, res: Response) => {
-    const requestedPath = await getRequestedPath(req);
-    const files = fs.readdirSync(requestedPath).map(file => ({
-        name: file,
-        isDirectory: fs.statSync(path.join(requestedPath, file)).isDirectory()
-    }));
-    res.status(200).json({ status: 'success', data: files });
-});
-
-export const updateContainerFile = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    const requestedPath = await getRequestedPath(req);
-    if(!fs.existsSync(requestedPath)) 
-    if(!req.body.content) 
-    fs.writeFileSync(requestedPath, req.body.content, 'utf-8');
-    res.status(200).json({ status: 'success' });
-});
-
-export const readContainerFile = catchAsync(async (req: Request, res: Response) => {
-    const requestedPath = await getRequestedPath(req);
-    res.status(200).json({
-        status: 'success',
-        data: {
-            name: path.basename(requestedPath),
-            content: fs.readFileSync(requestedPath, 'utf-8')
-        }
-    });
 });
 
 export const createDockerContainer = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
