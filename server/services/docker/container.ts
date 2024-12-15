@@ -62,6 +62,7 @@ class DockerContainer{
 
     async deployRepository(){
         const repository = await this.getRepository();
+        if(!repository) return;
         const repositoryService = new RepositoryService(repository);
         const githubService = new Github(repository.user, repository);
         await repositoryService.start(githubService);
@@ -296,7 +297,8 @@ class DockerContainer{
             const container = await this.createContainer();
             await container.start();
             if(this.container.isRepositoryContainer){
-                this.installDefaultPackages();
+                await this.installDefaultPackages();
+                await this.deployRepository();
             }
             await this.container.updateOne({ status: 'running' });
             return container;

@@ -57,43 +57,55 @@ const repositoryOperationHandler = async (repository: any, action: string) => {
         select: 'username container',
         populate: { path: 'github', select: 'accessToken username' }
     });
+
     const container = await DockerContainer.findOne({ repository });
+    if(!container){
+        throw new RuntimeError('Deployment::Container::NotFound', 404);
+    }
     const containerService = new DockerContainerService(container);
-    const github = new Github(repository.user, repository);
-    const currentDeploymentId = repository.deployments[0];
-    const currentDeployment = await Deployment.findById(currentDeploymentId) as IDeployment;
-    const { githubDeploymentId } = currentDeployment;
+    const githubService = new Github(repository.user, repository);
+
+    const currentDeploymentId = repository.deployments?.[0];
+    if(!currentDeploymentId){
+        throw new RuntimeError('Deployment::CurrentDeployment::NotFound', 404);
+    }
+
+    const currentDeployment = await Deployment.findById(currentDeploymentId);
     if(!currentDeployment){
-        throw new RuntimeError('Deployment::Not::Found', 404);
+        throw new RuntimeError('Deployment::InvalidReference', 404);
     }
+
+    const { githubDeploymentId } = currentDeployment;
     currentDeployment.status = 'queued';
-    github.updateDeploymentStatus(githubDeploymentId, 'queued');
     await currentDeployment.save();
-    switch(action){
-        case 'restart':
-            await containerService.restart();
-            // TODO: Can be refactored using mongoose middlewares
-            github.updateDeploymentStatus(githubDeploymentId, 'success');
-            break;
-        case 'stop':
-            await containerService.stop();
-            currentDeployment.status = 'stopped';
-            await currentDeployment.save();
-            github.updateDeploymentStatus(githubDeploymentId, 'inactive');
-            break;
-        case 'start':
-            await containerService.start();
-            github.updateDeploymentStatus(githubDeploymentId, 'success');
-            break;
-        default:
-            currentDeployment.status = 'success';
-            await currentDeployment.save();
-            return { 
-                status: 'error', 
-                message: 'Deployment::Invalid::Action' 
-            };
+    githubService.updateDeploymentStatus(githubDeploymentId, 'queued');
+
+    try{
+        switch(action){
+            case 'restart':
+                await containerService.restart();
+                await githubService.updateDeploymentStatus(githubDeploymentId, 'success');
+                break;
+            case 'stop':
+                await containerService.stop();
+                await githubService.updateDeploymentStatus(githubDeploymentId, 'inactive');
+                currentDeployment.status = 'stopped';
+                break;
+            case 'start':
+                await containerService.start();
+                await githubService.updateDeploymentStatus(githubDeploymentId, 'success');
+                currentDeployment.status = 'success';
+                break;
+            default:
+                throw new RuntimeError('Deployment::Invalid::Action', 400);
+        }
+    }catch(error){
+        currentDeployment.status = 'failure';
+        githubService.updateDeploymentStatus(githubDeploymentId, 'failure');
+    }finally{
+        await currentDeployment.save();
+        return currentDeployment;
     }
-    return currentDeployment;
 };
 
 /**

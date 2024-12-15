@@ -178,10 +178,10 @@ const createRepositoryContainer = async (repository: IRepository): Promise<IDock
     const network = await mongoose.model('DockerNetwork').create({
         user: repository.user,
         driver: 'bridge',
-        name: repository.name
+        name: repository.alias
     });
     const container = await mongoose.model('DockerContainer').create({
-        name: repository.name,
+        name: repository.alias,
         user: repository.user,
         repository: repository._id,
         image: image._id,
