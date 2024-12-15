@@ -17,6 +17,7 @@ import User from '@models/user';
 import HandlerFactory from '@controllers/common/handlerFactory';
 import { catchAsync, deleteJWTCookie, filterObject } from '@utilities/helpers';
 import { IUser } from '@typings/models/user';
+import sendEmail from '@services/sendEmail';
 
 const UserFactory = new HandlerFactory({
     model: User,
@@ -84,6 +85,12 @@ export const signIn = catchAsync(async (req: any, res: any, next: any): Promise<
     if(!requestedUser || !(await requestedUser.isCorrectPassword(password, requestedUser.password))){
         return next(new Error('Authentication::EmailOrPasswordIncorrect'));
     }
+    const clientIp = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+    sendEmail({
+        to: email,
+        subject: `Someone is logged into your account.`,
+        html: `The client's IP address is "${clientIp}", is that you? Remember to set a strong password to protect your data and services.`
+    });
     createAndSendToken(res, 200, requestedUser);
 });
 
@@ -98,6 +105,11 @@ export const signUp = catchAsync(async (req: any, res: any, next: any): Promise<
         return next(new Error('Authentication::Disabled'));
     }
     const newUser = await User.create({ username, fullname, email, password, passwordConfirm });
+    sendEmail({
+        to: email,
+        subject: `Hello @${username}!`,
+        html: `Your account has been created successfully.`
+    });
     createAndSendToken(res, 201, newUser);
 });
 
@@ -118,6 +130,11 @@ export const updateMyPassword = catchAsync(async (req: any, res: any, next: any)
     requestedUser.password = req.body.password;
     requestedUser.passwordConfirm = req.body.passwordConfirm;
     await requestedUser.save();
+    sendEmail({
+        to: requestedUser.email,
+        subject: 'Password updated successfully.',
+        html: `Hello @rodyherrera, you have changed your password correctly. You may need to log in again on devices where you had your session active.`
+    });
     createAndSendToken(res, 200, requestedUser);
 });
 
@@ -131,7 +148,11 @@ export const deleteMyAccount = catchAsync(async (req: any, res: any, next: any):
     if(!requestedUser){
         return next(new Error('Authentication::Delete::UserNotFound'));
     }
-
+    sendEmail({
+        to: requestedUser.email,
+        subject: 'You have deleted your account.',
+        html: `All your data on the platform has been deleted. This action is irreversible.`
+    }); 
     res.status(204).json({
         status: 'success',
         data: requestedUser
