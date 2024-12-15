@@ -10,6 +10,7 @@
       "outDir": "./dist",
       "paths": {
         "@typings/*": ["./typings/*"],
+        "@tests/*": ["./tests/*"],
         "@models/*": ["./models/*"],
         "@utilities/*": ["./utilities/*"],
         "@routes/*": ["./routes/*"],

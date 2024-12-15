@@ -1,4 +1,4 @@
-import mongoose, { Schema, Model } from 'mongoose';
+import mongoose, { Schema, Model, UpdateQuery } from 'mongoose';
 import { IDockerContainer } from '@typings/models/docker/container';
 import DockerContainerService, { getContainerStoragePath, getSystemDockerName } from '@services/docker/container';
 import logger from '@utilities/logger';
@@ -115,7 +115,10 @@ DockerContainerSchema.pre('findOneAndUpdate', async function (next){
         const doc = await this.model.findOne(this.getQuery());
         logger.debug(`@models/docker/container.ts (findOneAndUpdate): Recreating container (${doc.dockerContainerName}) with new environment variables...`);
         if(!doc) return;
-        Object.assign(doc.environment, update.environment);
+        const typedUpdate = update as UpdateQuery<IDockerContainer>;
+        if(typedUpdate.environment){
+            Object.assign(doc.environment, typedUpdate.environment);
+        }
         const containerService = new DockerContainerService(doc);
         await containerService.recreateContainer();
         logger.debug(`@models/docker/container.ts (findOneAndUpdate): Recreated (${doc.dockerContainerName}).`);

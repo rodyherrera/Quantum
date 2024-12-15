@@ -124,7 +124,7 @@ export const repositoryOperations = catchAsync(async (req: Request, res: Respons
     if(!action)
         throw new RuntimeError('Repository::Action::Required', 400);
     const currentDeployment = await repositoryOperationHandler(repository, action);
-    if(currentDeployment && currentDeployment.status === 'error'){
+    if(currentDeployment && currentDeployment.status === 'failure'){
         res.status(400).json(currentDeployment);
     }else{
         res.status(200).json({

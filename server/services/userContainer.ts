@@ -68,6 +68,7 @@ class UserContainer extends DockerContainerService{
         try{
             await this.start();
             if(!this.instance) return;
+            const container = this.user.container as IDockerContainer;
             const exec = await this.instance.exec({
                 Cmd: ['/bin/sh'],
                 AttachStdout: true,
@@ -77,7 +78,7 @@ class UserContainer extends DockerContainerService{
                 Tty: true
             });
             const userId = this.user._id.toString();
-            const containerId = this.user.container._id.toString();
+            const containerId = container._id.toString();
             await createLogStream(userId, containerId);
             setupSocketEvents(socket, userId, containerId, exec);
         }catch(error){

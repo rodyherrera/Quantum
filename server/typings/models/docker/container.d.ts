@@ -21,7 +21,7 @@ export interface IDockerContainer extends Document{
     dockerContainerName: string;
     ipAddress?: string;
     command: string;
-    storagePath?: string,
+    storagePath: string,
     isUserContainer: boolean;
     environment: IDockerContainerEnvironment;
     status: string,

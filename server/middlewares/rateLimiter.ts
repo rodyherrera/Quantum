@@ -8,8 +8,8 @@ const authLimiter = rateLimit({
     message: 'Core::RateLimiter',
     standardHeaders: true,
     legacyHeaders: false,
-    keyGenerator: (req) => {
-        return req.ip;
+    keyGenerator: async (req): Promise<string> => {
+        return req.ip as string;
     }
 });
 

@@ -110,7 +110,7 @@ export const deployContainers = async (): Promise<void> => {
                     }) as IRepository;
                 if(!repository) return;
                 const user = repository.user as IUser;
-                const repositoryService = new RepositoryHandler(repository, user);
+                const repositoryService = new RepositoryHandler(repository);
                 const githubService = new Github(user, repository);
                 await repositoryService.start(githubService);
             }

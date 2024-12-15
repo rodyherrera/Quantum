@@ -11,6 +11,7 @@ import RuntimeError from '@utilities/runtimeError';
 import DockerImage from '@models/docker/image';
 import DockerNetwork from '@models/docker/network';
 import PortBinding from '@models/portBinding';
+import { IDockerNetwork } from '@typings/models/docker/network';
 
 const getDockerOrCreateDockerImage = async (image: IRequestDockerImage, userId: string): Promise<IDockerImage> => {
     const { name, tag } = image;
@@ -81,7 +82,7 @@ const createHusbandContainer = async (user: IUser, config: IOneClickDeployConfig
     const husband = await DockerContainer.create({
         user: user._id,
         image: image._id,
-        network: parentContainer.network._id,
+        network: parentContainer.network,
         name: containerName,
         command: config.command,
         environment: { variables: config.environment }

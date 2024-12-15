@@ -10,11 +10,12 @@ import { IDockerContainer } from '@typings/models/docker/container';
 class RepositoryHandler{
     private repository: IRepository;
     private repositoryId: string;
-    private container: IDockerContainer;
+    private container: IDockerContainer | null;
 
     constructor(repository: IRepository){
         this.repository = repository;
         this.repositoryId = this.repository._id.toString();
+        this.container = null;
     }
 
     getValidCommands(): string[]{
@@ -29,7 +30,7 @@ class RepositoryHandler{
             .select('environment githubDeploymentId status');
     }
 
-    async getContainer(): Promise<IDockerContainer>{
+    async getContainer(): Promise<IDockerContainer | null>{
         if(this.container) return this.container;
         this.container = await DockerContainer.findOne({ repository: this.repositoryId });
         return this.container;
@@ -74,11 +75,12 @@ class RepositoryHandler{
 
     private async deploy(buildCommands: string[], environ: string): Promise<void>{
         const repositoryContainer = await this.getContainer();
+        if(!repositoryContainer) return;
         const containerService = new DockerContainerService(repositoryContainer);
         const container = await containerService.getExistingContainer();
-        const userId = this.container.user.toString();
-        const containerId = this.container._id.toString();
-        const id = this.container.user.toString();
+        const userId = repositoryContainer.user.toString();
+        const containerId = repositoryContainer._id.toString();
+        const id = repositoryContainer.user.toString();
         await createLogStream(userId, containerId);
         let stream = shells.get(id);
         if(!stream){

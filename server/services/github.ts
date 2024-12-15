@@ -43,7 +43,6 @@ class Github{
     private user: IUser;
     private repository: IRepository;
     private userGithub: IGithub;
-    private container: IDockerContainer;
     private octokit: Octokit;
 
     constructor(user: IUser, repository: IRepository){
@@ -70,10 +69,9 @@ class Github{
         }
     }
 
-    async getContainer(): Promise<IDockerContainer>{
-        if(this.container) return this.container;
-        this.container = await DockerContainer.findOne({ repository: this.repository._id });
-        return this.container;
+    async getContainer(): Promise<IDockerContainer | null>{
+        const container = await DockerContainer.findOne({ repository: this.repository._id });
+        return container;
     }
     
     /**
@@ -82,8 +80,11 @@ class Github{
      * @returns {Promise<void>} - Resolves if the cloning process is successful, rejects with an error if not.
     */
     async cloneRepository(): Promise<void>{
-        const container = await this.getContainer();
         try{
+            const container = await this.getContainer();
+            if(!container){
+                throw new RuntimeError('Github::Container::NotFound', 404);
+            }
             const repositoryInfo = await this.octokit.repos.get({ 
                 owner: this.userGithub.username, 
                 repo: this.repository.name 
@@ -104,6 +105,9 @@ class Github{
     */
     async readEnvironmentVariables(): Promise<Record<string, string>>{
         const container = await this.getContainer();
+        if(!container){
+            throw new RuntimeError('Github::Container::NotFound', 404);
+        }
         const files = await simpleGit(container.storagePath).raw(['ls-tree', 'HEAD', '-r', '--name-only']);
         const envFiles = files.split('\n').filter(file => file.includes('.env'));
         const environmentVariables: Record<string, string> = {};

@@ -23,6 +23,7 @@ export const createNetwork = async (networkId: string, driver: string, subnet: s
             CheckDuplicate: true,
             Attachable: true,
             IPAM: {
+                Driver: 'default',
                 Config: [{ Subnet: subnet }]
             }
         });

@@ -71,8 +71,7 @@ class DockerContainer{
 
     async executeCommand(command: string, workDir: string = '/'): Promise<void> {
         const container = await this.getExistingContainer();
-    
-        // En lugar de lanzar solamente /bin/sh, concatena el comando con '-c' para ejecutarlo completamente.
+
         const exec = await container.exec({
             Cmd: ['/bin/sh', '-c', command],
             AttachStdout: true,
@@ -81,17 +80,13 @@ class DockerContainer{
             Tty: false,
         });
     
-        // exec.start() retorna un stream; podemos “encadenar” la resolución de la Promesa en función de los eventos.
         const stream = await exec.start({ hijack: true });
     
         return new Promise<void>((resolve, reject) => {
-            // Acumuladores de datos (si quisieras guardar logs o capturar salida).
             const stdoutChunks: Buffer[] = [];
             const stderrChunks: Buffer[] = [];
     
             stream.on('data', (chunk: Buffer) => {
-                // Ojo: Dockerode a veces mezcla stdout y stderr en el mismo stream con prefijos,
-                // pero por simplicidad asumimos que va llegando intercalado.
                 stdoutChunks.push(chunk);
             });
     
@@ -100,15 +95,12 @@ class DockerContainer{
             });
     
             stream.on('end', async () => {
-                // Una vez que el stream termina, usamos exec.inspect() para ver exit code y estado final
-                try {
+                try{
                     const execInspect = await exec.inspect();
-    
-                    // Si exitCode es 0, se considera que el comando terminó OK
-                    if (execInspect.ExitCode === 0) {
-                        // Si quisieras obtener la salida, podrías hacer algo con stdoutChunks/stderrChunks aquí
+
+                    if(execInspect.ExitCode === 0){
                         resolve();
-                    } else {
+                    }else{
                         const stderrOutput = Buffer.concat(stderrChunks).toString();
                         reject(
                             new Error(
@@ -116,7 +108,7 @@ class DockerContainer{
                             )
                         );
                     }
-                } catch (inspectError) {
+                }catch(inspectError){
                     reject(inspectError);
                 }
             });

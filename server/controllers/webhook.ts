@@ -47,7 +47,7 @@ export const webhook = async (req: Request, res: Response) => {
         requestedRepository.deployments.push(deployment._id as mongoose.Types.ObjectId);
 
         // Start the repository
-        const repositoryHandler = new RepositoryHandler(requestedRepository, repositoryUser);
+        const repositoryHandler = new RepositoryHandler(requestedRepository);
         await repositoryHandler.start(github);
 
         res.status(200).json({ status: 'success' });
