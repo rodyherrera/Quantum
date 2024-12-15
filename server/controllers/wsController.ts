@@ -36,20 +36,16 @@ const checkRepositoryOwnership = async (socket: ISocket, next: WsNextFunction) =
     }
 };
 
-const handleShell = async (socket: ISocket) => {
-    try{
-        const repositoryHandler = new RepositoryHandler(socket.repository, socket.user);
-        await repositoryHandler.executeInteractiveShell(socket);
-    }catch(error){
-        logger.info('@controllers/wsController.ts (handleShell): ' + error);
-    }
-};
-
 const handleDockerShell = async (socket: ISocket) => {
     try{
-        const { dockerId } = socket.handshake.query;
-        const dockerContainer = await DockerContainer.findById(dockerId);
-        if(dockerContainer && dockerId){
+        let dockerContainer;
+        if(socket.repository){
+            dockerContainer = await DockerContainer.findOne({ repository: socket.repository });
+        }else{
+            const { dockerId } = socket.handshake.query;
+            dockerContainer = await DockerContainer.findById(dockerId);
+        }
+        if(dockerContainer){
             const dockerHandler = new DockerContainerService(dockerContainer);
             dockerHandler.startSocketShell(socket, '/');
         }
@@ -75,7 +71,7 @@ export default (io: any) => {
         switch(action){
             case 'Repository::Shell':
                 await checkRepositoryOwnership(socket, async (error) => {
-                    if(!error) handleShell(socket);
+                    if(!error) handleDockerShell(socket);
                     else logger.error('@controllers/wsController.ts (default): ', error);
                 });
                 break;
