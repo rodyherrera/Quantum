@@ -38,7 +38,6 @@ process.on('uncaughtException', async (error:Error) => {
         subject: 'Critical runtime error, restarting server...',
         html: `A critical error has been registered in the execution of the platform server. This error cannot be ignored and continue executing instructions, so the server will be forcefully restarted to maintain the integrity of the platform and its hosted services. Keep in mind that the latter can get into a loop. We will leave you error information:\n${error}`
     });
-    await bootstrap.restartServer();
 });
 
 /**

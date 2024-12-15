@@ -20,12 +20,10 @@ import RepositoryHandler from '@services/repositoryHandler';
 import sendMail from '@services/sendEmail';
 import logger from '@utilities/logger';
 import { ConfigureAppParams } from '@typings/utilities/bootstrap';
-import { spawn } from 'child_process';
 import { IRepository } from '@typings/models/repository';
-import * as nginxHandler from '@services/nginx';
 import DockerContainer from '@models/docker/container';
 import DockerContainerService from '@services/docker/container';
-
+import * as nginxHandler from '@services/nginx';
 /**
  * Asynchronously sets up an Nginx reverse proxy configuration.
  *
@@ -53,7 +51,7 @@ export const setupNginxReverseProxy = async (): Promise<void> => {
 export const ensurePublicFolderExistence = async (): Promise<void> => {
     const publicFolderPath = path.join(__dirname, '../public');
     try{
-        await fs.promises.access(publicFolderPath, fs.constants.F_OK); // Check existence efficiently
+        await fs.promises.access(publicFolderPath, fs.constants.F_OK); 
     }catch(error){
         await fs.promises.mkdir(publicFolderPath);
     }
@@ -73,29 +71,23 @@ export const configureApp = async ({ app, routes, suffix, middlewares }: Configu
     middlewares.forEach((middlewares) => app.use(middlewares));
     try{
         const routePromises = routes.map(async (route) => {
-            const path = suffix + route.replace(/\//g, '-').split(/(?=[A-Z])/).join('-').toLowerCase();
-            const router = require(`@routes/${route}.ts`);
-            if(router.default){
-                app.use(path, router.default);
-            }else{
-                logger.error(`@utilities/bootstrap.ts (configureApp): The module imported from './routes/${route}' does not have a default export.`);
+            try{
+                const routePath = suffix + route.replace(/\//g, '-').split(/(?=[A-Z])/).join('-').toLowerCase();
+                const routerModule = require(`@routes/${route}`);
+                const router = routerModule.default;
+                if(router){
+                    app.use(routePath, router);
+                }else{
+                    logger.error(`@utilities/bootstrap.ts (configureApp): The module imported from '@routes/${route}' does not have a default export.`);
+                }
+            }catch(importError){
+                logger.error(`@utilities/bootstrap.ts (configureApp): Failed to import route '${route}'. Error: ${importError}`);
             }
         });
         await Promise.all(routePromises);
     }catch(error){
         logger.error('@utilities/bootstrap.ts (configureApp): Error setting up the application routes ' + error);
     }
-};
-
-/**
- * Restarts the Node.js server by spawning a new process. Terminates the current process after spawning new one.
-*/
-export const restartServer = async (): Promise<void> => {
-    // "stdio: 'inherit'" -> Inherit standard flows from the main process.
-    const childProcess = spawn('npm', ['run', 'start'], { stdio: 'inherit' });
-    childProcess.on('close', (code) => {
-        logger.info(`@utilities/bootstrap.ts (restartServer): Server process exited with code ${code}.`);
-    });
 };
 
 export const deployContainers = async (): Promise<void> => {
@@ -137,28 +129,76 @@ export const deployContainers = async (): Promise<void> => {
 */
 export const validateEnvironmentVariables = (): void => {
     const requiredVariables = [
-        { name: 'NODE_ENV', validation: /^(development|production)$/i, errorMessage: 'NODE_ENV must be one of "development", "production", or "test".' },
+        { 
+            name: 'NODE_ENV', 
+            validation: /^(development|production|test)$/i, 
+            errorMessage: 'NODE_ENV must be one of "development", "production", or "test".' 
+        },
         { name: 'DOCKER_APK_STARTER_PACKAGES' },
-        { name: 'DOMAIN', validation: /^http(s)?:\/\/\S+$/, errorMessage: 'DOMAIN must be a valid URL starting with "http://" or "https://"' },
+        { 
+            name: 'DOMAIN', 
+            validation: /^https?:\/\/\S+$/, 
+            errorMessage: 'DOMAIN must be a valid URL starting with "http://" or "https://".' 
+        },
         { name: 'SECRET_KEY' },
-        { name: 'REGISTRATION_DISABLED', validation: /^(true|false)$/i, errorMessage: 'REGISTRATION_DISABLED must be either "true" or "false".' },
-        { name: 'CLIENT_HOST', validation: /^http(s)?:\/\/\S+$/, errorMessage: 'CLIENT_HOST must be a valid URL starting with "http://" or "https://"' },
-        { name: 'CLIENT_DEV_HOST', validation: /^http(s)?:\/\/\S+$/, errorMessage: 'CLIENT_DEV_HOST must be a valid URL starting with "http://" or "https://"' },
-        { name: 'SERVER_PORT', validation: /^\d+$/, errorMessage: 'SERVER_PORT must be a valid port number between 1 and 65535.' },
+        { 
+            name: 'REGISTRATION_DISABLED', 
+            validation: /^(true|false)$/i, 
+            errorMessage: 'REGISTRATION_DISABLED must be either "true" or "false".' 
+        },
+        { 
+            name: 'CLIENT_HOST', 
+            validation: /^https?:\/\/\S+$/, 
+            errorMessage: 'CLIENT_HOST must be a valid URL starting with "http://" or "https://".' 
+        },
+        { 
+            name: 'CLIENT_DEV_HOST', 
+            validation: /^https?:\/\/\S+$/, 
+            errorMessage: 'CLIENT_DEV_HOST must be a valid URL starting with "http://" or "https://".' 
+        },
+        { 
+            name: 'SERVER_PORT', 
+            validation: /^(?:[1-9][0-9]{0,4}|6553[0-5])$/, 
+            errorMessage: 'SERVER_PORT must be a valid port number between 1 and 65535.' 
+        },
         { name: 'SERVER_HOSTNAME' },
         { name: 'LOG_LEVEL' },
         { name: 'SESSION_SECRET' },
         { name: 'GITHUB_CLIENT_ID' },
         { name: 'GITHUB_CLIENT_SECRET' },
-        { name: 'SERVER_IP', validation: /^(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])(\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])){3}$/, errorMessage: 'SERVER_IP must be a valid IPv4 address.' },
-        { name: 'JWT_EXPIRATION_DAYS', validation: /^[-+]?\d+$/, errorMessage: 'JWT_EXPIRATION_DAYS must be a number.' },
+        { 
+            name: 'SERVER_IP', 
+            validation: /^(25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})(\.(25[0-5]|2[0-4][0-9]|1?[0-9]{1,2})){3}$/, 
+            errorMessage: 'SERVER_IP must be a valid IPv4 address.' 
+        },
+        { 
+            name: 'JWT_EXPIRATION_DAYS', 
+            validation: /^[-+]?\d+$/, 
+            errorMessage: 'JWT_EXPIRATION_DAYS must be a number.' 
+        },
         { name: 'CORS_ORIGIN' },
         { name: 'PRODUCTION_DATABASE' },
         { name: 'DEVELOPMENT_DATABASE' },
-        { name: 'LOG_PATH_MAX_SIZE', validation: /^\d+$/, errorMessage: 'LOG_PATH_MAX_SIZE must be a positive integer representing size in kilobytes.' },
-        { name: 'MONGO_URI', validation: /^mongodb(?:\+srv)?:\/\/\S+$/, errorMessage: 'MONGO_URI must be a valid MongoDB connection URI.' },
-        { name: 'ENCRYPTION_KEY', validation: /^[0-9a-fA-F]{64}$/, errorMessage: 'ENCRYPTION_KEY must be a 64-character hexadecimal string (32 bytes). Use https://www.browserling.com/tools/random-hex.' },
-        { name: 'ENCRYPTION_IV', validation: /^[0-9a-fA-F]{32}$/, errorMessage: 'ENCRYPTION_IV must be a 32-character hexadecimal string (16 bytes). Use https://www.browserling.com/tools/random-hex.' }
+        { 
+            name: 'LOG_PATH_MAX_SIZE', 
+            validation: /^\d+$/, 
+            errorMessage: 'LOG_PATH_MAX_SIZE must be a positive integer representing size in kilobytes.' 
+        },
+        { 
+            name: 'MONGO_URI', 
+            validation: /^mongodb(?:\+srv)?:\/\/\S+$/, 
+            errorMessage: 'MONGO_URI must be a valid MongoDB connection URI.' 
+        },
+        { 
+            name: 'ENCRYPTION_KEY', 
+            validation: /^[0-9a-fA-F]{64}$/, 
+            errorMessage: 'ENCRYPTION_KEY must be a 64-character hexadecimal string (32 bytes). Use https://www.browserling.com/tools/random-hex.' 
+        },
+        { 
+            name: 'ENCRYPTION_IV', 
+            validation: /^[0-9a-fA-F]{32}$/, 
+            errorMessage: 'ENCRYPTION_IV must be a 32-character hexadecimal string (16 bytes). Use https://www.browserling.com/tools/random-hex.' 
+        }
     ];
 
     const missingVariables: string[] = [];
