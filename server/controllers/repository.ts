@@ -77,7 +77,11 @@ export const getMyRepositories = RepositoryFactory.getAll({
             const repoInfo = await github.getRepositoryInfo();
             return repoInfo ? { ...repoInfo, ...repo } : null;
         }));
-        res.status(200).json({ status: 'success', data: enrichedData.filter(Boolean) });
+        res.status(200).json({
+            status: 'success',
+            ...body,
+            data: enrichedData
+        });
     }
 });
 
