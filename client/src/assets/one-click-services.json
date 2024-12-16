@@ -122,6 +122,10 @@
             "containerPath": "/var/lib/mysql",
             "mode": "rw"
         }],
+        "ports": [{
+            "protocol": "tcp",
+            "internalPort": 3306
+        }],
         "environment": {
             "MARIADB_PASSWORD": "secret",
             "MARIADB_DATABASE": "wordpress",
@@ -136,7 +140,7 @@
     "command": "/bin/sh",
     "environment": {
         "WORDPRESS_DB_NAME": "wordpress",
-        "WORDPRESS_DB_HOST": "husbands:Wordpress-DB",
+        "WORDPRESS_DB_HOST": "husbands:Wordpress-DB:3306",
         "WORDPRESS_DB_USER": "manager",
         "WORDPRESS_DB_PASSWORD": "secret"
     },

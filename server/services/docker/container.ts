@@ -178,20 +178,6 @@ class DockerContainer{
         return this.container.storagePath;
     }
 
-    async removeContainer() {
-        try{
-            const container = docker.getContainer(this.container.dockerContainerName);
-            if(!container) return;
-            await container.remove({ force: true });
-            const storagePath = this.getDockerStoragePath();
-            if(existsSync(storagePath)){
-                await fs.rm(this.getDockerStoragePath(), { recursive: true });
-            }
-        }catch (error){
-            logger.error('@services/docker/container.ts (removeContainer): ' + error);
-        }
-    }
-
     async getExistingContainer(): Promise<Dockerode.Container> {
         const container = docker.getContainer(this.container.dockerContainerName);
         const { State } = await container.inspect();
@@ -238,40 +224,88 @@ class DockerContainer{
         }
         const volumes: string[] = [];
         for(const { containerPath, mode } of this.container.volumes){
-            const hostPath = `${this.getDockerStoragePath()}${containerPath}`;
-            await fs.mkdir(hostPath, { recursive: true });
-            volumes.push(`${hostPath}:${containerPath}:${mode.trim()}`);
+            const volumeName = `${this.container.dockerContainerName}-${slugify(containerPath)}`;
+            try{
+                await docker.createVolume({
+                    Name: volumeName,
+                    Labels: {
+                        container: this.container.dockerContainerName,
+                    },
+                });
+            }catch(error){
+                if(error.statusCode !== 409){
+                    throw error;
+                }
+            }
+            volumes.push(`${volumeName}:${containerPath}:${mode.trim()}`);
         }
         return volumes;
     }
-
+    
     async createContainer(): Promise<Dockerode.Container> {
         const dockerImage = await this.getDockerImage();
         const dockerNetwork = await this.getDockerNetwork();
         const networkName = getSystemNetworkName(this.container.user.toString(), dockerNetwork._id.toString());
         const { exposedPorts, bindings } = await this.getPortBindings();
-        const volumeBinds: string[] = await this.getContainerVolumes();
+        const volumeMounts: string[] = await this.getContainerVolumes();
         const environmentVariables = Array.from(this.container.environment.variables.entries()).map(
-            ([key, value]) => `${key}=${value}`);
-            const options = {
-                Image: `${dockerImage.name}:${dockerImage.tag}`,
-                name: this.container.dockerContainerName,
-                Tty: true,
-                OpenStdin: true,
-                StdinOnce: true,
-                Env: environmentVariables,
-                ExposedPorts: exposedPorts,
-                HostConfig: {
-                    PortBindings: bindings,
-                    Binds: volumeBinds,
-                    NetworkMode: networkName,
-                    RestartPolicy: { Name: 'always' }
-                }
-            };
-            
+            ([key, value]) => `${key}=${value}`
+        );
+    
+        const options = {
+            Image: `${dockerImage.name}:${dockerImage.tag}`,
+            name: this.container.dockerContainerName,
+            Tty: true,
+            OpenStdin: true,
+            StdinOnce: true,
+            Env: environmentVariables,
+            ExposedPorts: exposedPorts,
+            HostConfig: {
+                PortBindings: bindings,
+                Mounts: volumeMounts.map((volume) => {
+                    const [Source, Target, Mode] = volume.split(':');
+                    return {
+                        Source,
+                        Target,
+                        Type: 'volume',
+                        ReadOnly: Mode === 'ro',
+                    };
+                }),
+                NetworkMode: networkName,
+                RestartPolicy: { Name: 'always' },
+            },
+        };
+    
         const container = await docker.createContainer(options);
         return container;
     }
+    
+    async removeContainer(){
+        try{
+            const container = docker.getContainer(this.container.dockerContainerName);
+            if(container){
+                await container.remove({ force: true });
+            }
+            if(this.container.volumes){
+                for(const { containerPath } of this.container.volumes){
+                    const volumeName = `${this.container.dockerContainerName}-${slugify(containerPath)}`;
+                    try{
+                        const volume = docker.getVolume(volumeName);
+                        await volume.remove();
+                    }catch(error){
+                        if(error.statusCode !== 404){
+                            logger.warn(
+                                `@services/docker/container.ts (removeContainer): Could not remove volume ${volumeName}. Error: ${error}`
+                            );
+                        }
+                    }
+                }
+            }
+        }catch(error){
+            logger.error('@services/docker/container.ts (removeContainer): ' + error);
+        }
+    }
+    
 
     async recreateContainer(): Promise<any> {
         const container = docker.getContainer(this.container.dockerContainerName);

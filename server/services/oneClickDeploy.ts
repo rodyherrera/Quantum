@@ -34,10 +34,17 @@ const parseEnvironVariables = async (
     const variables: { [key: string]: string } = {};
     for(let [key, value] of Object.entries(config.environment)){
         if(value.startsWith('husbands:')){
-            const husbandName = value.split('husbands:')[1];
+            const [husbandName, internalPort] = value.split(':').slice(1);
             const husband = husbands.get(husbandName);
-            if(!husband?.ipAddress) continue;
-            value = husband.ipAddress;
+            if(husband?.ipAddress){
+                // TEMPORAL SOLUTION, AFTER SERVER REBOOT
+                // CONTAINERS ON SAME NETWORKS CAN'T COMMUNICATE
+                value = process.env.SERVER_IP;
+            }
+            if(internalPort){
+                const portBinding = await PortBinding.findOne({ container: husband?._id, internalPort }).select('externalPort').lean();
+                if(portBinding) value += ':' + portBinding.externalPort;
+            }
         }
         variables[key] = value;
     }
@@ -88,6 +95,18 @@ const createHusbandContainer = async (user: IUser, config: IOneClickDeployConfig
         volumes: config.volumes,
         environment: { variables: config.environment }
     }); 
+    const portBindings = config.ports?.map(async (port) => {
+        const { internalPort, protocol } = port;
+        const externalPort = await findRandomAvailablePort();
+        return await PortBinding.create({
+            container: husband._id,
+            user: user._id,
+            internalPort,
+            protocol,
+            externalPort
+        });
+    }) ?? [];
+    await Promise.all(portBindings);
     return husband;
 };
 
