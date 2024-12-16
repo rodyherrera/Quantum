@@ -326,8 +326,16 @@ class Github{
                 hook_id: Number(this.repository.webhookId)
             });
             return response;
-        }catch(error){
-            logger.error('@services/github.ts (deleteWebhook): Error deleting webhook: ' + (error as Error).message);
+        }catch(error: any){
+            const errorMessage = error.message || '';
+            const errorStatus = error.status || 500;
+    
+            if(errorStatus === 404 || errorMessage.includes('Not Found')){
+                logger.warn(`@services/github.ts (deleteWebhook): Webhook not found, ignoring error. Repo: ${this.repository.name}`);
+                return;
+            }
+    
+            logger.error(`@services/github.ts (deleteWebhook): Error deleting webhook: ${errorMessage}`);
             throw error;
         }
     }
