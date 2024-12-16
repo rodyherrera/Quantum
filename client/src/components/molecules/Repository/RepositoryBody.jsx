@@ -13,7 +13,6 @@ const RepositoryBody = ({ repository }) => {
     const { repositories } = useSelector(state => state.repository);
     const ctxMenuOpts = [
         { title: 'Delete', onClick: () => setIsDeleteModalActive(true) },
-        { title: 'Manage Domains', onClick: () => handleRepositorySelection(`/repository/${repository.alias}/domains/`) },
         { title: 'Build & Dev Settings',  onClick: () => handleRepositorySelection(`/repository/${repository.alias}/deployment/setup/`) },
         { title: 'Environment Variables',  onClick: () => handleRepositorySelection(`/repository/${repository.alias}/deployment/environment-variables/`) },
         { title: 'File Explorer',  onClick: () => handleRepositorySelection(`/repository/${repository.alias}/storage/`) },

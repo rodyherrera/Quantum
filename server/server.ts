@@ -64,8 +64,6 @@ process.on('SIGINT', async () => {
 // Starts the HTTP Server
 httpServer.listen(SERVER_PORT, SERVER_HOST, async () => {
     try{
-        // Manages Nginx configuration for proxying
-        bootstrap.setupNginxReverseProxy();
         // Ensures necessary environment variables exists
         bootstrap.validateEnvironmentVariables();
         // Establishes a connection to the MongoDB database

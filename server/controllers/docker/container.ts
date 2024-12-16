@@ -12,6 +12,7 @@ import { isImageAvailable } from '@services/docker/image';
 import { catchAsync, findRandomAvailablePort } from '@utilities/helpers';
 import { NextFunction, Request, Response } from 'express';
 import { IUser } from '@typings/models/user';
+import { IRequest } from '@typings/controllers/common';
 import { parseConfigAndDeploy } from '@services/oneClickDeploy';
 import sendEmail from '@services/sendEmail';
 
@@ -40,7 +41,7 @@ export const deleteDockerContainer = DockerContainerFactory.deleteOne({
 
 export const getMyDockerContainers = DockerContainerFactory.getAll({
     middlewares: {
-        pre: [(req: Request, query: any) => {
+        pre: [(req: IRequest, query: any) => {
             query.user = req.user;
             return query;
         }]

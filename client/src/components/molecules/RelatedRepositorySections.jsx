@@ -66,12 +66,6 @@ const RelatedRepositorySections = ({ isRepositorySelected = true }) => {
             description: 'Customize your repository deployment settings, including installation, start, and build commands, among other configurations.',
             to: `/repository/${encodeURIComponent(selectedRepository?.alias)}/deployment/setup/`
         },
-        {
-            title: 'Manage Domains',
-            icon: MdHttp,
-            description: 'Add one or more domains to your repository. We take care of your SSL certificate.',
-            to: `/repository/${encodeURIComponent(selectedRepository?.alias)}/domains/`
-        },
         { 
             title: 'Deployments', 
             icon: IoIosGitBranch,

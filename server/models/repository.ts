@@ -16,12 +16,9 @@ import mongoose, { Model, Schema } from 'mongoose';
 import { IRepository } from '@typings/models/repository';
 import { IUser } from '@typings/models/user';
 import { v4 } from 'uuid';
-import { getPublicIPAddress } from '@utilities/helpers';
 import { IDockerContainer } from '@typings/models/docker/container';
 import Github from '@services/github';
-import logger from '@utilities/logger';
 import RepositoryHandler from '@services/repositoryHandler';
-import * as nginxHandler from '@services/nginx';
 
 const RepositorySchema: Schema<IRepository> = new Schema({
     alias: {
@@ -54,10 +51,6 @@ const RepositorySchema: Schema<IRepository> = new Schema({
     deployments: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Deployment',
-    }],
-    domains: [{
-        type: String,
-        trim: true
     }],
     port: { type: Number },
     createdAt: { type: Date, default: Date.now },
@@ -99,33 +92,13 @@ const deleteRepositoryHandler = async (deletedDoc: IRepository) => {
     if(!deletedDoc) return;
     const repositoryUser = await removeRepositoryReference(deletedDoc);
     const deployments = await getAndDeleteDeployments(deletedDoc._id as mongoose.Types.ObjectId);
-    await nginxHandler.removeDomainList(deletedDoc.domains);
     await performCleanupTasks(deletedDoc, repositoryUser, deployments);
-};
-
-const handleDomains = async (domains: string[], port: number, currentDomains: string[], userEmail: string) => {
-    const domainsToAdd = domains.filter((domain) => !currentDomains.includes(domain));
-    const domainsToRemove = currentDomains.filter((domain) => !domains.includes(domain));
-    const ipv4 = await getPublicIPAddress();
-
-    await Promise.all(domainsToAdd.map(async (domain) => {
-        const trimmedDomain = domain.trim();
-        try{
-            await nginxHandler.addDomain({ domain: trimmedDomain, port, ipv4 });
-            await nginxHandler.generateSSLCert(trimmedDomain, userEmail);
-            await nginxHandler.updateDomain({ domain: trimmedDomain, port, ipv4, useSSL: true });
-        }catch(error){
-            logger.error(`@models/repository.ts (handleDomains): Error processing domain (add) '${trimmedDomain}':`, error);
-        }
-    }));
-
-    await nginxHandler.removeDomainList(domainsToRemove);
 };
 
 const getRepositoryData = async (_id: mongoose.Types.ObjectId) => {
     return await Repository
         .findById(_id)
-        .select('user name deployments domains')
+        .select('user name deployments')
         .populate({
             path: 'user',
             select: 'username email',
@@ -145,7 +118,7 @@ const createWebhook = async (github: Github, webhookEndpoint: string): Promise<n
 };
 
 const handleUpdateCommands = async (context: any) => {
-    const { buildCommand, installCommand, startCommand, rootDirectory, domains, port } = context._update;
+    const { buildCommand, installCommand, startCommand, rootDirectory } = context._update;
     const { _id } = context._conditions;
 
     const repositoryData = await getRepositoryData(_id);
@@ -158,10 +131,6 @@ const handleUpdateCommands = async (context: any) => {
         const repositoryHandler = new RepositoryHandler(document);
         const githubHandler = new Github(user as IUser, document);
         repositoryHandler.start(githubHandler);
-    }
-    
-    if(domains?.length){
-        await handleDomains(domains, port, repositoryData.domains, (repositoryData.user as IUser).email);
     }
 };
 

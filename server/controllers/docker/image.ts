@@ -1,5 +1,6 @@
 import DockerImage from '@models/docker/image';
 import HandlerFactory from '@controllers/common/handlerFactory';
+import { IRequest } from '@typings/controllers/common';
 
 const DockerImageFactory = new HandlerFactory({
     model: DockerImage,
@@ -19,7 +20,7 @@ export const deleteDockerImage = DockerImageFactory.deleteOne();
 
 export const getMyDockersImage = DockerImageFactory.getAll({
     middlewares: {
-        pre: [(req, query) => {
+        pre: [(req: IRequest, query: any) => {
             query.user = req.user;
             return query;
         }]

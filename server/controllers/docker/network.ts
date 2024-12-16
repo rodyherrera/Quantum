@@ -1,5 +1,6 @@
 import DockerNetwork from '@models/docker/network';
 import HandlerFactory from '@controllers/common/handlerFactory';
+import { IRequest } from '@typings/controllers/common';
 
 const DockerNetworkFactory = new HandlerFactory({
     model: DockerNetwork,
@@ -19,7 +20,7 @@ export const createDockerNetwork = DockerNetworkFactory.createOne();
 
 export const getMyDockersNetwork = DockerNetworkFactory.getAll({
     middlewares: {
-        pre: [(req, query) => {
+        pre: [(req: IRequest, query: any) => {
             query.user = req.user;
             return query;
         }]

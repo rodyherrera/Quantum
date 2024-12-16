@@ -17,7 +17,6 @@ export interface IRepository extends Document{
     url: string;
     activeDeployment?: IDeployment,
     deployments: mongoose.Types.ObjectId[],
-    domains: string[];
     port?: number;
     createdAt: Date;
     updateAliasIfNeeded(): Promise<void>;

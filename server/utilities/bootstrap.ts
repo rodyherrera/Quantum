@@ -24,26 +24,6 @@ import { IUser } from '@typings/models/user';
 import { IRepository } from '@typings/models/repository';
 import DockerContainer from '@models/docker/container';
 import DockerContainerService from '@services/docker/container';
-import * as nginxHandler from '@services/nginx';
-
-/**
- * Asynchronously sets up an Nginx reverse proxy configuration.
- *
- * @returns {Promise<void>}
-*/
-export const setupNginxReverseProxy = async (): Promise<void> => {
-    if(!process.env.RUNNING_IN_DOCKER) return;
-    try{
-        await nginxHandler.removeDomain('_');
-        await nginxHandler.addDomain({
-            domain: '_',
-            ipv4: '127.0.0.1',
-            port: Number(process.env.SERVER_PORT) || 8000
-        });
-    }catch(error){
-        logger.error('@utilities/bootstrap.ts (setupNginxReverseProxy): Error configuring reverse proxy ' + error);
-    }
-};
 
 /**
  * Ensures the existence of the "../public" folder, creating it if necessary.
