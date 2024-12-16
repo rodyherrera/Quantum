@@ -57,8 +57,10 @@ const handleDockerShell = async (socket: ISocket) => {
 
 const handleCloudConsole = async (socket: ISocket) => {
     try{
-        const container = new UserContainer(await socket.user.populate('container'));
-        await container.executeInteractiveShell(socket);
+        const container = await DockerContainer.findById(socket.user.container);
+        if(!container) return;
+        const containerService = new DockerContainerService(container);
+        await containerService.startSocketShell(socket);
     }catch (error){
         logger.error('@controllers/wsController.ts (handleCloudConsole): ' + error);
     }

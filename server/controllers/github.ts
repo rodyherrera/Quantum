@@ -42,6 +42,6 @@ export const authCallback = catchAsync(async (req: Request, res: Response) => {
     // res.redirect just dont work... ???
     res.writeHead(302, {
         'Location': `${process.env.CLIENT_HOST}/github/authenticate/?accessToken=${accessToken}&data=${JSON.stringify(data)}`
-      });
+    });
     res.end();
 });
