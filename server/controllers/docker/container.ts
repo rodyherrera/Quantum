@@ -5,8 +5,6 @@ import DockerNetwork from '@models/docker/network';
 import HandlerFactory from '@controllers/common/handlerFactory';
 import DockerContainerService from '@services/docker/container';
 import mongoose from 'mongoose';
-import fs from 'node:fs';
-import path from 'node:path';
 import { IDockerImage } from '@typings/models/docker/image';
 import { IDockerNetwork } from '@typings/models/docker/network';
 import { IRequestDockerImage } from '@typings/controllers/docker/container';
@@ -42,7 +40,7 @@ export const deleteDockerContainer = DockerContainerFactory.deleteOne({
 
 export const getMyDockerContainers = DockerContainerFactory.getAll({
     middlewares: {
-        pre: [(req, query) => {
+        pre: [(req: Request, query: any) => {
             query.user = req.user;
             return query;
         }]
