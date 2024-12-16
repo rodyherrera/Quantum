@@ -1,6 +1,87 @@
 [{
+    "name": "Directus",
+    "website": "https://directus.io/",
+    "description": "Turn your data into a headless CMS, admin panels, or apps. Built for devs, used by everyone. ✨",
+    "image": {
+        "name": "directus/directus",
+        "tag": "11.3.2"
+    },
+    "volumes": [{ 
+        "containerPath": "/directus/uploads" 
+    }, { 
+        "containerPath": 
+        "/directus/extensions" 
+    }],
+    "ports": [{
+        "protocol": "tcp",
+        "internalPort": 8055
+    }],
+    "environment": {
+        "SECRET": "replace-with-secure-random-value",
+        "DB_CLIENT": "pg",
+        "DB_HOST": "{server_ip}",
+        "DB_PORT": "${Directus-Postgres-DB.externalPort}",
+        "DB_DATABASE": "directus",
+        "DB_USER": "directus",
+        "DB_PASSWORD": "directus",
+        "CACHE_ENABLED": "true",
+        "CACHE_AUTO_PURGE": "true",
+        "CACHE_STORE": "redis",
+        "REDIS": "redis://{server_ip}:${Directus-Redis-DB.externalPort}",
+        "ADMIN_EMAIL": "admin@example.com",
+        "ADMIN_PASSWORD": "toortoor"
+    },
+    "husbands": [
+        {
+            "name": "Directus-Redis-DB",
+            "image": { "name": "redis", "tag": "latest" },
+            "ports": [{ "protocol": "tcp", "internalPort": 6379 }]
+        },
+        {
+            "name": "Directus-Postgres-DB",
+            "image": { "name": "postgis/postgis", "tag": "13-master" },
+            "volumes": [{ "containerPath": "/var/lib/postgresql/data" }],
+            "ports": [{ "protocol": "tcp", "internalPort": 5432 }],
+            "environment": {
+                "POSTGRES_USER": "directus",
+                "POSTGRES_PASSWORD": "directus",
+                "POSTGRES_DB": "directus"
+            }
+        }
+    ]
+}, {
+    "name": "Uptime Kuma",
+    "description": "Self-hosted, open-source, fancy uptime monitoring and alerting system.",
+    "website": "",
+    "ports": [{
+        "protocol": "tcp",
+        "internalPort": 3001
+    }],
+    "image": {
+        "name": "louislam/uptime-kuma",
+        "tag": 1
+    },
+    "volumes": [{
+        "containerPath": "/app/data"
+    }]
+}, {
+    "name": "Appsmith",
+    "description": "Build better apps, faster, with fewer resources. Leading companies are innovating with Appsmith.",
+    "website": "",
+    "image": {
+        "name": "index.docker.io/appsmith/appsmith-ee",
+        "tag": "latest"
+    },
+    "ports": [{
+        "protocol": "tcp",
+        "internalPort": "80"
+    }],
+    "volumes": [{
+        "containerPath": "/appsmith-stacks"
+    }]
+}, {
     "name": "ownCloud",
-    "description": "An open-source file sync, share and content collaboration software that lets teams work on data easily from anywhere, on any device.",
+    "description": "An open-source file sync, share and content collaboration software.",
     "website": "https://owncloud.com/",
     "image": {
         "name": "owncloud/server",
@@ -17,6 +98,25 @@
     },
     "volumes": [{
         "containerPath": "/mnt/data"
+    }]
+}, {
+    "name": "Homarr",
+    "description": "A simple, yet powerful dashboard for your server.",
+    "website": "https://homarr.dev/",
+    "image": {
+        "name": "ghcr.io/ajnart/homarr",
+        "tag": "latest"
+    },
+    "volumes": [{
+        "containerPath": "/app/data/configs"
+    }, {
+        "containerPath": "/app/public/icons"
+    }, {
+        "containerPath": "/data"
+    }],
+    "ports": [{
+        "protocol": "tcp",
+        "internalPort": "7575"
     }]
 }, {
     "name": "Mongo",
@@ -160,7 +260,7 @@
     "command": "/bin/sh",
     "environment": {
         "WORDPRESS_DB_NAME": "wordpress",
-        "WORDPRESS_DB_HOST": "husbands:Wordpress-DB:3306",
+        "WORDPRESS_DB_HOST": "{server_ip}:${Wordpress-DB.externalPort}",
         "WORDPRESS_DB_USER": "manager",
         "WORDPRESS_DB_PASSWORD": "secret"
     },

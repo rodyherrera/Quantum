@@ -28,25 +28,47 @@ const parseEnvironVariables = async (
     config: IOneClickDeployConfig
 ): Promise<any> => {
     if(!config.environment) return {};
+
     const variables: { [key: string]: string } = {};
-    for(let [key, value] of Object.entries(config.environment)){
-        value = value.replace('{server_ip}', process.env.SERVER_IP);
-        if(value.startsWith('husbands:')){
-            const [husbandName, internalPort] = value.split(':').slice(1);
+    const envEntries = Object.entries(config.environment);
+
+    const husbandPortRegex = /\$\{([^}]+)\}/g;
+
+    for(let [key, value] of envEntries){
+        value = value.replace('{server_ip}', process.env.SERVER_IP || 'localhost');
+        let match;
+        while((match = husbandPortRegex.exec(value)) !== null){
+            // e.g ${Quantum-MongoDB.externalPort}
+            const placeholder = match[0];
+            // e.g Quantum-MongoDB.externalPort
+            const reference = match[1]; 
+            
+            const [husbandName, property] = reference.split('.');
+            if(property !== 'externalPort'){
+                throw new Error(`Unknown property in reference: ${reference}`);
+            }
+
             const husband = husbands.get(husbandName);
-            if(husband?.ipAddress){
-                // TEMPORAL SOLUTION, AFTER SERVER REBOOT
-                // CONTAINERS ON SAME NETWORKS CAN'T COMMUNICATE
-                value = process.env.SERVER_IP;
+            if(!husband){
+                throw new Error(`Husband "${husbandName}" not found.`);
             }
-            if(internalPort){
-                const portBinding = await PortBinding.findOne({ container: husband?._id, internalPort }).select('externalPort').lean();
-                if(portBinding) value += ':' + portBinding.externalPort;
+
+            const portBinding = await PortBinding.findOne({ container: husband._id }).select('externalPort').lean();
+            if(!portBinding){
+                throw new Error(`PortBinding for "${husbandName}" not found`);
             }
+
+            value = value.replace(placeholder, portBinding.externalPort.toString());
         }
+
         variables[key] = value;
     }
-    return await DockerContainer.findOneAndUpdate({ _id: parent.container._id }, { environment: { variables } });
+
+    return await DockerContainer.findOneAndUpdate(
+        { _id: parent.container._id },
+        { environment: { variables } },
+        { new: true }
+    );
 };
 
 const createParentContainer = async (user: IUser, config: IOneClickDeployConfig): Promise<any> => {
