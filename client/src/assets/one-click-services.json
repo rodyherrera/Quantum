@@ -14,6 +14,10 @@
         "protocol": "tcp",
         "internalPort": 27017
     }],
+    "volumes": [{
+        "containerPath": "/data/db",
+        "mode": "rw"
+    }],
     "environment": {
         "MONGO_INITDB_ROOT_USERNAME": "root",
         "MONGO_INITDB_ROOT_PASSWORD": "example"
@@ -26,6 +30,10 @@
         "name": "postgres",
         "tag": "latest"
     },
+    "volumes": [{
+        "containerPath": "/var/lib/postgresql/data",
+        "mode": "rw"
+    }],
     "ports": [{
         "protocol": "tcp",
         "internalPort": 5432
@@ -41,6 +49,10 @@
         "name": "mysql",
         "tag": "latest"
     },
+    "volumes": [{
+        "containerPath": "/var/lib/mysql",
+        "mode": "rw"
+    }],
     "ports": [{
         "protocol": "tcp",
         "internalPort": 3306
@@ -106,12 +118,20 @@
             "name": "mariadb",
             "tag": "latest"
         },
+        "volumes": [{
+            "containerPath": "/var/lib/mysql",
+            "mode": "rw"
+        }],
         "environment": {
             "MARIADB_PASSWORD": "secret",
             "MARIADB_DATABASE": "wordpress",
             "MARIADB_USER": "manager",
             "MARIADB_ROOT_PASSWORD": "secret"
         }
+    }],
+    "volumes": [{
+        "containerPath": "/var/www/html",
+        "mode": "rw"
     }],
     "command": "/bin/sh",
     "environment": {

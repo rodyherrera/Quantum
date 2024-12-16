@@ -19,6 +19,7 @@ import sendEmail from '@services/sendEmail';
 const DockerContainerFactory = new HandlerFactory({
     model: DockerContainer,
     fields: [
+        'volumes',
         'user',
         'image',
         'portBindings',
@@ -61,7 +62,7 @@ const findOrCreateImage = async (
     }
     if(!containerImage){
         const { name, tag } = image as IRequestDockerImage;
-        if(!isImageAvailable(name, tag)){
+        if(!(await isImageAvailable(name, tag))){
             next(new RuntimeError('DockerContainer::CreateDocker::ImageNotFound', 404));
             return null;
         }
@@ -173,7 +174,7 @@ export const containerStatus = catchAsync(async (req: Request, res: Response, ne
             });
         },
         async start(){
-
+            await containerService.start();
             sendEmail({
                 to: req.user.email,
                 subject: `Starting and deploying "${container.name}"`,

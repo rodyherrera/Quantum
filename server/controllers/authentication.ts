@@ -18,6 +18,7 @@ import HandlerFactory from '@controllers/common/handlerFactory';
 import { catchAsync, deleteJWTCookie, filterObject } from '@utilities/helpers';
 import { IUser } from '@typings/models/user';
 import sendEmail from '@services/sendEmail';
+import RuntimeError from '@utilities/runtimeError';
 
 const UserFactory = new HandlerFactory({
     model: User,
@@ -79,11 +80,11 @@ const createAndSendToken = (res: any, statusCode: number, user: any): void => {
 export const signIn = catchAsync(async (req: any, res: any, next: any): Promise<void> => {
     const { email, password } = req.body;
     if(!email || !password){
-        return next(new Error('Authentication::EmailOrPasswordRequired'));
+        return next(new RuntimeError('Authentication::EmailOrPasswordRequired', 400));
     }
     const requestedUser = await User.findOne({ email }).select('+password').populate('github');
     if(!requestedUser || !(await requestedUser.isCorrectPassword(password, requestedUser.password))){
-        return next(new Error('Authentication::EmailOrPasswordIncorrect'));
+        return next(new RuntimeError('Authentication::EmailOrPasswordIncorrect', 400));
     }
     const clientIp = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
     sendEmail({
@@ -102,7 +103,7 @@ export const signIn = catchAsync(async (req: any, res: any, next: any): Promise<
 export const signUp = catchAsync(async (req: any, res: any, next: any): Promise<void> => {
     const { username, fullname, email, password, passwordConfirm } = req.body;
     if(process.env.REGISTRATION_DISABLED === 'true'){
-        return next(new Error('Authentication::Disabled'));
+        return next(new RuntimeError('Authentication::Disabled', 200));
     }
     const newUser = await User.create({ username, fullname, email, password, passwordConfirm });
     sendEmail({
@@ -122,10 +123,10 @@ export const signUp = catchAsync(async (req: any, res: any, next: any): Promise<
 export const updateMyPassword = catchAsync(async (req: any, res: any, next: any): Promise<void> => {
     const requestedUser = await User.findById(req.user.id).select('+password').populate('github') as IUser;
     if(!(await requestedUser.isCorrectPassword(req.body.passwordCurrent, requestedUser.password))){
-        return next(new Error('Authentication::Update::PasswordCurrentIncorrect'));
+        return next(new RuntimeError('Authentication::Update::PasswordCurrentIncorrect', 400));
     }
     if(await requestedUser.isCorrectPassword(req.body.passwordConfirm, requestedUser.password)){
-        return next(new Error('Authentication::Update::PasswordsAreSame'));
+        return next(new RuntimeError('Authentication::Update::PasswordsAreSame', 400));
     }
     requestedUser.password = req.body.password;
     requestedUser.passwordConfirm = req.body.passwordConfirm;
@@ -146,7 +147,7 @@ export const updateMyPassword = catchAsync(async (req: any, res: any, next: any)
 export const deleteMyAccount = catchAsync(async (req: any, res: any, next: any): Promise<void> => {
     const requestedUser = await User.findByIdAndDelete(req.user.id);
     if(!requestedUser){
-        return next(new Error('Authentication::Delete::UserNotFound'));
+        return next(new RuntimeError('Authentication::Delete::UserNotFound', 404));
     }
     sendEmail({
         to: requestedUser.email,
@@ -167,7 +168,7 @@ export const deleteMyAccount = catchAsync(async (req: any, res: any, next: any):
 export const getMyAccount = catchAsync(async (req: any, res: any, next: any): Promise<void> => {
     const requestedUser = await User.findById(req.user.id).populate('github');
     if(!requestedUser){
-        return next(new Error('Authentication::Get::UserNotFound'));
+        return next(new RuntimeError('Authentication::Get::UserNotFound', 404));
     }
     res.status(200).json({
         status: 'success',
@@ -187,7 +188,7 @@ export const updateMyAccount = catchAsync(async (req: any, res: any, next: any):
         runValidators: true
     }).populate('github');
     if(!requestedUser){
-        return next(new Error('Authentication::Update::UserNotFound'));
+        return next(new RuntimeError('Authentication::Update::UserNotFound', 404));
     }
     res.status(200).json({
         status: 'success',

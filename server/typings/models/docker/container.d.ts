@@ -10,6 +10,11 @@ export interface IDockerContainerPortBindings{
     protocol: string;
 }
 
+export interface IDockerContainerVolume{
+    containerPath: string;
+    mode: string;
+}
+
 export interface IDockerContainer extends Document{
     _id: mongoose.Schema.Types.ObjectId,
     user: mongoose.Schema.Types.ObjectId,
@@ -21,6 +26,7 @@ export interface IDockerContainer extends Document{
     dockerContainerName: string;
     ipAddress?: string;
     command: string;
+    volumes: IDockerContainerVolume[];
     storagePath: string,
     isUserContainer: boolean;
     environment: IDockerContainerEnvironment;

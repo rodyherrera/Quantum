@@ -11,11 +11,10 @@ import RuntimeError from '@utilities/runtimeError';
 import DockerImage from '@models/docker/image';
 import DockerNetwork from '@models/docker/network';
 import PortBinding from '@models/portBinding';
-import { IDockerNetwork } from '@typings/models/docker/network';
 
 const getDockerOrCreateDockerImage = async (image: IRequestDockerImage, userId: string): Promise<IDockerImage> => {
     const { name, tag } = image;
-    if(!isImageAvailable(name, tag)){
+    if(!(await isImageAvailable(name, tag))){
         throw new RuntimeError('OneClickDeploy::Image::NotFound', 400);
     }
     const query = { user: userId, name, tag };
@@ -59,6 +58,7 @@ const createParentContainer = async (user: IUser, config: IOneClickDeployConfig)
         network: network._id,
         name: containerName,
         command: config.command,
+        volumes: config.volumes
     });
     const portBindings = config.ports?.map(async (port) => {
         const { internalPort, protocol } = port;
@@ -85,6 +85,7 @@ const createHusbandContainer = async (user: IUser, config: IOneClickDeployConfig
         network: parentContainer.network,
         name: containerName,
         command: config.command,
+        volumes: config.volumes,
         environment: { variables: config.environment }
     }); 
     return husband;

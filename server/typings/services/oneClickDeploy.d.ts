@@ -1,3 +1,5 @@
+import { IDockerContainerVolume } from '@typings/models/docker/container';
+
 export interface IOneClickDeployConfig{
     name: string;
     husbands?: IOneClickDeployConfig[];
@@ -10,6 +12,7 @@ export interface IOneClickDeployConfig{
         name: string,
         tag: string
     },
+    volumes: IDockerContainerVolume[];
     environment?: {
         [key: string]: string
     }

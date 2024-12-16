@@ -1,6 +1,7 @@
 import mongoose, { Schema, Model } from 'mongoose';
 import { getImageSize, pullImage } from '@services/docker/image';
 import { IDockerImage } from '@typings/models/docker/image';
+import RuntimeError from '@utilities/runtimeError';
 
 const DockerImageSchema: Schema<IDockerImage> = new Schema({
     name: {
@@ -46,7 +47,7 @@ DockerImageSchema.pre('deleteMany', async function(next){
     const images = await mongoose.model('DockerImage').find(conditions);
     await Promise.all(images.map(async (image) => {
         if(await hasActiveMainContainers(image)){
-            next(new Error('Docker::Image::ActiveUserContainers'));
+            next(new RuntimeError('Docker::Image::ActiveUserContainers', 403));
             return;
         }
         await cascadeDeleteHandler(image);
@@ -57,7 +58,7 @@ DockerImageSchema.pre('deleteMany', async function(next){
 DockerImageSchema.pre('findOneAndDelete', async function(next){
     const image = await this.model.findOne(this.getQuery());
     if(await hasActiveMainContainers(image)){
-        next(new Error('Docker::Image::ActiveUserContainers'));
+        next(new RuntimeError('Docker::Image::ActiveUserContainers', 403));
         return;
     }
     next();

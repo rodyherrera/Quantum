@@ -2,6 +2,7 @@ import mongoose, { Schema, Model } from 'mongoose';
 import { IDockerNetwork } from '@typings/models/docker/network';
 import { createNetwork, removeNetwork, randomIPv4Subnet, getSystemNetworkName } from '@services/docker/network';
 import { IUser } from '@typings/models/user';
+import RuntimeError from '@utilities/runtimeError';
 
 const DockerNetworkSchema: Schema<IDockerNetwork> = new Schema({
     name: {
@@ -75,7 +76,7 @@ const hasActiveMainContainers = async (document: IDockerNetwork): Promise<boolea
 DockerNetworkSchema.pre('findOneAndDelete', async function(next){
     const network = await this.model.findOne(this.getQuery());
     if(await hasActiveMainContainers(network)){
-        next(new Error('Docker::Network::ActiveUserContainers'));
+        next(new RuntimeError('Docker::Network::ActiveUserContainers', 403));
         return;
     }
     next();
@@ -90,7 +91,7 @@ DockerNetworkSchema.pre('deleteMany', async function(next){
     const networks = await mongoose.model('DockerNetwork').find(conditions);
     await Promise.all(networks.map(async (network) => {
         if(await hasActiveMainContainers(network)){
-            next(new Error('Docker::Network::ActiveUserContainers'));
+            next(new RuntimeError('Docker::Network::ActiveUserContainers', 403));
             return;
         }
         await cascadeDeleteHandler(network);

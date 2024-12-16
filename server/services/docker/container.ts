@@ -232,11 +232,25 @@ class DockerContainer{
         return dockerNetwork;
     }
 
+    async getContainerVolumes(): Promise<string[]> {
+        if(!(this.container.volumes && this.container.volumes.length > 0)){
+            return [];
+        }
+        const volumes: string[] = [];
+        for(const { containerPath, mode } of this.container.volumes){
+            const hostPath = `${this.getDockerStoragePath()}${containerPath}`;
+            await fs.mkdir(hostPath, { recursive: true });
+            volumes.push(`${hostPath}:${containerPath}:${mode.trim()}`);
+        }
+        return volumes;
+    }
+
     async createContainer(): Promise<Dockerode.Container> {
         const dockerImage = await this.getDockerImage();
         const dockerNetwork = await this.getDockerNetwork();
         const networkName = getSystemNetworkName(this.container.user.toString(), dockerNetwork._id.toString());
         const { exposedPorts, bindings } = await this.getPortBindings();
+        const volumeBinds: string[] = await this.getContainerVolumes();
         const environmentVariables = Array.from(this.container.environment.variables.entries()).map(
             ([key, value]) => `${key}=${value}`);
             const options = {
@@ -249,7 +263,7 @@ class DockerContainer{
                 ExposedPorts: exposedPorts,
                 HostConfig: {
                     PortBindings: bindings,
-                    Binds: [`${this.getDockerStoragePath()}:/app:rw`],
+                    Binds: volumeBinds,
                     NetworkMode: networkName,
                     RestartPolicy: { Name: 'always' }
                 }
