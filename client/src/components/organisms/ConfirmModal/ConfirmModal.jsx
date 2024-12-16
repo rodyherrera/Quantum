@@ -12,7 +12,7 @@
  * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 ****/
 
-import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
+import React, { useState, useEffect, useRef, useLayoutEffect, useCallback } from 'react';
 import ReactDOM from 'react-dom';
 import {
     ConfirmModalHeader,
@@ -41,7 +41,7 @@ const ConfirmModal = ({
     const confirmModalRef = useRef(null);
     const confirmButtonRef = useRef(null);
 
-    const hideConfirmModal = (callback = null) => {
+    const hideConfirmModal = useCallback((callback = null) => {
         window.scrollTo({ behavior: 'smooth', top: 0 });
         gsap.to(confirmButtonRef.current, {
             backgroundColor: '#004ad5',
@@ -61,11 +61,11 @@ const ConfirmModal = ({
                 setIsActive(!isActive);
             } 
         });
-    };
+    }, [setIsActive, isActive]);
 
-    const handleContinueBtn = () => {
+    const handleContinueBtn = useCallback(() => {
         hideConfirmModal(confirmHandler);
-    };
+    }, [hideConfirmModal, confirmHandler]);
 
     useLayoutEffect(() => {
         if(!isActive) return;
@@ -90,7 +90,7 @@ const ConfirmModal = ({
         return () => {
             document.removeEventListener('keydown', keydownHandler);
         };
-    }, [isActive, isContinueBtnDisabled]);
+    }, [isActive, isContinueBtnDisabled, handleContinueBtn, hideConfirmModal]);
 
     return (
         <React.Fragment>
