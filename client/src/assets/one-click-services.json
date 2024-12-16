@@ -1,4 +1,24 @@
 [{
+    "name": "ownCloud",
+    "description": "An open-source file sync, share and content collaboration software that lets teams work on data easily from anywhere, on any device.",
+    "website": "https://owncloud.com/",
+    "image": {
+        "name": "owncloud/server",
+        "tag": "latest"
+    },
+    "ports": [{
+        "protocol": "tcp",
+        "internalPort": 8080
+    }],
+    "environment": {
+        "OWNCLOUD_TRUSTED_DOMAINS": "{server_ip}",
+        "OWNCLOUD_ADMIN_USERNAME": "admin",
+        "OWNCLOUD_ADMIN_PASSWORD": "toortoor"
+    },
+    "volumes": [{
+        "containerPath": "/mnt/data"
+    }]
+}, {
     "name": "Mongo",
     "description": "MongoDB document databases provide high availability and easy scalability.",
     "website": "https://www.mongodb.com/",

@@ -226,6 +226,7 @@ class DockerContainer{
         for(const { containerPath, mode } of this.container.volumes){
             const volumeName = `${this.container.dockerContainerName}-${slugify(containerPath)}`;
             try{
+                // REMOVE RW FROM DB
                 await docker.createVolume({
                     Name: volumeName,
                     Labels: {
