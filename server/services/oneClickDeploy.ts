@@ -27,20 +27,22 @@ const parseEnvironVariables = async (
     husbands: Map<string, IDockerContainer>, 
     config: IOneClickDeployConfig
 ): Promise<any> => {
-    if(!config.environment) return {};
+    if (!config.environment) return {};
 
     const variables: { [key: string]: string } = {};
     const envEntries = Object.entries(config.environment);
 
     const husbandPortRegex = /\$\{([^}]+)\}/g;
+    const literalPortRegex = /:(\d+)/g;
 
     for(let [key, value] of envEntries){
         value = value.replace('{server_ip}', process.env.SERVER_IP || 'localhost');
+
         let match;
-        while((match = husbandPortRegex.exec(value)) !== null){
-            // e.g ${Quantum-MongoDB.externalPort}
+        while ((match = husbandPortRegex.exec(value)) !== null) {
+            // match[0] e.g. "${n8n-DB.externalPort}"
+            // match[1] e.g. "n8n-DB.externalPort"
             const placeholder = match[0];
-            // e.g Quantum-MongoDB.externalPort
             const reference = match[1]; 
             
             const [husbandName, property] = reference.split('.');
@@ -52,13 +54,32 @@ const parseEnvironVariables = async (
             if(!husband){
                 throw new Error(`Husband "${husbandName}" not found.`);
             }
+            const portBinding = await PortBinding
+                .findOne({ container: husband._id })
+                .select('externalPort')
+                .lean();
 
-            const portBinding = await PortBinding.findOne({ container: husband._id }).select('externalPort').lean();
             if(!portBinding){
                 throw new Error(`PortBinding for "${husbandName}" not found`);
             }
 
             value = value.replace(placeholder, portBinding.externalPort.toString());
+        }
+
+        let portMatch;
+        while ((portMatch = literalPortRegex.exec(value)) !== null){
+            // portMatch[0] = ":80", portMatch[1] = "80"
+            const fullMatch = portMatch[0];
+            const internalPort = parseInt(portMatch[1], 10); 
+
+            const portBinding = await PortBinding.findOne({
+                container: parent.container._id,
+                internalPort
+            }).select('externalPort').lean();
+
+            if(portBinding?.externalPort){
+                value = value.replace(fullMatch, `:${portBinding.externalPort}`);
+            }
         }
 
         variables[key] = value;
@@ -70,6 +91,7 @@ const parseEnvironVariables = async (
         { new: true }
     );
 };
+
 
 const createParentContainer = async (user: IUser, config: IOneClickDeployConfig): Promise<any> => {
     const randAlias = v4().slice(0, 4);

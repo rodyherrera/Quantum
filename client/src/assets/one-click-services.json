@@ -100,6 +100,102 @@
         "containerPath": "/mnt/data"
     }]
 }, {
+    "name": "ActivePieces",
+    "description": "Automation software that's AI-first, no-code & open-source",
+    "website": "https://www.activepieces.com/",
+    "ports": [{
+        "protocol": "tcp",
+        "internalPort": 80
+    }],
+    "volumes": [{
+        "containerPath": "/root/.activepieces"
+    }],
+    "environment": {
+        "AP_QUEUE_MODE": "MEMORY",
+        "AP_DB_TYPE": "SQLITE3",
+        "AP_FRONTEND_URL": "http://{server_ip}:80"
+    },
+    "image": {
+        "name": "activepieces/activepieces",
+        "tag": "latest"
+    }
+}, {
+    "name": "n8n",
+    "description": "Secure and AI-native workflow automation tool for technical people. Insert code when you need it.",
+    "website": "https://n8n.io/",
+    "ports": [{
+        "protocol": "tcp",
+        "internalPort": 5678
+    }],
+    "husbands": [{
+        "name": "n8n-DB",
+        "image": {
+            "name": "postgres",
+            "tag": "latest"
+        },
+        "volumes": [{
+            "containerPath": "/var/lib/postgresql/data",
+            "mode": "rw"
+        }],
+        "ports": [{
+            "protocol": "tcp",
+            "internalPort": 5432
+        }],
+        "environment": {
+            "POSTGRES_USER": "root",
+            "POSTGRES_PASSWORD": "changeme",
+            "POSTGRES_DB": "n8n",
+            "POSTGRES_NON_ROOT_PASSWORD": "changeme"
+        }
+    }],
+    "environment": {
+        "DB_TYPE": "postgresdb",
+        "DB_POSTGRESDB_DATABASE": "n8n",
+        "DB_POSTGRESDB_HOST": "{server_ip}",
+        "DB_POSTGRESDB_PORT": "${n8n-DB.externalPort}",
+        "DB_POSTGRESDB_USER": "root",
+        "DB_POSTGRESDB_PASSWORD": "changeme",
+        "N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS": "true",
+        "N8N_SECURE_COOKIE": "false"
+    },
+    "volumes": [{
+        "containerPath": "/home/node/.n8n"
+    }],
+    "image": {
+        "name": "docker.n8n.io/n8nio/n8n",
+        "tag": "latest"
+    }
+}, {
+    "name": "Tooljet",
+    "website": "https://www.tooljet.com/",
+    "description": "Open-source low-code framework to build and deploy internal tools with minimal engineering effort",
+    "ports": [{
+        "protocol": "tcp",
+        "internalPort": 80
+    }],
+    "volumes": [{
+        "containerPath": "/var/lib/postgresql/13/main"
+    }],
+    "image": {
+        "name": "tooljet/try",
+        "tag": "ee-lts-latest"
+    }
+}, {
+    "name": "Ollama",
+    "website": "https://ollama.com/",
+    "description": "The easiest way to get up and running with large language models.",
+    "image": {
+        "name": "ollama/ollama",
+        "tag": "latest"
+    },
+    "ports": [{
+        "protocol": "tcp",
+        "internalPort": 11434
+    }],
+    "volumes": [{
+        "containerPath": "/root/.ollama"
+    }]
+}, {
     "name": "Homarr",
     "description": "A simple, yet powerful dashboard for your server.",
     "website": "https://homarr.dev/",
@@ -118,6 +214,43 @@
         "protocol": "tcp",
         "internalPort": "7575"
     }]
+}, {
+    "name": "Eclipse Mosquitto",
+    "description": "An open source message broker which implements MQTT version 5, 3.1.1 and 3.1.",
+    "image": {
+        "name": "eclipse-mosquitto",
+        "tag": "latest"
+    },
+    "website": "https://mosquitto.org/",
+    "volumes": [{
+        "containerPath": "/mosquitto/config"
+    }],
+    "ports": [{
+        "protocol": "tcp",
+        "internalPort": 1883
+    }],
+    "command": "/bin/sh"
+}, {
+    "name": "phpmyadmin",
+    "website": "https://www.phpmyadmin.net/",
+    "description": "A free software tool written in PHP, intended to handle the administration of MySQL over the Web.",
+    "image": {
+        "name": "phpmyadmin",
+        "tag": "latest"
+    },
+    "ports": [{
+        "protocol": "tcp",
+        "internalPort": 80
+    }],
+    "volumes": [{
+        "containerPath": "/etc/phpmyadmin"
+    }],
+    "environment": {
+        "PMA_HOST": "Address/Hostname of MySQL/MariaDB server",
+        "PMA_PORT": "Port of the MySQL/MariaDB server",
+        "PMA_USER": "MySQL/MariaDB user",
+        "PMA_PASSWORD": "MySQL/MariaDB password"
+    }
 }, {
     "name": "Mongo",
     "description": "MongoDB document databases provide high availability and easy scalability.",
@@ -143,6 +276,28 @@
         "MONGO_INITDB_ROOT_PASSWORD": "example"
     }
 }, {
+    "name": "MariaDB",
+    "description": "One of the most popular open source relational databases.",
+    "command": "/bin/sh",
+    "image": {
+        "name": "mariadb",
+        "tag": "latest"
+    },
+    "volumes": [{
+        "containerPath": "/var/lib/mysql",
+        "mode": "rw"
+    }],
+    "ports": [{
+        "protocol": "tcp",
+        "internalPort": 3306
+    }],
+    "environment": {
+        "MARIADB_PASSWORD": "secret",
+        "MARIADB_DATABASE": "default",
+        "MARIADB_USER": "root",
+        "MARIADB_ROOT_PASSWORD": "secret"
+    }
+}, {
     "name": "PostgreSQL",
     "description": "The PostgreSQL object-relational database system provides reliability and data integrity.",
     "website": "https://www.postgresql.org/",
@@ -159,7 +314,11 @@
         "internalPort": 5432
     }],
     "environment": {
-        "POSTGRES_PASSWORD": "example"
+        "POSTGRES_USER": "root",
+        "POSTGRES_PASSWORD": "changeme",
+        "POSTGRES_DB": "default",
+        "POSTGRES_NON_ROOT_USER": "non-root",
+        "POSTGRES_NON_ROOT_PASSWORD": "changeme"
     }
 }, {
     "name": "MySQL",
