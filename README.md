@@ -1,10 +1,10 @@
 # The scalable, hackable, open-source, and self-hostable alternative to Heroku/Netlify/Vercel/... 🚀
 <div>
-<a href="https://ko-fi.com/codewithrodi"> <img align="left" src="https://cdn.ko-fi.com/cdn/kofi3.png?v=3" height="33"   width="130" alt="Support Quantum!" /></a>
+<a href="https://ko-fi.com/codewithrodi"> <img align="left" src="https://cdn.ko-fi.com/cdn/kofi3.png?v=3" height="50"   width="180" alt="Support Quantum!" /></a>
 </div>
 <br /> <br />
 
-![Quantum Home Page](/screenshots/QuantumHomePage.png)
+![Quantum Home Page](/screenshots/Quantum-Cloud-Platform.png)
 
 We assist you in hosting your applications, servers, and services on your own centralized hardware infrastructure, all conveniently located in one place. Our platform was conceived as an open-source alternative to renowned platforms like Vercel, Netlify, and Heroku. 
 
