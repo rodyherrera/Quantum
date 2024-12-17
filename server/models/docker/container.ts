@@ -101,8 +101,9 @@ const cascadeDeleteHandler = async (document: IDockerContainer): Promise<void> =
     await mongoose.model('PortBinding').deleteMany({ container: _id });
 };
 
-DockerContainerSchema.post('findOneAndDelete', async function (deletedDoc: IDockerContainer){
-    await cascadeDeleteHandler(deletedDoc);
+DockerContainerSchema.pre('findOneAndDelete', async function (){
+    const container = await this.model.findOne(this.getQuery());
+    await cascadeDeleteHandler(container);
 });
 
 DockerContainerSchema.pre('deleteMany', async function(){
