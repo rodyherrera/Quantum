@@ -6,18 +6,20 @@
 <br /> <br />
 
 ## Table of Contents
+- [Deploying with Quantum Setup Utility (Recommended)](#deploying-with-quantum-setup-utility-recommended)
+- [Deploying with Docker Compose](#deploying-with-docker-compose)
+- [Quantum CLI via Docker](#quantum-cli-via-docker)
+- [In Case You Don’t Deploy in Docker](#in-case-you-dont-deploy-in-docker)
 - [Features](#features)
-- [Post-Installation Configuration](#post-installation-configuration)
 - [Obtaining GitHub Client Secret and Client ID](#obtaining-github-client-secret-and-client-id)
-- [Deploying with Docker](#deploying-with-docker)
-- [Project Requirements](#project-requirements)
-- [Installation](#installation)
-- [Deploying Quantum](#deploying-quantum)
-- [Building the client application](#building-the-client-application)
+- [Using NGINX as a Reverse Proxy](#using-nginx-as-a-reverse-proxy)
 - [The Quantum CLI](#the-quantum-cli)
-- [How does this work?](#how-does-this-work)
-- [What happens when the server is closed?](#what-happens-when-the-server-is-closed)
-- [We'd love your feedback and support!](#we-d-love-your-feedback-and-support)
+- [How Does This Work?](#how-does-this-work)
+- [Where Are Repositories and Logs Stored?](#where-are-repositories-and-logs-stored)
+- [What Happens When the Server Is Closed?](#what-happens-when-the-server-is-closed)
+- [Custom Domains for Your Deployments](#custom-domains-for-your-deployments)
+- [How Can I Migrate to New Versions?](#how-can-i-migrate-to-new-versions)
+- [We'd Love Your Feedback and Support!](#wed-love-your-feedback-and-support)
 
 We assist you in hosting your applications, servers, and services on your own centralized hardware infrastructure, all conveniently located in one place. Our platform was conceived as an open-source alternative to renowned platforms like Vercel, Netlify, and Heroku. 
 
@@ -41,6 +43,14 @@ While Quantum offers a panel for configuring commands such as installing depende
 ![Repository Environment Variables](/screenshots/RepositoryEnvironVariables.png)
 ![User Profile](/screenshots/User-Profile.png)
 I've successfully **migrated all my frontend applications from Vercel and my various VPS services to Quantum**. The platform's ease of use and efficiency are evident in the 15 repositories I currently have deployed – a testament to my confidence in Quantum.
+
+## Cloning Repository
+```bash
+git clone https://github.com/rodyherrera/Quantum
+```
+This command clones the Quantum repository from GitHub to your local machine.
+
+You can deploy using **Quantum Setup Utility (Recommended)**, **Docker Compose** or from **source**.
 
 ## Deploying with Quantum Setup Utility (Recommended)
 The easiest way to deploy is with Docker. You can configure environment variables through the **.env** file located at the root of the repository. And then just type **docker compose up -d --build**. But also, you can use the **Quantum deployment tool**.
@@ -201,36 +211,6 @@ In a browser, navigate to `http://quantum.yourdomain.com` (or `https://...` if u
 You should see your Quantum application served via NGINX at your custom domain.
 
 **That’s it!** You have successfully set up NGINX as a reverse proxy for your Quantum deployment. From now on, you can access your Quantum server (and any associated front-end or back-end services) via the domain name(s) you configured, without needing to remember the internal ports or IP addresses.
-
-## Installation
-You may prefer the all-in-one command, to run in your terminal, clone the repository and install dependencies.
-```bash
-git clone -b 1.0.6 https://github.com/rodyherrera/Quantum && cd Quantum && cd server && npm install --force && cd ../client &&  npm install --force
-```
-
-### Installation Guide
-1. **Clone the Quantum Repository:**
-    ```bash
-    git clone -b 1.0.6 https://github.com/rodyherrera/Quantum
-    ```
-    This command clones the Quantum repository from GitHub to your local machine.
-2. **Navigate to the Quantum Directory:**
-    ```bash
-    cd Quantum
-    ```
-    Move into the cloned repository directory.
-3. **Install Server Dependencies:**
-    ```bash
-    cd server
-    npm install --force
-    ```
-    This command installs the necessary dependencies for the server component of Quantum.
-4. **Install Client Dependencies:**
-    ```bash
-    cd ../client
-    npm install --force
-    ```
-    Navigate to the client directory within the Quantum repository and install the frontend dependencies.
 
 ## The Quantum CLI 
 Through the CLI, you can create a user account as an administrator, reestablish the database among other options provided by the platform for management purposes.
