@@ -12,7 +12,8 @@ After creating an account on our platform, you'll be prompted to log in using yo
 
 Quantum also offers a 'Cloud Shell' feature, ensuring every user on the platform has access to their own dedicated environment. Think of it as a client-server connection, enabling you to execute commands directly on your Virtual Private Server (VPS) or any other hosting environment where Quantum is deployed.
 
-![Quantum Cloud Console](/screenshots/CloudConsole.png)
+![Quantum Cloud Dashboard](/screenshots/Dashboard.png)
+![Quantum Cloud Console](/screenshots/Cloud-Console.png)
 
 Similarly, every repository you have deployed on the platform comes with its own command line interface. This allows you to monitor the execution output of your service (referred to as logs) or execute specific commands as needed.
 
@@ -20,12 +21,13 @@ Similarly, every repository you have deployed on the platform comes with its own
 
 If you wish to make local changes—meaning alterations that don't necessitate a GitHub commit or application redeployment—the platform offers a file explorer feature. This tool enables you to read from and write to files within your repository. It's important to note that any changes made through this explorer will be overwritten if a commit is subsequently made to your repository. This occurs because commits replace the files with the data currently stored on GitHub.
 
-![Repository File Explorer](/screenshots/RepositoryFileExplorer.png)
+![Repository File Explorer](/screenshots/File-Explorer.png)
+![Repository File Explorer](/screenshots/Create-New-Repository.png)
 
 While Quantum offers a panel for configuring commands such as installing dependencies (e.g., "npm install"), building source code (e.g., "npm run build"), or starting your software (e.g., "npm run start"), it also provides a separate panel specifically for managing environment variables. It's worth noting that this isn't a manual process where you input variables and their values one by one. When the repository is cloned, Quantum automatically maps the environment variables, allowing you to assign their respective values later on. You have the flexibility to create, delete, and modify environment variables associated with the deployment of your repository as needed.
 
 ![Repository Environment Variables](/screenshots/RepositoryEnvironVariables.png)
-![User Profile](/screenshots/UserProfile.png)
+![User Profile](/screenshots/User-Profile.png)
 I've successfully **migrated all my frontend applications from Vercel and my various VPS services to Quantum**. The platform's ease of use and efficiency are evident in the 15 repositories I currently have deployed – a testament to my confidence in Quantum.
 
 ## Table of Contents
@@ -467,14 +469,15 @@ When a user deletes their account, all associated deployments and repositories a
 Regarding deployments, Quantum takes responsibility for deleting them from GitHub, but only if the deployment is exclusively linked to Quantum. If the repository contains deployments from other platforms like Vercel or Heroku, they remain unaffected. Additionally, any webhooks created to monitor repository commits are also deleted as part of this process.
 
 ## Custom domains for your deployments
-Once you have configured your repository, and subsequently deployed it on the network (you can check if it is accessible through the port it is running on), you can assign as many custom domains as you want through the user interface.
+Regardless of the service you have deployed (whether it’s a GitHub repository or a Docker application), once you have exposed the port, you can use a reverse proxy to, among other things, assign a domain to your application. For instance, with NGINX Reverse Proxy you can:
 
-When you enter one or more domains, it will first be verified if it has already been generated, to avoid generating it again. If it does not exist, it will be generated through "certbot" automatically, to later adjust the NGINX configuration related to your repository.
+1. Use the public IP of the server where Quantum is hosted along with the exposed port of your service to set up the reverse proxy.
 
-Consider that, for this to work correctly, the domain must have a type A record where it points to the address of your server.
+2. Alternatively, use the internal IP of the Docker container along with the internal port of your service.
+
+If you’re using NGINX Reverse Proxy, you’ll need to create A records that point to the IP address of the server where Quantum is hosted (as shown in the attached Namecheap screenshot). Basically, it’s the same process you’ve been following all this time.
 
 ![NameCheap A Record](/screenshots/NameCheapARecord.png)
-![Repository Domains](/screenshots/RepositoryDomains.png)
 
 ## Where are repositories and logs stored?
 All platform repositories, along with their respective logs, are stored in `/var/lib/quantum`. This directory is automatically created whether you deploy with or without Docker.
