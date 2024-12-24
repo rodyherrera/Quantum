@@ -79,6 +79,41 @@ By default, the back-end server will be deployed on port **7080**. The front-end
 
 **NOTE**: If you want to use a domain, you can use NGINX to reverse proxy or use the NGINX Reverse Proxy application (Recommended).
 
+## Quantum CLI via Docker
+This is useful, as it will help you create `your administrator user`. 
+If you have already deployed to Docker, you can access the CLI via the following command:
+```bash
+docker exec -it quantum-server-1 npm run cli
+```
+After running it, if your container is active, you will be able to correctly access the available options.
+[You can learn more about the Quantum CLI here.](#the-quantum-cli)
+
+## In case you don't deploy in Docker
+
+Thought about Docker and deployment setup for 5 seconds
+Here’s a unified text that summarizes everything clearly:
+
+When deploying with Docker, you only need to edit a single .env file located at the root of the repository (as mentioned in the corresponding section). Most environment variables are already set, so you typically only have to adjust the secret keys.
+
+If you choose not to use Docker, you must still configure the environment variables, but this time they won’t be centralized in a single file. Instead, you’ll need to modify variables in both the client/ and server/ directories, and you’ll also have to update additional variables—such as the MongoDB URI.
+
+For the client application, go to the client/ directory, run npm install, then npm run build. After building, you can serve the dist folder on a specific port with a tool like serve by running npx serve -s dist. In that same folder, rename client/.env.example to client/.env. There are only two variables you need to change:
+
+```bash
+# VITE_SERVER: Address where the 
+# Quantum backend is deployed.
+VITE_SERVER = http://0.0.0.0:8000
+
+# VITE_API_SUFFIX: Suffix to make API 
+# calls, you should not change /api/v1.
+VITE_API_SUFFIX = /api/v1
+```
+
+For the server application, navigate to the server/ directory, run npm install, and then launch the server with npm run start.
+
+Once you’ve configured and built both the client and server applications (and updated all necessary environment variables), you’ll have everything you need to proceed with the deployment.
+
+
 ## Features
 - **Github Integration:** Securely connect your GitHub account to Quantum for repository access and management of deployments.
 - **Cloud Shell:** Access a dedicated environment for executing commands directly on your Virtual Private Server (VPS) or hosting environment where Quantum is deployed.
@@ -104,140 +139,6 @@ To integrate your application with GitHub's API, you'll need to obtain a Client 
 8. **Utilize the credentials in your application:** Use the Client ID and Client Secret in your application's configuration to authenticate requests to GitHub's API.
 
 It is important that you do this step, otherwise NO ONE will simply be able to use your application, including you.
-
-## Quantum CLI via Docker
-This is useful, as it will help you create `your administrator user`. 
-If you have already deployed to Docker, you can access the CLI via the following command:
-```bash
-docker exec -it quantum-server-1 npm run cli
-```
-After running it, if your container is active, you will be able to correctly access the available options.
-[You can learn more about the Quantum CLI here.](#the-quantum-cli)
-
-## In case you don't deploy in Docker
-When you deploy in Docker, you only have to modify a .env file, which, as mentioned in the corresponding section, is located in the root of the repository. 
-
-If you do NOT deploy in Docker, you must still adjust those environment variables, but now they are not centralized in a single file as in the case of Docker. Well, you must configure the environment variables found in "client/" and "server/".
-
-In addition, when you deploy in Docker, there are environment variables that are already configured, so the ones you have to adjust are only secret keys, however if you choose to deploy without Docker, you must adjust more variables such as: the URI of your MongoDB.
-
-Next, we will show you the content of `server/.env.example`, you must create a `server/.env` file where you establish the production values ​​of these environment variables that are documented.
-```env
-# NODE_ENV: Defines the server execution environment. 
-NODE_ENV = production
-
-# DOCKERS_CONTAINER_ALIASES: The content of the variable will indicate 
-# the value that will be concatenated at the beginning of each container 
-# name that is created for a specific user. Changing this value after 
-# having already deployed and having your database with users can cause problems. 
-# This value is the way to determine which container belongs to Quantum.
-DOCKERS_CONTAINER_ALIASES = Quantum-Container
-
-# DOCKER_APK_STARTER_PACKAGES: Initial packages to install once
-# the user container is created.
-DOCKER_APK_STARTER_PACKAGES = "git nodejs npm python3 py3-pip"
-
-# DOMAIN: Specifies the base domain of the server. This is the 
-# main access point for the application.
-DOMAIN = http://quantum-server.yourdomain.com
-# DOMAIN = http://127.0.0.1:80
-
-# SECRET_KEY: Secret key used for encrypting 
-# sensitive data. It's crucial for ensuring application security.
-SECRET_KEY = 
-
-# REGISTRATION_DISABLED: The value of the variable will indicate 
-# whether third parties can create accounts within the platform, that 
-# is, through the client application (webui) or through the API 
-# provided by the server. By default this option is "true" indicating 
-# that accounts cannot be created, so the system administrator creates 
-# their account as "admin" from the CLI provided.
-REGISTRATION_DISABLED = true
-
-# CLIENT_HOST: Specifies the host of the application's 
-# client. It's the access point for the user interface.
-CLIENT_HOST = http://quantum.yourdomain.com
-# CLIENT_HOST = http://127.0.0.1:3030
-
-# SERVER_PORT: The port on which the server 
-# is listening for incoming requests.
-SERVER_PORT = 8000
-
-# SERVER_HOSTNAME: The hostname of the 
-# server where the application is running.
-SERVER_HOSTNAME = 0.0.0.0
-
-# SESSION_SECRET: Secret key used for signing 
-# and verifying the authenticity of user sessions.
-SESSION_SECRET = 
-
-# GITHUB_CLIENT_ID: Unique identifier provided by GitHub for OAuth integration.
-# GITHUB_CLIENT_SECRET: Secret key provided by GitHub for OAuth integration.
-# https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/authenticating-to-the-rest-api-with-an-oauth-app#registering-your-app
-GITHUB_CLIENT_ID = 
-GITHUB_CLIENT_SECRET = 
-
-# JWT_EXPIRATION_DAYS: Specifies the validity duration 
-# of JWT tokens issued for user authentication.
-JWT_EXPIRATION_DAYS = 7
-
-# CORS_ORIGIN: Defines allowed origins for 
-# cross-origin resource sharing (CORS) requests. In 
-# this case, it allows from any origin.
-CORS_ORIGIN = *
-
-# PRODUCTION_DATABASE: Specifies the production 
-# database the application will connect to.
-PRODUCTION_DATABASE = quantumcloud@production
-
-# DEVELOPMENT_DATABASE: Specifies the development 
-# database the application will connect to.
-DEVELOPMENT_DATABASE = quantumcloud@development
-
-# LOG_PATH_MAX_SIZE: The maximum size of the log 
-# file before rotation occurs. (KYLOBYTES)
-LOG_PATH_MAX_SIZE = 250
-
-# MONGO_URI: MongoDB connection URI 
-# used by the application.
-MONGO_URI = mongodb://user:password@hostname:port
-
-# MONGO_AUTH_SOURCE: Specifies the database to authenticate against.
-# Use this if your authentication credentials are stored in a different database
-# than the one you're connecting to. Commonly, this is set to "admin".
-MONGO_AUTH_SOURCE = admin
-
-# SMTP_HOST (OPTIONAL): Points to the host of the SMTP server. For example "smtp.myservice.com".
-SMTP_HOST =
-
-# SMTP_PORT (OPTIONAL): Set the port of your SMTP server, it 
-# can be 465, 587 or simply 25, depending on your provider.
-SMTP_PORT =
-
-# SMTP_AUTH_USER (OPTIONAL): Enter the username of the account you want 
-# to send emails with, for example: "no-reply@myquantumservice.com".
-SMTP_AUTH_USER =
-
-# SMTP_AUTH_PASSWORD (OPTIONAL): Enter the password to authenticate 
-# with "SMTP_AUTH_USER".
-SMTP_AUTH_PASSWORD = 
-
-# WEBMASTER_MAIL (OPTIONAL): Enter the email address to which you want 
-# important notifications to be sent about events within the server, such 
-# as errors, reports, among other things.
-WEBMASTER_MAIL = 
-```
-In the same way, you will find `client/.env.example`, you must create a `client/.env` file to deploy your web application, there are only two variables that you must adjust.
-```bash
-# VITE_SERVER: Address where the 
-# Quantum backend is deployed.
-VITE_SERVER = http://0.0.0.0:8000
-
-# VITE_API_SUFFIX: Suffix to make API 
-# calls, you should not change /api/v1.
-VITE_API_SUFFIX = /api/v1
-```
-After establishing the environment variables for both the client and server applications, you will have what you need to deploy.
 
 ## Using NGINX as a reverse proxy
 If you already have `NGINX` running on your server, **you will not be able to deploy the Quantum server on port 80**, since the port is already occupied, so you will have an error from Docker.
