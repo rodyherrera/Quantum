@@ -22,7 +22,6 @@ Similarly, every repository you have deployed on the platform comes with its own
 If you wish to make local changes—meaning alterations that don't necessitate a GitHub commit or application redeployment—the platform offers a file explorer feature. This tool enables you to read from and write to files within your repository. It's important to note that any changes made through this explorer will be overwritten if a commit is subsequently made to your repository. This occurs because commits replace the files with the data currently stored on GitHub.
 
 ![Repository File Explorer](/screenshots/File-Explorer.png)
-![Repository File Explorer](/screenshots/Create-New-Repository.png)
 
 While Quantum offers a panel for configuring commands such as installing dependencies (e.g., "npm install"), building source code (e.g., "npm run build"), or starting your software (e.g., "npm run start"), it also provides a separate panel specifically for managing environment variables. It's worth noting that this isn't a manual process where you input variables and their values one by one. When the repository is cloned, Quantum automatically maps the environment variables, allowing you to assign their respective values later on. You have the flexibility to create, delete, and modify environment variables associated with the deployment of your repository as needed.
 
@@ -69,6 +68,22 @@ To integrate your application with GitHub's API, you'll need to obtain a Client 
 8. **Utilize the credentials in your application:** Use the Client ID and Client Secret in your application's configuration to authenticate requests to GitHub's API.
 
 It is important that you do this step, otherwise NO ONE will simply be able to use your application, including you.
+
+## Deploying with Quantum Setup Utility (Recommended)
+The easiest way to deploy is with Docker. You can configure environment variables through the **.env** file located at the root of the repository. And then just type **docker compose up -d --build**. But also, you can use the **Quantum deployment tool**.
+
+In the **root of the repository** write the following command:
+
+```bash
+bash scripts/deploy-setup-utility.sh
+```
+
+Once executed, the deployment of the tool should begin, **environment variables will be adjusted automatically and this is the reason why we recommend using this method.**
+
+![Setup Utility Script](/screenshots/Setup-Utility-Script.png)
+![Setup Utility Script Deployed Services](/screenshots/Setup-Utility-Script-Deployed-Services.png)
+![Setup Utility Script Home Page](/screenshots/Setup-Utility-Home.png)
+![Setup Utility Script Home Page](/screenshots/Setup-Utility-Quantum-Deployment.png)
 
 ## Deploying with Docker
 Deploying Quantum in docker is extremely simple. However, first, **you must configure the required environment variables found in the .env file within the repository**. If you already did it, you can continue ;)
