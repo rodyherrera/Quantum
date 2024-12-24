@@ -6,6 +6,7 @@
 <br /> <br />
 
 ## Table of Contents
+- [Cloning Repository](#cloning-repository)
 - [Deploying with Quantum Setup Utility (Recommended)](#deploying-with-quantum-setup-utility-recommended)
 - [Deploying with Docker Compose](#deploying-with-docker-compose)
 - [Quantum CLI via Docker](#quantum-cli-via-docker)
