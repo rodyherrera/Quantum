@@ -29,6 +29,41 @@ While Quantum offers a panel for configuring commands such as installing depende
 ![User Profile](/screenshots/User-Profile.png)
 I've successfully **migrated all my frontend applications from Vercel and my various VPS services to Quantum**. The platform's ease of use and efficiency are evident in the 15 repositories I currently have deployed – a testament to my confidence in Quantum.
 
+## Deploying with Quantum Setup Utility (Recommended)
+The easiest way to deploy is with Docker. You can configure environment variables through the **.env** file located at the root of the repository. And then just type **docker compose up -d --build**. But also, you can use the **Quantum deployment tool**.
+
+In the **root of the repository** write the following command:
+
+```bash
+bash scripts/deploy-setup-utility.sh
+```
+
+Once executed, the deployment of the tool should begin, **environment variables will be adjusted automatically and this is the reason why we recommend using this method.**
+
+![Setup Utility Script](/screenshots/Setup-Utility-Script.png)
+![Setup Utility Script Deployed Services](/screenshots/Setup-Utility-Script-Deployed-Services.png)
+![Setup Utility Script Home Page](/screenshots/Setup-Utility-Home.png)
+![Setup Utility Script Home Page](/screenshots/Setup-Utility-Quantum-Deployment.png)
+
+**NOTE**: If you want to use a domain, you can use NGINX to reverse proxy or use the NGINX Reverse Proxy application (Recommended).
+
+## Deploying with Docker Compose
+Deploying through Docker is relatively simple. Within the root of the directory there is a **.env** file. **You must fill in ALL the variables that are NOT commented.** Those environment variables that are mentioned are optional.
+
+Then, run the following command in the root of the directory.
+
+```bash
+docker-compose up -d --build 
+```
+When deploying to Docker, you will have three new containers:
+ 1. The Quantum server (back-end)
+ 2. The web application (front-end)
+ 3. The MongoDB instance (database)
+
+By default, the back-end server will be deployed on port **7080**. The front-end server on port **5050**.
+
+**NOTE**: If you want to use a domain, you can use NGINX to reverse proxy or use the NGINX Reverse Proxy application (Recommended).
+
 ## Table of Contents
 - [Features](#features)
 - [Post-Installation Configuration](#post-installation-configuration)
@@ -68,86 +103,6 @@ To integrate your application with GitHub's API, you'll need to obtain a Client 
 8. **Utilize the credentials in your application:** Use the Client ID and Client Secret in your application's configuration to authenticate requests to GitHub's API.
 
 It is important that you do this step, otherwise NO ONE will simply be able to use your application, including you.
-
-## Deploying with Quantum Setup Utility (Recommended)
-The easiest way to deploy is with Docker. You can configure environment variables through the **.env** file located at the root of the repository. And then just type **docker compose up -d --build**. But also, you can use the **Quantum deployment tool**.
-
-In the **root of the repository** write the following command:
-
-```bash
-bash scripts/deploy-setup-utility.sh
-```
-
-Once executed, the deployment of the tool should begin, **environment variables will be adjusted automatically and this is the reason why we recommend using this method.**
-
-![Setup Utility Script](/screenshots/Setup-Utility-Script.png)
-![Setup Utility Script Deployed Services](/screenshots/Setup-Utility-Script-Deployed-Services.png)
-![Setup Utility Script Home Page](/screenshots/Setup-Utility-Home.png)
-![Setup Utility Script Home Page](/screenshots/Setup-Utility-Quantum-Deployment.png)
-
-## Deploying with Docker
-Deploying Quantum in docker is extremely simple. However, first, **you must configure the required environment variables found in the .env file within the repository**. If you already did it, you can continue ;)
-
-```env
-# NOTE: These environment variables are used in "docker-compose.yml".
-
-# You can generate a random key for these variables in: https://randomkeygen.com/
-SECRET_KEY = 
-SESSION_SECRET = 
-
-# GITHUB_CLIENT_ID: Unique identifier provided by GitHub for OAuth integration.
-# GITHUB_CLIENT_SECRET: Secret key provided by GitHub for OAuth integration.
-# https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/authenticating-to-the-rest-api-with-an-oauth-app#registering-your-app
-GITHUB_CLIENT_ID = 
-GITHUB_CLIENT_SECRET = 
-
-# Credentials that will be used to authenticate with MongoDB.
-MONGO_INITDB_ROOT_USERNAME = root
-MONGO_INITDB_ROOT_PASSWORD = changeme
-
-# OPTIONAL: If you have an SMTP server, complete these variables. 
-# It will serve so that, in case of errors at runtime, you will be notified (WEBMASTER_EMAIL).
-SMTP_HOST =
-SMTP_PORT =
-SMTP_AUTH_USER =
-SMTP_AUTH_PASSWORD =
-WEBMASTER_MAIL =
-
-# DOMAIN: Specifies the base domain of the server. This is the 
-# main access point for the application.
-DOMAIN = http://quantum-server.yourdomain.com
-
-# CLIENT_HOST: Specifies the host of the application's 
-# client. It's the access point for the user interface.
-CLIENT_HOST = http://quantum.yourdomain.com
-
-# REGISTRATION_DISABLED: The value of the variable will indicate 
-# whether third parties can create accounts within the platform, that 
-# is, through the client application (webui) or through the API 
-# provided by the server. By default this option is "true" indicating 
-# that accounts cannot be created, so the system administrator creates 
-# their account as "admin" from the CLI provided.
-REGISTRATION_DISABLED = false
-
-# ...other variables that you can modify for the deployment of the 
-# application in docker, you should not worry about this, since they
-# have values ​​assigned by default (in docker-compose.yml).
-```
-
-When cloning the repository, inside the generated folder (root), you will discover the "docker-compose.yml" file, which will allow you to deploy both the backend and frontend servers using the command "docker-compose up -d --build ".
-```bash
-# First, you must clone the repository.
-git clone -b 1.0.6 https://github.com/rodyherrera/Quantum
-```
-After cloning the repository, we go inside the generated folder to run docker-compose.
-```bash
-docker-compose up -d --build 
-```
-When deploying to Docker, you will have three new containers, `1) The Quantum server`, `2) The web application` and `3) The MongoDB instance`. 
-
-By default, the backend server will run on port `80`. While the web application on `5050`. The database on `27020`. 
-
-You shouldn't worry about the ports, but in case you have conflicts with existing services, such as port 80, you can change it and make a reverse proxy. You must do this modification within the "docker-compose.yml", and well, it also applies to the other services.
 
 ## Quantum CLI via Docker
 This is useful, as it will help you create `your administrator user`. 
