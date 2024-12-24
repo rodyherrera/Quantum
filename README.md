@@ -138,6 +138,9 @@ To integrate your application with GitHub's API, you'll need to obtain a Client 
 
 It is important that you do this step, otherwise NO ONE will simply be able to use your application, including you.
 
+![Github OAuth Apps](/screenshots/Github-OAuth-Apps.png)
+![Github OAuth App Config](/screenshots/Github-OAuth-App-Config.png)
+
 ## Using NGINX as a reverse proxy
 If you want to assign a custom domain (or multiple domains) to your Quantum deployment, using NGINX as a reverse proxy is the recommended approach. Below is a general outline of how to set this up.
 
