@@ -93,11 +93,11 @@ After running it, if your container is active, you will be able to correctly acc
 Thought about Docker and deployment setup for 5 seconds
 Here’s a unified text that summarizes everything clearly:
 
-When deploying with Docker, you only need to edit a single .env file located at the root of the repository (as mentioned in the corresponding section). Most environment variables are already set, so you typically only have to adjust the secret keys.
+When deploying with Docker, you only need to edit a single `.env` file located at the root of the repository (as mentioned in the corresponding section). Most environment variables are already set, so you typically only have to adjust the secret keys.
 
-If you choose not to use Docker, you must still configure the environment variables, but this time they won’t be centralized in a single file. Instead, you’ll need to modify variables in both the client/ and server/ directories, and you’ll also have to update additional variables—such as the MongoDB URI.
+If you choose not to use Docker, you must still configure the environment variables, but this time they won’t be centralized in a single file. Instead, you’ll need to modify variables in both the `client/` and `server/` directories, and you’ll also have to update additional variables—such as the MongoDB URI.
 
-For the client application, go to the client/ directory, run npm install, then npm run build. After building, you can serve the dist folder on a specific port with a tool like serve by running npx serve -s dist. In that same folder, rename client/.env.example to client/.env. There are only two variables you need to change:
+For the client application, go to the `client/` directory, run `npm install`, then `npm run build`. After building, you can serve the `dist` folder on a specific port with a tool like `serve` by running `npx serve -s dist`. In that same folder, rename `client/.env.example` to `client/.env`. There are only two variables you need to change:
 
 ```bash
 # VITE_SERVER: Address where the 
@@ -109,10 +109,9 @@ VITE_SERVER = http://0.0.0.0:8000
 VITE_API_SUFFIX = /api/v1
 ```
 
-For the server application, navigate to the server/ directory, run npm install, and then launch the server with npm run start.
+For the server application, navigate to the `server/` directory, run `npm install`, and then launch the server with `npm run start`.
 
 Once you’ve configured and built both the client and server applications (and updated all necessary environment variables), you’ll have everything you need to proceed with the deployment.
-
 
 ## Features
 - **Github Integration:** Securely connect your GitHub account to Quantum for repository access and management of deployments.
@@ -141,69 +140,79 @@ To integrate your application with GitHub's API, you'll need to obtain a Client 
 It is important that you do this step, otherwise NO ONE will simply be able to use your application, including you.
 
 ## Using NGINX as a reverse proxy
-If you already have `NGINX` running on your server, **you will not be able to deploy the Quantum server on port 80**, since the port is already occupied, so you will have an error from Docker.
+If you want to assign a custom domain (or multiple domains) to your Quantum deployment, using NGINX as a reverse proxy is the recommended approach. Below is a general outline of how to set this up.
 
-**To fix this**, simply change the exposure port to the server's host network within the `docker-compose.yml` file, and then reverse proxy through NGINX to that port, for example:
-```yml
-services:
-  backend-server:
-    ports:
-      # - "80:80"
-      - "8080:80"
+Personally, I recommend you use [NGINX Proxy Manager](https://nginxproxymanager.com/).
+![NGINX Proxy Manager](/screenshots/NGINX-Proxy-Manager.png)
+
+Otherwise, follow these instructions. (as you would with any other app):
+
+### 1. Create Your DNS Records
+First, you need to create A records in your DNS provider (e.g., Namecheap, GoDaddy, Cloudflare) that point your chosen domain (e.g., `quantum.yourdomain.com`) to the public IP address of the server hosting Quantum.
+
+For example, in Namecheap, you’d add an A record like:
+```vbnet
+Host:    @
+Value:   123.456.78.90  (Your server’s public IP)
+TTL:     Automatic
 ```
-We've commented out the line declaring port '80' exposure on the local network for accessing the Quantum server. Instead, `we're now utilizing port '8080' to redirect to port '80'` within the Docker container where the Quantum server is hosted.
+*(You can also create subdomain records like `app.yourdomain.com` if preferred.)*
 
-Now this still won't work as we need to add the following configuration inside the existing **http{}** block in `/etc/nginx/nginx.conf`.
-```conf
+### 2. Install and Configure NGINX
+On the server hosting Quantum, install NGINX (if you haven’t already). For most Linux distributions, the command is typically:
+
+```bash
+sudo apt-get update
+sudo apt-get install nginx
+```
+Once installed, you can modify the default NGINX configuration or create a new one specific to your domain. For instance, in `/etc/nginx/sites-available/default`:
+
+```nginx
 server {
-    server_name _;
+    listen 80;
+    server_name quantum.yourdomain.com;
 
-	location / {
-		proxy_set_header Host $host;
-		proxy_set_header X-Real-IP $remote_addr;
-		proxy_pass http://0.0.0.0:8080;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
+    location / {
+        # Option 1: If you want to point directly to the Quantum server’s public IP and port
+        # proxy_pass http://123.456.78.90:7080/;
+
+        # Option 2: If you're hosting the Quantum back-end in Docker on the same machine,
+        # you can use the Docker container’s internal IP (e.g., 172.17.0.2)
+        # or `localhost` along with the mapped port.
+        proxy_pass http://localhost:7080/;
+
+        # Pass additional headers if necessary
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection "upgrade";
-	}
-    
-    listen 80;
+        proxy_set_header Host $host;
+    }
 }
 ```
-In the `server_name` directive, we use `_` to denote any requests not explicitly defined in NGINX. This configuration directs such requests to the address specified in `proxy_pass.` For instance, consider the domain `bar.example.com` which resolves to your server's IP address. Upon accessing this domain, NGINX intercepts the request. However, lacking a corresponding `server{}` block with `server_name bar.example. com` NGINX forwards the request to `http://0.0.0.0:8080`. This destination hosts instructions to handle the requested domain
+Replace `quantum.yourdomain.com` with your actual domain or subdomain, and adjust the IP/port according to your Quantum server configuration.
 
-Furthermore, you'll need to create another block akin to the preceding one. While the previous block facilitates managing various domains associated with your application, this new 'server{}' directive will exclusively handle requests directed to the quantum backend. This approach proves advantageous as it allows you to precisely define the server's domain and assign it an SSL certificate.
-
-```conf
-server{
-	server_name quantum-server.your_domain.com;
-
-	location / {
-		proxy_set_header Host $host;
-		proxy_set_header X-Real-IP $remote_addr;
-		proxy_pass http://0.0.0.0:8080;
-		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-		proxy_set_header X-Forwarded-Proto $scheme;
-		proxy_http_version 1.1;
-		proxy_set_header Upgrade $http_upgrade;
-		proxy_set_header Connection "upgrade";
-	}
-}
-```
-
-Notice how we now specify the `server_name` with the domain through which we intend to route requests to our backend server. Subsequently, we employ reverse proxying with the same configuration as the preceding block. Should you opt for **SSL encryption**, you have the option to manually configure it at this juncture. Alternatively, you can leverage tools such as `certbot --nginx` for streamlined certificate management.
-
-Consider that you should adjust the endpoint set in the `VITE_SERVER` environment variable located in `client/.env`.
-
-Now, you just have to reload the NGINX configuration for the changes to take effect.
+### 3. Enable the New Configuration
+Next, test your NGINX configuration and reload if there are no errors:
 
 ```bash
-sudo nginx -s reload
+sudo nginx -t
+sudo systemctl reload nginx
 ```
 
-Problem solved!
+### 4. (Optional) Add HTTPS/SSL
+To secure your domain with HTTPS, you can use Certbot or another SSL certificate provider:
+
+```bash
+sudo apt-get install certbot python3-certbot-nginx
+sudo certbot --nginx -d quantum.yourdomain.com
+```
+Follow the prompts to complete the SSL setup.
+
+### 5. Verify Your Setup
+In a browser, navigate to `http://quantum.yourdomain.com` (or `https://...` if using SSL).
+You should see your Quantum application served via NGINX at your custom domain.
+
+**That’s it!** You have successfully set up NGINX as a reverse proxy for your Quantum deployment. From now on, you can access your Quantum server (and any associated front-end or back-end services) via the domain name(s) you configured, without needing to remember the internal ports or IP addresses.
 
 ## Project Requirements
 To run this project, you'll need the following:
