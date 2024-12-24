@@ -40,7 +40,7 @@ fuser -k ${CLIENT_PORT}/tcp > /dev/null 2>&1
 echo "@deploy-setup-utility.sh: deploying via docker compose..."
 sleep 2
 
-docker compose -f ./setup-utility/docker-compose.yml up -d --build
+docker compose -f ./setup-utility/docker-compose.yml up -d --build --force-recreate
 
 echo "@deploy-setup-utility.sh: checking if the services were deployed correctly..."
 

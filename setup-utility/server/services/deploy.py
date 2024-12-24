@@ -38,10 +38,10 @@ async def execute_deploy_script():
     kill_port(27020)
     kill_port(5050)
     kill_port(7070)
-
+    
     process = await asyncio.create_subprocess_exec(
-        'bash', str(deploy_script_path),
-        cwd=deploy_script_path.parent,
+        'bash', deploy_script_path,
+        cwd=deploy_script_path.parent.parent,
         stdin=asyncio.subprocess.DEVNULL,
         stdout=asyncio.subprocess.PIPE,
         stderr=asyncio.subprocess.PIPE

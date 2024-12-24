@@ -40,7 +40,7 @@ print_message "Building Quantum docker image..."
 systemctl start docker
 
 echo "@deploy.sh: STEP 5..."
-docker-compose down --volumes --remove-orphans
+docker compose down --volumes --remove-orphans
 
 echo "@deploy.sh: STEP 6..."
-docker compose up --build
+docker compose up --build --force-recreate 
