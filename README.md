@@ -1,10 +1,23 @@
 # The scalable, hackable, open-source, and self-hostable alternative to Heroku/Netlify/Vercel/... 🚀
+![Quantum Home Page](/screenshots/Quantum-Cloud-Platform.png)
 <div>
 <a href="https://ko-fi.com/codewithrodi"> <img align="left" src="https://cdn.ko-fi.com/cdn/kofi3.png?v=3" height="50"   width="180" alt="Support Quantum!" /></a>
 </div>
 <br /> <br />
 
-![Quantum Home Page](/screenshots/Quantum-Cloud-Platform.png)
+## Table of Contents
+- [Features](#features)
+- [Post-Installation Configuration](#post-installation-configuration)
+- [Obtaining GitHub Client Secret and Client ID](#obtaining-github-client-secret-and-client-id)
+- [Deploying with Docker](#deploying-with-docker)
+- [Project Requirements](#project-requirements)
+- [Installation](#installation)
+- [Deploying Quantum](#deploying-quantum)
+- [Building the client application](#building-the-client-application)
+- [The Quantum CLI](#the-quantum-cli)
+- [How does this work?](#how-does-this-work)
+- [What happens when the server is closed?](#what-happens-when-the-server-is-closed)
+- [We'd love your feedback and support!](#we-d-love-your-feedback-and-support)
 
 We assist you in hosting your applications, servers, and services on your own centralized hardware infrastructure, all conveniently located in one place. Our platform was conceived as an open-source alternative to renowned platforms like Vercel, Netlify, and Heroku. 
 
@@ -50,6 +63,8 @@ Once executed, the deployment of the tool should begin, **environment variables 
 ## Deploying with Docker Compose
 Deploying through Docker is relatively simple. Within the root of the directory there is a **.env** file. **You must fill in ALL the variables that are NOT commented.** Those environment variables that are mentioned are optional.
 
+![Docker Compose Environ Variables](/screenshots/Docker-Compose-Environ-Variables.png)
+
 Then, run the following command in the root of the directory.
 
 ```bash
@@ -64,20 +79,6 @@ By default, the back-end server will be deployed on port **7080**. The front-end
 
 **NOTE**: If you want to use a domain, you can use NGINX to reverse proxy or use the NGINX Reverse Proxy application (Recommended).
 
-## Table of Contents
-- [Features](#features)
-- [Post-Installation Configuration](#post-installation-configuration)
-- [Obtaining GitHub Client Secret and Client ID](#obtaining-github-client-secret-and-client-id)
-- [Deploying with Docker](#deploying-with-docker)
-- [Project Requirements](#project-requirements)
-- [Installation](#installation)
-- [Deploying Quantum](#deploying-quantum)
-- [Building the client application](#building-the-client-application)
-- [The Quantum CLI](#the-quantum-cli)
-- [How does this work?](#how-does-this-work)
-- [What happens when the server is closed?](#what-happens-when-the-server-is-closed)
-- [We'd love your feedback and support!](#we-d-love-your-feedback-and-support)
-  
 ## Features
 - **Github Integration:** Securely connect your GitHub account to Quantum for repository access and management of deployments.
 - **Cloud Shell:** Access a dedicated environment for executing commands directly on your Virtual Private Server (VPS) or hosting environment where Quantum is deployed.
