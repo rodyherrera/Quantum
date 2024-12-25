@@ -88,8 +88,6 @@ DockerContainerSchema.index({ user: 1, name: 1 }, { unique: true });
 const cascadeDeleteHandler = async (document: IDockerContainer): Promise<void> => {
     if(!document) return;
     const { user, network, image, _id } = document;
-    const containerService = new DockerContainerService(document);
-    await containerService.removeContainer();
     const update = { $pull: { containers: _id } };
     await mongoose.model('User').updateOne({ _id: user }, update);
     if(document.isRepositoryContainer){
@@ -99,6 +97,8 @@ const cascadeDeleteHandler = async (document: IDockerContainer): Promise<void> =
     }
     await mongoose.model('DockerImage').updateOne({ _id: image }, update);
     await mongoose.model('PortBinding').deleteMany({ container: _id });
+    const containerService = new DockerContainerService(document);
+    await containerService.removeContainer();
 };
 
 DockerContainerSchema.pre('findOneAndDelete', async function (){
