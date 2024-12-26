@@ -1,71 +1,45 @@
 import { IRequest } from '@typings/controllers/common'
 import { catchAsync } from '@utilities/helpers';
 import { NextFunction, Response } from 'express';
-import { IUser } from '@typings/models/user';
 import DockerContainer from '@models/docker/container';
-import Repository from '@models/repository';
+import DockerContainerService from '@services/docker/container';
 import RuntimeError from '@utilities/runtimeError';
 import path from 'path';
-import fs from 'fs';
 
 class DockerFS{
-    private isRepositoryContainer: boolean;
-
-    constructor(isRepositoryContainer: boolean = false){
-        this.isRepositoryContainer = isRepositoryContainer;
-    }
-
-    private async getRequestedPath(req: IRequest, next: NextFunction): Promise<string>{
-        let storagePath;
-        const user = req.user as IUser;
-        if(this.isRepositoryContainer){
-            const repository = await Repository
-                .findOne({ _id: req.params.id, user: user._id })
-                .populate({
-                    path: 'container',
-                    select: 'storagePath'
-                })
-                .lean();
-            if(!repository){
-                throw new RuntimeError('DockerFS::StorageExplorer::NotFound', 404);
-            }
-            storagePath = repository.container.storagePath;
-        }else{
-            const container = await DockerContainer
-                .findOne({ _id: req.params.id, user: user._id })
-                .select('storagePath')
-                .lean();
-            storagePath = container?.storagePath;
+    private async getContainerService(req: IRequest, next: NextFunction): Promise<DockerContainerService>{
+        const user = req.user;
+        const container = await DockerContainer.findOne({ _id: req.params.id, user: user._id });
+        if(!container){
+            throw next(new RuntimeError('Docker::Container::NotFound', 404));
         }
-        const requestedPath = path.join(storagePath || '', req.params.route || '');
-        if(!fs.existsSync(requestedPath)){
-            throw next(new RuntimeError('DockerFS::Container::File::NotExists', 404));
-        }
-        return requestedPath;
+        const containerService = new DockerContainerService(container);
+        return containerService;
     };
 
     storageExplorer = catchAsync(async (req: IRequest, res: Response, next: NextFunction) => {
-        const requestedPath = await this.getRequestedPath(req, next);
-        const files = fs.readdirSync(requestedPath).map((file) => ({
-            name: file,
-            isDirectory: fs.statSync(path.join(requestedPath, file)).isDirectory()
-        }));
+        const containerService = await this.getContainerService(req, next);
+        const files = await containerService.listDirectory(req.params.route);
         res.status(200).json({ status: 'success', data: files });
     });
 
     updateContainerFile = catchAsync(async (req: IRequest, res: Response, next: NextFunction) => {
-        const requestedPath = await this.getRequestedPath(req, next);
-        if(!req.body.content){
-            return next(new RuntimeError('Docker::Container::File::UpdateContentRequired', 400));
+        const containerService = await this.getContainerService(req, next);
+        try{
+            if(!req.body.content){
+                return next(new RuntimeError('Docker::Container::File::UpdateContentRequired', 400));
+            }
+            await containerService.writeFile(req.params.route, req.body.content);
+        }catch(error){
+            console.log(error);
         }
-        fs.writeFileSync(requestedPath, req.body.content, 'utf-8');
         res.status(200).json({ status: 'success' });
     });
 
     readContainerFile = catchAsync(async (req: IRequest, res: Response, next: NextFunction) => {
-        const requestedPath = await this.getRequestedPath(req, next);
-        const name = path.basename(requestedPath);
-        const content = fs.readFileSync(requestedPath, 'utf-8');
+        const containerService = await this.getContainerService(req, next);
+        const name = path.basename(req.params.route);
+        const content = await containerService.readFile(req.params.route);
         res.status(200).json({
             status: 'success',
             data: { name, content }

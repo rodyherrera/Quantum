@@ -16,5 +16,4 @@ export { default as CreateRepository } from './CreateRepository';
 export { default as RepositoryDeployments } from './RepositoryDeployments';
 export { default as SetupDeployment } from './SetupDeployment';
 export { default as EnvironmentVariables } from './EnvironmentVariables';
-export { default as Storage } from './Storage';
 export { default as Shell } from './Shell';

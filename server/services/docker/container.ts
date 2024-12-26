@@ -1,14 +1,12 @@
 import Dockerode from 'dockerode';
-import fs from 'fs/promises';
 import path from 'path';
 import slugify from 'slugify';
 import PortBinding from '@models/portBinding';
 import { Socket } from 'socket.io';
-import { existsSync } from 'fs';
 import { ensureDirectoryExists } from '@utilities/helpers';
 import { createLogStream, setupSocketEvents, shells } from '@services/logManager';
 import { pullImage } from '@services/docker/image';
-import { IDockerContainer } from '@typings/models/docker/container';
+import { IDockerContainer, FileInfo, ExecResult } from '@typings/models/docker/container';
 import { IDockerImage } from '@typings/models/docker/image';
 import { IDockerNetwork } from '@typings/models/docker/network';
 import { getSystemNetworkName } from '@services/docker/network';
@@ -69,56 +67,56 @@ class DockerContainer{
         await repositoryService.start(githubService);
     }
 
-    async executeCommand(command: string, workDir: string = '/'): Promise<void> {
+    async executeCommand(command: string[] | string, options: Partial<Dockerode.ExecOptions> = {}): Promise<ExecResult>{
         const container = await this.getExistingContainer();
+    
+        const cmd = typeof command === 'string' 
+            ? ['sh', '-c', command]
+            : command;
 
-        const exec = await container.exec({
-            Cmd: ['/bin/sh', '-c', command],
+        const defaultOptions: Dockerode.ExecOptions = {
+            Cmd: cmd,
             AttachStdout: true,
             AttachStderr: true,
-            WorkingDir: workDir,
             Tty: false,
-        });
-    
+            ...options
+        };
+
+        const exec = await container.exec(defaultOptions);
         const stream = await exec.start({ hijack: true });
-    
-        return new Promise<void>((resolve, reject) => {
-            const stdoutChunks: Buffer[] = [];
-            const stderrChunks: Buffer[] = [];
-    
+
+        return new Promise<ExecResult>((resolve, reject) => {
+            const chunks: Buffer[] = [];
+            const errorChunks: Buffer[] = [];
+            
             stream.on('data', (chunk: Buffer) => {
-                stdoutChunks.push(chunk);
+                const data = chunk.slice(8);
+                chunks.push(data);
             });
-    
-            stream.on('error', (err: Error) => {
-                reject(err);
-            });
-    
+
+            stream.on('error', reject);
+
             stream.on('end', async () => {
                 try{
                     const execInspect = await exec.inspect();
-
-                    if(execInspect.ExitCode === 0){
-                        resolve();
-                    }else{
-                        const stderrOutput = Buffer.concat(stderrChunks).toString();
-                        reject(
-                            new Error(
-                                `Command "${command}" failed with exit code ${execInspect.ExitCode}. Stderr: ${stderrOutput}`
-                            )
-                        );
-                    }
-                }catch(inspectError){
-                    reject(inspectError);
+                    const output = Buffer.concat(chunks).toString('utf8').trim();
+                    const error = Buffer.concat(errorChunks).toString('utf8').trim();
+                    resolve({
+                        output,
+                        exitCode: execInspect.ExitCode,
+                        error: error || undefined
+                    });
+                }catch(error){
+                    reject(error);
                 }
             });
         });
-    }
+    };
 
     async installDefaultPackages(){
         try{
-            await this.executeCommand('apk update');
-            await this.executeCommand(`apk add --no-cache ${process.env.DOCKER_APK_STARTER_PACKAGES}`);
+            await this.executeCommand(['apk update']);
+            await this.executeCommand([`apk add --no-cache ${process.env.DOCKER_APK_STARTER_PACKAGES}`]);
         }catch(error){
             logger.error('@services/docker/container.ts (installDefaultPackages): ' + error);
         }
@@ -217,6 +215,76 @@ class DockerContainer{
         return dockerNetwork;
     }
 
+    async writeFile(filePath: string, content: string): Promise<void> {
+        try{
+            await this.executeCommand(['sh', '-c', 'mkdir -p /tmp/quantum-file-operations']);
+            
+            const tempPath = '/tmp/quantum-file-operations/temp_file';
+            const targetDir = path.dirname(filePath);
+
+            await this.executeCommand([
+                'sh',
+                '-c',
+                `printf '%s' "${content.replace(/"/g, '\\"')}" > ${tempPath}`
+            ]);
+            
+            await this.executeCommand(['sh', '-c', `mkdir -p ${targetDir}`]);
+            
+            await this.executeCommand(['mv', tempPath, filePath]);
+        }finally{
+            try{
+                await this.executeCommand(['rm', '-rf', '/tmp/quantum-file-operations']);
+            }catch(error){
+                logger.error(error);
+            }
+        }
+    }
+
+    async readFile(filePath: string): Promise<string> {
+        const { output, exitCode, error } = await this.executeCommand(['cat', filePath]);
+        
+        if(exitCode !== 0){
+            throw new Error(`Failed to read file ${filePath}: ${error}`);
+        }
+        
+        return output;
+    }
+
+    async listDirectory(dirPath: string = '/'): Promise<FileInfo[]>{
+        const { output, exitCode, error } = await this.executeCommand(['ls', '-la', dirPath]);
+
+        if(exitCode !== 0){
+            throw new Error(`Failed to list directory ${dirPath}: ${error}`);
+        }
+
+        return this.parseLsOutput(output);
+    }
+
+    private parseLsOutput(output: string): FileInfo[]{
+        const lines = output
+            .split('\n')
+            .filter(line => line.trim().length > 0)
+            .filter(line => !line.startsWith('total'));
+        return lines
+            .map(line => {
+                const match = line.match(/^([d\-])[\w-]+ +\d+ +\w+ +\w+ +\d+ +\w+ +\d+ +[\d:]+ +(.+)$/);
+                if(!match || line.length < 10) return null;
+
+                const name = match[2].trim();
+                if(name === '.' || name === '..') return null;
+
+                return {
+                    name,
+                    isDirectory: match[1] === 'd'
+                };
+            })
+            .filter((file): file is FileInfo => 
+                file !== null && 
+                file.name !== '' && 
+                file.name.length > 0
+            );
+    }
+
     async getContainerVolumes(): Promise<string[]> {
         if(!(this.container.volumes && this.container.volumes.length > 0)){
             return [];
@@ -232,7 +300,7 @@ class DockerContainer{
                         container: this.container.dockerContainerName,
                     },
                 });
-            }catch(error){
+            }catch(error: any){
                 if(error.statusCode !== 409){
                     throw error;
                 }
@@ -293,7 +361,7 @@ class DockerContainer{
                     try{
                         const volume = docker.getVolume(volumeName);
                         await volume.remove();
-                    }catch(error){
+                    }catch(error: any){
                         if(error.statusCode !== 404){
                             logger.warn(
                                 `@services/docker/container.ts (removeContainer): Could not remove volume ${volumeName}. Error: ${error}`

@@ -15,6 +15,17 @@ export interface IDockerContainerVolume{
     mode: string;
 }
 
+export interface FileInfo{
+    name: string;
+    isDirectory: boolean;
+}
+
+export interface ExecResult{
+    output: string;
+    exitCode: number;
+    error?: string;
+}
+
 export interface IDockerContainer extends Document{
     _id: mongoose.Schema.Types.ObjectId,
     user: mongoose.Schema.Types.ObjectId,

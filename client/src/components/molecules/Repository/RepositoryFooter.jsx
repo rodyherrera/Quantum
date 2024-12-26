@@ -7,7 +7,7 @@ import { useDispatch } from 'react-redux';
 import { PiDatabaseThin, PiShareNetworkThin } from "react-icons/pi";
 import { setState as repoSetState } from '@services/repository/slice';
 import { setState as dockerContainerSetState } from '@services/docker/container/slice';
-
+import { useEffect } from 'react';
 const RepositoryFooter = ({ repository }) => {
     const dispatch = useDispatch();
 
@@ -35,7 +35,7 @@ const RepositoryFooter = ({ repository }) => {
             ['Stop', CiCloudOff, null, () => repositoryStatusHandler('stop')] : 
             ['Start', CiCloudOn, null, () => repositoryStatusHandler('start')],
         ['Restart', CiRedo, null, () => repositoryStatusHandler('restart')],
-        ['File Explorer', CiServer, `/repository/${repository.alias}/storage/`, handleRepositorySelection],
+        ['File Explorer', CiServer, `/docker-container/${repository.container._id}/storage/`, selectContainerHandler],
         ['Environment', PiDatabaseThin, `/repository/${repository.alias.toLowerCase()}/deployment/environment-variables/`, handleRepositorySelection],
         ['Deployments', PiShareNetworkThin, `/repository/${repository.alias}/deployments/`, handleRepositorySelection]
     ];

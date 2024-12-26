@@ -21,7 +21,7 @@ import Repository from '@models/repository';
 import DockerFS from '@controllers/common/dockerFS';
 
 const router = express.Router();
-const repositoryFS = new DockerFS(true);
+const repositoryFS = new DockerFS();
 const ownership = verifyOwnership(Repository);
 
 router.use(authMiddleware.protect);

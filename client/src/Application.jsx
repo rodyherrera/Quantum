@@ -70,7 +70,6 @@ const Application = () => {
                         <Route path='create' element={<pages.protected.repository.CreateRepository />} />
                         <Route path=':repositoryAlias'>
                             <Route path='shell' element={<pages.protected.repository.Shell />} />
-                            <Route path='storage' element={<pages.protected.repository.Storage />} />
                             <Route path='deployments' element={<pages.protected.repository.RepositoryDeployments />} />
                             <Route path='deployment'>
                                 <Route path='setup' element={<pages.protected.repository.SetupDeployment />} />
