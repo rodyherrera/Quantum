@@ -34,7 +34,7 @@ services:
       LOG_LEVEL: info
 
       SERVER_PORT: 80
-      SERVER_HOST: 0.0.0.0
+      SERVER_HOSTNAME: 0.0.0.0
 
       JWT_EXPIRATION_DAYS: ${JWT_EXPIRATION_DAYS:-7}
       CORS_ORIGIN: ${CORS_ORIGIN:-*}

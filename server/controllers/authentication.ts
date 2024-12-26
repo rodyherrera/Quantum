@@ -60,9 +60,7 @@ const createAndSendToken = (res: any, statusCode: number, user: any): void => {
     deleteJWTCookie(res);
     res.cookie('jwt', token, {
         expires: new Date(Date.now() + Number(process.env.JWT_EXPIRATION_DAYS) * 24 * 60 * 60 * 1000),
-        httpOnly: true,
-        sameSite: 'none',
-        secure: true
+        httpOnly: true
     });
 
     res.status(statusCode).json({

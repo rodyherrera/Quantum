@@ -29,9 +29,7 @@ const getRandomPort = (): number => {
 
 export const deleteJWTCookie = (res: Response) => {
     res.clearCookie('jwt', {
-        sameSite: 'none',
-        httpOnly: true,
-        secure: true
+        httpOnly: true
     });
 };
 

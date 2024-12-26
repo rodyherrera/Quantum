@@ -114,7 +114,6 @@ class DockerContainer{
             });
         });
     }
-    
 
     async installDefaultPackages(){
         try{
