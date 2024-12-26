@@ -7,7 +7,7 @@ import { useDispatch } from 'react-redux';
 import { PiDatabaseThin, PiShareNetworkThin } from "react-icons/pi";
 import { setState as repoSetState } from '@services/repository/slice';
 import { setState as dockerContainerSetState } from '@services/docker/container/slice';
-import { useEffect } from 'react';
+
 const RepositoryFooter = ({ repository }) => {
     const dispatch = useDispatch();
 
