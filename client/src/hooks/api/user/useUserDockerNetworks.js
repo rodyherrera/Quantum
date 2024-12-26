@@ -10,13 +10,13 @@ const useUserDockerNetworks = () => {
 
     useEffect(() => {
         dispatch(getMyDockerNetworks({ page }));
-    }, [page]);
+    }, [dispatch, page]);
 
     useEffect(() => {
         return () => {
             dispatch(dockerNetSetState({ path: 'networks', value: [] }));
         }
-    }, []);
+    }, [dispatch]);
 
     return { dockerNetworks, isLoading, error, stats, isOperationLoading, page, setPage };
 };

@@ -263,6 +263,7 @@ class DockerContainer{
             ExposedPorts: exposedPorts,
             HostConfig: {
                 PortBindings: bindings,
+                Binds: [`${this.getDockerStoragePath()}:/app:rw`],
                 Mounts: volumeMounts.map((volume) => {
                     const [Source, Target, Mode] = volume.split(':');
                     return {

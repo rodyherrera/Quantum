@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import MinimalForm from '@components/organisms/MinimalForm';
-import { useUserDockerContainers } from '@hooks/api/user';
+import { useUserDockerContainers, useUserRepositories } from '@hooks/api/user';
 import CreatePortBindingImage from '@images/CreatePortBinding.jpeg';
 import { useDispatch, useSelector } from 'react-redux';
 import { createPortBinding } from '@services/portBinding/operations';
@@ -16,6 +16,7 @@ const CreatePortBinding = () => {
         selectedDockerContainer } = useSelector((state) => state.dockerContainer);
     const { error, isOperationLoading } = useSelector((state) => state.portBinding);
     const { dockerContainers } = useUserDockerContainers();
+    const { repositories } = useUserRepositories();
     const navigate = useNavigate();
     const dispatch = useDispatch();
     useDocumentTitle('Port Binding');
@@ -63,7 +64,7 @@ const CreatePortBinding = () => {
                     type: 'select',
                     value: selectedDockerContainer?._id,
                     name: 'container',
-                    options: dockerContainers.map(({ name, _id, ipAddress }) => [_id, `${name} (${ipAddress})`]),
+                    options: [ ...dockerContainers.map(({ name, _id, ipAddress }) => [_id, `${name} (${ipAddress})`]), ...repositories.map(({ container }) => [container._id, `${container.name} (${container.ipAddress})`]) ],
                     placeholder: 'Choose containers to connect',
                     helperText: 'Select the containers you wish to connect to this network. You can choose one or multiple containers from the list.'
                 },

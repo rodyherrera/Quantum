@@ -141,12 +141,6 @@ DockerContainerSchema.pre('save', async function (next){
             const userId = this.user.toString();
             const paths = getContainerStoragePath(userId, containerId, userId);
             this.dockerContainerName = getSystemDockerName(containerId);
-            if(!this.volumes.some(({ containerPath }) => containerPath === '/app')){
-                this.volumes.push({
-                    containerPath: '/app',
-                    mode: 'rw'
-                });
-            }
             if(this.isUserContainer){
                 this.storagePath = paths.userContainerPath;
             }else if(this.isRepositoryContainer){
