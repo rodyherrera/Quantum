@@ -104,7 +104,7 @@ export const updateMyProfile = (body, navigate) => async (dispatch) => {
 */
 export const deleteMyProfile = () => async (dispatch) => {
     const operation = createOperation(authSlice, dispatch);
-    operation.on('response', () => dispatch(logout()));
+    operation.on('response', () => window.location.href = '/');
     operation.use({
         api: authService.deleteMyProfile,
         loaderState: 'authStatus.isEliminatingAccount'
