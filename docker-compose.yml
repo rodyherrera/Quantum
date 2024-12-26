@@ -1,5 +1,6 @@
 services:
   server:
+    container_name: quantum-server
     build: 
       context: ./server
       dockerfile: Dockerfile
@@ -67,6 +68,7 @@ services:
       retries: 3
 
   client:
+    container_name: quantum-client
     build:
       context: ./client
       dockerfile: Dockerfile
@@ -94,6 +96,7 @@ services:
       retries: 3
 
   mongodb:
+    container_name: quantum-mongodb
     image: mongo:latest
     ports:
       - "${MONGO_DB_PORT}:27021"

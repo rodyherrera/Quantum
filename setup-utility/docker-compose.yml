@@ -9,6 +9,8 @@ services:
       - SERVER_PORT=${SERVER_PORT:-9080}
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+      - /usr/local/bin/docker-compose:/usr/local/bin/docker-compose
+      - /usr/bin/docker:/usr/bin/docker
 
   client:
     build:

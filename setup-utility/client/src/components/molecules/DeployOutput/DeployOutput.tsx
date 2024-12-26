@@ -81,12 +81,8 @@ const DeployOutput = () => {
                     </div>
                 )}
                 {[
-                    'Setting up Docker repository and installing dependencies',
-                    'Updating package lists',
-                    'Installing Docker components',
-                    'Starting Docker service',
-                    'Ensuring port availability',
-                    'Building and bringing up Docker Compose services'
+                    'Stop current deployment if it exists.',
+                    'Building image and deploying'
                 ].map((stepName, index) => (
                     <div className='Setup-Utility-Deploy-Step-Container' key={index}>
                         {(currentStep === (index + 1)) && (
