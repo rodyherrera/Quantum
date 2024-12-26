@@ -316,10 +316,10 @@ class DockerContainer{
         const networkName = getSystemNetworkName(this.container.user.toString(), dockerNetwork._id.toString());
         const { exposedPorts, bindings } = await this.getPortBindings();
         const volumeMounts: string[] = await this.getContainerVolumes();
+        const binds = this.container.isRepositoryContainer ? [`${this.getDockerStoragePath()}:/app:rw`] : [];
         const environmentVariables = Array.from(this.container.environment.variables.entries()).map(
             ([key, value]) => `${key}=${value}`
         );
-    
         const options = {
             Image: `${dockerImage.name}:${dockerImage.tag}`,
             name: this.container.dockerContainerName,
@@ -330,7 +330,7 @@ class DockerContainer{
             ExposedPorts: exposedPorts,
             HostConfig: {
                 PortBindings: bindings,
-                Binds: [`${this.getDockerStoragePath()}:/app:rw`],
+                Binds: binds,
                 Mounts: volumeMounts.map((volume) => {
                     const [Source, Target, Mode] = volume.split(':');
                     return {
