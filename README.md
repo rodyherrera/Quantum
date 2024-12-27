@@ -1,4 +1,4 @@
-# The scalable, hackable, open-source, and self-hostable alternative to Heroku/Netlify/Vercel/... 🚀
+# The Open-Source and Self-Hosted Alternative to Heroku, Netlify, and Vercel 🚀
 ![Quantum Home Page](/screenshots/Quantum-Cloud-Platform.png)
 <div>
 <a href="https://ko-fi.com/codewithrodi"> <img align="left" src="https://cdn.ko-fi.com/cdn/kofi3.png?v=3" height="50"   width="180" alt="Support Quantum!" /></a>
@@ -22,21 +22,15 @@
 - [How Can I Migrate to New Versions?](#how-can-i-migrate-to-new-versions)
 - [We'd Love Your Feedback and Support!](#wed-love-your-feedback-and-support)
 
-We assist you in hosting your applications, servers, and services on your own centralized hardware infrastructure, all conveniently located in one place. Our platform was conceived as an open-source alternative to renowned platforms like Vercel, Netlify, and Heroku. 
+Quantum allows you to effortlessly deploy your GitHub repositories, integrating real-time continuous deployment seamlessly. Additionally, you can easily deploy and manage Docker containers. With "One Click Services," you have access to over 20 applications that you can deploy to your Quantum account with just a single click. Among these applications are Uptime Kuma, Code Server, Ollama, various Databases, and many more.
 
-After creating an account on our platform, you'll be prompted to log in using your GitHub credentials. This step allows you to securely store your access token for cloning repositories, creating webhooks, and managing deployments – including creation, updating, and deletion. Once your GitHub account is connected, you'll gain full access to all the platform's features.
+With Quantum, you have full access to the file systems of all your Docker containers and your deployed GitHub repositories. This enables you to make adjustments directly without the need to perform an immediate commit. You can configure environment variables, access the terminal, restart or shut down containers, and utilize many other functionalities.
 
-Quantum also offers a 'Cloud Shell' feature, ensuring every user on the platform has access to their own dedicated environment. Think of it as a client-server connection, enabling you to execute commands directly on your Virtual Private Server (VPS) or any other hosting environment where Quantum is deployed.
+To deploy the application, you can use the [Quantum Setup Utility](#deploying-with-quantum-setup-utility-recommended), which simplifies the installation process on your VPS quickly and easily. Alternatively, you also have the option to use [Docker Compose](#deploying-with-docker-compose).
 
 ![Quantum Cloud Dashboard](/screenshots/Dashboard.png)
 ![Quantum Cloud Console](/screenshots/Cloud-Console.png)
-
-Similarly, every repository you have deployed on the platform comes with its own command line interface. This allows you to monitor the execution output of your service (referred to as logs) or execute specific commands as needed.
-
 ![Repository CLI](/screenshots/RepositoryCLI.png)
-
-If you wish to make local changes—meaning alterations that don't necessitate a GitHub commit or application redeployment—the platform offers a file explorer feature. This tool enables you to read from and write to files within your repository. It's important to note that any changes made through this explorer will be overwritten if a commit is subsequently made to your repository. This occurs because commits replace the files with the data currently stored on GitHub.
-
 ![Repository File Explorer](/screenshots/File-Explorer.png)
 
 While Quantum offers a panel for configuring commands such as installing dependencies (e.g., "npm install"), building source code (e.g., "npm run build"), or starting your software (e.g., "npm run start"), it also provides a separate panel specifically for managing environment variables. It's worth noting that this isn't a manual process where you input variables and their values one by one. When the repository is cloned, Quantum automatically maps the environment variables, allowing you to assign their respective values later on. You have the flexibility to create, delete, and modify environment variables associated with the deployment of your repository as needed.
