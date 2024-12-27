@@ -31,17 +31,29 @@ const EnvironVariables = () => {
 
             <Input
                 type='text'
-                value={environVariables.CLIENT_HOST || ''}
+                value={
+                    environVariables.CLIENT_HOST || (
+                        environVariables.SERVER_IP 
+                            ? `http://${environVariables.SERVER_IP}:${environVariables.CLIENT_WEB_APP_PORT}`
+                            : ''
+                    )
+                }
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('CLIENT_HOST', e.target.value)}
-                placeholder='Client Application Domain (e.g. quantumapp.com)'
+                placeholder='Client Application Endpoint (e.g. https://quantumapp.com)'
                 helperText='* For example quantumapp.com. Through this domain you can access the web application. Also, if you configure OAuth on Github, you must point to this domain.'
             />
 
             <Input
                 type='text'
-                value={environVariables.DOMAIN || ''}
+                value={
+                    environVariables.DOMAIN || (
+                        environVariables.SERVER_IP 
+                            ? `http://${environVariables.SERVER_IP}:${environVariables.SERVER_PORT}`
+                            : ''
+                    )
+                }
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('DOMAIN', e.target.value)}
-                placeholder='Server Domain (e.g. quantumserver.com)'
+                placeholder='Server Endpoint (e.g. https://quantumserver.com)'
                 helperText='* For example quantumserver.com. This domain will be used by the client application to make calls to the API.'
             />
 
