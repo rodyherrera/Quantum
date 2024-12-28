@@ -37,14 +37,15 @@ const PortBindingSchema: Schema<IPortBinding> = new Schema({
 
 PortBindingSchema.index({ container: 1, externalPort: 1, internalPort: 1 }, { unique: true });
 
-const cascadeDeleteHandler = async (document: IPortBinding): Promise<void> => {
+const cascadeDeleteHandler = async (document: IPortBinding, options: { [key: string]: string } | undefined = undefined ): Promise<void> => {
     if(!document) return;
     const update = { $pull: { portBindings: document._id } };
+    await mongoose.model('User').updateOne({ _id: document.user }, update);
+    if(options && options?.isContainerDeletion) return;
     const container = await mongoose.model('DockerContainer').findOneAndUpdate({ _id: document.container }, update);
     if(!container) return;
     const containerService = new DockerContainerService(container);
     await containerService.recreateContainer();
-    await mongoose.model('User').updateOne({ _id: document.user }, update);
 };
 
 PortBindingSchema.post('findOneAndDelete', async function(deletedDoc: IPortBinding){
@@ -53,9 +54,10 @@ PortBindingSchema.post('findOneAndDelete', async function(deletedDoc: IPortBindi
 
 PortBindingSchema.pre('deleteMany', async function(){
     const conditions = this.getQuery();
+    const options = this.getOptions();
     const portBindings = await mongoose.model('PortBinding').find(conditions);
     await Promise.all(portBindings.map(async (portBinding: IPortBinding) => {
-        await cascadeDeleteHandler(portBinding);
+        await cascadeDeleteHandler(portBinding, options);
     }));
 });
 

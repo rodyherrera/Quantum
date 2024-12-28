@@ -4,7 +4,7 @@ import slugify from 'slugify';
 import PortBinding from '@models/portBinding';
 import { Socket } from 'socket.io';
 import { ensureDirectoryExists } from '@utilities/helpers';
-import { createLogStream, setupSocketEvents, shells } from '@services/logManager';
+import { createLogStream, setupSocketEvents } from '@services/logManager';
 import { pullImage } from '@services/docker/image';
 import { IDockerContainer, FileInfo, ExecResult } from '@typings/models/docker/container';
 import { IDockerImage } from '@typings/models/docker/image';
@@ -352,7 +352,13 @@ class DockerContainer{
     async removeContainer(){
         try{
             const container = docker.getContainer(this.container.dockerContainerName);
-            if(container){
+            const containerInfo = await container.inspect().catch((err) => {
+                if(err.statusCode === 404){
+                    return null;
+                } 
+                throw err;
+            });
+            if(containerInfo){
                 await container.remove({ force: true });
             }
             if(this.container.volumes){
@@ -374,7 +380,6 @@ class DockerContainer{
             logger.error('@services/docker/container.ts (removeContainer): ' + error);
         }
     }
-    
 
     async recreateContainer(): Promise<any> {
         const container = docker.getContainer(this.container.dockerContainerName);
