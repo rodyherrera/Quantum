@@ -22,6 +22,40 @@ const getDockerOrCreateDockerImage = async (image: IRequestDockerImage, userId: 
     return dockerImage;
 };
 
+const createContainerWithBindings = async (
+    user: IUser,
+    config: IOneClickDeployConfig, 
+    imageId: string, 
+    networkId: string
+): Promise<IDockerContainer> => {
+    const randAlias = v4().slice(0, 4);
+    const containerName = `${config.name}-${randAlias}`;
+    const container = await DockerContainer.create({
+        user: user._id,
+        image: imageId,
+        network: networkId,
+        name: containerName,
+        command: config.command,
+        volumes: config.volumes,
+        environment: { variables: config.environment }
+    });
+
+    if(config.ports && config.ports.length > 0){
+        await Promise.all(config.ports.map(async (port) => {
+            const { internalPort, protocol } = port;
+            const externalPort = await findRandomAvailablePort();
+            return PortBinding.create({
+                container: container._id,
+                user: user._id,
+                internalPort,
+                protocol,
+                externalPort
+            });
+        }));
+    }
+    return container;
+};
+
 const parseEnvironVariables = async (
     parent: any,
     husbands: Map<string, IDockerContainer>, 
@@ -94,70 +128,32 @@ const parseEnvironVariables = async (
 
 
 const createParentContainer = async (user: IUser, config: IOneClickDeployConfig): Promise<any> => {
-    const randAlias = v4().slice(0, 4);
-    const containerName = `${config.name}-${randAlias}`;
-    const networkName = `${containerName}-network`;
     const [image, network] = await Promise.all([
         getDockerOrCreateDockerImage(config.image as IRequestDockerImage, user._id),
-        DockerNetwork.create({ name: networkName, user: user._id })
+        DockerNetwork.create({
+            name: `${config.name}-${v4().slice(0, 4)}-network`,
+            user: user._id
+        })
     ]);
-    const container = await DockerContainer.create({
-        user: user._id,
-        image: image._id,
-        network: network._id,
-        name: containerName,
-        command: config.command,
-        volumes: config.volumes
-    });
-    const portBindings = config.ports?.map(async (port) => {
-        const { internalPort, protocol } = port;
-        const externalPort = await findRandomAvailablePort();
-        return await PortBinding.create({
-            container: container._id,
-            user: user._id,
-            internalPort,
-            protocol,
-            externalPort
-        });
-    }) ?? [];
-    await Promise.all(portBindings);
+
+    const container = await createContainerWithBindings(user, config, image._id.toString(), network._id.toString());
     return { network, container };
 };
 
-const createHusbandContainer = async (user: IUser, config: IOneClickDeployConfig, parentContainer: IDockerContainer) => {
-    const randAlias = v4().slice(0, 4);
-    const image = await getDockerOrCreateDockerImage(config.image as IRequestDockerImage, user._id);
-    const containerName = `${config.name}-${randAlias}`;
-    const husband = await DockerContainer.create({
-        user: user._id,
-        image: image._id,
-        network: parentContainer.network,
-        name: containerName,
-        command: config.command,
-        volumes: config.volumes,
-        environment: { variables: config.environment }
-    }); 
-    const portBindings = config.ports?.map(async (port) => {
-        const { internalPort, protocol } = port;
-        const externalPort = await findRandomAvailablePort();
-        return await PortBinding.create({
-            container: husband._id,
-            user: user._id,
-            internalPort,
-            protocol,
-            externalPort
-        });
-    }) ?? [];
-    await Promise.all(portBindings);
-    return husband;
+const createHusbandsContainer = async (user: IUser, husbandsConfig: IOneClickDeployConfig[], parentContainer: IDockerContainer) => {
+    const husbandsMap = new Map<string, IDockerContainer>();
+    const containers = await Promise.all(husbandsConfig.map(async (config) => {
+        const image = await getDockerOrCreateDockerImage(config.image as IRequestDockerImage, user._id);
+        const container = await createContainerWithBindings(user, config, image._id.toString(), parentContainer.network.toString());
+        return { name: config.name, container };
+    }));
+
+    containers.forEach(({ name, container }) => husbandsMap.set(name, container));
+    return husbandsMap;
 };
 
 export const parseConfigAndDeploy = async (user: IUser, config: IOneClickDeployConfig): Promise<any> => {
     const parent = await createParentContainer(user, config);
-    const husbands = new Map<string, IDockerContainer>();
-    for(const husbandEntity of config.husbands ?? []){
-        const container = await createHusbandContainer(user, husbandEntity, parent);
-        husbands.set(husbandEntity.name, container);
-    }
-    return await parseEnvironVariables(parent, husbands, config);
+    const husbands = await createHusbandsContainer(user, config.husbands ?? [], parent.container);
+    return parseEnvironVariables(parent, husbands, config);
 };
