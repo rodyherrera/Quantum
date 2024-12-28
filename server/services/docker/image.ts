@@ -6,7 +6,7 @@ const docker = new Dockerode();
 export const isImageAvailable = async (imageName: string, tag: string = 'latest'): Promise<boolean> => {
     const fullImageName = `${imageName}:${tag}`;
     try{
-        const images = await docker.listImages({ filters: fullImageName });
+        const images = await docker.listImages({ filters: { reference: [fullImageName] } });
         return images.some((image) => image.RepoTags?.includes(fullImageName));
     }catch(error: any){
         logger.error('@services/docker/image.ts (isImageAvailable): ' + error);
