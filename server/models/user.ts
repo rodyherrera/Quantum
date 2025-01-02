@@ -17,6 +17,12 @@ import validator from 'validator';
 import bcrypt from 'bcryptjs';
 import { IUser } from '@typings/models/user';
 import { IDockerContainer } from '@typings/models/docker/container';
+import PortBinding from '@models/portBinding';
+import Repository from '@models/repository';
+import Github from '@models/github';
+import DockerContainer from '@models/docker/container';
+import DockerImage from '@models/docker/image';
+import DockerNetwork from '@models/docker/network';
 
 const UserSchema: Schema<IUser> = new Schema({
     username: {
@@ -113,14 +119,14 @@ const cascadeDeleteHandler = async (document: IUser): Promise<void> => {
     if(!document) return;
     const query = { user: document._id };
     // check for errors (cascade in the others models)
-    await mongoose.model('Repository').deleteMany(query);
-    await mongoose.model('Github').findOneAndDelete(query);
-    await mongoose.model('DockerContainer').findOneAndDelete({ _id: document.container });
-    await mongoose.model('PortBinding').deleteMany(query);
+    await Repository.deleteMany(query);
+    await Github.findOneAndDelete(query);
+    await DockerContainer.findOneAndDelete({ _id: document.container });
+    await PortBinding.deleteMany(query);
     try{
-        await mongoose.model('DockerContainer').deleteMany(query);
-        await mongoose.model('DockerNetwork').deleteMany(query);
-        await mongoose.model('DockerImage').deleteMany(query);
+        await DockerContainer.deleteMany(query);
+        await DockerNetwork.deleteMany(query);
+        await DockerImage.deleteMany(query);
     }catch(e){
         // TODO: remove try-catch.
     }
@@ -128,9 +134,9 @@ const cascadeDeleteHandler = async (document: IUser): Promise<void> => {
 
 const createUserContainer = async (user: IUser): Promise<IDockerContainer> => {
     const userId = user._id.toString();
-    const image = await mongoose.model('DockerImage').create({ name: 'alpine', tag: 'latest', user: userId });
-    const network = await mongoose.model('DockerNetwork').create({ user: userId, driver: 'bridge', name: userId });
-    const container = await mongoose.model('DockerContainer').create({
+    const image = await DockerImage.create({ name: 'alpine', tag: 'latest', user: userId });
+    const network = await DockerNetwork.create({ user: userId, driver: 'bridge', name: userId });
+    const container = await DockerContainer.create({
         name: userId,
         user: userId,
         image: image._id,
@@ -147,13 +153,13 @@ const createUserContainer = async (user: IUser): Promise<IDockerContainer> => {
 
 UserSchema.pre('findOneAndDelete', async function(){
     const conditions = this.getQuery();
-    const user = await mongoose.model('User').findOne(conditions).populate('container');
+    const user = await this.findOne(conditions).populate('container');
     await cascadeDeleteHandler(user);
 });
 
 UserSchema.pre('deleteMany', async function() {
     const conditions = this.getQuery();
-    const users = await mongoose.model('User').find(conditions);
+    const users = await this.find(conditions);
     await Promise.all(users.map(async (user) => {
         await cascadeDeleteHandler(user);
     }));

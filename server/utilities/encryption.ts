@@ -1,7 +1,9 @@
 import crypto from 'crypto';
 
-const ENCRYPTION_KEY = Buffer.from(process.env.ENCRYPTION_KEY!, 'hex');
-const IV = Buffer.from(process.env.ENCRYPTION_IV!, 'hex');
+// TODO: use process.env.ENCRYPTION_KEY! 
+//       and process.env.ENCRYPTION_IV!
+const ENCRYPTION_KEY = Buffer.from(process.env.ENCRYPTION_KEY || '', 'hex');
+const IV = Buffer.from(process.env.ENCRYPTION_IV || '', 'hex');
 
 export const encrypt = (text: string): String => {
     const cipher = crypto.createCipheriv('aes-256-cbc', ENCRYPTION_KEY, IV);

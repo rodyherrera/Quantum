@@ -12,12 +12,13 @@
  * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 ****/
 
+import * as dotenv from 'dotenv';
+dotenv.config({ path: './.env' });
+
 import prompts from 'prompts';
 import mongoConnector from '@utilities/mongoConnector';
 import actions from '@cli/actions';
-import dotenv from 'dotenv';
 
-dotenv.config({ path: './.env' });
 
 (async () => {
     await mongoConnector();
