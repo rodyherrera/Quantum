@@ -51,7 +51,6 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /usr/bin/docker:/usr/bin/docker
-      - ./server:/app
       - /var/lib/quantum:/var/lib/quantum
 
     depends_on:
