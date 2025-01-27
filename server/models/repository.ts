@@ -34,6 +34,10 @@ const RepositorySchema: Schema<IRepository> = new Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'DockerContainer'
     },
+    branch: {
+        type: String,
+        default: 'main'
+    },
     webhookId: String,
     buildCommand: { type: String, default: '' },
     installCommand: { type: String, default: '' },

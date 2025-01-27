@@ -7,6 +7,7 @@ export interface IRepository extends Document{
     alias: string;
     _id: string | mongoose.Types.ObjectId;
     name: string;
+    branch: string;
     webhookId?: number;
     buildCommand?: string;
     installCommand?: string;

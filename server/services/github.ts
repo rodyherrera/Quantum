@@ -79,7 +79,7 @@ class Github{
      *
      * @returns {Promise<void>} - Resolves if the cloning process is successful, rejects with an error if not.
     */
-    async cloneRepository(): Promise<void>{
+    async cloneRepository(branch): Promise<void>{
         try{
             const container = await this.getContainer();
             if(!container){
@@ -92,7 +92,7 @@ class Github{
             const cloneEndpoint = repositoryInfo.data.private
                 ? repositoryInfo.data.clone_url.replace('https://', `https://${this.userGithub.getDecryptedAccessToken()}@`)
                 : repositoryInfo.data.clone_url;
-            await exec(`git clone ${cloneEndpoint} ${container.storagePath}`);
+            await exec(`git clone --branch ${branch} ${cloneEndpoint} ${container.storagePath}`);
         }catch(error){
             logger.error('@services/github.ts (cloneRepository): ' + (error as Error).message);
         }
@@ -375,7 +375,7 @@ class Github{
      * @returns {Promise<Deployment>} - The newly created Deployment object, representing the deployment record in the Quantum Cloud system.
     */
     async deployRepository(): Promise<IDeployment>{
-        await this.cloneRepository();
+        await this.cloneRepository(this.repository.branch);
         const githubDeploymentId = await this.createGithubDeployment();
         const newDeployment = await this.createNewDeployment(githubDeploymentId);
         newDeployment.url = `https://github.com/${this.userGithub.username}/${this.repository.name}/deployments/${githubDeploymentId}`;
