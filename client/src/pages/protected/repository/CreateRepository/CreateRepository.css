@@ -22,6 +22,53 @@
     padding-right: .5rem;
 }
 
+.Branch-List-Container{
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-gap: 0.5rem;
+}
+
+.Branch-Container{
+    padding: .5rem 1rem;
+    border: 1px solid #000000;
+    border-radius: .25rem;
+    cursor: pointer;
+    transition: .3s;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.Branch-Container[data-isdefaultbranch='true']{
+    background-color: #0f62fe;
+    border: unset;
+}
+
+.Branch-Container[data-isdefaultbranch='true'] .Branch-Name,
+.Branch-Container[data-isdefaultbranch='true'] i{
+    color: #FFF;
+}
+
+.Branch-Left-Container{
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+}
+
+.Branch-Container:active{
+    transform: scale(.98);
+}
+
+.Branch-Container:hover{
+    border-color: #0f62fe;
+}
+
+.Branch-Name{
+    color: #252525;
+    font-weight: 400;
+    font-size: .95rem;
+}
+
 @media screen and (max-width: 700px){
     #Create-Repository-Main #Github-Account-Repository-List-Container{
         width: 100%;

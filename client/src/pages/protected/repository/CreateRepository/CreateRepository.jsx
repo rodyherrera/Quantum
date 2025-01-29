@@ -12,11 +12,13 @@
  * =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 ****/
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { getMyGithubRepositories, createRepository } from '@services/repository/operations';
 import { useSelector, useDispatch } from 'react-redux';
 import { gsap } from 'gsap';
+import { IoIosGitBranch } from "react-icons/io";
 import { useNavigate } from 'react-router-dom';
+import { GoArrowRight } from "react-icons/go";
 import DataRenderer from '@components/organisms/DataRenderer';
 import RepositoryBasicItem from '@components/atoms/RepositoryBasicItem';
 import { useDocumentTitle } from '@hooks/common';
@@ -26,6 +28,7 @@ import './CreateRepository.css';
 const CreateRepository = () => {
     const { githubRepositories, isLoading, isOperationLoading, error } = useSelector(state => state.repository);
     const { user } = useSelector(state => state.auth);
+    const [selectedRepo, setSelectedRepo] = useState(null);
     useDocumentTitle('Create Repository');
 
     const dispatch = useDispatch();
@@ -35,11 +38,12 @@ const CreateRepository = () => {
         dispatch(getMyGithubRepositories());
     }, []);
 
-    const handleClick = async (repository) => {
+    const handleDeploy = async (repository, branch) => {
         const body = {
             name: repository.name,
             url: repository.html_url,
-            user: user._id
+            user: user._id,
+            branch
         };
         await dispatch(createRepository(body, navigate));
     };
@@ -67,13 +71,22 @@ const CreateRepository = () => {
             ease: "back.out(1.7)"  
         });
     }, [githubRepositories]);
+    
+    const handleRepoSelection = (repository) => {
+        const hasBranches = repository.branches.length > 1;
+        if(hasBranches){
+            setSelectedRepo(repository);
+            return;
+        }
+        handleDeploy(repository, repository.default_branch);
+    };
 
     return (
         <DataRenderer
-            title="Let's start our teamwork..."
+            title={selectedRepo ? "We're almost ready..." : "Let's start our teamwork..."}
             id='Create-Repository-Main'
             error={error}
-            description='To deploy a new Project, import an existing Git Repository.'
+            description={selectedRepo ? 'You just need to specify the branch you want to deploy.' : 'To deploy a new Project, import an existing Git Repository.'}
             isLoading={isLoading}
             isOperationLoading={isOperationLoading}
             operationLoadingMessage="We're cloning and adjusting parameters in your repository..."
@@ -91,14 +104,39 @@ const CreateRepository = () => {
                 { title: 'Create Repository', to: '/respository/create/' }
             ]}
         >
-            <article id='Github-Account-Repository-List-Container'>
-                {githubRepositories.map((repository, index) => (
-                    <RepositoryBasicItem 
-                        key={index} 
-                        onClick={() => handleClick(repository)}
-                        repository={repository} />
-                ))}
-            </article>
+            {selectedRepo ? (
+                <article className='Branch-List-Container'>
+                    {selectedRepo.branches.map((branch) => (
+                        <div 
+                            className='Branch-Container' 
+                            data-isdefaultbranch={branch === selectedRepo.default_branch} 
+                            key={branch}
+                            onClick={() => handleDeploy(selectedRepo, branch)}
+                        >
+                            <div className='Branch-Left-Container'>
+                                <i className='Branch-Icon-Container'>
+                                    <IoIosGitBranch />
+                                </i>
+                                <h3 className='Branch-Name'>{branch}</h3>
+                            </div>
+                            <div className='Branch-Right-Container'>
+                                <i className='Branch-Arrow-Container'>
+                                    <GoArrowRight />
+                                </i>
+                            </div>
+                        </div> 
+                    ))}
+                </article>
+            ) : (
+                <article id='Github-Account-Repository-List-Container'>
+                    {githubRepositories.map((repository, index) => (
+                        <RepositoryBasicItem 
+                            key={index} 
+                            onClick={() => handleRepoSelection(repository)}
+                            repository={repository} />
+                    ))}
+                </article>
+                )}
         </DataRenderer>
     );
 };

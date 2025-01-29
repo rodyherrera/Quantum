@@ -23,7 +23,6 @@ import { DeploymentState } from '@typings/services/github';
 import { IDockerContainer } from '@typings/models/docker/container';
 import simpleGit from 'simple-git';
 import logger from '@utilities/logger';
-import RepositoryHandler from '@services/repositoryHandler';
 import Deployment from '@models/deployment';
 import RuntimeError from '@utilities/runtimeError';
 import mongoose from 'mongoose';
@@ -79,7 +78,7 @@ class Github{
      *
      * @returns {Promise<void>} - Resolves if the cloning process is successful, rejects with an error if not.
     */
-    async cloneRepository(branch): Promise<void>{
+    async cloneRepository(branch: string): Promise<void>{
         try{
             const container = await this.getContainer();
             if(!container){
@@ -208,7 +207,7 @@ class Github{
         const { data: { id: deploymentId } }: any = await this.octokit.repos.createDeployment({
             owner: this.userGithub.username,
             repo: this.repository.name,
-            ref: 'main',
+            ref: this.repository.branch,
             auto_merge: false,
             required_contexts: [],
             environment: 'Production'

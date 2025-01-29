@@ -1,4 +1,3 @@
-import axios from 'axios';
 import Repository from '@models/repository';
 import HandlerFactory from '@controllers/common/handlerFactory';
 import Deployment from '@models/deployment';
@@ -7,6 +6,7 @@ import { catchAsync } from '@utilities/helpers';
 import { Response } from 'express';
 import { IRepository } from '@typings/models/repository';
 import { IRequest } from '@typings/controllers/common';
+import { Octokit } from '@octokit/rest';
 
 const RepositoryFactory = new HandlerFactory({
     model: Repository,
@@ -20,6 +20,7 @@ const RepositoryFactory = new HandlerFactory({
         'buildCommand',
         'port', 
         'installCommand', 
+        'branch',
         'startCommand', 
         'rootDirectory'
     ]
@@ -32,11 +33,24 @@ export const updateRepository = RepositoryFactory.updateOne();
 export const deleteRepository = RepositoryFactory.deleteOne();
 
 const getGithubRepositories = async (accessToken: string): Promise<any[]> => {
-    const response = await axios.get('https://api.github.com/user/repos', {
-        headers: { Authorization: `Bearer ${accessToken}` },
-        params: { visibility: 'all', per_page: 100 }
-    });
-    return response.data;
+    const octokit = new Octokit({ auth: accessToken });
+
+    const repos = await octokit.paginate(
+        octokit.rest.repos.listForAuthenticatedUser,
+        { visibility: 'all', per_page: 100 }
+    );
+
+    const reposWithBranches = await Promise.all(
+        repos.map(async repo => {
+            const branches = await octokit.paginate(
+                octokit.rest.repos.listBranches,
+                { owner: repo.owner.login, repo: repo.name, per_page: 100 }
+            );
+            return { ...repo, branches: branches.map(b => b.name) };
+        })
+    );
+
+    return reposWithBranches;
 };
 
 const filterRepositories = (githubRepositories: any[], userRepositories: any[]): any[] => 
