@@ -16,6 +16,7 @@ import createOperation from '@utilities/api/operationHandler';
 import { getMyDockerImages } from '@services/docker/image/operations';
 import { getMyDockerNetworks } from '@services/docker/network/operations';
 import { getMyPortBindings } from '@services/portBinding/operations';
+import { getMyProfile } from '@services/authentication/operations';
 import * as dockerContainerSlice from '@services/docker/container/slice';
 import * as dockerContainerService from '@services/docker/container/service'
 
@@ -44,6 +45,7 @@ export const setDockerStatus = (id, status) => async (dispatch) => {
     const operation = createOperation(dockerContainerSlice, dispatch);
     operation.on('finally', () => {
         dispatch(getMyDockerContainers());
+        dispatch(getMyProfile());
     });
     operation.use({
         api: dockerContainerService.setContainerStatus,
@@ -60,6 +62,7 @@ export const deleteDockerContainer = (id) => async (dispatch) => {
         dispatch(getMyDockerNetworks());
         dispatch(getMyPortBindings());
         dispatch(getMyDockerImages());
+        dispatch(getMyProfile());
     });
     operation.use({
         api: dockerContainerService.deleteDockerContainer,
@@ -128,6 +131,7 @@ export const oneClickDeploy = (body, onResponse = () => {}) => async (dispatch) 
         dispatch(getMyDockerNetworks());
         dispatch(getMyPortBindings());
         dispatch(getMyDockerImages());
+        dispatch(getMyProfile());
         onResponse();
     });
     operation.use({
@@ -141,6 +145,7 @@ export const createDockerContainer = (body, navigate) => async (dispatch) => {
     const operation = createOperation(dockerContainerSlice, dispatch);
     operation.on('response', () => {
         navigate('/dashboard/');
+        dispatch(getMyProfile());
     });
     operation.use({
         api: dockerContainerService.createDockerContainer,

@@ -15,12 +15,18 @@
 import createOperation from '@utilities/api/operationHandler';
 import * as portBindingSlice from '@services/portBinding/slice';
 import * as portBindingService from '@services/portBinding/service'
+import { getMyProfile } from '@services/authentication/operations';
 
 export const createPortBinding = (body, navigate) => async (dispatch) => {
     const operation = createOperation(portBindingSlice, dispatch);
     operation.on('response', () => {
         navigate('/dashboard/');
     });
+
+    operation.on('finally', () => {
+        dispatch(getMyProfile());
+    });
+    
     operation.use({
         api: portBindingService.createPortBinding,
         loaderState: 'isOperationLoading',
@@ -36,6 +42,7 @@ export const deletePortBinding = (id, portBindings) => async (dispatch) => {
             path: 'portBindings',
             value: updatedPortBindings
         }));
+        dispatch(getMyProfile());
     });
     operation.use({
         api: portBindingService.deletePortBinding,

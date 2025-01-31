@@ -16,6 +16,7 @@ import createOperation from '@utilities/api/operationHandler';
 import { getMyDockerImages } from '@services/docker/image/operations';
 import { getMyDockerContainers } from '@services/docker/container/operations';
 import { getMyPortBindings } from '@services/portBinding/operations';
+import { getMyProfile } from '@services/authentication/operations';
 import * as dockerNetworkSlice from '@services/docker/network/slice';
 import * as dockerNetworkService from '@services/docker/network/service'
 
@@ -23,6 +24,7 @@ export const createDockerNetwork = (body, navigate) => async (dispatch) => {
     const operation = createOperation(dockerNetworkSlice, dispatch);
     operation.on('response', () => {
         navigate('/dashboard/');
+        dispatch(getMyProfile());
     });
     operation.use({
         api: dockerNetworkService.createDockerNetwork,
@@ -51,6 +53,7 @@ export const deleteDockerNetwork = (id) => async (dispatch) => {
         dispatch(getMyDockerContainers());
         dispatch(getMyPortBindings());
         dispatch(getMyDockerImages());
+        dispatch(getMyProfile());
     });
     operation.use({
         api: dockerNetworkService.deleteDockerNetwork,

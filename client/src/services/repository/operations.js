@@ -14,6 +14,7 @@
 
 import * as repositoryService from '@services/repository/service';
 import * as repositorySlice from '@services/repository/slice';
+import { getMyProfile } from '@services/authentication/operations';
 import createOperation from '@utilities/api/operationHandler';
 
 /**
@@ -28,6 +29,10 @@ export const createRepository = (body, navigate) => async (dispatch) => {
 
     operation.on('response', (data) => {
         navigate(`/repository/${data.alias}/deployment/setup/`);
+    });
+
+    operation.on('finally', () => {
+        dispatch(getMyProfile());
     });
 
     operation.use({
@@ -105,6 +110,7 @@ export const deleteRepository = (id, repositories, navigate) => async (dispatch)
             value: updatedRepositories
         }))
         navigate('/dashboard/');
+        dispatch(getMyProfile());
     });
 
     operation.use({
