@@ -316,7 +316,7 @@ class DockerContainer{
         const networkName = getSystemNetworkName(this.container.user.toString(), dockerNetwork._id.toString());
         const { exposedPorts, bindings } = await this.getPortBindings();
         const volumeMounts: string[] = await this.getContainerVolumes();
-        const binds = this.container.isRepositoryContainer ? [`${this.getDockerStoragePath()}:/app:rw`] : [];
+        const binds = this.container.isRepositoryContainer ? [`${this.getDockerStoragePath()}:/app:rw`] : undefined;
         const environmentVariables = Array.from(this.container.environment.variables.entries()).map(
             ([key, value]) => `${key}=${value}`
         );
