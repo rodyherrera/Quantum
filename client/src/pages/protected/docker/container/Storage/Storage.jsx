@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import Storage from '@components/organisms/Storage';
 import RelatedRepositorySections from '@components/molecules/RelatedRepositorySections';
+import DockerContainerRelatedSections from '@components/molecules/DockerContainerRelatedSections';
 import { setState } from '@services/docker/container/slice';
 import { useSelector, useDispatch } from 'react-redux';
 import { storageExplorer, readContainerFile, updateContainerFile } from '@services/docker/container/operations';
@@ -26,7 +27,7 @@ const DockerContainerStorage = () => {
         name={selectedDockerContainer?.name}
         updateOperation={updateContainerFile}
         isOperationLoading={isOperationLoading}
-        RightContainerComponent={selectedDockerContainer.isRepositoryContainer ? RelatedRepositorySections : undefined}
+        RightContainerComponent={selectedDockerContainer.isRepositoryContainer ? RelatedRepositorySections : DockerContainerRelatedSections}
         updateSelectedFile={updateSelectedFile}
         document={selectedDockerContainer}
         selectedFile={selectedContainerFile}
