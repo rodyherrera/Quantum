@@ -151,10 +151,12 @@ const createUserContainer = async (user: IUser): Promise<IDockerContainer> => {
     return container;
 };
 
-UserSchema.pre('findOneAndDelete', async function(){
+UserSchema.pre('findOneAndDelete', async function (){
     const conditions = this.getQuery();
-    const user = await this.findOne(conditions).populate('container');
-    await cascadeDeleteHandler(user);
+    const user = await this.model.findOne(conditions).populate('container');
+    if(user){
+        await cascadeDeleteHandler(user);
+    }
 });
 
 UserSchema.pre('deleteMany', async function() {
