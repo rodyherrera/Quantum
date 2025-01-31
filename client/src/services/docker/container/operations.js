@@ -41,11 +41,21 @@ export const getMyDockerContainers = ({ page = 1, limit = 50 } = {}) => async (d
     });
 };
 
+export const countContainersByStatus = () => async (dispatch) => {
+    const operation = createOperation(dockerContainerSlice, dispatch);
+    operation.use({
+        api: dockerContainerService.countContainersByStatus,
+        loaderState: 'isContainersByStatusLoading',
+        responseState: 'containersByStatus'
+    });
+};
+
 export const setDockerStatus = (id, status) => async (dispatch) => {
     const operation = createOperation(dockerContainerSlice, dispatch);
     operation.on('finally', () => {
         dispatch(getMyDockerContainers());
         dispatch(getMyProfile());
+        dispatch(countContainersByStatus());
     });
     operation.use({
         api: dockerContainerService.setContainerStatus,
@@ -62,6 +72,7 @@ export const deleteDockerContainer = (id) => async (dispatch) => {
         dispatch(getMyDockerNetworks());
         dispatch(getMyPortBindings());
         dispatch(getMyDockerImages());
+        dispatch(countContainersByStatus());
         dispatch(getMyProfile());
     });
     operation.use({
@@ -132,6 +143,7 @@ export const oneClickDeploy = (body, onResponse = () => {}) => async (dispatch) 
         dispatch(getMyPortBindings());
         dispatch(getMyDockerImages());
         dispatch(getMyProfile());
+        dispatch(countContainersByStatus());
         onResponse();
     });
     operation.use({
@@ -146,6 +158,7 @@ export const createDockerContainer = (body, navigate) => async (dispatch) => {
     operation.on('response', () => {
         navigate('/dashboard/');
         dispatch(getMyProfile());
+        dispatch(countContainersByStatus());
     });
     operation.use({
         api: dockerContainerService.createDockerContainer,

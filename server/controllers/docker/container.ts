@@ -51,6 +51,34 @@ export const getMyDockerContainers = DockerContainerFactory.getAll({
 
 export const updateDockerContainer = DockerContainerFactory.updateOne();
 
+export const countUserContainersByStatus = catchAsync(async (req: IRequest, res: Response) => {
+    const result = await DockerContainer.aggregate([
+        {
+            $match: {
+                user: req.user._id
+            }
+        },
+        {
+            $group: {
+                _id: '$status',
+                count: { $sum: 1 }
+            }
+        },
+        {
+            $match: {
+                _id: { $in: ['running', 'stopped', 'restarting'] }
+            }
+        }
+    ]);
+    console.log(result);
+    const counts = { running: 0, restarting: 0, stopped: 0 };
+    result.forEach((item) => counts[item._id] = item.count);
+    res.status(200).json({
+        status: 'success',
+        data: counts
+    });
+});
+
 const findOrCreateImage = async (
     image: string | IRequestDockerImage,
     userId: string,

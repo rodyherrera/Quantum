@@ -6,16 +6,20 @@ import { TbServerBolt } from "react-icons/tb";
 import { useNavigate } from 'react-router-dom';
 import { gsap } from 'gsap';
 import { setState as coreSetState } from '@services/core/slice';
+import { countContainersByStatus } from '@services/docker/container/operations';
 import './UserStickyFooterStats.css';
 
 const UserStickyFooterStats = () => {
     const { user } = useSelector((state) => state.auth);
     const { isCloudConsoleEnabled } = useSelector(state => state.core);
+    const { containersByStatus } = useSelector((state) => state.dockerContainer);
     const dispatch = useDispatch();
     const containerRef = useRef(null);
     const navigate = useNavigate();
 
     useEffect(() => {
+        dispatch(countContainersByStatus());
+
         const mainRef = document.querySelector('main');
         let lastScrollY = mainRef ? mainRef.scrollTop : 0;
         let isAnimating = false;
@@ -84,13 +88,13 @@ const UserStickyFooterStats = () => {
                         <p className='User-Sticky-Footer-Stats-Item-Content'>{user.containers.length} container(s)</p>
                     </div>
                     <div className='User-Sticky-Footer-Stats-Item'>
-                        <p className='User-Sticky-Footer-Stats-Item-Content'>{user.containers.filter(c => c.status === 'running').length} running</p>
+                        <p className='User-Sticky-Footer-Stats-Item-Content'>{containersByStatus.running} running</p>
                     </div>
                     <div className='User-Sticky-Footer-Stats-Item'>
-                        <p className='User-Sticky-Footer-Stats-Item-Content'>{user.containers.filter(c => c.status === 'stopped').length} stopped</p>
+                        <p className='User-Sticky-Footer-Stats-Item-Content'>{containersByStatus.stopped} stopped</p>
                     </div>
                     <div className='User-Sticky-Footer-Stats-Item'>
-                        <p className='User-Sticky-Footer-Stats-Item-Content'>{user.containers.filter(c => c.status === 'restarting').length} restarting</p>
+                        <p className='User-Sticky-Footer-Stats-Item-Content'>{containersByStatus.restarting} restarting</p>
                     </div>
                 </div>
             </div>

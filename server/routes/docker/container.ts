@@ -14,6 +14,7 @@ router.get('/random-available-port/', dockerContainerController.randomAvailableP
 router.use(authMiddleware.protect);
 router.get('/me/', dockerContainerController.getMyDockerContainers);
 router.post('/', dockerContainerController.createDockerContainer);
+router.get('/count-containers-by-status/', dockerContainerController.countUserContainersByStatus);
 router.post('/one-click-deploy/', dockerContainerController.oneClickDeploy);
 router.post('/:id/status/', ownership, dockerContainerController.containerStatus);
 

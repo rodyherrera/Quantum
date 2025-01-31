@@ -13,7 +13,7 @@
 ****/
 
 import createOperation from '@utilities/api/operationHandler';
-import { getMyDockerContainers } from '@services/docker/container/operations';
+import { getMyDockerContainers, countContainersByStatus } from '@services/docker/container/operations';
 import { getMyDockerNetworks } from '@services/docker/network/operations';
 import { getMyPortBindings } from '@services/portBinding/operations';
 import { getMyProfile } from '@services/authentication/operations';
@@ -41,6 +41,7 @@ export const deleteDockerImage = (id) => async (dispatch) => {
         dispatch(getMyPortBindings());
         dispatch(getMyDockerImages());
         dispatch(getMyProfile());        
+        dispatch(countContainersByStatus());
     });
     operation.use({
         api: dockerImageService.deleteDockerImage,

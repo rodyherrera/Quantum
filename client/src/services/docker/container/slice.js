@@ -17,6 +17,8 @@ import * as reduxUtils from '@utilities/common/reduxUtils';
 
 const state = {
     error: null,
+    isContainersByStatusLoading: true,
+    containersByStatus: { running: 0, restarting: 0, stopped: 0 },
     isLoading: true,
     randomAvailablePort: 0,
     isRandomAvailablePortLoading: true,

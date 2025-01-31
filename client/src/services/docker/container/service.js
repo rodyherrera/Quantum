@@ -21,6 +21,11 @@ export const getMyDockerContainers = DockerContainerAPI.register({
     method: 'GET'
 });
 
+export const countContainersByStatus = DockerContainerAPI.register({
+    path: '/count-containers-by-status/',
+    method: 'GET'
+});
+
 export const oneClickDeploy = DockerContainerAPI.register({
     path: '/one-click-deploy/',
     method: 'POST'
