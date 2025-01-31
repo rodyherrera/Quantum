@@ -46,7 +46,7 @@ const RelatedRepositorySections = ({ isRepositorySelected = true }) => {
             title: 'File Explorer', 
             description: 'Explore and manage your files and folders directly from the browser.',
             icon: CiServer,
-            to: `/repository/${encodeURIComponent(selectedRepository?.alias)}/storage/`
+            to: `/docker-container/${encodeURIComponent(selectedRepository?.container)}/storage/`
         },
         { 
             title: 'Repository CLI', 
