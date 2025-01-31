@@ -10,8 +10,13 @@
 }
 
 .Dashboard-Card-Container-Footer{
-    padding: 0 1rem;
+    padding: 0 1rem .5rem;
     overflow-x: scroll;
+}
+
+.Dashboard-Card-Container-Footer::-webkit-scrollbar-thumb,
+.Dashboard-Card-Container-Footer::-webkit-scrollbar-thumb:hover{
+    background-color: #dadada;
 }
 
 .Dashboard-Card-Container-Footer-Left-Container{
