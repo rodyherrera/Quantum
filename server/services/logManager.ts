@@ -35,6 +35,7 @@ const getLogDir = (id: string): string => {
 const getLogFile = async (logName: string, logDir: string): Promise<string> => {
     await ensureDirectoryExists(logDir);
     const logFile = path.join(logDir, `${logName}.log`);
+    return logFile;
 }
 
 /**
