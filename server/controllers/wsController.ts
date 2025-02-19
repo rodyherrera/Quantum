@@ -60,7 +60,7 @@ const handleCloudConsole = async (socket: ISocket) => {
         const container = await DockerContainer.findById(socket.user.container);
         if(!container) return;
         const containerService = new DockerContainerService(container);
-        await containerService.startSocketShell(socket);
+        await containerService.startSocketShell(socket, '/');
     }catch (error){
         logger.error('@controllers/wsController.ts (handleCloudConsole): ' + error);
     }
