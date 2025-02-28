@@ -6,13 +6,31 @@ PUBLIC_IP=$(curl -s https://api.ipify.org)
 ENV_FILE="./setup-utility/.env"
 
 echo "@deploy-setup-utility.sh: $PUBLIC_IP ok."
+
+echo ""
+echo "Quantum can be deployed in two environments:"
+echo "  1. 🖥️  Local: The address '0.0.0.0' will be used, making the application accessible only within this machine."
+echo "  2. 🌐 Server (Public IP): The public IP obtained from Apify will be used, allowing access from the internet."
+echo ""
+echo "⚠️ IMPORTANT: If you choose the Server option, make sure the required ports are open in the firewall and that the server has a publicly accessible IP."
+echo ""
+echo -n "Do you want to deploy Quantum in your local environment? (0.0.0.0) [y/N]: "
+
+read USE_LOCAL_ENVIRONMENT
+
+if [[ "$USE_LOCAL_ENVIRONMENT" == "y" || "$USE_LOCAL_ENVIRONMENT" == "Y" ]]; then
+  SERVER_IP="0.0.0.0"
+else
+  SERVER_IP="$PUBLIC_IP"
+fi
+
 echo "@deploy-setup-utility.sh: overwriting the value of the SERVER_IP environment variable located in @setup-utility/.env"
 
 if [ -f "$ENV_FILE" ]; then
   if grep -q "^SERVER_IP=" "$ENV_FILE"; then
-    sed -i "s/^SERVER_IP=.*/SERVER_IP=${PUBLIC_IP}/" "$ENV_FILE"
+    sed -i "s/^SERVER_IP=.*/SERVER_IP=${SERVER_IP}/" "$ENV_FILE"
   else
-    echo "SERVER_IP=${PUBLIC_IP}" >> "$ENV_FILE"
+    echo "SERVER_IP=${SERVER_IP}" >> "$ENV_FILE"
   fi
   echo "@deploy-setup-utility.sh: ok."
 else
@@ -49,7 +67,8 @@ sleep 5
 check_port() {
   PORT=$1
   SERVICE_NAME=$2
-  RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" http://$PUBLIC_IP:$PORT/env)
+  ROUTE=$3
+  RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" http://$SERVER_IP:$PORT/$ROUTE)
 
   if [[ "$RESPONSE" -ge 200 && "$RESPONSE" -lt 300 ]]; then
     echo "@deploy-setup-utility.sh: 🟢 "$SERVICE_NAME" was deployed successfully (HTTP $RESPONSE))."
@@ -59,9 +78,9 @@ check_port() {
   fi
 }
 
-check_port $SERVER_PORT "setup-utility-server"
-check_port $CLIENT_PORT "setup-utility-client"
+check_port $SERVER_PORT "setup-utility-server" "env"
+check_port $CLIENT_PORT "setup-utility-client" ""
 
 echo ""
-echo "@deploy-setup-utility.sh: To configure and deploy Quantum, go to: http://$PUBLIC_IP:$CLIENT_PORT/"
+echo "@deploy-setup-utility.sh: To configure and deploy Quantum, go to: http://$SERVER_IP:$CLIENT_PORT/"
 echo "@deploy-setup-utility.sh: Happy hacking."
