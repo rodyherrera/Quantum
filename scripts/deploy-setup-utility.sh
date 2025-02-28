@@ -1,5 +1,13 @@
 #!/bin/bash
 
+# Check if sudo is available
+type sudo &>/dev/null && SUDO_AVAILABLE=1 || SUDO_AVAILABLE=0
+
+if [[ "$SUDO_AVAILABLE" -eq 1 && "$EUID" -ne 0 ]]; then
+  echo "@deploy-setup-utility.sh: ❌ This script must be run as root (with sudo)."
+  exit 1
+fi
+
 echo "@deploy-setup-utility.sh: obtaining public IP address, connecting with https://api.apify.org/..."
 
 PUBLIC_IP=$(curl -s https://api.ipify.org)
