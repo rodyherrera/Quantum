@@ -76,10 +76,10 @@ check_port() {
   PORT=$1
   SERVICE_NAME=$2
   ROUTE=$3
-  RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" http://$SERVER_IP:$PORT/$ROUTE)
+  RESPONSE=$(curl -s --max-time 10 -o /dev/null -w "%{http_code}" http://$SERVER_IP:$PORT/$ROUTE)
 
   if [[ "$RESPONSE" -ge 200 && "$RESPONSE" -lt 300 ]]; then
-    echo "@deploy-setup-utility.sh: 🟢 "$SERVICE_NAME" was deployed successfully (HTTP $RESPONSE))."
+    echo "@deploy-setup-utility.sh: 🟢 "$SERVICE_NAME" was deployed successfully (HTTP $RESPONSE)."
   else
     echo "@deploy-setup-utility.sh: 🔴 "$SERVICE_NAME" did not respond to the request (HTTP $RESPONSE)."
     exit 1
