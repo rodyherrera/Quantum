@@ -1,9 +1,6 @@
 from pathlib import Path
 import asyncio
 import os
-import pty
-import subprocess
-import platform
 import psutil
 import re
 import signal

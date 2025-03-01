@@ -1,7 +1,11 @@
 import os
 import secrets
 from dotenv import dotenv_values
-from core.config import env_path
+from core.config import env_path, setup_utility_env_path
+
+def get_server_ip():
+    env = dotenv_values(setup_utility_env_path)
+    return env['SERVER_IP']
 
 def generate_default_env_variables():
     return {

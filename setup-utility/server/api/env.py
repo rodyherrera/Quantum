@@ -15,7 +15,6 @@ async def set_env(request: Request):
         new_vars = await request.json()
         update_env_variables(new_vars)
         
-        # Ejecutar deploy en segundo plano
         asyncio.create_task(execute_deploy_script())
 
         return {'status': 'success'}
