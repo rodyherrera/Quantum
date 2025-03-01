@@ -76,7 +76,12 @@ check_port() {
   PORT=$1
   SERVICE_NAME=$2
   ROUTE=$3
-  RESPONSE=$(curl -s --max-time 10 -o /dev/null -w "%{http_code}" http://$SERVER_IP:$PORT/$ROUTE)
+  ENDPOINT="http://$SERVER_IP:$PORT/$ROUTE"
+
+  echo ""
+  echo "@deploy-setup-utility.sh: checking for $ENDPOINT"
+
+  RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" $ENDPOINT)
 
   if [[ "$RESPONSE" -ge 200 && "$RESPONSE" -lt 300 ]]; then
     echo "@deploy-setup-utility.sh: 🟢 "$SERVICE_NAME" was deployed successfully (HTTP $RESPONSE)."
