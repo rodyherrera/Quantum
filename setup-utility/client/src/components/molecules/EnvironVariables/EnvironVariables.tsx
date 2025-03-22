@@ -16,8 +16,19 @@ const EnvironVariables = () => {
 
     useEffect(() => {
         if(!serverIP) return;
-        dispatch(setEnvironVariables({ ...environVariables, SERVER_IP: serverIP }));
+        dispatch(setEnvironVariables({ 
+            ...environVariables, 
+            SERVER_IP: serverIP,
+            CLIENT_HOST: `http://${serverIP}:${environVariables.CLIENT_WEB_APP_PORT}`,
+            DOMAIN: `http://${serverIP}:${environVariables.SERVER_PORT}`
+        }));
     }, [dispatch, serverIP]);
+
+    useEffect(() => {
+        dispatch(setEnvironVariables({
+            ...environVariables,
+        }));
+    }, []);
 
     return (
         <React.Fragment>
@@ -31,13 +42,7 @@ const EnvironVariables = () => {
 
             <Input
                 type='text'
-                value={
-                    environVariables.CLIENT_HOST || (
-                        environVariables.SERVER_IP 
-                            ? `http://${environVariables.SERVER_IP}:${environVariables.CLIENT_WEB_APP_PORT}`
-                            : ''
-                    )
-                }
+                value={environVariables.CLIENT_HOST || ''}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('CLIENT_HOST', e.target.value)}
                 placeholder='Client Application Endpoint (e.g. https://quantumapp.com)'
                 helperText='* For example quantumapp.com. Through this domain you can access the web application. Also, if you configure OAuth on Github, you must point to this domain.'
@@ -45,13 +50,7 @@ const EnvironVariables = () => {
 
             <Input
                 type='text'
-                value={
-                    environVariables.DOMAIN || (
-                        environVariables.SERVER_IP 
-                            ? `http://${environVariables.SERVER_IP}:${environVariables.SERVER_PORT}`
-                            : ''
-                    )
-                }
+                value={environVariables.DOMAIN || ''}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('DOMAIN', e.target.value)}
                 placeholder='Server Endpoint (e.g. https://quantumserver.com)'
                 helperText='* For example quantumserver.com. This domain will be used by the client application to make calls to the API.'
