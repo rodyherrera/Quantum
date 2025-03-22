@@ -59,7 +59,6 @@ bash scripts/deploy-setup-utility.sh
 Once executed, the deployment of the tool should begin, **environment variables will be adjusted automatically and this is the reason why we recommend using this method.**
 
 ![Setup Utility Script](/screenshots/Setup-Utility-Script.png)
-![Setup Utility Script Deployed Services](/screenshots/Setup-Utility-Script-Deployed-Services.png)
 ![Setup Utility Script Home Page](/screenshots/Setup-Utility-Home.png)
 ![Setup Utility Script Home Page](/screenshots/Setup-Utility-Quantum-Deployment.png)
 

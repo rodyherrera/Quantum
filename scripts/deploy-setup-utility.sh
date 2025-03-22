@@ -14,15 +14,23 @@ echo "  2. 🌐 Server (Public IP): The public IP obtained from Apify will be us
 echo ""
 echo "⚠️ IMPORTANT: If you choose the Server option, make sure the required ports are open in the firewall and that the server has a publicly accessible IP."
 echo ""
-echo -n "Do you want to deploy Quantum in your local environment? (0.0.0.0) [y/N]: "
 
-read USE_LOCAL_ENVIRONMENT
+echo -n "Choose the environment for deployment (1 for Local, 2 for Server): "
+read DEPLOY_ENV
 
-if [[ "$USE_LOCAL_ENVIRONMENT" == "y" || "$USE_LOCAL_ENVIRONMENT" == "Y" ]]; then
-  SERVER_IP="0.0.0.0"
-else
-  SERVER_IP="$PUBLIC_IP"
-fi
+case $DEPLOY_ENV in
+  '1')
+    echo "You have selected Local. Deploying Quantum with address 0.0.0.0..."
+    SERVER_IP="0.0.0.0"
+    ;;
+  '2')
+    echo "You have selected Server. Deploying Quantum with Public IP $PUBLIC_IP..."
+    SERVER_IP="$PUBLIC_IP"
+    ;;
+  *)
+    echo "Invalid selection. Please choose 1 for Local or 2 for Server."
+    ;;
+esac
 
 echo "@deploy-setup-utility.sh: overwriting the value of the SERVER_IP environment variable located in @setup-utility/.env"
 
@@ -55,7 +63,7 @@ echo "@deploy-setup-utility.sh: killing processes using ports $SERVER_PORT and $
 fuser -k ${SERVER_PORT}/tcp > /dev/null 2>&1
 fuser -k ${CLIENT_PORT}/tcp > /dev/null 2>&1
 
-echo "@deploy-setup-utility.sh: deploying via docker compose..."
+echo "@deploy-setup-utility.sh: deploying services..."
 sleep 2
 set -e
 
