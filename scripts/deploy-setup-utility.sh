@@ -1,13 +1,5 @@
 #!/bin/bash
 
-# Check if sudo is available
-type sudo &>/dev/null && SUDO_AVAILABLE=1 || SUDO_AVAILABLE=0
-
-if [[ "$SUDO_AVAILABLE" -eq 1 && "$EUID" -ne 0 ]]; then
-  echo "@deploy-setup-utility.sh: ❌ This script must be run as root (with sudo)."
-  exit 1
-fi
-
 echo "@deploy-setup-utility.sh: obtaining public IP address, connecting with https://api.apify.org/..."
 
 PUBLIC_IP=$(curl -s https://api.ipify.org)
@@ -65,8 +57,32 @@ fuser -k ${CLIENT_PORT}/tcp > /dev/null 2>&1
 
 echo "@deploy-setup-utility.sh: deploying via docker compose..."
 sleep 2
+set -e
 
-docker compose -f ./setup-utility/docker-compose.yml up -d --build --force-recreate
+cd setup-utility/server || { echo "Error: setup-utility/server not found."; exit 1; }
+
+# Crear y activar entorno virtual
+if [ ! -d "venv" ]; then
+    virtualenv venv
+fi
+source venv/bin/activate
+
+echo "@deploy-setup-utility.sh: Installing server dependencies..."
+pip install -r requirements.txt > server-install.log 2>&1 || { echo "❌ Server dependencies installation failed. Check server-install.log for details."; exit 1; }
+echo "✅ Server dependencies installed successfully."
+echo ""
+
+bash start.sh &
+
+cd ../client
+
+echo "@deploy-setup-utility.sh: Installing client dependencies..."
+npm install --force > client-install.log 2>&1 || { echo "❌ Client dependencies installation failed. Check client-install.log for details."; exit 1; }
+echo "✅ Client dependencies installed successfully."
+echo ""
+
+echo "@deploy-setup-utility.sh: Starting the client..."
+npm run dev > client.log 2>&1 &
 
 echo "@deploy-setup-utility.sh: checking if the services were deployed correctly..."
 
