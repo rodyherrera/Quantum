@@ -11,3 +11,5 @@ RUN chmod +x start.sh
 EXPOSE 80
 
 CMD ["/bin/bash", "-c", "npm install; npm start"]
+
+RUN echo '@deploy.sh: STEP 4...'

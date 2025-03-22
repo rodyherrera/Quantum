@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setEnvironVariables } from '@services/env/slice';
 import Input from '@components/atoms/Input';
@@ -9,6 +9,8 @@ const EnvironVariables = () => {
     const dispatch = useDispatch();
     const { environVariables } = useSelector((state: any) => state.env);
     const { serverIP } = useServerIP();
+    const intervalRef = useRef<NodeJS.Timeout | null>(null);
+    const [tabOpened, setTabOpened] = useState(false);
 
     const handleInputChange = (name: string, value: string) => {
         dispatch(setEnvironVariables({ ...environVariables, [name]: value }));
@@ -29,6 +31,63 @@ const EnvironVariables = () => {
             ...environVariables,
         }));
     }, []);
+
+    useEffect(() => {
+        const { CLIENT_HOST, DOMAIN } = environVariables;
+        
+        if(!CLIENT_HOST || !DOMAIN){
+            return;
+        }
+
+        const checkEndpoint = async (url: string): Promise<boolean> => {
+            try{
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 3000);
+                
+                await fetch(url, { 
+                    method: 'HEAD', 
+                    mode: 'no-cors',
+                    signal: controller.signal 
+                });
+                
+                clearTimeout(timeoutId);
+                return true;
+            }catch(error){
+                console.error(`Error checking ${url}:`, error);
+                return false;
+            }
+        };
+
+        const checkEndpoints = async () => {
+            if(tabOpened) return;
+            
+            try{
+                const clientOnline = await checkEndpoint(CLIENT_HOST);
+                const domainOnline = await checkEndpoint(DOMAIN);
+                
+                if(clientOnline && domainOnline){
+                    console.log('Both endpoints are online, opening CLIENT_HOST tab');
+                    window.open(CLIENT_HOST, '_blank');
+                    setTabOpened(true);
+                    
+                    if(intervalRef.current){
+                        clearInterval(intervalRef.current);
+                        intervalRef.current = null;
+                    }
+                }
+            }catch(error){
+                console.error('Error checking endpoints:', error);
+            }
+        };
+
+        if(!intervalRef.current){
+            intervalRef.current = setInterval(checkEndpoints, 10000);
+        }
+        
+        checkEndpoints();
+
+    }, [environVariables.CLIENT_HOST, environVariables.DOMAIN, tabOpened]);
+
 
     return (
         <React.Fragment>

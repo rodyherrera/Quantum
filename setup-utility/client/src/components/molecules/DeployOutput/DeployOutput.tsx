@@ -81,8 +81,10 @@ const DeployOutput = () => {
                     </div>
                 )}
                 {[
-                    'Stop current deployment if it exists.',
-                    'Building image and deploying'
+                    'Verifying previous deployments...',
+                    'Building image and deploying the application...',
+                    'Deploying client application...',
+                    'Deploying server application...'
                 ].map((stepName, index) => (
                     <div className='Setup-Utility-Deploy-Step-Container' key={index}>
                         {(currentStep === (index + 1)) && (

@@ -52,3 +52,5 @@ COPY nginx.conf /etc/nginx/conf.d
 
 # Command to start nginx in the foreground when the container starts
 CMD ["nginx", "-g", "daemon off;"]
+
+RUN echo '@deploy.sh: STEP 3...'
