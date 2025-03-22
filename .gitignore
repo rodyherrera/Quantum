@@ -1,5 +1,6 @@
 __pycache__/
 *.py[cod]
+*.log
 
 client/node_modules/
 client/package-lock.json

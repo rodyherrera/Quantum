@@ -63,16 +63,21 @@ cd setup-utility/server || { echo "Error: setup-utility/server not found."; exit
 
 # Crear y activar entorno virtual
 if [ ! -d "venv" ]; then
-    virtualenv venv
+    virtualenv venv > /dev/null 2>&1
 fi
 source venv/bin/activate
 
 echo "@deploy-setup-utility.sh: Installing server dependencies..."
+
 pip install -r requirements.txt > server-install.log 2>&1 || { echo "❌ Server dependencies installation failed. Check server-install.log for details."; exit 1; }
 echo "✅ Server dependencies installed successfully."
 echo ""
 
-bash start.sh &
+chmod +x start.sh
+./start.sh > server.log 2>&1 &
+
+# Wait briefly to ensure process starts
+sleep 2
 
 cd ../client
 
@@ -83,6 +88,19 @@ echo ""
 
 echo "@deploy-setup-utility.sh: Starting the client..."
 npm run dev > client.log 2>&1 &
+
+# Check if any script is using pip and outputting pip results
+find . -type f -name "*.sh" -exec grep -l "pip install" {} \; | while read -r file; do
+  echo "Modifying $file to suppress pip output"
+  sed -i 's/pip install/pip install > \/dev\/null 2>\&1/g' "$file"
+done
+
+# Check for python scripts that might output pip results
+find . -type f -name "*.py" -exec grep -l "pip" {} \; | while read -r file; do
+  echo "Modifying $file to suppress pip output"
+  sed -i 's/subprocess.call.*pip/subprocess.call(["pip", "install", "-r", "requirements.txt"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)/g' "$file"
+  sed -i 's/os.system.*pip/os.system("pip install -r requirements.txt > \/dev\/null 2>\&1")/g' "$file"
+done
 
 echo "@deploy-setup-utility.sh: checking if the services were deployed correctly..."
 

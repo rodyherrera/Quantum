@@ -20,11 +20,10 @@ fi
 CURRENT_HASH=$(sha256sum "$REQUIREMENTS_FILE" | awk '{print $1}')
 
 if [ "$PREV_HASH" != "$CURRENT_HASH" ]; then
-    echo "@setup-utility: installing requirements..."
-    pip install -r "$REQUIREMENTS_FILE"
+    pip install > /dev/null 2>&1 -r "$REQUIREMENTS_FILE"
     echo "$CURRENT_HASH" > "$HASH_FILE"
 else
-    echo "@setup-utility: requirements already installed."
+    : # Suppressing setup-utility message
 fi
 
 # Get the path of uvicorn
@@ -52,7 +51,7 @@ $SUDO $UVICORN_PATH main:app \
     --access-log \
     --no-server-header &
 
-echo "@setup-utility: server deployed successfully and running on http://$HOST:$PORT"
+: # Suppressing setup-utility message
 
 # Wait for uvicorn to finish
 wait
