@@ -71,7 +71,6 @@ const parseEnvironVariables = async (
 
     for(let [key, value] of envEntries){
         value = value.replace('{server_ip}', process.env.SERVER_IP || 'localhost');
-
         let match;
         while ((match = husbandPortRegex.exec(value)) !== null) {
             // match[0] e.g. "${n8n-DB.externalPort}"
