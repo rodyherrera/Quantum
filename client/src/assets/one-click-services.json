@@ -35,7 +35,8 @@
         {
             "name": "Directus-Redis-DB",
             "image": { "name": "redis", "tag": "latest" },
-            "ports": [{ "protocol": "tcp", "internalPort": 6379 }]
+            "ports": [{ "protocol": "tcp", "internalPort": 6379 }],
+            "command": "/bin/sh"
         },
         {
             "name": "Directus-Postgres-DB",
@@ -46,9 +47,11 @@
                 "POSTGRES_USER": "directus",
                 "POSTGRES_PASSWORD": "directus",
                 "POSTGRES_DB": "directus"
-            }
+            },
+            "command": "/bin/sh"
         }
-    ]
+    ],
+    "command": "/bin/sh"
 }, {
     "name": "Uptime Kuma",
     "description": "Self-hosted, open-source, fancy uptime monitoring and alerting system.",
@@ -63,7 +66,8 @@
     },
     "volumes": [{
         "containerPath": "/app/data"
-    }]
+    }],
+    "command": "/bin/sh"
 }, {
     "name": "Appsmith",
     "description": "Build better apps, faster, with fewer resources. Leading companies are innovating with Appsmith.",
@@ -78,7 +82,8 @@
     }],
     "volumes": [{
         "containerPath": "/appsmith-stacks"
-    }]
+    }],
+    "command": "/bin/sh"
 }, {
     "name": "ownCloud",
     "description": "An open-source file sync, share and content collaboration software.",
@@ -98,7 +103,8 @@
     },
     "volumes": [{
         "containerPath": "/mnt/data"
-    }]
+    }],
+    "command": "/bin/sh"
 }, {
     "name": "ActivePieces",
     "description": "Automation software that's AI-first, no-code & open-source",
@@ -118,7 +124,8 @@
     "image": {
         "name": "activepieces/activepieces",
         "tag": "latest"
-    }
+    },
+    "command": "/bin/sh"
 }, {
     "name": "n8n",
     "description": "Secure and AI-native workflow automation tool for technical people. Insert code when you need it.",
@@ -164,7 +171,8 @@
     "image": {
         "name": "docker.n8n.io/n8nio/n8n",
         "tag": "latest"
-    }
+    },
+    "command": "/bin/sh"
 }, {
     "name": "Tooljet",
     "website": "https://www.tooljet.com/",
@@ -179,7 +187,8 @@
     "image": {
         "name": "tooljet/try",
         "tag": "ee-lts-latest"
-    }
+    },
+    "command": "/bin/sh"
 }, {
     "name": "Ollama",
     "website": "https://ollama.com/",
@@ -213,7 +222,8 @@
     "ports": [{
         "protocol": "tcp",
         "internalPort": "7575"
-    }]
+    }],
+    "command": "/bin/sh"
 }, {
     "name": "Eclipse Mosquitto",
     "description": "An open source message broker which implements MQTT version 5, 3.1.1 and 3.1.",
@@ -250,7 +260,8 @@
         "PMA_PORT": "Port of the MySQL/MariaDB server",
         "PMA_USER": "MySQL/MariaDB user",
         "PMA_PASSWORD": "MySQL/MariaDB password"
-    }
+    },
+    "command": "/bin/sh"
 }, {
     "name": "Mongo",
     "description": "MongoDB document databases provide high availability and easy scalability.",
@@ -274,7 +285,8 @@
     "environment": {
         "MONGO_INITDB_ROOT_USERNAME": "root",
         "MONGO_INITDB_ROOT_PASSWORD": "example"
-    }
+    },
+    "command": "/bin/sh"
 }, {
     "name": "MariaDB",
     "description": "One of the most popular open source relational databases.",
@@ -319,7 +331,8 @@
         "POSTGRES_DB": "default",
         "POSTGRES_NON_ROOT_USER": "non-root",
         "POSTGRES_NON_ROOT_PASSWORD": "changeme"
-    }
+    },
+    "command": "/bin/sh"
 }, {
     "name": "MySQL",
     "description": "MySQL is a widely used, open-source relational database management system (RDBMS).",
@@ -340,7 +353,8 @@
         "MYSQL_ROOT_PASSWORD": "my-secret-pw",
         "MYSQL_ALLOW_EMPTY_PASSWORD": "yes",
         "MYSQL_RANDOM_ROOT_PASSWORD": "yes"
-    }
+    },
+    "command": "/bin/sh"
 }, {
     "name": "Kali Linux",
     "description": "Penetration Testing and Ethical Hacking Linux Distribution.",

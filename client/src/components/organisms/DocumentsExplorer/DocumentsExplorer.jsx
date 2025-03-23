@@ -1,6 +1,7 @@
 import React from 'react';
 import { GoArrowDownLeft } from 'react-icons/go';
 import { Pagination } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 import Loader from '@components/atoms/Loader';
 import './DocumentsExplorer.css';
 
@@ -16,10 +17,12 @@ const DocumentsExplorer = ({
     Render,
     rowsTitles
 }) => {
+    const navigate = useNavigate();
+
     return (
         <main className='Documents-Explorer-Main'>
             <section className='Documents-Sidebar-Container'>
-                <article className='Documents-Sidebar-Top-Container'>
+                <article className='Documents-Sidebar-Top-Container' onClick={() => navigate(-1)}>
                     <article className='Documents-Sidebar-Header-Container'>
                         <i className='Documents-Sidebar-Header-Back-Icon-Container'>
                             <GoArrowDownLeft />
