@@ -15,7 +15,6 @@
 - [Obtaining GitHub Client Secret and Client ID](#obtaining-github-client-secret-and-client-id)
 - [Using NGINX as a Reverse Proxy](#using-nginx-as-a-reverse-proxy)
 - [The Quantum CLI & Admin User Creation](#the-quantum-cli--admin-user-creation)
-- [How Does This Work?](#how-does-this-work)
 - [Where Are Repositories and Logs Stored?](#where-are-repositories-and-logs-stored)
 - [What Happens When the Server Is Closed?](#what-happens-when-the-server-is-closed)
 - [Custom Domains for Your Deployments](#custom-domains-for-your-deployments)
@@ -225,28 +224,6 @@ When deploying Quantum, you must use this CLI, since user registration for secur
 
 ![Quantum CLI](/screenshots/QuantumCLI.png)
 
-## How does this work?
-
-When you create an account on Quantum, a Docker instance is spawned within the host server, using the 'alpine:linux' image. Each user is allocated a dedicated Docker instance where their logs and repositories are stored and executed. This setup ensures isolation between users, enabling precise control over their deployments and management.
-
-When a user initiates the creation of a repository or deployment, they select it from the list of public or private repositories associated with their account. The chosen repository is then cloned into their Docker instance. Subsequently, in the web UI, they are directed to the "Build & Dev Settings" page. Here, they configure essential commands for deploying the repository, such as installation, build, and start commands.
-
-Additionally, users have the option to modify the "rootDirectory" parameter, specifying the directory within their repository where these commands should be executed. This is particularly useful if their application is not located in the root directory ("/") of their repository.
-
-Once these parameters are configured, the deployment is created in Quantum and registered in their GitHub repository. A webhook is automatically generated in their repository to listen for commits. Consequently, whenever a commit is made, the repository is redeployed automatically, ensuring seamless updates.
-
-Upon cloning the repository, Quantum initiates a mapping process for environment files. Any environment files detected are then loaded into the database. This preemptive action ensures that project variables are readily available, eliminating the need for manual creation. Users retain the flexibility to modify, add, or delete environment variables as needed.
-
-In addition to accessing the CLI and viewing the deployment log of your repository, which allows you to execute commands directly within your repository instance, you also have access to the "Cloud Console". This feature enables you to execute commands within your Docker instance. It proves useful when you require the installation of additional packages for deploying your repositories.
-
-Moreover, upon starting your instance, the "apk" packages are automatically updated, and common development packages like git, npm, nodejs, and python are installed by default.
-
-When the server is started after it has been shut down/restarted, the users' Docker instances and their repositories will automatically start.
-
-When a user deletes their account, all associated deployments and repositories are permanently removed from the platform's database and file system. This deletion process extends to their Docker instance as well, ensuring a clean slate. It's important to note that this action is irreversible.
-
-Regarding deployments, Quantum takes responsibility for deleting them from GitHub, but only if the deployment is exclusively linked to Quantum. If the repository contains deployments from other platforms like Vercel or Heroku, they remain unaffected. Additionally, any webhooks created to monitor repository commits are also deleted as part of this process.
-
 ## Custom domains for your deployments
 Regardless of the service you have deployed (whether it’s a GitHub repository or a Docker application), once you have exposed the port, you can use a reverse proxy to, among other things, assign a domain to your application. For instance, with NGINX Reverse Proxy you can:
 
@@ -277,13 +254,6 @@ When initiating the shutdown of the host server (Quantum Server), it won't close
 Similarly, upon restarting the server, the platform bootloader takes charge of mounting all users' Docker instances during server runtime. Once these Docker instances are successfully started, the bootloader proceeds to launch the repositories of all users within their respective instances. Please note that this startup process may require a few minutes, depending on your hardware specifications and the number of users on the platform.
 
 If a server crash occurs, it won't simply shut down. Instead, the error will be displayed in the console, and the server will promptly initiate an automatic restart. If the error persists and another occurrence happens, the server will persistently attempt to restart until it can do so successfully. This proactive approach is vital for security reasons; it ensures that deployments aren't compromised due to server issues without the user's awareness. Therefore, the server diligently strives to recover and restart after any crash, safeguarding the continuity of operations.
-
-## How can I migrate to new versions?
-While there's currently no streamlined tool for easily uploading a new version, migrating to a fresh iteration of the platform isn't a daunting task. This is because crucial data pertaining to logs and repository information resides securely within the host server. Even if you were to remove the Docker container, delete the source code, or take any other action, your repositories and logs persist within "/var/lib/quantum/" and, of course, within your database.
-
-Should you wish to transition to a newer version of Quantum, the process is straightforward. Simply retain the ".env" files located within the "client/" and "server/" directories. Once the updated Quantum version is cloned, reintegrate these files into their respective directories.
-
-With these steps completed, all that's left is to redeploy—whether through Docker or from the source code. Everything will remain intact, as neither the database nor your files in "/var/lib/quantum/" will be affected.
 
 ## We'd love your feedback and support!
 Your involvement is vital to make Quantum the best it can be. Here's how you can get involved:
