@@ -309,8 +309,8 @@ class DockerContainer{
         }
         return volumes;
     }
-    
-    async createContainer(): Promise<Dockerode.Container> {
+
+    async getDockerOptions(){
         const dockerImage = await this.getDockerImage();
         const dockerNetwork = await this.getDockerNetwork();
         const networkName = getSystemNetworkName(this.container.user.toString(), dockerNetwork._id.toString());
@@ -320,6 +320,7 @@ class DockerContainer{
         const environmentVariables = Array.from(this.container.environment.variables.entries()).map(
             ([key, value]) => `${key}=${value}`
         );
+
         const options = {
             Image: `${dockerImage.name}:${dockerImage.tag}`,
             name: this.container.dockerContainerName,
@@ -344,9 +345,76 @@ class DockerContainer{
                 RestartPolicy: { Name: 'always' },
             },
         };
+
+        return options;
+    }
     
+    async createContainer(): Promise<Dockerode.Container> {
+        const options = await this.getDockerOptions();
         const container = await docker.createContainer(options);
         return container;
+    }
+
+    async reloadContainer(): Promise<void>{
+        try{
+            const containerName = this.container.dockerContainerName;
+            const container = docker.getContainer(containerName);
+            const containerInfo = await container.inspect();
+            const isRunning = containerInfo.State.Running;
+            if(isRunning){
+                await container.stop({ t: 10 });
+                logger.info(`@services/docker/container.ts (reloadContainer): Stopped container ${containerName} for environment update`);
+            }
+
+            const tempImageName = `temp-${containerName}-${Date.now()}`;
+            await container.commit({ repo: tempImageName });
+            logger.info(`@services/docker/container.ts (reloadContainer): Created temporary image of container ${containerName}`);
+            const existingBinds = containerInfo.HostConfig.Binds || [];
+            const existingVolumes = (containerInfo.Mounts || [])
+                .filter((mount) => mount.Type === 'volume')
+                .map((mount) => ({
+                    Source: mount.Name,
+                    Target: mount.Destination,
+                    Type: 'volume',
+                    ReadOnly: mount.RW === false
+                }));
+            await container.remove({ force: true, v: false });
+            logger.info(`@services/docker/container.ts (reloadContainer): Removed old container ${containerName} without removing volumes`);
+
+            const newOptions = await this.getDockerOptions();
+            if(!newOptions.HostConfig.Binds && existingBinds.length > 0){
+                newOptions.HostConfig.Binds = existingBinds;
+            }
+
+            if(!newOptions.HostConfig.Mounts && existingVolumes.length > 0){
+                newOptions.HostConfig.Mounts = existingVolumes;
+            }
+
+            newOptions.Image = tempImageName;
+            const newContainer = await docker.createContainer({
+                ...newOptions,
+                name: containerName
+            });
+
+            if(isRunning){
+                await newContainer.start();
+                await this.container.updateOne({ status: 'running' });
+                logger.info(`@services/docker/container.ts (reloadContainer): Started recreated container ${containerName} with updated environment`);
+            }else{
+                await this.container.updateOne({ status: 'stopped' });
+                logger.info(`@services/docker/container.ts (reloadContainer): Created container ${containerName} with updated environment (not started)`);
+            }
+
+            const tempImage = docker.getImage(tempImageName);
+            await tempImage.remove({ force: true });
+            logger.info(`@services/docker/container.ts (reloadContainer): Removed temporary image ${tempImageName}`);
+            
+            return newContainer;
+        }catch(error){
+            logger.error(`@services/docker/container.ts (reloadContainer): ${error}`);
+            await this.container.updateOne({ status: 'error' });
+            throw error;
+        }
     }
     
     async removeContainer(){
@@ -379,14 +447,6 @@ class DockerContainer{
         }catch(error){
             logger.error('@services/docker/container.ts (removeContainer): ' + error);
         }
-    }
-
-    async recreateContainer(): Promise<any> {
-        const container = docker.getContainer(this.container.dockerContainerName);
-        if(container){
-            await container.remove({ force: true });
-        }
-        await this.initializeContainer();
     }
 
     async stop(): Promise<void>{

@@ -128,15 +128,15 @@ DockerContainerSchema.pre('findOneAndUpdate', async function (next){
 
     if(modifiedPaths.includes('environment') || modifiedPaths.includes('command')){
         const doc = await this.model.findOne(this.getQuery());
-        logger.debug(`@models/docker/container.ts (findOneAndUpdate): Recreating container (${doc.dockerContainerName}) with new environment variables...`);
+        logger.info(`@models/docker/container.ts (findOneAndUpdate): Recreating container (${doc.dockerContainerName}) with new environment variables...`);
         if(!doc) return next();
         const typedUpdate = update as UpdateQuery<IDockerContainer>;
         if(typedUpdate.environment){
             Object.assign(doc.environment, typedUpdate.environment);
         }
         const containerService = new DockerContainerService(doc);
-        await containerService.recreateContainer();
-        logger.debug(`@models/docker/container.ts (findOneAndUpdate): Recreated (${doc.dockerContainerName}).`);
+        await containerService.reloadContainer();
+        logger.info(`@models/docker/container.ts (findOneAndUpdate): Recreated (${doc.dockerContainerName}).`);
     }
 
     // If we're updating environment variables, handle encryption

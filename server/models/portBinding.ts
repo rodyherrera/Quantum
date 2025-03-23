@@ -45,7 +45,7 @@ const cascadeDeleteHandler = async (document: IPortBinding, options: { [key: str
     const container = await mongoose.model('DockerContainer').findOneAndUpdate({ _id: document.container }, update);
     if(!container) return;
     const containerService = new DockerContainerService(container);
-    await containerService.recreateContainer();
+    await containerService.reloadContainer();
 };
 
 PortBindingSchema.post('findOneAndDelete', async function(deletedDoc: IPortBinding){
@@ -65,7 +65,7 @@ PortBindingSchema.post('save', async function(){
     const container = await DockerContainer.findById(this.container);
     if(container?.ipAddress && this.externalPort){
         const containerService = new DockerContainerService(container);
-        await containerService.recreateContainer();
+        await containerService.reloadContainer();
     }
 });
 
