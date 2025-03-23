@@ -14,7 +14,7 @@
 - [Features](#features)
 - [Obtaining GitHub Client Secret and Client ID](#obtaining-github-client-secret-and-client-id)
 - [Using NGINX as a Reverse Proxy](#using-nginx-as-a-reverse-proxy)
-- [The Quantum CLI](#the-quantum-cli)
+- [The Quantum CLI & Admin User Creation](#the-quantum-cli--admin-user-creation)
 - [How Does This Work?](#how-does-this-work)
 - [Where Are Repositories and Logs Stored?](#where-are-repositories-and-logs-stored)
 - [What Happens When the Server Is Closed?](#what-happens-when-the-server-is-closed)
@@ -209,7 +209,7 @@ You should see your Quantum application served via NGINX at your custom domain.
 
 **That’s it!** You have successfully set up NGINX as a reverse proxy for your Quantum deployment. From now on, you can access your Quantum server (and any associated front-end or back-end services) via the domain name(s) you configured, without needing to remember the internal ports or IP addresses.
 
-## The Quantum CLI 
+## The Quantum CLI & Admin User Creation
 Through the CLI, you can create a user account as an administrator, reestablish the database among other options provided by the platform for management purposes.
 
 In order to access the CLI, you must go to the "server" directory, and there execute the "npm run cli" command, followed by this, the program will start and you must choose the option you want to use in the administrator.
