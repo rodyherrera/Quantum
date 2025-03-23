@@ -1,6 +1,6 @@
 .Dashboard-Module-Body-Container{
-    max-height: 350px;
-    height: 350px;
+    max-height: 450px;
+    height: 450px;
     overflow-y: scroll;
     position: relative;
 }

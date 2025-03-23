@@ -23,6 +23,7 @@ import createOperation from '@utilities/api/operationHandler';
  * @param {function} dispatch - Redux dispatch function.
 */
 const handleAuthResponse = (data, dispatch) => {
+    if(!data) return;
     dispatch(authSlice.setState({ path: 'user', value: data.user }));
     dispatch(authSlice.setState({ path: 'authStatus.isAuthenticated', value: true }));
 };
