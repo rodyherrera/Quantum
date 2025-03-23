@@ -70,7 +70,6 @@ export const countUserContainersByStatus = catchAsync(async (req: IRequest, res:
             }
         }
     ]);
-    console.log(result);
     const counts = { running: 0, restarting: 0, stopped: 0 };
     result.forEach((item) => counts[item._id] = item.count);
     res.status(200).json({

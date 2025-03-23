@@ -1,5 +1,5 @@
 import { DashboardCardBody } from '@components/atoms/DashboardCard';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { setState as repoSetState } from '@services/repository/slice';
@@ -25,10 +25,6 @@ const RepositoryBody = ({ repository }) => {
         navigate(path);
     };
     
-    useEffect(() => {
-        console.log(repository);
-    }, [repository]);
-
     return (
         <ConfirmModal
             highlightTitle='Delete'
