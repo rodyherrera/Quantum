@@ -1,6 +1,7 @@
 import mongoose, { Document } from 'mongoose';
 
 export interface IDockerContainerEnvironment{
+    isEncrypted: boolean;
     variables: Map<string, string>;
 }
 

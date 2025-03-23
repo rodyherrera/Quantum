@@ -1,6 +1,7 @@
 import mongoose, { Schema, Model, UpdateQuery } from 'mongoose';
 import { IDockerContainer } from '@typings/models/docker/container';
 import DockerContainerService, { getContainerStoragePath, getSystemDockerName } from '@services/docker/container';
+import { encrypt, decrypt } from '@utilities/encryption';
 import logger from '@utilities/logger';
 
 const DockerContainerSchema: Schema<IDockerContainer> = new Schema({
@@ -60,6 +61,10 @@ const DockerContainerSchema: Schema<IDockerContainer> = new Schema({
         type: Date
     },
     environment: {
+        isEncrypted: {
+            type: Boolean,
+            default: false
+        },
         variables: {
             type: Map,
             of: String,
@@ -120,10 +125,11 @@ DockerContainerSchema.pre('findOneAndUpdate', async function (next){
         return next();
     }
     const modifiedPaths = Object.keys(update);
+
     if(modifiedPaths.includes('environment') || modifiedPaths.includes('command')){
         const doc = await this.model.findOne(this.getQuery());
         logger.debug(`@models/docker/container.ts (findOneAndUpdate): Recreating container (${doc.dockerContainerName}) with new environment variables...`);
-        if(!doc) return;
+        if(!doc) return next();
         const typedUpdate = update as UpdateQuery<IDockerContainer>;
         if(typedUpdate.environment){
             Object.assign(doc.environment, typedUpdate.environment);
@@ -132,6 +138,50 @@ DockerContainerSchema.pre('findOneAndUpdate', async function (next){
         await containerService.recreateContainer();
         logger.debug(`@models/docker/container.ts (findOneAndUpdate): Recreated (${doc.dockerContainerName}).`);
     }
+
+    // If we're updating environment variables, handle encryption
+    if(modifiedPaths.includes('environment')){
+        const typedUpdate = update as UpdateQuery<IDockerContainer>;
+        if(typedUpdate.environment && typedUpdate.environment.variables){
+            const doc = await this.model.findOne(this.getQuery());
+            if(!doc) return next();
+            
+            const updatedVariables = typedUpdate.environment.variables;
+            const encryptedVariables = new Map<string, string>();
+            for(const [key, value] of Object.entries(updatedVariables)){
+                encryptedVariables.set(key, encrypt(value));
+            }
+
+            typedUpdate.environment.variables = encryptedVariables;
+            typedUpdate.environment.isEncrypted = true;
+        }
+    }
+});
+
+DockerContainerSchema.post('find', function(docs){
+    if(!docs) return docs;
+    for(const doc of docs){
+        if(doc.environment && doc.environment.isEncrypted){
+            const encryptedVars = new Map(doc.environment.variables);
+            const decryptedVars = new Map<string, string>();
+            for(const [key, value] of encryptedVars.entries()){
+                decryptedVars.set(key, decrypt(value));
+            }
+            doc.environment.variables = decryptedVars;
+        }
+    }
+    return docs;
+});
+
+DockerContainerSchema.post('findOne', function(doc){
+    if(!doc || !doc.environment || !doc.environment.isEncrypted) return doc;
+    const encryptedVars = new Map(doc.environment.variables);
+    const decryptedVars = new Map<string, string>();
+    for(const [key, value] of encryptedVars.entries()){
+        decryptedVars.set(key, decrypt(value));
+    }
+    doc.environment.variables = decryptedVars;
+    return doc;
 });
 
 DockerContainerSchema.pre('save', async function (next){
@@ -160,7 +210,14 @@ DockerContainerSchema.pre('save', async function (next){
             // TODO: Implement logic to be able to deploy the container with 
             // a different network, that is, one that can be changed.
             await mongoose.model('DockerNetwork').updateOne({ _id: this.network }, update);
-            this.status = 'running';
+        }
+        if(!this.environment.isEncrypted && this.environment.variables.size > 0){
+            const encryptedVariables = new Map<string, string>();
+            for(const [key, value] of this.environment.variables.entries()){
+                encryptedVariables.set(key, encrypt(value));
+            }
+            this.environment.variables = encryptedVariables;
+            this.environment.isEncrypted = true;
         }
         next();
     }catch(error: any){
