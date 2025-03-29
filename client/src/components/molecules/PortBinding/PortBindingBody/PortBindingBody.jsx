@@ -4,11 +4,13 @@ import { useDispatch } from 'react-redux';
 import { setState as dockerNetworkSetState } from '@services/docker/network/slice';
 import { setState as dockerImageSetState } from '@services/docker/image/slice';
 import { setState as dockerContainerSetState } from '@services/docker/container/slice';
+import useServerIP from '@hooks/api/server/useServerIP';
 import useDeletePortBinding from '@hooks/api/portBinding/useDeletePortBinding';
 import './PortBindingBody.css';
 
 const PortBindingBody = ({ portBinding }) => {
     const dispatch = useDispatch();
+    const { serverIP } = useServerIP();
     const deletePortBinding = useDeletePortBinding(portBinding._id);
 
     const selectDockerNetwork = () => {
@@ -36,7 +38,7 @@ const PortBindingBody = ({ portBinding }) => {
 
     return (
         <DashboardCardBody
-            name={`${portBinding.container.ipAddress}:${portBinding.internalPort}->${portBinding.externalPort}`}
+            name={`${serverIP}:${portBinding.externalPort} points to ${portBinding.container.ipAddress}:${portBinding.internalPort}`}
             ctxMenuOpts={ctxMenuOpts}
             createdAt={portBinding.createdAt}
             updatedAt={portBinding.updatedAt}
