@@ -4,7 +4,7 @@ import slugify from 'slugify';
 import PortBinding from '@models/portBinding';
 import { Socket } from 'socket.io';
 import { ensureDirectoryExists } from '@utilities/helpers';
-import { createLogStream, setupSocketEvents } from '@services/logManager';
+import { createLogStream, setupSocketEvents, shells } from '@services/logManager';
 import { pullImage } from '@services/docker/image';
 import { IDockerContainer, FileInfo, ExecResult } from '@typings/models/docker/container';
 import { IDockerImage } from '@typings/models/docker/image';
@@ -357,6 +357,7 @@ class DockerContainer{
 
     async reloadContainer(): Promise<void>{
         try{
+            shells.delete(this.container._id.toString());
             const containerName = this.container.dockerContainerName;
             const container = docker.getContainer(containerName);
             const containerInfo = await container.inspect();
