@@ -357,6 +357,7 @@ class DockerContainer{
 
     async reloadContainer(): Promise<void>{
         try{
+            await this.container.updateOne({ status: 'reloading' });
             shells.delete(this.container._id.toString());
             const containerName = this.container.dockerContainerName;
             const container = docker.getContainer(containerName);
@@ -409,7 +410,8 @@ class DockerContainer{
             const tempImage = docker.getImage(tempImageName);
             await tempImage.remove({ force: true });
             logger.info(`@services/docker/container.ts (reloadContainer): Removed temporary image ${tempImageName}`);
-            
+            await this.container.updateOne({ status: 'running' });
+            logger.info(`@services/docker/container.ts (reloadContainer): Successfully reloaded container ${containerName}`);
             return newContainer;
         }catch(error){
             logger.error(`@services/docker/container.ts (reloadContainer): ${error}`);

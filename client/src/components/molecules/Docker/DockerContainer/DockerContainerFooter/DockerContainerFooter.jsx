@@ -26,14 +26,14 @@ const DockerContainerFooter = ({ container }) => {
     };
     
     const options = [
-        ['Terminal', GoTerminal, `/docker-container/${container._id}/shell/`, selectContainerHandler, !container?.command],
-        ['Expose Port', IoCloudOutline, '/port-binding/create/', selectContainerHandler],
+        ['Terminal', GoTerminal, `/docker-container/${container._id}/shell/`, selectContainerHandler, !container?.command || ['stopped', 'restarting', 'reloading'].includes(container?.status)],
+        ['Expose Port', IoCloudOutline, '/port-binding/create/', selectContainerHandler, ['stopped', 'restarting', 'reloading'].includes(container?.status)],
         ['Environment', PiDatabaseThin, `/docker-container/${container._id}/environment-variables/`, selectContainerHandler],
         ['File Explorer', CiServer, `/docker-container/${container._id}/storage/`, selectContainerHandler],
         container.status === 'running' ? 
             ['Stop', CiCloudOff, null, () => containerStatusHandler('stop')] : 
             ['Start', CiCloudOn, null, () => containerStatusHandler('start')],
-        ['Restart', CiRedo, null, () => containerStatusHandler('restart')]
+        ['Restart', CiRedo, null, () => containerStatusHandler('restart'), ['stopped', 'restarting', 'reloading'].includes(container?.status)]
     ];
 
     return <DashboardCardFooter options={options} />

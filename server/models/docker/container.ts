@@ -40,7 +40,7 @@ const DockerContainerSchema: Schema<IDockerContainer> = new Schema({
     },
     status: {
         type: String,
-        enum: ['created', 'running', 'stopped', 'restarting'],
+        enum: ['created', 'running', 'stopped', 'reloading', 'restarting'],
         default: 'created'
     },
     command: {
@@ -140,8 +140,7 @@ DockerContainerSchema.pre('findOneAndUpdate', async function (next){
             Object.assign(doc.environment, typedUpdate.environment);
         }
         const containerService = new DockerContainerService(doc);
-        await containerService.reloadContainer();
-        logger.info(`@models/docker/container.ts (findOneAndUpdate): Recreated (${doc.dockerContainerName}).`);
+        containerService.reloadContainer();
     }
 
     // If we're updating environment variables, handle encryption
