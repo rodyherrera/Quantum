@@ -4,11 +4,11 @@
 
 Quantum is a self-hosted PaaS. From one dashboard you deploy GitHub repositories, databases,
 one-click templates and Docker Compose stacks on your own server, with logs, a shell, environment
-variables, persistent volumes and VS Code in the browser for every one of them.
+variables, persistent volumes, metrics and VS Code in the browser for every one of them.
 
 - [Deploy Quantum](#deploy-quantum)
-- [Configuration](#configuration)
 - [Using Quantum](#using-quantum)
+- [Configuration](#configuration)
 - [Where the data lives](#where-the-data-lives)
 
 ## Deploy Quantum
@@ -74,6 +74,125 @@ CLIENT_HOST=https://quantum.example.com
 and `docker compose up -d --build`: the ports are now reachable only by the proxy, and `DOMAIN`
 is compiled into the web bundle, so the web image needs the rebuild.
 
+## Using Quantum
+
+Everything belongs to an organization; members are owners, admins, members or viewers. Inside
+an organization, projects group applications, and every application lives in a project.
+
+![Settings: account, password, organization and team](/screenshots/account.png)
+
+### Applications
+
+![Applications: repositories, databases, templates and compose stacks in one table](/screenshots/applications.png)
+
+An application is one of:
+
+- **A GitHub repository.** Pick it from the connected account, choose a branch, and Quantum
+  builds and runs it: a Dockerfile in the repo, a prebuilt image, or your own install, build and
+  start commands. Every push to the branch redeploys.
+- **A database.** Postgres, MySQL, MariaDB, MongoDB or Redis, with backups and restore from the
+  dashboard.
+- **A template.** One click on anything in the catalogue: n8n, Directus, WordPress, Uptime Kuma, Ollama and the
+  rest.
+- **A stack.** **Applications → Deploy stack** takes a compose file, either from one of your
+  GitHub repositories or pasted in. Each service becomes a container on the stack's own network, so
+  services reach each other by name exactly as with `docker compose up`.
+
+![Template catalogue](/screenshots/templates.png)
+
+Every application has **Logs**, a **Shell** into the container and **Environment** variables,
+with **Start**, **Stop**, **Restart** and **Redeploy** at the top of its page. The table shows each
+one's internal **Address**; the published ports are on the application itself. Variables save
+automatically and apply on **Redeploy**.
+
+![A stack's page: every service with its image, internal address and published ports](/screenshots/services.png)
+![Logs, one service at a time](/screenshots/logs.png)
+
+### Compose stacks
+
+![Deploy a stack from one of your repositories or from a pasted compose file](/screenshots/deploy-stack.png)
+
+**From a repository** is the way that runs itself. Pick the repository and branch, Quantum finds the
+compose files at its root (`compose.dokploy.yml` and friends count), shows the `${VAR}` placeholders
+the file uses so you can fill them, and registers the webhook on GitHub for you. From then on every
+push to that branch, or every published release if you prefer, clones the branch, builds the
+services that have `build:` on the server, pulls the rest and redeploys. The compose file is read
+from the repository on each deploy; edit it there. Branch, file and trigger live in the stack's
+**Settings** tab, next to its variables.
+
+![Compose file of a repository stack, read from the repository at every deploy](/screenshots/compose.png)
+
+**Pasted** compose files work too, without `build:` and without a trigger other than the Redeploy
+button. Supported per service either way: `image`, `command`, `environment`, `ports`, `volumes`
+(named volumes) and `depends_on`, plus `build:` for repository stacks. Host bind mounts are
+rejected with a message naming the service. Host ports are assigned by Quantum, as for every other
+application. Removing a service from the file and redeploying removes its container.
+
+### Environment variables
+
+![Environment variables per service](/screenshots/environment.png)
+
+Repositories, template installs and compose services each have their own variables. When a
+repository is cloned, a `.env` at its root is imported once, so a project that already runs
+locally starts with the same configuration.
+
+### Internal addresses
+
+Every container Quantum runs also joins a network shared by the organization. The **Address**
+column shows its IP there, so an app deployed from GitHub reaches a compose service or a managed
+database at `http://<ip>:<port>` without publishing anything to the host. Services of one stack
+reach each other by service name as well. The IP is refreshed when a container is recreated, so
+copy it again after a redeploy.
+
+### Metrics, usage and events
+
+![Metrics of one container: CPU, memory, network and processes](/screenshots/metrics.png)
+
+**Metrics** shows one container at a time, whether a repository, a database or a single service of
+a stack: CPU, memory, network since start and the processes running inside, with the recent samples
+charted.
+
+![Usage: network and CPU per project over a time window](/screenshots/usage.png)
+
+**Usage** adds up transfer, CPU and peak memory per project over the last 15 minutes, hour, 6 hours
+or 24 hours.
+
+![Events: every step Quantum took, with its source and time](/screenshots/events.png)
+
+**Events** is the record of what Quantum did: every deployment step, start and stop, with its
+source and time. A stack that is still installing shows the same steps on its own page as they
+happen.
+
+### Persistent volumes
+
+A repository keeps its checkout across deploys. Anything it writes elsewhere is lost when the
+container is recreated, unless the path is listed under **Persistent volumes** in the repository
+settings. Databases and templates persist on volumes by default. Volumes go away with the
+application.
+
+### Private registries
+
+![Organization settings with container registries](/screenshots/organization.png)
+
+**Settings → Organization → Container registries** takes a registry host, a username and a
+token, and every pull from that host uses them. For GitHub Container Registry use a classic
+personal access token with `read:packages`; without an entry for `ghcr.io`, Quantum falls back
+to the connected GitHub account of the application's owner.
+
+### VS Code in the browser
+
+**Open in VS Code** on any application starts a [code-server](https://github.com/coder/code-server)
+container that mounts the same files the application sees, joins its network and hands you a
+URL and a password. Edits to a repository land in `/app` at once; exec apps pick them up on
+**Restart**, Dockerfile and image apps on the next deploy, and the next push from GitHub replaces
+tracked files, so commit what you want to keep. **Stop** frees the workspace.
+
+### Custom domains for deployments
+
+Deployments are reachable through their published ports. To put a hostname in front of one, add
+an A record for the server and point a reverse proxy at the port, or at the container's internal
+address if the proxy runs on the same host.
+
 ### GitHub OAuth
 
 Deploying a repository needs a GitHub OAuth app: **Settings → Developer settings → OAuth Apps →
@@ -109,101 +228,6 @@ have working defaults.
 | `SMTP_*`, `WEBMASTER_MAIL` | Password resets and alert emails. |
 | `REGISTRATION_DISABLED` | `true` closes self-signup. |
 
-## Using Quantum
-
-Everything belongs to an organization; members are owners, admins, members or viewers. Inside
-an organization, projects group applications, and every application lives in a project.
-
-### Applications
-
-![Applications: repositories, databases, templates and compose stacks in one table](/screenshots/applications.png)
-
-An application is one of:
-
-- **A GitHub repository.** Pick it from the connected account, choose a branch, and Quantum
-  builds and runs it: a Dockerfile in the repo, a prebuilt image, or your own install, build and
-  start commands. Every push to the branch redeploys.
-- **A database.** Postgres, MySQL, MariaDB, MongoDB or Redis, with backups and restore from the
-  dashboard.
-- **A template.** One click on anything in the catalogue: n8n, Directus, WordPress, Uptime Kuma, Ollama and the
-  rest.
-- **A stack.** **Applications → Deploy stack** takes a compose file, either from one of your
-  GitHub repositories or pasted in. Each service becomes a container on the stack's own network, so
-  services reach each other by name exactly as with `docker compose up`.
-
-![Template catalogue](/screenshots/templates.png)
-
-Every application has **Logs**, a **Shell** into the container, **Environment** variables and
-the columns **Address** and **Ports** in the table. Variables and compose files save
-automatically and apply on **Redeploy**.
-
-![Logs of a running service](/screenshots/logs.png)
-![Shell inside a container](/screenshots/shell.png)
-
-### Compose stacks
-
-![Compose file, editable in place](/screenshots/compose.png)
-
-**From a repository** is the way that runs itself. Pick the repository and branch, Quantum finds the
-compose files at its root (`compose.dokploy.yml` and friends count), shows the `${VAR}` placeholders
-the file uses so you can fill them, and registers the webhook on GitHub for you. From then on every
-push to that branch, or every published release if you prefer, clones the branch, builds the
-services that have `build:` on the server, pulls the rest and redeploys. The compose file is read
-from the repository on each deploy; edit it there. Branch, file and trigger live in the stack's
-**Settings** tab, next to its variables.
-
-**Pasted** compose files work too, without `build:` and without a trigger other than the Redeploy
-button. Supported per service either way: `image`, `command`, `environment`, `ports`, `volumes`
-(named volumes) and `depends_on`, plus `build:` for repository stacks. Host bind mounts are
-rejected with a message naming the service. Host ports are assigned by Quantum, as for every other
-application. Removing a service from the file and redeploying removes its container.
-
-### Environment variables
-
-![Environment variables per service](/screenshots/environment.png)
-
-Repositories, template installs and compose services each have their own variables. When a
-repository is cloned, a `.env` at its root is imported once, so a project that already runs
-locally starts with the same configuration.
-
-### Internal addresses
-
-Every container Quantum runs also joins a network shared by the organization. The **Address**
-column shows its IP there and a stable hostname, so an app deployed from GitHub reaches a
-compose service or a managed database at `http://<hostname>:<port>` without publishing anything
-to the host. IPs can change when a container is recreated; use the hostname.
-
-### Persistent volumes
-
-A repository keeps its checkout across deploys. Anything it writes elsewhere is lost when the
-container is recreated, unless the path is listed under **Persistent volumes** in the repository
-settings. Databases and templates persist on volumes by default. Volumes go away with the
-application.
-
-### Private registries
-
-![Organization settings with container registries](/screenshots/organization.png)
-
-**Settings → Organization → Container registries** takes a registry host, a username and a
-token, and every pull from that host uses them. For GitHub Container Registry use a classic
-personal access token with `read:packages`; without an entry for `ghcr.io`, Quantum falls back
-to the connected GitHub account of the application's owner.
-
-### VS Code in the browser
-
-**Open in VS Code** on any application starts a [code-server](https://github.com/coder/code-server)
-container that mounts the same files the application sees, joins its network and hands you a
-URL and a password. Edits to a repository land in `/app` at once; exec apps pick them up on
-**Restart**, Dockerfile and image apps on the next deploy, and the next push from GitHub replaces
-tracked files, so commit what you want to keep. **Stop** frees the workspace.
-
-### Custom domains for deployments
-
-Deployments are reachable through their published ports. To put a hostname in front of one, add
-an A record for the server and point a reverse proxy at the port, or at the container's internal
-address if the proxy runs on the same host.
-
-![Account settings](/screenshots/account.png)
 
 ## Where the data lives
 
