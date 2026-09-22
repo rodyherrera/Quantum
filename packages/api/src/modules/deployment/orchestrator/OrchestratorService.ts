@@ -91,7 +91,13 @@ export default class OrchestratorService{
     }
 
     reconcile(nodeId: string = this.nodeId): Promise<Job>{
-        return this.enqueue({ type: JobType.Reconcile, nodeId, lockKey: `reconcile:${nodeId}`, maxAttempts: 1 });
+        return this.enqueue({
+            type: JobType.Reconcile,
+            nodeId,
+            lockKey: `reconcile:${nodeId}`,
+            idempotencyKey: `reconcile:${nodeId}`,
+            maxAttempts: 1
+        });
     }
 
     orgCascadeDelete(organizationId: number, options: { userId?: number } = {}): Promise<Job>{
@@ -117,7 +123,13 @@ export default class OrchestratorService{
     }
 
     metricsSample(nodeId: string = this.nodeId): Promise<Job>{
-        return this.enqueue({ type: JobType.MetricsSample, nodeId, lockKey: `metrics:${nodeId}`, maxAttempts: 1 });
+        return this.enqueue({
+            type: JobType.MetricsSample,
+            nodeId,
+            lockKey: `metrics:${nodeId}`,
+            idempotencyKey: `metrics:${nodeId}`,
+            maxAttempts: 1
+        });
     }
 
     repositoryTeardown(repositoryId: number): Promise<Job>{
@@ -153,7 +165,8 @@ export default class OrchestratorService{
             userId: options.userId,
             projectId: options.projectId,
             payload: options.payload,
-            lockKey: `template:${templateInstallId}`
+            lockKey: `template:${templateInstallId}`,
+            priority: 10
         });
     }
 

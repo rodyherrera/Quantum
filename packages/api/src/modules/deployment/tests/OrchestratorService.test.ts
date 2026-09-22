@@ -58,6 +58,15 @@ describe('OrchestratorService enqueue', () => {
         expect(await Job.countBy({ repositoryId: 14, status: JobStatus.Queued })).toBe(1);
     });
 
+    it('does not pile another metrics sample while one is already in flight', async () => {
+        const orchestrator = new OrchestratorService();
+        const first = await orchestrator.metricsSample();
+        const second = await orchestrator.metricsSample();
+
+        expect(second.id).toBe(first.id);
+        expect(await Job.countBy({ type: JobType.MetricsSample })).toBe(1);
+    });
+
     it('enqueues lifecycle jobs keyed by repository', async () => {
         const job = await new OrchestratorService().lifecycle(15, 'restart', 99);
 
@@ -146,6 +155,29 @@ describe('JobRunner', () => {
         const fresh = await findByPk(job.id);
         expect(fresh?.status).toBe(JobStatus.Failed);
         expect(fresh?.error).toContain('UnknownJobType');
+    });
+
+    it('claims a later install while older metrics hold the same lock in a long queue', async () => {
+        const orchestrator = new OrchestratorService();
+        const held = await orchestrator.metricsSample();
+        held.status = JobStatus.Active;
+        held.lockedUntil = new Date(Date.now() + 120_000);
+        held.claimedBy = 'local:worker';
+        await held.save();
+
+        for(let i = 0; i < 60; i++){
+            await orchestrator.enqueue({ type: JobType.MetricsSample, lockKey: 'metrics:local' });
+        }
+        const install = await orchestrator.templateJob(JobType.TemplateInstall, 3);
+
+        const handled: JobType[] = [];
+        const runner = new JobRunner({
+            [JobType.MetricsSample]: async () => { handled.push(JobType.MetricsSample); },
+            [JobType.TemplateInstall]: async () => { handled.push(JobType.TemplateInstall); }
+        });
+
+        expect(await runner.claim()).toMatchObject({ id: install.id, type: JobType.TemplateInstall });
+        expect(handled).toEqual([]);
     });
 });
 

@@ -1,4 +1,4 @@
-import { IsNull, LessThanOrEqual, MoreThan, Not } from 'typeorm';
+import { LessThanOrEqual } from 'typeorm';
 import Job from '../models/Job';
 import { JobStatus, JobType } from '@quantum/contracts/modules/deployment/domain';
 import { logger } from '@/shared/utils/Logger';
@@ -13,7 +13,6 @@ export interface JobRunnerOptions{
     pollIntervalMs?: number;
 }
 
-const CLAIM_BATCH = 50;
 const MAX_PROCESSED_PER_PASS = 10000;
 
 export default class JobRunner{
@@ -67,22 +66,31 @@ export default class JobRunner{
 
     async claim(): Promise<Job | null>{
         const now = new Date();
-        const activeLocks = await this.#activeLocks(now);
-        const candidates = await Job.find({
-            where: [
-                { nodeId: this.nodeId, status: JobStatus.Queued, runAt: LessThanOrEqual(now) },
-                { nodeId: this.nodeId, status: JobStatus.Active, runAt: LessThanOrEqual(now), lockedUntil: LessThanOrEqual(now) }
-            ],
-            order: { priority: 'DESC', runAt: 'ASC', id: 'ASC' },
-            take: CLAIM_BATCH
-        });
-        const job = candidates.find((candidate) => this.#lockAvailable(candidate, activeLocks));
-        if(!job) return null;
-        return this.#markActive(job, now);
-    }
+        const job = await Job.createQueryBuilder('job')
+            .where('job.nodeId = :nodeId', { nodeId: this.nodeId })
+            .andWhere('job.runAt <= :now', { now })
+            .andWhere('(job.status = :queued OR (job.status = :active AND job.lockedUntil <= :now))', {
+                queued: JobStatus.Queued,
+                active: JobStatus.Active
+            })
+            .andWhere(`(
+                job.lockKey IS NULL
+                OR job.lockKey NOT IN (
+                    SELECT held."lockKey"
+                    FROM ${Job.getRepository().metadata.tablePath} held
+                    WHERE held."nodeId" = :nodeId
+                      AND held.status = :active
+                      AND held."lockedUntil" > :now
+                      AND held."lockKey" IS NOT NULL
+                )
+            )`)
+            .orderBy('job.priority', 'DESC')
+            .addOrderBy('job.runAt', 'ASC')
+            .addOrderBy('job.id', 'ASC')
+            .getOne();
 
-    #lockAvailable(job: Job, activeLocks: Set<string>): boolean{
-        return !job.lockKey || !activeLocks.has(job.lockKey);
+        if(job === null) return null;
+        return this.#markActive(job, now);
     }
 
     async #markActive(job: Job, now: Date): Promise<Job>{
@@ -92,14 +100,6 @@ export default class JobRunner{
         job.attempts += 1;
         await job.save();
         return job;
-    }
-
-    async #activeLocks(now: Date): Promise<Set<string>>{
-        const rows = await Job.find({
-            where: { nodeId: this.nodeId, status: JobStatus.Active, lockedUntil: MoreThan(now), lockKey: Not(IsNull()) },
-            select: { lockKey: true }
-        });
-        return new Set(rows.map((row) => row.lockKey).filter((key): key is string => key !== null));
     }
 
     async #process(job: Job): Promise<void>{
