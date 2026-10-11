@@ -198,13 +198,16 @@ export default class TemplateHandler{
         install.spec = spec;
         await install.save();
 
-        for(const [name, service] of Object.entries(spec.services)){
-            if(service.build === undefined || sourcePath === null) continue;
-            const tag = `quantum-stack-${install.id}-${name}:${version}`;
+        if(sourcePath !== null){
             const docker = getDockerHost(install.nodeId).client();
             const buildPath = sourcePath;
-            await activity.step(`Building ${name}`, () => buildComposeImage(docker, buildPath, composeDir, service.build as NonNullable<typeof service.build>, tag));
-            built.set(name, tag);
+            await Promise.all(Object.entries(spec.services).flatMap(([name, service]) => {
+                if(service.build === undefined) return [];
+                const tag = `quantum-stack-${install.id}-${name}:${version}`;
+                return [activity.step(`Building ${name}`, () =>
+                    buildComposeImage(docker, buildPath, composeDir, service.build as NonNullable<typeof service.build>, tag)
+                ).then(() => { built.set(name, tag); })];
+            }));
         }
 
         return { spec, built };
