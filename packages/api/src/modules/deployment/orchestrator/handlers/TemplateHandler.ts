@@ -1,6 +1,7 @@
 import path from 'node:path';
 import { readFile } from 'node:fs/promises';
 import { In, Not } from 'typeorm';
+import type Dockerode from 'dockerode';
 import TemplateInstall from '@/modules/template/models/TemplateInstall';
 import DockerContainer from '@/modules/docker/models/DockerContainer';
 import DockerImage from '@/modules/docker/models/DockerImage';
@@ -11,7 +12,7 @@ import { installInputs, installSpec, serviceEnvironment } from '@/modules/templa
 import { composeToSpec, interpolateCompose } from '@/modules/template/services/composeSpec';
 import { TemplateInstallError } from '@/modules/template/contracts/domain/errors';
 import { checkoutRepository } from '../build/SourceCheckout';
-import { buildComposeImage, insideSource } from '../build/composeBuild';
+import { buildComposeImage, composeImageFingerprint, imageExists, insideSource } from '../build/composeBuild';
 import { getDockerHost } from '../DockerHost';
 import { shellSplit } from '../shellSplit';
 import ContainerOps from '../ContainerOps';
@@ -203,14 +204,33 @@ export default class TemplateHandler{
             const buildPath = sourcePath;
             await Promise.all(Object.entries(spec.services).flatMap(([name, service]) => {
                 if(service.build === undefined) return [];
-                const tag = `quantum-stack-${install.id}-${name}:${version}`;
-                return [activity.step(`Building ${name}`, () =>
-                    buildComposeImage(docker, buildPath, composeDir, service.build as NonNullable<typeof service.build>, tag)
-                ).then(() => { built.set(name, tag); })];
+                const recipe = service.build;
+                return [this.#imageFor(install, name, recipe, version, docker, buildPath, composeDir, activity)
+                    .then((tag) => { built.set(name, tag); })];
             }));
         }
 
         return { spec, built };
+    }
+
+    async #imageFor(
+        install: TemplateInstall,
+        name: string,
+        build: NonNullable<TemplateServiceSpec['build']>,
+        version: string,
+        docker: Dockerode,
+        sourcePath: string,
+        composeDir: string,
+        activity: ActivityStepContext
+    ): Promise<string>{
+        const fingerprint = await composeImageFingerprint(sourcePath, composeDir, build).catch(() => version);
+        const tag = `quantum-stack-${install.id}-${name}:${fingerprint}`;
+        if(await imageExists(docker, tag)){
+            await activity.success(`Reusing ${name}`);
+            return tag;
+        }
+        await activity.step(`Building ${name}`, () => buildComposeImage(docker, sourcePath, composeDir, build, tag));
+        return tag;
     }
 
     async #service(
