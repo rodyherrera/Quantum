@@ -7,6 +7,7 @@ one-click templates and Docker Compose stacks on your own server, with logs, a s
 variables, persistent volumes, metrics and VS Code in the browser for every one of them.
 
 - [Deploy Quantum](#deploy-quantum)
+- [One-Click Deploy](#one-click-deploy)
 - [Using Quantum](#using-quantum)
 - [Configuration](#configuration)
 - [Where the data lives](#where-the-data-lives)
@@ -73,6 +74,10 @@ CLIENT_HOST=https://quantum.example.com
 
 and `docker compose up -d --build`: the ports are now reachable only by the proxy, and `DOMAIN`
 is compiled into the web bundle, so the web image needs the rebuild.
+
+## One-Click Deploy
+
+[![Deploy on RepoCloud](https://d16t0pc4846x52.cloudfront.net/deploylobe.svg)](https://repocloud.io/details/Quantum/)
 
 ## Using Quantum
 
