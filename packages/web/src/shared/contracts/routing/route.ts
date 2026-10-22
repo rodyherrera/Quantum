@@ -1,6 +1,6 @@
 import type { ComponentType } from 'react';
 
-export type RouteTier = 'guest' | 'protected';
+export type RouteTier = 'guest' | 'public' | 'protected';
 
 export type RouteKind = 'page' | 'layout';
 

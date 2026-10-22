@@ -11,9 +11,9 @@ const DiscoveryError = defineErrors({
 } as const);
 
 const modules = import.meta.glob([
-    '/src/modules/*/pages/{guest,protected}/index.tsx',
-    '/src/modules/*/pages/{guest,protected}/**/index.tsx',
-    '/src/modules/*/pages/{guest,protected}/**/layout.tsx'
+    '/src/modules/*/pages/{guest,public,protected}/index.tsx',
+    '/src/modules/*/pages/{guest,public,protected}/**/index.tsx',
+    '/src/modules/*/pages/{guest,public,protected}/**/layout.tsx'
 ]);
 
 export const discoverRoutes = (): DiscoveredRoute[] => {

@@ -24,6 +24,13 @@ describe('parseRouteFile', () => {
             .toEqual({ tier: 'guest', kind: 'page', path: '/sign-in' });
     });
 
+    it('reads a public page at the root of its tier as the site root', () => {
+        expect(parseRouteFile('/src/modules/home/pages/public/index.tsx'))
+            .toEqual({ tier: 'public', kind: 'page', path: '/' });
+        expect(parseRouteFile('/src/modules/home/pages/public/GetStarted/index.tsx'))
+            .toEqual({ tier: 'public', kind: 'page', path: '/get-started' });
+    });
+
     it('reads a layout as the same path as the page beside it', () => {
         const directory = '/src/modules/applications/pages/protected/Applications/[appId]';
 
