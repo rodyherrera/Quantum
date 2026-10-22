@@ -2,15 +2,16 @@ import { NavLink } from 'react-router-dom';
 import { LogOut } from 'lucide-react';
 import { navGroups, settingsEntry, settingsGroups } from '@/app/navigation/sections';
 import { endSession } from '@/shared/services/end-session';
-import { useSidebarStore } from '@/shared/store/sidebar';
-import OrganizationSwitcher from '@/modules/organization/components/OrganizationSwitcher';
-import SessionAvatar from '@/modules/auth/components/SessionAvatar';
 import ThemeToggle from '@/shared/components/layout/ThemeToggle';
 import SidebarToggle from '@/shared/components/layout/SidebarToggle';
+import type { ReactNode } from 'react';
 import type { NavGroup, NavSection } from '@/shared/contracts/navigation';
 
 interface AppSidebarProps{
     panel: 'app' | 'settings';
+    collapsed: boolean;
+    organization: ReactNode;
+    account: ReactNode;
 }
 
 const labelClass = (collapsed: boolean): string => (collapsed ? 'hidden' : 'hidden truncate lg:inline');
@@ -54,8 +55,7 @@ const Group = ({ group, collapsed }: GroupProps) => (
     </div>
 );
 
-const AppSidebar = ({ panel }: AppSidebarProps) => {
-    const collapsed = useSidebarStore((state) => state.collapsed);
+const AppSidebar = ({ panel, collapsed, organization, account }: AppSidebarProps) => {
     const groups = panel === 'settings' ? settingsGroups : navGroups;
 
     const signOut = () => {
@@ -80,10 +80,10 @@ const AppSidebar = ({ panel }: AppSidebarProps) => {
 
             {}
             <footer className='flex shrink-0 flex-col gap-1 border-t border-separator p-2'>
-                <OrganizationSwitcher collapsed={collapsed} />
+                {organization}
 
                 <div className={`flex gap-1 ${collapsed ? 'flex-col items-center' : 'flex-col items-center lg:flex-row lg:items-center'}`}>
-                    <SessionAvatar collapsed={collapsed} />
+                    {account}
 
                     <span className={`flex-1 ${labelClass(collapsed)}`} />
 
