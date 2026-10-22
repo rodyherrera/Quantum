@@ -8,7 +8,7 @@ const RouteError = defineErrors({
     }
 } as const);
 
-const ROUTE_FILE = /\/modules\/([^/]+)\/pages\/(guest|protected)\/(.*?)(index|layout)\.tsx$/;
+const ROUTE_FILE = /\/modules\/([^/]+)\/pages\/(guest|public|protected)\/(.*?)(index|layout)\.tsx$/;
 
 const toKebab = (segment: string): string =>
     segment

@@ -39,6 +39,14 @@ describe('the assembled route tree', () => {
         expect(pathsOf(layout?.children ?? [])).not.toContain('sign-in');
     });
 
+    it('serves the landing and the self-host guide outside both guards', () => {
+        const root = router.routes[0] as RouteObject;
+        const direct = root.children ?? [];
+
+        expect(direct.some((route) => route.index === true)).toBe(true);
+        expect(pathsOf(direct)).toContain('get-started');
+    });
+
     it('ends with a catch-all for unknown paths', () => {
         const root = router.routes[0] as RouteObject;
 

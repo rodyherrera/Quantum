@@ -16,15 +16,16 @@ import Modal from '@/shared/components/Modal';
 import CreateOrganizationForm from '@/modules/organization/components/CreateOrganizationForm';
 import { useTenancy } from '@/modules/organization/hooks/use-tenancy';
 import { useTenantStore } from '@/shared/store/tenant';
+import { useSidebarStore } from '@/shared/store/sidebar';
 import type { Organization } from '@quantum/contracts/modules/organization/domain';
 
-interface TriggerProps{
+interface OrganizationTriggerProps{
     name: string | undefined;
     loading: boolean;
     collapsed: boolean;
 }
 
-const Trigger = ({ name, loading, collapsed }: TriggerProps) => (
+export const OrganizationTrigger = ({ name, loading, collapsed }: OrganizationTriggerProps) => (
     <Button
         variant='ghost'
         size='sm'
@@ -52,11 +53,8 @@ const OrganizationRow = ({ organization }: OrganizationRowProps) => (
     </ListBoxItem>
 );
 
-interface OrganizationSwitcherProps{
-    collapsed?: boolean;
-}
-
-const OrganizationSwitcher = ({ collapsed = false }: OrganizationSwitcherProps) => {
+const OrganizationSwitcher = () => {
+    const collapsed = useSidebarStore((state) => state.collapsed);
     const { organizations, current, loading, reload } = useTenancy();
     const setOrganizationId = useTenantStore((state) => state.setOrganizationId);
     const { contains } = useFilter({ sensitivity: 'base' });
@@ -70,7 +68,7 @@ const OrganizationSwitcher = ({ collapsed = false }: OrganizationSwitcherProps) 
         <>
             <Popover.Root isOpen={open} onOpenChange={setOpen}>
                 <Popover.Trigger>
-                    <Trigger name={current?.name} loading={loading} collapsed={collapsed} />
+                    <OrganizationTrigger name={current?.name} loading={loading} collapsed={collapsed} />
                 </Popover.Trigger>
 
                 <Popover.Content placement='bottom start' className='w-72 max-w-[calc(100vw_-_2rem)]'>

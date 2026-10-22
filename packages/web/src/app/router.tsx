@@ -62,6 +62,8 @@ const children: RouteObject[] = [];
 const guest = toRoutes(byTier('guest'));
 if(guest.length) children.push({ element: <GuestGuard />, children: guest });
 
+children.push(...toRoutes(byTier('public')));
+
 const loadOrgLayout: PageLoader = () => import('@/app/layouts/OrgLayout');
 
 const protectedChildren = toRoutes(byTier('protected'), loadOrgLayout);
