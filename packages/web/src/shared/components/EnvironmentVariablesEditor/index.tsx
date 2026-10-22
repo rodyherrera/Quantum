@@ -47,7 +47,7 @@ const EnvironmentVariableRow = ({ row, onChange, onRemove }: EnvironmentVariable
         >
             {isSecretVariable(row.key) ? (
                 <InputGroup fullWidth>
-                    <InputGroup.Input className='font-mono' placeholder='Value' autoComplete='off' />
+                    <InputGroup.Input className='min-w-0 font-mono' placeholder='Value' autoComplete='off' />
                     <InputGroup.Suffix>
                         <GenerateSecretButton name={row.key} onGenerate={(value) => onChange(row.key, value)} />
                     </InputGroup.Suffix>
