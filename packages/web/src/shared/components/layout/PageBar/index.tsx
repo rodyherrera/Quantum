@@ -33,7 +33,7 @@ const PageBar = ({ title, icon: Icon, trail = [], children, actions }: PageBarPr
                 </Fragment>
             ))}
 
-            <h1 className='flex min-w-0 items-center gap-2 font-medium text-foreground'>
+            <h1 className='flex min-w-[min(7rem,40vw)] items-center gap-2 font-medium text-foreground'>
                 {Icon !== undefined && <Icon aria-hidden='true' className='size-[0.9375rem] shrink-0 text-subtle' />}
                 <span className='truncate'>{title}</span>
             </h1>

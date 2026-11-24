@@ -267,6 +267,16 @@ body {
     padding-block: 0.25rem;
 }
 
+.input,
+.textarea,
+.select__value {
+    font-size: 0.8125rem;
+}
+
+.select__trigger {
+    padding-inline-start: 0.625rem;
+}
+
 .input:focus,
 .input[data-focused="true"],
 .textarea:focus,
