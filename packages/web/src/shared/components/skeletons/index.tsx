@@ -1,6 +1,5 @@
 import { cn, Skeleton } from '@heroui/react';
-import PageBody from '@/shared/components/layout/PageBody';
-import type { ReactNode } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 
 const WIDTHS = ['w-2/3', 'w-1/2', 'w-1/3', 'w-3/4', 'w-1/4', 'w-1/2'];
 
@@ -23,40 +22,31 @@ interface TableSkeletonProps{
 
 export const TableSkeleton = ({ rows = 6, columns = 4, className }: TableSkeletonProps) => (
     <Loading className={cn('w-full', className)}>
-        <div className='grid gap-x-8 border-b border-border pb-3' style={columnsStyle(columns)}>
-            {Array.from({ length: columns }, (_, column) => <Skeleton key={column} className='h-3 w-20' />)}
+        <div className='grid h-8 items-center gap-x-6 border-b border-separator px-5' style={columnsStyle(columns)}>
+            {Array.from({ length: columns }, (_, column) => <Skeleton key={column} className='h-2.5 w-16' />)}
         </div>
         {Array.from({ length: rows }, (_, row) => (
-            <div key={row} className='grid gap-x-8 border-b border-border py-4' style={columnsStyle(columns)}>
+            <div key={row} className='grid h-10 items-center gap-x-6 border-b border-separator px-5' style={columnsStyle(columns)}>
                 {Array.from({ length: columns }, (_, column) => (
-                    <Skeleton key={column} className={cn('h-3.5', WIDTHS[(row + column) % WIDTHS.length])} />
+                    <Skeleton key={column} className={cn('h-3', WIDTHS[(row + column) % WIDTHS.length])} />
                 ))}
             </div>
         ))}
     </Loading>
 );
 
-interface ActionsProps{
-    count: number;
-}
-
-const Actions = ({ count }: ActionsProps) => (
-    <div className='flex flex-wrap gap-2'>
-        {Array.from({ length: count }, (_, index) => <Skeleton key={index} className='h-10 w-28' />)}
-    </div>
-);
-
-interface PageHeaderSkeletonProps{
+interface BarSkeletonProps{
     actions?: number;
 }
 
-export const PageHeaderSkeleton = ({ actions = 0 }: PageHeaderSkeletonProps) => (
-    <div className='flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between'>
-        <div className='min-w-0'>
-            <Skeleton className='h-9 w-56 max-w-full' />
-            <Skeleton className='mt-4 h-4 w-96 max-w-full' />
-        </div>
-        {actions > 0 && <Actions count={actions} />}
+const BarSkeleton = ({ actions = 0 }: BarSkeletonProps) => (
+    <div className='flex h-[var(--bar-height)] shrink-0 items-center gap-3 border-b border-separator px-4'>
+        <Skeleton className='h-3 w-28' />
+        {actions > 0 && (
+            <div className='ml-auto flex gap-1.5'>
+                {Array.from({ length: actions }, (_, index) => <Skeleton key={index} className='h-7 w-24' />)}
+            </div>
+        )}
     </div>
 );
 
@@ -68,33 +58,37 @@ interface PageSkeletonProps{
 }
 
 export const PageSkeleton = ({ actions = 0, columns = 4, rows = 6, children }: PageSkeletonProps) => (
-    <PageBody width='wide' height='full'>
-        <Loading>
-            <PageHeaderSkeleton actions={actions} />
-            <div className='mt-8'>{children ?? <TableSkeleton rows={rows} columns={columns} />}</div>
-        </Loading>
-    </PageBody>
+    <Loading className='flex min-h-0 flex-1 flex-col'>
+        <BarSkeleton actions={actions} />
+        {children ?? <TableSkeleton rows={rows} columns={columns} />}
+    </Loading>
 );
 
-interface DetailHeaderSkeletonProps{
+interface DetailSkeletonProps{
     actions?: number;
     tabs?: number;
 }
 
-export const DetailHeaderSkeleton = ({ actions = 4, tabs = 4 }: DetailHeaderSkeletonProps) => (
-    <Loading>
-        <div className='flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between'>
-            <div className='min-w-0'>
-                <Skeleton className='h-3 w-40' />
-                <Skeleton className='mt-5 h-9 w-72 max-w-full' />
-                <Skeleton className='mt-4 h-4 w-64 max-w-full' />
+export const DetailSkeleton = ({ actions = 4, tabs = 4 }: DetailSkeletonProps) => (
+    <Loading className='grid min-h-0 flex-1 xl:grid-cols-[minmax(0,1fr)_18.75rem]'>
+        <div className='flex min-w-0 flex-col'>
+            <div className='flex flex-wrap items-start justify-between gap-4 px-5 pt-6 sm:px-7'>
+                <div className='flex items-center gap-2.5'>
+                    <Skeleton className='size-7 rounded-lg' />
+                    <Skeleton className='h-6 w-56 max-w-full' />
+                </div>
+                <div className='flex gap-1.5'>
+                    {Array.from({ length: actions }, (_, index) => <Skeleton key={index} className='h-8 w-20' />)}
+                </div>
             </div>
-            <Actions count={actions} />
+            <div className='flex gap-2 border-b border-separator px-6 pb-2.5 pt-5'>
+                {Array.from({ length: tabs }, (_, index) => <Skeleton key={index} className='h-7 w-20' />)}
+            </div>
+            <LinesSkeleton className='px-5 pt-6 sm:px-7' lines={4} />
         </div>
-        <div className='mt-8 flex gap-8 border-b border-border pb-3.5'>
-            {Array.from({ length: tabs }, (_, index) => <Skeleton key={index} className='h-3 w-16' />)}
+        <div className='hidden flex-col gap-3 border-l border-separator px-4 pt-6 xl:flex'>
+            {Array.from({ length: 6 }, (_, index) => <Skeleton key={index} className={cn('h-3', WIDTHS[index % WIDTHS.length])} />)}
         </div>
-        <TableSkeleton className='mt-8' rows={3} />
     </Loading>
 );
 
@@ -104,11 +98,11 @@ interface FieldsSkeletonProps{
 }
 
 export const FieldsSkeleton = ({ rows = 4, className }: FieldsSkeletonProps) => (
-    <Loading className={cn('flex w-full max-w-2xl flex-col gap-6', className)}>
+    <Loading className={cn('flex w-full max-w-2xl flex-col gap-5', className)}>
         {Array.from({ length: rows }, (_, index) => (
             <div key={index}>
-                <Skeleton className='h-3 w-24' />
-                <Skeleton className='mt-2.5 h-10 w-full' />
+                <Skeleton className='h-2.5 w-20' />
+                <Skeleton className='mt-2 h-8 w-full' />
             </div>
         ))}
     </Loading>
@@ -121,57 +115,48 @@ interface LinesSkeletonProps{
 
 export const LinesSkeleton = ({ lines = 3, className }: LinesSkeletonProps) => (
     <Loading className={cn('flex flex-col gap-3', className)}>
-        {Array.from({ length: lines }, (_, index) => <Skeleton key={index} className={cn('h-3.5', WIDTHS[index % WIDTHS.length])} />)}
+        {Array.from({ length: lines }, (_, index) => <Skeleton key={index} className={cn('h-3', WIDTHS[index % WIDTHS.length])} />)}
     </Loading>
 );
 
-interface StatBandSkeletonProps{
-    columns?: number;
+interface BoardSkeletonProps{
+    stats?: number;
 }
 
-export const StatBandSkeleton = ({ columns = 4 }: StatBandSkeletonProps) => (
-    <div className='grid border-y border-border [&>*+*]:border-l [&>*+*]:border-separator [&>*+*]:pl-6' style={columnsStyle(columns)}>
-        {Array.from({ length: columns }, (_, index) => (
-            <div key={index} className='py-6 pr-6'>
-                <Skeleton className='h-3 w-16' />
-                <Skeleton className='mt-4 h-9 w-24' />
-                <Skeleton className='mt-3 h-3 w-28 max-w-full' />
-            </div>
-        ))}
-    </div>
-);
-
-interface ChartSkeletonProps{
-    className?: string;
-}
-
-export const ChartSkeleton = ({ className }: ChartSkeletonProps) => (
-    <div className={className}>
-        <div className='flex items-center justify-between'>
-            <Skeleton className='h-4 w-24' />
-            <Skeleton className='h-3 w-20' />
+export const BoardSkeleton = ({ stats = 4 }: BoardSkeletonProps) => (
+    <div>
+        <div className='grid grid-cols-2 border-b border-separator lg:[grid-template-columns:var(--columns)]' style={{ '--columns': `repeat(${stats}, minmax(0, 1fr))` } as CSSProperties}>
+            {Array.from({ length: stats }, (_, index) => (
+                <div key={index} className='px-5 py-4'>
+                    <Skeleton className='h-2.5 w-16' />
+                    <Skeleton className='mt-3 h-6 w-24' />
+                    <Skeleton className='mt-2.5 h-2.5 w-28 max-w-full' />
+                </div>
+            ))}
         </div>
-        <Skeleton className='mt-5 h-64 w-full' />
+        <div className='border-b border-separator px-5 py-4'>
+            <Skeleton className='h-3 w-28' />
+            <Skeleton className='mt-4 h-40 w-full' />
+        </div>
     </div>
 );
 
 export const SplitSkeleton = () => (
-    <Loading className='flex h-full min-h-0 flex-col lg:flex-row'>
-        <div className='flex w-full shrink-0 flex-col gap-4 border-b border-border px-5 pb-6 pt-8 lg:h-full lg:w-[24rem] lg:border-b-0 lg:border-r'>
-            <Skeleton className='h-3 w-32' />
-            <Skeleton className='h-10 w-full' />
-            {Array.from({ length: 8 }, (_, index) => (
-                <div key={index} className='border-b border-border py-3'>
-                    <Skeleton className={cn('h-3.5', WIDTHS[index % WIDTHS.length])} />
+    <Loading className='flex min-h-0 flex-1 flex-col lg:flex-row'>
+        <div className='flex w-full shrink-0 flex-col gap-1 border-b border-separator p-2.5 lg:w-[20.625rem] lg:border-b-0 lg:border-r'>
+            <Skeleton className='mb-2 h-8 w-full' />
+            {Array.from({ length: 9 }, (_, index) => (
+                <div key={index} className='flex items-center gap-2.5 px-2 py-1.5'>
+                    <Skeleton className='size-7 rounded-lg' />
+                    <Skeleton className={cn('h-3', WIDTHS[index % WIDTHS.length])} />
                 </div>
             ))}
         </div>
-        <div className='flex-1 px-5 pt-8 sm:px-8 lg:px-10'>
-            <Skeleton className='h-3 w-24' />
-            <Skeleton className='mt-5 h-9 w-64 max-w-full' />
-            <Skeleton className='mt-4 h-4 w-full max-w-lg' />
-            <Skeleton className='mt-2 h-4 w-3/4 max-w-md' />
-            <Skeleton className='mt-8 h-10 w-32' />
+        <div className='flex-1 px-9 pt-8'>
+            <Skeleton className='size-11 rounded-xl' />
+            <Skeleton className='mt-4 h-7 w-56 max-w-full' />
+            <Skeleton className='mt-3 h-3.5 w-full max-w-lg' />
+            <Skeleton className='mt-6 h-9 w-28' />
         </div>
     </Loading>
 );

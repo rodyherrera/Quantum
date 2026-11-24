@@ -145,7 +145,7 @@ const Codespaces = () => {
     const projectItems = projects.data ?? [];
 
     return (
-        <PageBody width='wide' height='full'>
+        <PageBody fill>
             <CodespacesHeader canAdd={projectId !== null} onAdd={() => setCreateOpen(true)} />
 
             <div className='mt-6 max-w-sm'>

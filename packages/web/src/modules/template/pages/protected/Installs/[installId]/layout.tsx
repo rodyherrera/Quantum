@@ -1,5 +1,5 @@
 import { NavLink, Outlet, useParams } from 'react-router-dom';
-import { DetailHeaderSkeleton } from '@/shared/components/skeletons';
+import { DetailSkeleton } from '@/shared/components/skeletons';
 import { Button } from '@heroui/react';
 import { Play, RefreshCw, RotateCw, Square } from 'lucide-react';
 import PageBody from '@/shared/components/layout/PageBody';
@@ -132,15 +132,15 @@ const InstallLayout = () => {
 
     if(install.loading){
         return (
-            <PageBody width='wide' height='full'>
-                <DetailHeaderSkeleton actions={5} tabs={4} />
+            <PageBody fill>
+                <DetailSkeleton actions={5} tabs={4} />
             </PageBody>
         );
     }
 
     if(install.error !== undefined){
         return (
-            <PageBody width='wide'>
+            <PageBody>
                 <ErrorState title='Could not load the install' description={copy(install.error)} onRetry={install.reload} />
             </PageBody>
         );
@@ -149,7 +149,7 @@ const InstallLayout = () => {
     if(install.data === null || id === undefined) return null;
 
     return (
-        <PageBody width='wide' height='full'>
+        <PageBody fill>
             <InstallHeader
                 install={install.data}
                 isOperating={operate.loading}

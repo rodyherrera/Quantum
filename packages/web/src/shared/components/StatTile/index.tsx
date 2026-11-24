@@ -2,17 +2,15 @@ import type { ReactNode } from 'react';
 
 interface StatTileProps{
     label: string;
-    value: string;
+    value: ReactNode;
     hint?: string;
-    children?: ReactNode;
 }
 
-const StatTile = ({ label, value, hint, children }: StatTileProps) => (
-    <section className='flex min-w-0 flex-col py-6 pr-6'>
-        <h2 className='label-caps text-muted'>{label}</h2>
-        <p className='title-display mt-3 truncate text-[2.375rem] leading-none tabular-nums text-foreground'>{value}</p>
-        {hint !== undefined && <p className='mt-2 truncate text-[0.8125rem] text-muted'>{hint}</p>}
-        {children}
+const StatTile = ({ label, value, hint }: StatTileProps) => (
+    <section className='flex min-w-0 flex-col gap-0.5 px-5 py-4'>
+        <h2 className='truncate text-muted'>{label}</h2>
+        <p className='flex min-w-0 items-center gap-2 truncate text-[1.375rem] font-medium leading-snug tracking-[-0.015em] tabular-nums text-foreground'>{value}</p>
+        {hint !== undefined && <p className='truncate text-xs text-subtle'>{hint}</p>}
     </section>
 );
 

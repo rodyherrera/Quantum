@@ -3,11 +3,12 @@ import {
     AppWindow,
     ArrowLeft,
     Building2,
+    Code2,
     FolderClosed,
     Gauge,
+    Inbox,
     KeyRound,
     LayoutTemplate,
-    ScrollText,
     Settings,
     UserRound,
     Users
@@ -18,7 +19,8 @@ export const navGroups: NavGroup[] = [
     {
         items: [
             { label: 'Applications', to: '/applications', icon: AppWindow },
-            { label: 'Projects', to: '/projects', icon: FolderClosed }
+            { label: 'Projects', to: '/projects', icon: FolderClosed },
+            { label: 'Codespaces', to: '/codespaces', icon: Code2 }
         ]
     },
     {
@@ -26,7 +28,7 @@ export const navGroups: NavGroup[] = [
         items: [
             { label: 'Metrics', to: '/metrics', icon: Activity },
             { label: 'Usage', to: '/usage', icon: Gauge },
-            { label: 'Events', to: '/events', icon: ScrollText }
+            { label: 'Events', to: '/events', icon: Inbox }
         ]
     },
     {
@@ -37,16 +39,22 @@ export const navGroups: NavGroup[] = [
     }
 ];
 
-export const sections: NavSection[] = navGroups.flatMap((group) => group.items);
-
-export const settingsSections: NavSection[] = [
-    { label: 'Back to app', to: '/applications', icon: ArrowLeft },
-    { label: 'Account', to: '/account', icon: UserRound },
-    { label: 'Password', to: '/change-password', icon: KeyRound },
-    { label: 'Organization', to: '/settings/organization', icon: Building2 },
-    { label: 'Team', to: '/settings/team', icon: Users }
+export const settingsGroups: NavGroup[] = [
+    { items: [{ label: 'Back to app', to: '/applications', icon: ArrowLeft }] },
+    {
+        heading: 'Account',
+        items: [
+            { label: 'Account', to: '/account', icon: UserRound },
+            { label: 'Password', to: '/change-password', icon: KeyRound }
+        ]
+    },
+    {
+        heading: 'Organization',
+        items: [
+            { label: 'Organization', to: '/settings/organization', icon: Building2 },
+            { label: 'Team', to: '/settings/team', icon: Users }
+        ]
+    }
 ];
-
-export const settingsGroups: NavGroup[] = [{ items: settingsSections }];
 
 export const settingsEntry: NavSection = { label: 'Settings', to: '/settings/organization', icon: Settings };

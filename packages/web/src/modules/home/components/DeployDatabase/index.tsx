@@ -1,5 +1,5 @@
 import PageBody from '@/shared/components/layout/PageBody';
-import ApplicationsTable from '@/modules/application/components/ApplicationsTable';
+import ApplicationsList from '@/modules/application/components/ApplicationsList';
 import ConnectionStringField from '@/modules/database/components/ConnectionStringField';
 import DeploymentSteps from '@/modules/template/components/DeploymentSteps';
 import LandingSheet from '@/modules/home/components/LandingSheet';
@@ -20,13 +20,13 @@ const DeployDatabase = ({ isActive }: DeployDatabaseProps) => {
     return (
         <LandingWindow title='orders · PostgreSQL 16'>
             <LandingSheet title='A database being provisioned' width={1040} height={640} path='/applications'>
-                <PageBody width='wide' height='full'>
+                <PageBody fill>
                     <div className='grid grid-cols-[minmax(0,5fr)_minmax(0,6fr)] items-start gap-x-14 gap-y-10'>
                         <DeploymentSteps steps={run.steps} />
                         <ConnectionStringField value={DEMO_CONNECTION_STRING} />
 
                         <div className='col-span-2'>
-                            <ApplicationsTable rows={databaseRows(run.done ? DatabaseStatus.Running : DatabaseStatus.Provisioning)} {...IDLE_ROW_ACTIONS} />
+                            <ApplicationsList rows={databaseRows(run.done ? DatabaseStatus.Running : DatabaseStatus.Provisioning)} {...IDLE_ROW_ACTIONS} />
                         </div>
                     </div>
                 </PageBody>

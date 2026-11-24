@@ -3,7 +3,7 @@ import PageBody from '@/shared/components/layout/PageBody';
 import ConnectGithubButton from '@/modules/github/components/ConnectGithubButton';
 
 const NeedAuthenticate = () => (
-    <PageBody height='full'>
+    <PageBody fill>
         <div className='dot-grid flex flex-1 flex-col justify-center'>
             <p className='label-caps text-muted'>GitHub</p>
 

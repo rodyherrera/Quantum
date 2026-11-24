@@ -3,7 +3,7 @@ import AppSidebar from '@/shared/components/layout/AppSidebar';
 import PageBody from '@/shared/components/layout/PageBody';
 import EntitySelect from '@/shared/components/EntitySelect';
 import ApplicationsHeader from '@/modules/application/components/ApplicationsHeader';
-import ApplicationsTable from '@/modules/application/components/ApplicationsTable';
+import ApplicationsList from '@/modules/application/components/ApplicationsList';
 import { OrganizationTrigger } from '@/modules/organization/components/OrganizationSwitcher';
 import { AccountLink } from '@/modules/auth/components/SessionAvatar';
 import { DEMO_ROWS } from '@/modules/home/utils/demo/applications';
@@ -11,6 +11,8 @@ import { DEMO_ORGANIZATION, DEMO_USER } from '@/modules/home/utils/demo/entities
 import { IDLE, IDLE_ROW_ACTIONS } from '@/modules/home/utils/demo/idle';
 
 const PROJECTS = [{ id: 1, name: 'Production' }];
+
+const DEMO_COUNTS = { all: DEMO_ROWS.length, repository: 0, stack: 0, database: 0, template: 0 };
 
 const LandingDashboard = () => (
     <div className='flex h-full bg-background text-foreground'>
@@ -22,8 +24,8 @@ const LandingDashboard = () => (
         />
 
         <main className='min-w-0 flex-1 overflow-hidden'>
-            <PageBody width='wide' height='full'>
-                <ApplicationsHeader canAddDatabase onAddApplication={IDLE} onAddCompose={IDLE} onAddDatabase={IDLE} />
+            <PageBody fill>
+                <ApplicationsHeader kind='all' counts={DEMO_COUNTS} canAddDatabase onKindChange={IDLE} onAddApplication={IDLE} onAddCompose={IDLE} onAddDatabase={IDLE} onInstallTemplate={IDLE} />
 
                 <div className='mt-6 flex flex-wrap items-center gap-3'>
                     <div className='max-w-xs flex-1'>
@@ -44,7 +46,7 @@ const LandingDashboard = () => (
                 </div>
 
                 <div className='mt-6 flex flex-1 flex-col'>
-                    <ApplicationsTable rows={DEMO_ROWS} {...IDLE_ROW_ACTIONS} />
+                    <ApplicationsList rows={DEMO_ROWS} {...IDLE_ROW_ACTIONS} />
                 </div>
             </PageBody>
         </main>

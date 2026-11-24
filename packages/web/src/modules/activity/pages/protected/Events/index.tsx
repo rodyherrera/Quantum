@@ -45,7 +45,7 @@ const Events = () => {
     }
 
     return (
-        <PageBody width='wide' height='full'>
+        <PageBody fill>
             <PageHeader title='Events' />
 
             <div className='mt-6 flex flex-1 flex-col'>

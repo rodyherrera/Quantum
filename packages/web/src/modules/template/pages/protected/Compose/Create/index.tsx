@@ -343,7 +343,7 @@ const CreateStack = () => {
     const form = { projects: projects.data ?? [], projectsLoading: projects.loading, projectId, onProjectChange: setProjectId };
 
     return (
-        <PageBody width='wide'>
+        <PageBody>
             <PageHeader eyebrow='Applications' title='Deploy a stack' actions={<ModeSwitch mode={mode} onChange={setMode} />} />
 
             <div className='mt-10 [&>div>section:first-child]:border-t-0 [&>div>section:first-child]:pt-0'>

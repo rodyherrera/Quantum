@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react';
 import { LinesSkeleton, PageSkeleton, TableSkeleton } from '@/shared/components/skeletons';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Button, Input, Label, ListBox, ListBoxItem, Select, TextField } from '@heroui/react';
-import { AppWindow, ArrowRight } from 'lucide-react';
+import { AppWindow, Plus } from 'lucide-react';
+import PageBar from '@/shared/components/layout/PageBar';
 import PageBody from '@/shared/components/layout/PageBody';
 import ListPageShell from '@/shared/components/ListPageShell';
 import ErrorState from '@/shared/components/ErrorState';
@@ -10,9 +11,9 @@ import CenterState from '@/shared/components/CenterState';
 import DeleteConfirmDialog from '@/shared/components/DeleteConfirmDialog';
 import Modal from '@/shared/components/Modal';
 import InlineError from '@/shared/components/InlineError';
-import EntitySelect from '@/shared/components/EntitySelect';
 import ApplicationsHeader from '@/modules/application/components/ApplicationsHeader';
-import ApplicationsTable from '@/modules/application/components/ApplicationsTable';
+import ApplicationsFilters from '@/modules/application/components/ApplicationsFilters';
+import ApplicationsList from '@/modules/application/components/ApplicationsList';
 import ConnectionStringField from '@/modules/database/components/ConnectionStringField';
 import { useQuery } from '@/shared/hooks/api/use-query';
 import { useResource } from '@/shared/hooks/api/use-resource';
@@ -25,14 +26,16 @@ import { projectRoutes } from '@quantum/contracts/modules/project/routes';
 import { repositoryRoutes } from '@quantum/contracts/modules/repository/routes';
 import { templateInstallRoutes } from '@quantum/contracts/modules/template/routes';
 import { isInstallTransient } from '@/modules/template/utils/install-status';
-import type { TemplateInstallOperation } from '@quantum/contracts/modules/template/http';
 import { useCurrentOrganizationId } from '@/modules/organization/hooks/use-current-organization-id';
 import { isDatabaseTransient } from '@/modules/application/utils/status';
-import { buildRows } from '@/modules/application/utils/application-rows';
+import { buildRows, kindOf } from '@/modules/application/utils/application-rows';
 import { formatDate } from '@/shared/utils/format-date';
 import { applicationErrorMessages } from '@/modules/application/utils/error-messages';
 import { errorCopy } from '@/shared/utils/error-copy';
 import { DatabaseEngine } from '@quantum/contracts/modules/database/domain';
+import type { KindFilter } from '@/modules/application/components/ApplicationsHeader';
+import type { Row } from '@/modules/application/utils/application-rows';
+import type { TemplateInstallOperation } from '@quantum/contracts/modules/template/http';
 import type { Database } from '@quantum/contracts/modules/database/domain';
 import type { CreateDatabaseInput } from '@quantum/contracts/modules/database/http';
 import type { Repository } from '@quantum/contracts/modules/repository/domain';
@@ -234,7 +237,7 @@ const RestoreDatabaseDialog = ({ database, onClose, onRestored }: RestoreDatabas
         >
             <div className='flex flex-col gap-4'>
                 {backups.length === 0 ? (
-                    <p className='text-[0.875rem] text-muted'>This database has no backups yet.</p>
+                    <p className='text-muted'>This database has no backups yet.</p>
                 ) : (
                     <div className='flex flex-col gap-1.5'>
                         <Label>Backup</Label>
@@ -322,6 +325,21 @@ const UninstallDialog = ({ install, onClose, onRemoved }: UninstallDialogProps) 
     />
 );
 
+const countKinds = (rows: Row[]): Record<KindFilter, number> => {
+    const counts: Record<KindFilter, number> = { all: rows.length, repository: 0, stack: 0, database: 0, template: 0 };
+    for(const row of rows) counts[kindOf(row)] += 1;
+    return counts;
+};
+
+const LoadError = ({ title, error, onRetry }: { title: string; error: Error; onRetry: () => void }) => (
+    <>
+        <PageBar title='Applications' icon={AppWindow} />
+        <CenterState>
+            <ErrorState title={title} description={copy(error)} onRetry={onRetry} />
+        </CenterState>
+    </>
+);
+
 const Applications = () => {
     const navigate = useNavigate();
     const organizationId = useCurrentOrganizationId();
@@ -329,20 +347,23 @@ const Applications = () => {
         list: 'listByOrganization',
         request: organizationId === null ? null : { path: { orgId: organizationId } }
     });
-    const [projectId, setProjectId] = useState<number | null>(null);
+    const [params, setParams] = useSearchParams();
+    const [kind, setKind] = useState<KindFilter>('all');
     const [search, setSearch] = useState('');
-    const [params] = useSearchParams();
 
-    useEffect(() => {
-        if(projectId !== null) return;
-        const list = projects.data ?? [];
-        if(list.length === 0) return;
-        const requested = Number(params.get('project'));
-        const pick = list.find((project) => project.id === requested)
-            ?? list.find((project) => project.isDefault)
-            ?? list[0];
-        if(pick !== undefined) setProjectId(pick.id);
-    }, [projectId, projects.data, params]);
+    const projectList = projects.data ?? [];
+    const requested = Number(params.get('project'));
+    const projectId = (projectList.find((project) => project.id === requested)
+        ?? projectList.find((project) => project.isDefault)
+        ?? projectList[0])?.id ?? null;
+
+    const selectProject = (id: number) => {
+        setParams((current) => {
+            const next = new URLSearchParams(current);
+            next.set('project', String(id));
+            return next;
+        }, { replace: true });
+    };
 
     const repositoriesQuery = useResource(repositoryRoutes, { list: 'mine' });
     const databasesQuery = useQuery((databasesProjectId: number) => databaseApi.listByProject({ path: { projectId: databasesProjectId } }), [projectId ?? undefined], { enabled: projectId !== null });
@@ -386,27 +407,13 @@ const Applications = () => {
     };
 
     if(organizationId === null || projects.loading || repositoriesQuery.loading){
-        return <PageSkeleton actions={2} columns={5} />;
+        return <PageSkeleton actions={1} columns={5} />;
     }
 
-    if(projects.error !== undefined){
-        return (
-            <CenterState className='h-full'>
-                <ErrorState title='Could not load projects' description={copy(projects.error)} onRetry={projects.refresh} />
-            </CenterState>
-        );
-    }
+    if(projects.error !== undefined) return <LoadError title='Could not load projects' error={projects.error} onRetry={projects.refresh} />;
 
     if(repositoriesQuery.error !== undefined){
-        return (
-            <CenterState className='h-full'>
-                <ErrorState
-                    title='Could not load applications'
-                    description={copy(repositoriesQuery.error)}
-                    onRetry={repositoriesQuery.refresh}
-                />
-            </CenterState>
-        );
+        return <LoadError title='Could not load applications' error={repositoriesQuery.error} onRetry={repositoriesQuery.refresh} />;
     }
 
     const rows = buildRows(
@@ -416,43 +423,38 @@ const Applications = () => {
     );
 
     const query = search.trim().toLowerCase();
-    const filtered = query === '' ? rows : rows.filter((row) => row.name.toLowerCase().includes(query));
+    const filtered = rows.filter((row) => (kind === 'all' || kindOf(row) === kind) && (query === '' || row.name.toLowerCase().includes(query)));
+    const narrowed = query !== '' || kind !== 'all';
 
     const scopedLoading = projectId !== null && (databases.loading || installsQuery.loading);
-    const scopedError = databases.error ?? installsQuery.error;
+    const scopedError = databases.error ?? installsQuery.error ?? backup.error;
 
     return (
-        <PageBody width='wide' height='full'>
+        <>
             <ApplicationsHeader
+                kind={kind}
+                counts={countKinds(rows)}
                 canAddDatabase={projectId !== null}
+                onKindChange={setKind}
                 onAddApplication={() => navigate('/repositories/create')}
                 onAddCompose={() => navigate('/compose/create')}
                 onAddDatabase={() => setCreateDatabaseOpen(true)}
+                onInstallTemplate={() => navigate('/templates')}
             />
 
-            <div className='mt-6 flex flex-wrap items-center gap-3'>
-                <div className='max-w-xs flex-1'>
-                    <EntitySelect
-                        items={projects.data ?? []}
-                        getKey={(project) => project.id}
-                        getLabel={(project) => project.name}
-                        value={projectId}
-                        onChange={(key) => setProjectId(Number(key))}
-                        placeholder='Select a project'
-                        ariaLabel='Project'
-                    />
-                </div>
+            <ApplicationsFilters
+                projects={projectList}
+                projectId={projectId}
+                search={search}
+                shown={filtered.length}
+                total={rows.length}
+                onProjectChange={selectProject}
+                onSearchChange={setSearch}
+            />
 
-                <TextField value={search} onChange={setSearch} validationBehavior='aria' className='max-w-xs flex-1'>
-                    <Label className='sr-only'>Search</Label>
-                    <Input placeholder='Search by name' autoComplete='off' />
-                </TextField>
-            </div>
+            {scopedError !== undefined && <InlineError className='border-b border-separator px-4 py-2'>{copy(scopedError)}</InlineError>}
 
-            {backup.error !== undefined && <InlineError className='mt-4'>{copy(backup.error)}</InlineError>}
-            {scopedError !== undefined && <InlineError className='mt-4'>{copy(scopedError)}</InlineError>}
-
-            <div className='mt-6 flex flex-1 flex-col'>
+            <PageBody variant='flush' fill>
                 <ListPageShell
                     loading={scopedLoading}
                     skeleton={<TableSkeleton columns={5} />}
@@ -462,19 +464,19 @@ const Applications = () => {
                     isEmpty={filtered.length === 0}
                     empty={{
                         icon: AppWindow,
-                        title: query !== '' ? 'No matches' : 'No applications yet',
-                        description: query !== ''
-                            ? 'Try a different search term.'
-                            : 'Create an application, or pick a project above to see its databases and template installs.',
-                        action: query === '' ? (
+                        title: narrowed ? 'No matches' : 'No applications yet',
+                        description: narrowed
+                            ? 'Try another search or show all applications.'
+                            : 'Import a repository, deploy a compose stack, or install a template from the catalogue.',
+                        action: narrowed ? undefined : (
                             <Button onPress={() => navigate('/repositories/create')}>
+                                <Plus aria-hidden='true' />
                                 New application
-                                <ArrowRight aria-hidden='true' className='size-4' />
                             </Button>
-                        ) : undefined
+                        )
                     }}
                 >
-                    <ApplicationsTable
+                    <ApplicationsList
                         rows={filtered}
                         onNavigate={navigate}
                         onDeleteApp={setDeleteAppTarget}
@@ -487,7 +489,7 @@ const Applications = () => {
                         onRedeployInstall={redeployInstall}
                     />
                 </ListPageShell>
-            </div>
+            </PageBody>
 
             <CreateDatabaseDialog
                 projectId={projectId}
@@ -525,7 +527,7 @@ const Applications = () => {
                 onClose={() => setUninstallTarget(null)}
                 onRemoved={installsQuery.refresh}
             />
-        </PageBody>
+        </>
     );
 };
 

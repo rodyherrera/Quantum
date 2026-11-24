@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { FieldsSkeleton, PageHeaderSkeleton } from '@/shared/components/skeletons';
+import { FieldsSkeleton } from '@/shared/components/skeletons';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@heroui/react';
 import { ArrowRight } from 'lucide-react';
@@ -124,7 +124,7 @@ const OrganizationSettings = () => {
     if(current === null){
         return (
             <PageBody>
-                <PageHeaderSkeleton />
+                
                 <FieldsSkeleton className='mt-10' rows={3} />
             </PageBody>
         );

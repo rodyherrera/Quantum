@@ -18,7 +18,7 @@ const DeployRepository = ({ isActive }: DeployRepositoryProps) => {
     return (
         <LandingWindow title='storefront · Deployments'>
             <LandingSheet title='Deployments of a repository' width={1040} height={640} path='/repositories/12/deployments'>
-                <PageBody width='wide' height='full'>
+                <PageBody fill>
                     <h2 className='text-[0.9375rem] font-medium text-foreground'>Deployments</h2>
                     <p className='mt-1 text-[0.8125rem] text-muted'>Continuously generated from acme/storefront.</p>
 

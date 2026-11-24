@@ -18,7 +18,7 @@ const DeployStack = ({ isActive }: DeployStackProps) => {
     return (
         <LandingWindow title='shop · Services'>
             <LandingSheet title='A Compose stack deploying from a repository' width={1200} height={740} path='/installs/9/services'>
-                <PageBody width='wide' height='full'>
+                <PageBody fill>
                     <div className='grid grid-cols-[minmax(0,7fr)_minmax(0,5fr)] items-start gap-14'>
                         <ServicesTable host={DEMO_HOST} services={STACK_SERVICES} />
                         <DeploymentSteps steps={run.steps} />

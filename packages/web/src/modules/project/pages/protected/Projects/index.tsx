@@ -148,7 +148,7 @@ const Projects = () => {
     const items = projects.data ?? [];
 
     return (
-        <PageBody width='wide' height='full'>
+        <PageBody fill>
             <ProjectsHeader onCreate={() => setCreateOpen(true)} />
 
             <div className='mt-6 flex flex-1 flex-col'>

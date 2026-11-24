@@ -11,7 +11,7 @@ import {
     AutocompleteFilter,
     useFilter
 } from '@heroui/react';
-import { ChevronsUpDown, Plus } from 'lucide-react';
+import { ChevronDown, Plus } from 'lucide-react';
 import Modal from '@/shared/components/Modal';
 import CreateOrganizationForm from '@/modules/organization/components/CreateOrganizationForm';
 import { useTenancy } from '@/modules/organization/hooks/use-tenancy';
@@ -31,14 +31,19 @@ export const OrganizationTrigger = ({ name, loading, collapsed }: OrganizationTr
         size='sm'
         aria-haspopup='dialog'
         aria-label={`Organization: ${name ?? 'none'}`}
-        className={`is-plain h-9 w-full gap-2 text-foreground ${collapsed ? 'justify-center px-0' : 'justify-center px-0 lg:justify-between lg:px-2'}`}
+        className={`h-8 w-full gap-2 px-1.5 font-semibold text-foreground ${collapsed ? 'justify-center' : 'justify-center lg:justify-start'}`}
     >
+        <span aria-hidden='true' className='grid size-5 shrink-0 place-items-center rounded-[0.3125rem] bg-accent text-[0.6875rem] font-semibold uppercase text-accent-foreground'>
+            {(name ?? '?').slice(0, 1)}
+        </span>
         {!collapsed && (
-            <span className='hidden min-w-0 flex-1 truncate text-left lg:inline'>
-                {loading ? <Skeleton className='inline-block h-3 w-20' /> : name ?? 'No organization'}
-            </span>
+            <>
+                <span className='hidden min-w-0 flex-1 truncate text-left capitalize lg:inline'>
+                    {loading ? <Skeleton className='inline-block h-3 w-20' /> : name ?? 'No organization'}
+                </span>
+                <ChevronDown aria-hidden='true' className='hidden text-subtle lg:block' />
+            </>
         )}
-        <ChevronsUpDown aria-hidden='true' className='size-3.5 shrink-0 text-muted' />
     </Button>
 );
 
@@ -94,7 +99,7 @@ const OrganizationSwitcher = () => {
                                     setOpen(false);
                                 }}
                                 renderEmptyState={() => (
-                                    <p className='py-3 text-center text-[0.8125rem] text-muted'>No organizations found</p>
+                                    <p className='py-3 text-center text-subtle'>No organizations found</p>
                                 )}
                                 className='max-h-64 overflow-y-auto'
                             >
@@ -108,14 +113,14 @@ const OrganizationSwitcher = () => {
 
                         <button
                             type='button'
-                            className='flex min-h-9 w-full items-center gap-2 px-2.5 text-[0.8125rem] text-muted transition-colors hover:bg-default hover:text-foreground'
+                            className='flex min-h-8 w-full items-center gap-2 rounded-md px-2.5 text-muted transition-colors hover:bg-default hover:text-foreground'
                             onClick={() => {
                                 setOpen(false);
                                 setCreating(true);
                             }}
                         >
                             <Plus aria-hidden='true' className='size-4' />
-                            Create Organization
+                            Create organization
                         </button>
                     </Popover.Dialog>
                 </Popover.Content>

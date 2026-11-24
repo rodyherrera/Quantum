@@ -1,23 +1,21 @@
+import { cn } from '@heroui/react';
 import type { ReactNode } from 'react';
 
 interface PageBodyProps{
     children: ReactNode;
-    width?: 'default' | 'wide';
-    height?: 'auto' | 'full';
+    variant?: 'padded' | 'flush' | 'narrow';
+    fill?: boolean;
+    className?: string;
 }
 
-const MAX_WIDTH = {
-    default: 'max-w-none',
-    wide: 'max-w-none'
+const VARIANT = {
+    padded: 'px-5 py-5 sm:px-7',
+    flush: '',
+    narrow: 'mx-auto max-w-[46rem] px-5 pb-24 pt-10 sm:px-7'
 } as const;
 
-const HEIGHT = {
-    auto: 'pb-14 pt-8 lg:pt-11',
-    full: 'flex min-h-0 flex-col pb-8 pt-6 lg:h-full lg:pt-9'
-} as const;
-
-const PageBody = ({ children, width = 'default', height = 'auto' }: PageBodyProps) => (
-    <div className={`w-full px-5 sm:px-8 lg:px-10 ${MAX_WIDTH[width]} ${HEIGHT[height]}`}>
+const PageBody = ({ children, variant = 'padded', fill = false, className }: PageBodyProps) => (
+    <div className={cn('w-full', VARIANT[variant], fill && 'flex min-h-0 flex-1 flex-col', className)}>
         {children}
     </div>
 );

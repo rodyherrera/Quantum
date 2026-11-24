@@ -1,5 +1,5 @@
 import { NavLink, Outlet, useParams } from 'react-router-dom';
-import { DetailHeaderSkeleton } from '@/shared/components/skeletons';
+import { DetailSkeleton } from '@/shared/components/skeletons';
 import { ArrowUpRight } from 'lucide-react';
 import PageBody from '@/shared/components/layout/PageBody';
 import ErrorState from '@/shared/components/ErrorState';
@@ -97,15 +97,15 @@ const RepositoryLayout = () => {
 
     if(repository.loading && repository.data === null){
         return (
-            <PageBody width='wide' height='full'>
-                <DetailHeaderSkeleton actions={4} tabs={5} />
+            <PageBody fill>
+                <DetailSkeleton actions={4} tabs={5} />
             </PageBody>
         );
     }
 
     if(repository.error !== undefined){
         return (
-            <PageBody width='wide'>
+            <PageBody>
                 <ErrorState
                     title='Could not load repository'
                     description={copy(repository.error)}
@@ -118,7 +118,7 @@ const RepositoryLayout = () => {
     if(repository.data === null || id === undefined) return null;
 
     return (
-        <PageBody width='wide' height='full'>
+        <PageBody fill>
             <RepositoryHeader repository={repository.data} renameError={rename.error} onRename={(name) => rename.run(id, name)} />
 
             <nav aria-label='Repository' className='mt-8 flex shrink-0 gap-8 overflow-x-auto border-b border-border'>

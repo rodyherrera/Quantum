@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { FieldsSkeleton, PageHeaderSkeleton } from '@/shared/components/skeletons';
+import { FieldsSkeleton } from '@/shared/components/skeletons';
 import { Button } from '@heroui/react';
 import { ArrowRight } from 'lucide-react';
 import { useSession } from '@/modules/auth/hooks/use-session';
@@ -15,7 +15,7 @@ const Account = () => {
     if(user === null){
         return (
             <PageBody>
-                <PageHeaderSkeleton />
+                
                 <FieldsSkeleton className='mt-10' rows={4} />
             </PageBody>
         );

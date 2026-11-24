@@ -1,8 +1,5 @@
-import { createApi } from '@/shared/api/create-api';
 import { useQuery } from '@/shared/hooks/api/use-query';
-import { serverRoutes } from '@quantum/contracts/modules/server/routes';
-
-const serverApi = createApi(serverRoutes);
+import { serverApi } from '@/shared/api/server-api';
 
 const fallbackHost = (): string => (typeof window === 'undefined' ? 'localhost' : window.location.hostname);
 

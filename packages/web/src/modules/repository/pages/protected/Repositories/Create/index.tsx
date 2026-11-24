@@ -316,7 +316,7 @@ const CreateRepository = () => {
     const account = useQuery(githubApi.account);
 
     return (
-        <PageBody height='full'>
+        <PageBody fill>
             <PageHeader
                 eyebrow='Applications / Import'
                 title='Import a repository'

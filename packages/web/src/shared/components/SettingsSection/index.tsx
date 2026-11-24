@@ -6,15 +6,20 @@ interface SettingsSectionProps{
     children: ReactNode;
 }
 
+/* A titled card. Its rows are split by hairlines; free-form content goes in a SettingsBlock. */
 const SettingsSection = ({ title, description, children }: SettingsSectionProps) => (
-    <section className='grid gap-6 border-t border-border py-8 lg:grid-cols-[17rem_minmax(0,48rem)] lg:gap-12'>
+    <section className='flex flex-col gap-2.5'>
         <div>
-            <h2 className='text-[1.0625rem] text-foreground'>{title}</h2>
-            {description !== undefined && <p className='mt-2 max-w-[30ch] text-[0.8125rem] text-muted'>{description}</p>}
+            <h2 className='text-[0.84375rem] font-semibold text-foreground'>{title}</h2>
+            {description !== undefined && <p className='mt-0.5 max-w-[60ch] text-subtle'>{description}</p>}
         </div>
 
-        <div className='flex min-w-0 flex-col gap-5'>{children}</div>
+        <div className='min-w-0 rounded-lg border border-separator bg-surface [&>*+*]:border-t [&>*+*]:border-separator'>{children}</div>
     </section>
+);
+
+export const SettingsBlock = ({ children }: { children: ReactNode }) => (
+    <div className='flex min-w-0 flex-col gap-4 p-4'>{children}</div>
 );
 
 export default SettingsSection;

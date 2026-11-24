@@ -260,7 +260,7 @@ const Team = () => {
     const items = members.data ?? [];
 
     return (
-        <PageBody width='wide' height='full'>
+        <PageBody fill>
             <TeamHeader onInvite={() => setInviteOpen(true)} />
 
             <div className='mt-10 flex flex-1 flex-col'>
