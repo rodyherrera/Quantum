@@ -77,13 +77,15 @@ is compiled into the web bundle, so the web image needs the rebuild.
 ## Using Quantum
 
 Everything belongs to an organization; members are owners, admins, members or viewers. Inside
-an organization, projects group applications, and every application lives in a project.
+an organization, projects group applications, and every application lives in a project. The
+sidebar lists your projects under the navigation, and each one opens Applications filtered to it.
+**⌘K** (**Ctrl+K**) opens a palette that jumps to any page, starts a deploy or switches the theme.
 
 ![Settings: account, password, organization and team](/screenshots/account.png)
 
 ### Applications
 
-![Applications: repositories, databases, templates and compose stacks in one table](/screenshots/applications.png)
+![Applications: repositories, databases, templates and compose stacks in one list, grouped by state](/screenshots/applications.png)
 
 An application is one of:
 
@@ -94,16 +96,18 @@ An application is one of:
   dashboard.
 - **A template.** One click on anything in the catalogue: n8n, Directus, WordPress, Uptime Kuma, Ollama and the
   rest.
-- **A stack.** **Applications → Deploy stack** takes a compose file, either from one of your
-  GitHub repositories or pasted in. Each service becomes a container on the stack's own network, so
-  services reach each other by name exactly as with `docker compose up`.
+- **A stack.** **Deploy a stack**, under the arrow next to **New application**, takes a compose
+  file, either from one of your GitHub repositories or pasted in. Each service becomes a container
+  on the stack's own network, so services reach each other by name exactly as with
+  `docker compose up`.
 
 ![Template catalogue](/screenshots/templates.png)
 
-Every application has **Logs**, a **Shell** into the container and **Environment** variables,
-with **Start**, **Stop**, **Restart** and **Redeploy** at the top of its page. The table shows each
-one's internal **Address**; the published ports are on the application itself. Variables save
-automatically and apply on **Redeploy**.
+**Applications** groups them by state (deploying, failed, running, stopped), with a tab per kind,
+and shows each one's internal address; the published ports are on the application itself. Every
+application has **Logs**, a **Shell** into the container and **Environment** variables, with
+**Start**, **Stop**, **Restart** and **Redeploy** at the top of its page; repositories and stacks list
+their status, source and ports on the right. Variables save automatically and apply on **Redeploy**.
 
 ![A stack's page: every service with its image, internal address and published ports](/screenshots/services.png)
 ![Logs, one service at a time](/screenshots/logs.png)
@@ -138,30 +142,30 @@ locally starts with the same configuration.
 
 ### Internal addresses
 
-Every container Quantum runs also joins a network shared by the organization. The **Address**
-column shows its IP there, so an app deployed from GitHub reaches a compose service or a managed
-database at `http://<ip>:<port>` without publishing anything to the host. Services of one stack
-reach each other by service name as well. The IP is refreshed when a container is recreated, so
-copy it again after a redeploy.
+Every container Quantum runs also joins a network shared by the organization. Applications shows
+its IP there next to each one, and a stack's **Services** tab lists the IP of every service, so an
+app deployed from GitHub reaches a compose service or a managed database at `http://<ip>:<port>`
+without publishing anything to the host. Services of one stack reach each other by service name as
+well. The IP is refreshed when a container is recreated, so copy it again after a redeploy.
 
 ### Metrics, usage and events
 
 ![Metrics of one container: CPU, memory, network and processes](/screenshots/metrics.png)
 
 **Metrics** shows one container at a time, whether a repository, a database or a single service of
-a stack: CPU, memory, network since start and the processes running inside, with the recent samples
-charted.
+a stack: CPU, memory, network in and out since it started and the processes running inside, with the
+recent samples charted. Network is charted as the traffic between two samples.
 
-![Usage: network and CPU per project over a time window](/screenshots/usage.png)
+![Usage: transfer, CPU and peak memory per project over a time window](/screenshots/usage.png)
 
 **Usage** adds up transfer, CPU and peak memory per project over the last 15 minutes, hour, 6 hours
-or 24 hours.
+or 24 hours, next to each project's share of the transfer and the server's own CPU and memory.
 
 ![Events: every step Quantum took, with its source and time](/screenshots/events.png)
 
 **Events** is the record of what Quantum did: every deployment step, start and stop, with its
-source and time. A stack that is still installing shows the same steps on its own page as they
-happen.
+source and time, grouped by day and filterable by level. A stack that is still installing shows the
+same steps on its own page as they happen.
 
 ### Persistent volumes
 
@@ -185,7 +189,8 @@ to the connected GitHub account of the application's owner.
 container that mounts the same files the application sees, joins its network and hands you a
 URL and a password. Edits to a repository land in `/app` at once; exec apps pick them up on
 **Restart**, Dockerfile and image apps on the next deploy, and the next push from GitHub replaces
-tracked files, so commit what you want to keep. **Stop** frees the workspace.
+tracked files, so commit what you want to keep. **Stop** frees the workspace. **Codespaces** in the
+sidebar lists every workspace in the organization.
 
 ### Custom domains for deployments
 
