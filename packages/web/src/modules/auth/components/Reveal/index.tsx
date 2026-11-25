@@ -8,7 +8,7 @@ interface RevealProps{
 
 const Reveal = ({ show, children }: RevealProps) => (
     <Collapse show={show}>
-        <div className='flex flex-col gap-5 pt-5'>{children}</div>
+        <div className='flex flex-col gap-2.5 pt-2.5'>{children}</div>
     </Collapse>
 );
 
