@@ -3,7 +3,7 @@ import { cn } from '@heroui/react';
 import QuantumMark from '@/shared/components/QuantumMark';
 import PixelLink from '@/modules/home/components/PixelLink';
 import { GITHUB_URL } from '@/modules/home/utils/links';
-import { MONO_LABEL, WRAP } from '@/modules/home/utils/classes';
+import { WRAP } from '@/modules/home/utils/classes';
 
 interface LandingNavProps{
     overlay?: boolean;
@@ -24,7 +24,7 @@ const LandingNav = ({ overlay = false }: LandingNavProps) => {
                     Quantum
                 </Link>
 
-                <nav aria-label='Sections' className={`${MONO_LABEL} hidden items-center gap-6 md:flex`}>
+                <nav aria-label='Sections' className='hidden items-center gap-6 md:flex'>
                     <Link to={{ pathname: '/', hash: 'deploy' }} className={link}>Deploy</Link>
                     <Link to={{ pathname: '/', hash: 'operate' }} className={link}>Operate</Link>
                     <NavLink to='/get-started' className={link}>Guide</NavLink>
@@ -32,7 +32,7 @@ const LandingNav = ({ overlay = false }: LandingNavProps) => {
                 </nav>
 
                 <div className='ms-auto flex items-center gap-5'>
-                    <Link to='/sign-in' className={`${MONO_LABEL} ${link}`}>Log in</Link>
+                    <Link to='/sign-in' className={link}>Log in</Link>
                     <PixelLink to='/sign-up' size='sm' tone={overlay ? 'paper' : 'theme'}>Sign up</PixelLink>
                 </div>
             </div>

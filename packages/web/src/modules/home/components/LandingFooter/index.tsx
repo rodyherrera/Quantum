@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import QuantumMark from '@/shared/components/QuantumMark';
 import { GITHUB_URL, ISSUES_URL, LICENSE_URL, SUPPORT_URL } from '@/modules/home/utils/links';
-import { MONO_LABEL, WRAP } from '@/modules/home/utils/classes';
+import { WRAP } from '@/modules/home/utils/classes';
 
 const LINK = 'transition-colors hover:text-foreground motion-reduce:transition-none';
 
@@ -13,8 +13,8 @@ const EXTERNAL = [
 
 const LandingFooter = () => (
     <footer className='border-t border-separator'>
-        <div className={`${WRAP} ${MONO_LABEL} flex min-h-16 flex-wrap items-center gap-x-6 gap-y-2 py-5 text-subtle`}>
-            <Link to='/' className='inline-flex items-center gap-2 font-sans text-xs font-semibold normal-case tracking-normal text-foreground'>
+        <div className={`${WRAP} flex min-h-16 flex-wrap items-center gap-x-6 gap-y-2 py-5 text-xs text-subtle`}>
+            <Link to='/' className='inline-flex items-center gap-2 font-semibold text-foreground'>
                 <QuantumMark className='size-4' />
                 Quantum
             </Link>
