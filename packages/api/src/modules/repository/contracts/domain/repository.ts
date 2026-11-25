@@ -19,6 +19,7 @@ export interface RepositoryFields{
     image: string | null;
     url: string;
     port: number | null;
+    healthCheckPath: string | null;
     userId: number;
     organizationId: number | null;
     projectId: number;

@@ -7,6 +7,7 @@ import Project from '@/modules/project/models/Project';
 import Repository from '../models/Repository';
 import { oneWithContainerStatus, withContainerStatus } from './withContainerStatus';
 import { normalizeVolumes } from './repositoryVolumes';
+import { normalizeHealthCheckPath } from './healthCheckPath';
 import { RepositoryError } from '../contracts/domain/errors';
 import { SourceType } from '@quantum/contracts/modules/repository/domain';
 import type { Tenant } from '@/modules/organization/contracts/types/fastify';
@@ -111,6 +112,7 @@ export default class RepositoryService{
         if(input.runtimeVersion !== undefined) repository.runtimeVersion = input.runtimeVersion;
         if(input.outputDirectory !== undefined) repository.outputDirectory = input.outputDirectory;
         if(input.port !== undefined) repository.port = input.port;
+        if(input.healthCheckPath !== undefined) repository.healthCheckPath = normalizeHealthCheckPath(input.healthCheckPath);
         if(input.buildStrategy !== undefined) repository.buildStrategy = input.buildStrategy;
         if(input.dockerfilePath !== undefined) repository.dockerfilePath = input.dockerfilePath === '' ? null : input.dockerfilePath;
         if(input.image !== undefined) repository.image = input.image === '' ? null : input.image;

@@ -4,6 +4,8 @@ import PortBinding from '@/modules/docker/models/PortBinding';
 import Deployment from '../../models/Deployment';
 import Job from '../../models/Job';
 import ContainerOps from '../ContainerOps';
+import { ensureEdge } from '../Edge';
+import { clearLeftovers } from '../Release';
 import { getDockerHost } from '../DockerHost';
 import { ContainerDesiredState, ContainerStatus } from '@quantum/contracts/modules/docker/domain';
 import { DeploymentStatus, JobStatus, JobType } from '@quantum/contracts/modules/deployment/domain';
@@ -56,6 +58,10 @@ export default class ReconcileHandler{
             if(await this.#portsDrifted(ops, container)) return await this.#replace(ops, container);
             if(container.status !== ContainerStatus.Running) return await this.#startOrRecreate(ops, container);
             await ops.ensureAddress();
+            if(container.isRepositoryContainer){
+                await clearLeftovers(container);
+                await ensureEdge(container);
+            }
             return 'started';
         }catch(error){
             logger.error(`reconcile failed for ${container.dockerContainerName}`, error, { scope: 'orchestrator.handler.reconcile' });
@@ -80,6 +86,8 @@ export default class ReconcileHandler{
         const bindings = await PortBinding.find({ where: { containerId: container.id } });
         const wanted = new Set(bindings.map((binding) => binding.externalPort));
         const published = await ops.publishedPorts();
+        // A repository app hands its ports to its edge, which keeps them in line on its own.
+        if(container.isRepositoryContainer && published.size === 0) return false;
 
         if(wanted.size !== published.size) return true;
         return [...wanted].some((port) => !published.has(port));

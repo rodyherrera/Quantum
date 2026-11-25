@@ -16,20 +16,22 @@ export default class ContainerOptionsResolver{
         const image = await this.#imageRef(overrides.imageOverride);
         const networkName = await this.#networkName();
         const { exposedPorts, bindings } = await this.#portBindings();
+        // A repository app's published ports belong to its edge, so a release can start next to it.
+        const published = this.container.isRepositoryContainer ? {} : bindings;
         const mounts = await this.#volumeMounts();
         const binds = this.#binds();
         const env = [...(await containerEnvironment(this.container)), ...(overrides.extraEnv ?? [])];
 
         const options: Dockerode.ContainerCreateOptions = {
             Image: image,
-            name: this.container.dockerContainerName,
+            name: overrides.name ?? this.container.dockerContainerName,
             Tty: true,
             OpenStdin: true,
             StdinOnce: true,
             Env: env,
             ExposedPorts: exposedPorts,
             HostConfig: {
-                PortBindings: bindings,
+                PortBindings: published,
                 Binds: binds,
                 Mounts: mounts,
                 NetworkMode: networkName,

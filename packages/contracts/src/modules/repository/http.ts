@@ -34,6 +34,7 @@ export interface UpdateRepositoryInput{
     runtimeVersion?: string;
     outputDirectory?: string;
     port?: number;
+    healthCheckPath?: string;
     projectId?: number;
     buildStrategy?: BuildStrategy;
     dockerfilePath?: string;

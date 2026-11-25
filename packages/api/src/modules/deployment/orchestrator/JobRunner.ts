@@ -104,6 +104,8 @@ export default class JobRunner{
 
     async #process(job: Job): Promise<void>{
         const handler = this.handlers[job.type];
+        // A job that outlives its lease keeps it, so no other worker picks it up while it still runs.
+        const renewal = setInterval(() => void this.#renew(job), this.leaseMs / 3);
         try{
             if(!handler) throw new Error(`Orchestrator::Dispatch::UnknownJobType::${job.type}`);
             await handler(job);
@@ -112,7 +114,16 @@ export default class JobRunner{
             const message = error instanceof Error ? error.message : String(error);
             await this.#fail(job, message);
             logger.error(`job ${job.id} (${job.type}) failed: ${message}`, error, { scope: 'orchestrator.runner' });
+        }finally{
+            clearInterval(renewal);
         }
+    }
+
+    async #renew(job: Job): Promise<void>{
+        await Job.update(
+            { id: job.id, claimedBy: this.workerId, status: JobStatus.Active },
+            { lockedUntil: new Date(Date.now() + this.leaseMs) }
+        ).catch((error) => logger.warn(`could not renew the lease of job ${job.id} — ${(error as Error).message}`, { scope: 'orchestrator.runner' }));
     }
 
     async #complete(job: Job): Promise<void>{

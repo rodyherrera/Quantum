@@ -140,6 +140,20 @@ Repositories, template installs and compose services each have their own variabl
 repository is cloned, a `.env` at its root is imported once, so a project that already runs
 locally starts with the same configuration.
 
+### Deploys without downtime
+
+A redeploy of a repository never takes the app down. The new version starts next to the running
+one and only takes the traffic once it answers on its port, or on a **Health check** path set in
+the repository's settings. If it crashes or never answers, the deploy fails with the reason and the
+old version keeps serving as if nothing happened. After the switch the old version stays up for a
+minute, and if the new one dies in that time, traffic goes straight back to it.
+
+Each app sits behind a small proxy that holds its published port and its internal hostname, which
+is what lets two versions run side by side. For a minute or two during a deploy both versions run,
+so they share the app's volumes and memory doubles. An app on the **Exec** build strategy builds in
+place, inside the container that serves it, so it does not get this. An app created before this
+change moves behind its proxy on its next deploy, with a blip of under a second that one time.
+
 ### Internal addresses
 
 Every container Quantum runs also joins a network shared by the organization. Applications shows

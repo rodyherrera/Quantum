@@ -8,11 +8,14 @@ import { internalHostname } from '@/modules/docker/services/containerAddress';
 import { namedVolume } from '@/modules/docker/services/containerVolume';
 import { containerEnvironment } from './containerEnvironment';
 import { joinOrganizationNetwork, organizationNetworkName } from './NetworkOps';
+import { ensureEdge, hostPortsOf, removeEdge } from './Edge';
+import PortBinding from '@/modules/docker/models/PortBinding';
 import { pullImage } from './pullImage';
 import { ContainerStatus } from '@quantum/contracts/modules/docker/domain';
 import { logger } from '@/shared/utils/Logger';
 
 export interface ContainerOverrides{
+    name?: string;
     imageOverride?: string;
     extraEnv?: string[];
     cmd?: string[];
@@ -85,20 +88,12 @@ export default class ContainerOps{
         const live = this.#docker.getContainer(this.container.dockerContainerName);
         const info = await live.inspect().catch((error: { statusCode?: number }) =>
             error.statusCode === 404 ? null : Promise.reject(error));
-        if(!info) return new Set();
-
-        const published = new Set<number>();
-        for(const hostPorts of Object.values(info.HostConfig?.PortBindings ?? {})){
-            for(const { HostPort } of (hostPorts ?? []) as Array<{ HostPort?: string }>){
-                const port = Number(HostPort);
-                if(Number.isInteger(port) && port > 0) published.add(port);
-            }
-        }
-        return published;
+        return info ? hostPortsOf(info) : new Set();
     }
 
     async removeContainer(): Promise<void>{
         await this.destroyContainer();
+        if(this.container.isRepositoryContainer) await removeEdge(this.container);
         await this.#removeVolumes();
     }
 
@@ -155,6 +150,14 @@ export default class ContainerOps{
         await created.start();
         await this.#markRunning(created);
         return created;
+    }
+
+    /* Starts a second container of this one under `name`, leaving the running one and its record alone. */
+    async createRelease(name: string, image: string): Promise<void>{
+        const options = await new ContainerOptionsResolver(this.container).resolve({ name, imageOverride: image });
+        const created = await this.#docker.createContainer(options);
+        await this.#join(created.id);
+        await created.start();
     }
 
     async reloadContainer(overrides: ContainerOverrides = {}): Promise<void>{
@@ -218,7 +221,8 @@ export default class ContainerOps{
 
     async #join(containerRef: string): Promise<void>{
         try{
-            await joinOrganizationNetwork(containerRef, this.container.organizationId, internalHostname(this.container));
+            const alias = await this.#reachedThroughEdge() ? undefined : internalHostname(this.container);
+            await joinOrganizationNetwork(containerRef, this.container.organizationId, alias);
         }catch(error){
             logger.warn(
                 `could not attach ${this.container.dockerContainerName} to its organization network — ${(error as Error).message}`,
@@ -238,6 +242,13 @@ export default class ContainerOps{
         this.container.status = ContainerStatus.Running;
         this.container.startedAt = new Date();
         await this.container.save();
+        if(this.container.isRepositoryContainer) await ensureEdge(this.container);
+    }
+
+    /* A repository app with published ports is reached through its edge, which also holds its hostname. */
+    async #reachedThroughEdge(): Promise<boolean>{
+        if(!this.container.isRepositoryContainer) return false;
+        return (await PortBinding.countBy({ containerId: this.container.id })) > 0;
     }
 
     async #pullBaseImage(imageOverride?: string): Promise<void>{

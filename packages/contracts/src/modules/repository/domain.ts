@@ -43,6 +43,7 @@ export interface Repository extends BaseEntity{
     image: string | null;
     url: string;
     port: number | null;
+    healthCheckPath: string | null;
     containerStatus: ContainerStatus | null;
     ports: RepositoryPort[];
     address: ContainerAddress | null;
