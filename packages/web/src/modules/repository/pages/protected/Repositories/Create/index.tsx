@@ -1,17 +1,18 @@
 import { useState } from 'react';
-import { FieldsSkeleton, TableSkeleton } from '@/shared/components/skeletons';
+import { FieldsSkeleton } from '@/shared/components/skeletons';
 import { useNavigate } from 'react-router-dom';
 import { Button, Label, ListBox, ListBoxItem, Select } from '@heroui/react';
-import { ArrowRight, FolderGit2 } from 'lucide-react';
+import { FolderGit2 } from 'lucide-react';
+import PageBar from '@/shared/components/layout/PageBar';
 import PageBody from '@/shared/components/layout/PageBody';
-import PageHeader from '@/shared/components/layout/PageHeader';
+import PageIntro from '@/shared/components/layout/PageIntro';
 import ErrorState from '@/shared/components/ErrorState';
 import EmptyState from '@/shared/components/EmptyState';
-import CenterState from '@/shared/components/CenterState';
-import SettingsSection from '@/shared/components/SettingsSection';
+import SettingsSection, { SettingsBlock } from '@/shared/components/SettingsSection';
 import Form from '@/shared/components/forms/Form';
 import Field from '@/shared/components/forms/Field';
 import EntitySelect from '@/shared/components/EntitySelect';
+import GithubIcon from '@/shared/components/icons/GithubIcon';
 import ConnectGithubButton from '@/modules/github/components/ConnectGithubButton';
 import RepositoryPicker from '@/modules/github/components/RepositoryPicker';
 import { useForm } from '@/shared/hooks/forms/use-form';
@@ -32,12 +33,19 @@ import {
     validateCreateRepositoryForm
 } from '@/modules/repository/utils/create-repository-form';
 import type { IValidation } from 'typia';
+import type { FieldBinding } from '@/shared/contracts/form';
 import type { CreateRepositoryFormValues } from '@/modules/repository/utils/create-repository-form';
 import type { GithubAccount, GithubRepository, RepositoryDetection } from '@quantum/contracts/modules/github/domain';
 import type { Project } from '@quantum/contracts/modules/project/domain';
 
 const githubCopy = errorCopy(githubErrorMessages);
 const repositoryCopy = errorCopy(repositoryErrorMessages);
+
+const TRAIL = [{ label: 'Applications', to: '/applications' }];
+
+const branchOptions = (repository: GithubRepository) => repository.branches.map((branch) => ({ value: branch, label: branch }));
+
+const FRAMEWORK_CHOICES = FRAMEWORK_OPTIONS.map((framework) => ({ value: framework, label: framework }));
 
 const initialValuesFor = (
     repository: GithubRepository,
@@ -73,6 +81,56 @@ const ConnectGithubPrompt = () => (
     </EmptyState>
 );
 
+interface OptionSelectProps{
+    binding: FieldBinding<unknown>;
+    label: string;
+    options: { value: string; label: string }[];
+    placeholder?: string;
+}
+
+const OptionSelect = ({ binding, label, options, placeholder }: OptionSelectProps) => (
+    <div className='flex flex-col gap-1.5'>
+        <Label>{label}</Label>
+        <Select
+            aria-label={label}
+            placeholder={placeholder}
+            selectedKey={(binding.value as string) === '' ? null : (binding.value as string)}
+            onSelectionChange={(key) => binding.onChange(String(key))}
+        >
+            <Select.Trigger>
+                <Select.Value />
+                <Select.Indicator />
+            </Select.Trigger>
+
+            <Select.Popover>
+                <ListBox>
+                    {options.map((option) => (
+                        <ListBoxItem key={option.value} id={option.value} textValue={option.label}>
+                            {option.label}
+                        </ListBoxItem>
+                    ))}
+                </ListBox>
+            </Select.Popover>
+        </Select>
+    </div>
+);
+
+interface SelectedRepositoryProps{
+    repository: GithubRepository;
+    onBack: () => void;
+}
+
+const SelectedRepository = ({ repository, onBack }: SelectedRepositoryProps) => (
+    <div className='flex items-center gap-2.5 rounded-lg border border-separator bg-surface py-2 pl-3 pr-2'>
+        <GithubIcon className='size-4 shrink-0 text-muted' />
+        <span className='min-w-0 flex-1 truncate'>
+            <span className='font-medium text-foreground'>{repository.fullName}</span>
+            <span className='ml-2 text-subtle'>{repository.private ? 'Private' : 'Public'}</span>
+        </span>
+        <Button variant='ghost' size='sm' onPress={onBack}>Change repository</Button>
+    </div>
+);
+
 interface RepositoryConfigFieldsProps{
     repository: GithubRepository;
     detection: RepositoryDetection | null;
@@ -94,147 +152,72 @@ const RepositoryConfigFields = ({ repository, detection, projects, onBack }: Rep
     });
 
     return (
-        <div>
-            <div className='flex flex-wrap items-end justify-between gap-4'>
-                <div className='min-w-0'>
-                    <h2 className='truncate font-mono text-[0.9375rem] text-foreground'>{repository.fullName}</h2>
-                    <p className='mt-1 text-[0.8125rem] text-muted'>Configure how this repository is built and run.</p>
-                </div>
-                <Button variant='secondary' size='sm' onPress={onBack}>Change repository</Button>
-            </div>
+        <div className='flex flex-col gap-7'>
+            <SelectedRepository repository={repository} onBack={onBack} />
 
-            <Form form={form} className='mt-6 flex flex-col'>
+            <Form form={form} className='flex flex-col gap-7'>
                 <SettingsSection title='Repository' description='What to call it, which branch to deploy, and where it belongs.'>
-                    <div className='grid gap-5 sm:grid-cols-2'>
-                        <Field form={form} name='alias' label='Alias' placeholder='my-repository' />
+                    <SettingsBlock>
+                        <div className='grid gap-4 sm:grid-cols-2'>
+                            <Field form={form} name='alias' label='Alias' placeholder='my-repository' />
 
-                        <Field form={form} name='branch'>
+                            <Field form={form} name='branch'>
+                                {(binding) => <OptionSelect binding={binding} label='Branch' options={branchOptions(repository)} />}
+                            </Field>
+                        </div>
+
+                        <Field form={form} name='projectId'>
                             {(binding) => (
                                 <div className='flex flex-col gap-1.5'>
-                                    <Label>Branch</Label>
-                                    <Select
-                                        aria-label='Branch'
-                                        selectedKey={(binding.value as string) === '' ? null : (binding.value as string)}
-                                        onSelectionChange={(key) => binding.onChange(String(key))}
-                                    >
-                                        <Select.Trigger>
-                                            <Select.Value />
-                                            <Select.Indicator />
-                                        </Select.Trigger>
-
-                                        <Select.Popover>
-                                            <ListBox>
-                                                {repository.branches.map((branch) => (
-                                                    <ListBoxItem key={branch} id={branch} textValue={branch}>
-                                                        {branch}
-                                                    </ListBoxItem>
-                                                ))}
-                                            </ListBox>
-                                        </Select.Popover>
-                                    </Select>
+                                    <Label>Project</Label>
+                                    <EntitySelect
+                                        items={projects}
+                                        getKey={(project) => project.id}
+                                        getLabel={(project) => project.name}
+                                        value={(binding.value as number) === 0 ? null : (binding.value as number)}
+                                        onChange={(key) => binding.onChange(Number(key))}
+                                        placeholder='Select a project'
+                                        ariaLabel='Project'
+                                    />
                                 </div>
                             )}
                         </Field>
-                    </div>
-
-                    <Field form={form} name='projectId'>
-                        {(binding) => (
-                            <div className='flex flex-col gap-1.5'>
-                                <Label>Project</Label>
-                                <EntitySelect
-                                    items={projects}
-                                    getKey={(project) => project.id}
-                                    getLabel={(project) => project.name}
-                                    value={(binding.value as number) === 0 ? null : (binding.value as number)}
-                                    onChange={(key) => binding.onChange(Number(key))}
-                                    placeholder='Select a project'
-                                    ariaLabel='Project'
-                                />
-                            </div>
-                        )}
-                    </Field>
+                    </SettingsBlock>
                 </SettingsSection>
 
                 <SettingsSection title='Build' description='Detected from the repository. Change anything Quantum got wrong.'>
-                    <div className='grid gap-5 sm:grid-cols-2'>
-                        <Field form={form} name='framework'>
-                            {(binding) => (
-                                <div className='flex flex-col gap-1.5'>
-                                    <Label>Framework</Label>
-                                    <Select
-                                        aria-label='Framework'
-                                        placeholder='Select a framework'
-                                        selectedKey={(binding.value as string) === '' ? null : (binding.value as string)}
-                                        onSelectionChange={(key) => binding.onChange(String(key))}
-                                    >
-                                        <Select.Trigger>
-                                            <Select.Value />
-                                            <Select.Indicator />
-                                        </Select.Trigger>
+                    <SettingsBlock>
+                        <div className='grid gap-4 sm:grid-cols-2'>
+                            <Field form={form} name='framework'>
+                                {(binding) => (
+                                    <OptionSelect binding={binding} label='Framework' options={FRAMEWORK_CHOICES} placeholder='Select a framework' />
+                                )}
+                            </Field>
 
-                                        <Select.Popover>
-                                            <ListBox>
-                                                {FRAMEWORK_OPTIONS.map((framework) => (
-                                                    <ListBoxItem key={framework} id={framework} textValue={framework}>
-                                                        {framework}
-                                                    </ListBoxItem>
-                                                ))}
-                                            </ListBox>
-                                        </Select.Popover>
-                                    </Select>
-                                </div>
-                            )}
-                        </Field>
+                            <Field form={form} name='runtime'>
+                                {(binding) => (
+                                    <OptionSelect binding={binding} label='Runtime' options={RUNTIME_OPTIONS} placeholder='Select a runtime' />
+                                )}
+                            </Field>
 
-                        <Field form={form} name='runtime'>
-                            {(binding) => (
-                                <div className='flex flex-col gap-1.5'>
-                                    <Label>Runtime</Label>
-                                    <Select
-                                        aria-label='Runtime'
-                                        placeholder='Select a runtime'
-                                        selectedKey={(binding.value as string) === '' ? null : (binding.value as string)}
-                                        onSelectionChange={(key) => binding.onChange(String(key))}
-                                    >
-                                        <Select.Trigger>
-                                            <Select.Value />
-                                            <Select.Indicator />
-                                        </Select.Trigger>
+                            <Field form={form} name='runtimeVersion' label='Runtime version' placeholder='20' />
+                            <Field form={form} name='port' label='Port' type='number' placeholder='3000' />
+                        </div>
 
-                                        <Select.Popover>
-                                            <ListBox>
-                                                {RUNTIME_OPTIONS.map((runtime) => (
-                                                    <ListBoxItem key={runtime.value} id={runtime.value} textValue={runtime.label}>
-                                                        {runtime.label}
-                                                    </ListBoxItem>
-                                                ))}
-                                            </ListBox>
-                                        </Select.Popover>
-                                    </Select>
-                                </div>
-                            )}
-                        </Field>
+                        <div className='grid gap-4 sm:grid-cols-3'>
+                            <Field form={form} name='installCommand' label='Install command' placeholder='npm install' />
+                            <Field form={form} name='buildCommand' label='Build command' placeholder='npm run build' />
+                            <Field form={form} name='startCommand' label='Start command' placeholder='npm start' />
+                        </div>
 
-                        <Field form={form} name='runtimeVersion' label='Runtime version' placeholder='20' />
-                        <Field form={form} name='port' label='Port' type='number' placeholder='3000' />
-                    </div>
-
-                    <div className='grid gap-5 sm:grid-cols-3'>
-                        <Field form={form} name='installCommand' label='Install command' placeholder='npm install' />
-                        <Field form={form} name='buildCommand' label='Build command' placeholder='npm run build' />
-                        <Field form={form} name='startCommand' label='Start command' placeholder='npm start' />
-                    </div>
-
-                    <div className='grid gap-5 sm:grid-cols-2'>
-                        <Field form={form} name='outputDirectory' label='Output directory' placeholder='dist' />
-                    </div>
+                        <div className='grid gap-4 sm:grid-cols-2'>
+                            <Field form={form} name='outputDirectory' label='Output directory' placeholder='dist' />
+                        </div>
+                    </SettingsBlock>
                 </SettingsSection>
 
-                <div className='border-t border-border py-6'>
-                    <Button type='submit' isPending={form.submitting} isDisabled={!form.isValid}>
-                        Create repository
-                        <ArrowRight aria-hidden='true' className='size-4' />
-                    </Button>
+                <div>
+                    <Button type='submit' isPending={form.submitting} isDisabled={!form.isValid}>Import and deploy</Button>
                 </div>
             </Form>
         </div>
@@ -260,13 +243,11 @@ const RepositoryConfigForm = ({ repository, onBack }: RepositoryConfigFormProps)
 
     if(projects.error !== undefined){
         return (
-            <CenterState className='h-full'>
-                <ErrorState
-                    title='Could not load projects'
-                    description={repositoryCopy(projects.error)}
-                    onRetry={projects.refresh}
-                />
-            </CenterState>
+            <ErrorState
+                title='Could not load projects'
+                description={repositoryCopy(projects.error)}
+                onRetry={projects.refresh}
+            />
         );
     }
 
@@ -290,18 +271,16 @@ const RepositoryCreateFlow = ({ account }: RepositoryCreateFlowProps) => {
     const [selected, setSelected] = useState<GithubRepository | null>(null);
 
     if(repositories.loading){
-        return <TableSkeleton rows={6} columns={2} />;
+        return <FieldsSkeleton rows={1} />;
     }
 
     if(repositories.error !== undefined){
         return (
-            <CenterState className='h-full'>
-                <ErrorState
-                    title='Could not load GitHub repositories'
-                    description={githubCopy(repositories.error)}
-                    onRetry={repositories.reload}
-                />
-            </CenterState>
+            <ErrorState
+                title='Could not load GitHub repositories'
+                description={githubCopy(repositories.error)}
+                onRetry={repositories.reload}
+            />
         );
     }
 
@@ -316,23 +295,26 @@ const CreateRepository = () => {
     const account = useQuery(githubApi.account);
 
     return (
-        <PageBody fill>
-            <PageHeader
-                eyebrow='Applications / Import'
-                title='Import a repository'
-                description='Pick a repository from your GitHub account. Quantum detects the framework and deploys on every push.'
-            />
+        <>
+            <PageBar title='Import a repository' icon={FolderGit2} trail={TRAIL} />
 
-            <div className='mt-8 flex flex-1 flex-col'>
-                {account.loading ? (
-                    <TableSkeleton rows={6} columns={2} />
-                ) : account.error !== undefined ? (
-                    <CenterState><ConnectGithubPrompt /></CenterState>
-                ) : (
-                    <RepositoryCreateFlow account={account.data} />
-                )}
-            </div>
-        </PageBody>
+            <PageBody variant='narrow'>
+                <PageIntro
+                    title='Import a repository'
+                    description='Pick a repository from your GitHub account. Quantum detects the framework and deploys on every push.'
+                />
+
+                <div className='mt-8'>
+                    {account.loading ? (
+                        <FieldsSkeleton rows={1} />
+                    ) : account.error !== undefined ? (
+                        <ConnectGithubPrompt />
+                    ) : (
+                        <RepositoryCreateFlow account={account.data} />
+                    )}
+                </div>
+            </PageBody>
+        </>
     );
 };
 
