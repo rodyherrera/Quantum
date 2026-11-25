@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react';
 import { PageSkeleton, TableSkeleton } from '@/shared/components/skeletons';
 import { useRememberedSelection } from '@/shared/hooks/use-remembered-selection';
 import { Button } from '@heroui/react';
-import { Code2, Plus, Trash2 } from 'lucide-react';
+import { Trash2 } from 'lucide-react';
 import PageBar from '@/shared/components/layout/PageBar';
 import PageBody from '@/shared/components/layout/PageBody';
 import ListRow from '@/shared/components/list/ListRow';
@@ -27,7 +27,7 @@ import type { Codespace } from '@quantum/contracts/modules/codespace/domain';
 
 const copy = errorCopy(codespaceErrorMessages);
 
-const COLUMNS = 'grid-cols-[1rem_minmax(0,1fr)_auto_auto] md:grid-cols-[1rem_minmax(0,1fr)_7.5rem_minmax(0,14rem)_3.5rem_auto]';
+const COLUMNS = 'grid-cols-[minmax(0,1fr)_auto_auto] md:grid-cols-[minmax(0,1fr)_7.5rem_minmax(0,14rem)_3.5rem_auto]';
 
 const resourcesOf = (codespace: Codespace): string =>
     `${codespace.cpuCores} CPU · ${formatBytes(codespace.memoryMb * 1024 * 1024)} memory · ${codespace.diskGb} GB disk`;
@@ -61,7 +61,6 @@ interface CodespaceRowProps{
 
 const CodespaceRow = ({ codespace, onAccess, onDelete }: CodespaceRowProps) => (
     <ListRow className={COLUMNS}>
-        <Code2 aria-hidden='true' className='size-[0.9375rem] text-subtle' />
 
         <span className='min-w-0 truncate'>
             <span className='font-medium text-foreground'>{codespace.name}</span>
@@ -118,14 +117,13 @@ const Codespaces = () => {
 
     const newCodespace = (
         <Button size='sm' isDisabled={projectId === null} onPress={() => setCreateOpen(true)}>
-            <Plus aria-hidden='true' />
             <span className='sr-only sm:not-sr-only'>New codespace</span>
         </Button>
     );
 
     return (
         <>
-            <PageBar title='Codespaces' icon={Code2} actions={projects.error === undefined ? newCodespace : undefined}>
+            <PageBar title='Codespaces' actions={projects.error === undefined ? newCodespace : undefined}>
                 {projects.error === undefined ? (
                     <div className='w-44 py-1 pl-1'>
                         <EntitySelect
@@ -151,18 +149,15 @@ const Codespaces = () => {
                     onRetry={projects.error === undefined ? codespaces.reload : projects.refresh}
                     showPrompt={projects.error === undefined && projectId === null}
                     prompt={{
-                        icon: Code2,
                         title: 'Select a project',
                         description: 'Pick one of your projects to see its codespaces.'
                     }}
                     isEmpty={(codespaces.data ?? []).length === 0}
                     empty={{
-                        icon: Code2,
                         title: 'No codespaces yet',
                         description: 'Create one to get a cloud dev environment for this project.',
                         action: (
                             <Button onPress={() => setCreateOpen(true)}>
-                                <Plus aria-hidden='true' />
                                 New codespace
                             </Button>
                         )

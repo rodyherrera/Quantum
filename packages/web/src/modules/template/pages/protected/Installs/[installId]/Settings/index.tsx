@@ -6,7 +6,6 @@ import SettingsRow from '@/shared/components/SettingsRow';
 import EntitySelect from '@/shared/components/EntitySelect';
 import ErrorState from '@/shared/components/ErrorState';
 import SaveStatus from '@/shared/components/forms/SaveStatus';
-import GithubIcon from '@/shared/components/icons/GithubIcon';
 import EnvironmentVariablesEditor from '@/shared/components/EnvironmentVariablesEditor';
 import Panel from '@/modules/template/components/Panel';
 import { FieldsSkeleton } from '@/shared/components/skeletons';
@@ -48,9 +47,8 @@ const SourceSection = ({ installId, source }: SourceSectionProps) => {
                         href={`https://github.com/${source.owner}/${source.repo}`}
                         target='_blank'
                         rel='noreferrer'
-                        className='inline-flex items-center gap-2 font-mono text-xs text-foreground underline-offset-4 hover:underline'
+                        className='font-mono text-xs text-foreground underline-offset-4 hover:underline'
                     >
-                        <GithubIcon className='size-3.5 text-subtle' />
                         {source.owner}/{source.repo}
                     </a>
                 )}

@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { BoardSkeleton, PageSkeleton } from '@/shared/components/skeletons';
-import { Gauge } from 'lucide-react';
 import PageBar from '@/shared/components/layout/PageBar';
 import PageBody from '@/shared/components/layout/PageBody';
 import Segmented from '@/shared/components/layout/Segmented';
@@ -14,7 +13,6 @@ import MeterList from '@/shared/components/board/MeterList';
 import { useQuery } from '@/shared/hooks/api/use-query';
 import { dockerApi } from '@/modules/docker/api/api';
 import { serverApi } from '@/shared/api/server-api';
-import { projectHue } from '@/modules/project/utils/project-hue';
 import { formatBytes } from '@/shared/utils/format-bytes';
 import { rate, share } from '@/shared/utils/format-metrics';
 import type { NetworkUsageStat, ResourceUsageStat } from '@quantum/contracts/modules/docker/domain';
@@ -50,10 +48,6 @@ const joinUsage = (network: NetworkUsageStat[], resources: ResourceUsageStat[]):
     return [...byId.values()].sort((a, b) => (b.incoming + b.outgoing) - (a.incoming + a.outgoing));
 };
 
-const ProjectDot = ({ projectId }: { projectId: number }) => (
-    <span aria-hidden='true' className='size-2 shrink-0 rounded-[0.15625rem]' style={{ backgroundColor: projectHue(projectId) }} />
-);
-
 const COLUMNS = 'grid-cols-[minmax(0,1fr)_4.75rem_4.75rem] sm:grid-cols-[minmax(0,1fr)_5rem_5rem_4.5rem_5.5rem]';
 
 const ProjectsTable = ({ usage }: { usage: ProjectUsage[] }) => (
@@ -69,7 +63,6 @@ const ProjectsTable = ({ usage }: { usage: ProjectUsage[] }) => (
         {usage.map((project) => (
             <ListRow key={project.projectId} className={`px-5 ${COLUMNS}`} to={`/applications?project=${project.projectId}`} label={`Open ${project.projectName}`}>
                 <span role='cell' className='flex min-w-0 items-center gap-2'>
-                    <ProjectDot projectId={project.projectId} />
                     <span className='truncate font-medium text-foreground'>{project.projectName}</span>
                 </span>
                 <span role='cell' className='text-right tabular-nums text-foreground'>{formatBytes(project.incoming)}</span>
@@ -112,7 +105,6 @@ const Usage = () => {
     const bar = (
         <PageBar
             title='Usage'
-            icon={Gauge}
             actions={<Segmented label='Time window' options={WINDOWS} value={minutes} onChange={setMinutes} />}
         />
     );
@@ -140,7 +132,6 @@ const Usage = () => {
                     onRetry={retry}
                     isEmpty={usage.length === 0}
                     empty={{
-                        icon: Gauge,
                         title: 'No usage yet',
                         description: 'Transfer, CPU and memory per project appear here once your projects have running containers.'
                     }}
@@ -151,7 +142,7 @@ const Usage = () => {
                         <StatTile label='Peak memory' value={formatBytes(peak?.maxMem ?? 0)} hint={peak === undefined ? 'No memory samples' : `Highest of any project · ${peak.projectName}`} />
                         <StatTile
                             label='Busiest project'
-                            value={busiest === undefined ? '—' : <><ProjectDot projectId={busiest.projectId} />{busiest.projectName}</>}
+                            value={busiest === undefined ? '—' : busiest.projectName}
                             hint={busiest === undefined ? 'No CPU samples' : `${rate(busiest.avgCpu)}% average CPU`}
                         />
                     </StatBand>
@@ -165,7 +156,7 @@ const Usage = () => {
                             <MeterList
                                 entries={usage.map((project) => ({
                                     key: String(project.projectId),
-                                    label: <><ProjectDot projectId={project.projectId} />{project.projectName}</>,
+                                    label: project.projectName,
                                     value: project.incoming + project.outgoing,
                                     display: share(project.incoming + project.outgoing, transferred)
                                 }))}

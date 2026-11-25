@@ -1,9 +1,10 @@
 @import "@heroui/styles";
 
 /*
- * Quantum design tokens. Linear-style: a dark canvas behind one inset panel, 13px type,
- * hairline separators, 6px radius and a single indigo accent. Every component reads these
- * through HeroUI's variables, so the palette lives here and nowhere else.
+ * Quantum design tokens. Linear-style and monochrome: a dark canvas behind one inset panel, 13px
+ * type, hairline separators and a 6px radius. The accent is the ink itself; colour is kept for
+ * status text alone. Every component reads these through HeroUI's variables, so the palette lives
+ * here and nowhere else.
  */
 @theme inline {
     --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
@@ -36,7 +37,8 @@
     --default: rgb(20 20 40 / 0.05);
     --default-hover: rgb(20 20 40 / 0.08);
 
-    --accent: #5e6ad2;
+    --accent: #1b1c20;
+    --accent-foreground: #ffffff;
     --success: #2e9a68;
     --warning: #c78a10;
     --danger: #d64545;
@@ -48,7 +50,7 @@
 
     --overlay-shadow: 0 0 0 1px rgb(15 15 30 / 0.06), 0 16px 40px rgb(20 20 45 / 0.14), 0 3px 10px rgb(20 20 45 / 0.07);
     --backdrop: rgb(22 22 34 / 0.26);
-    --glow: rgb(94 106 210 / 0.14);
+    --glow: rgb(20 20 30 / 0.06);
 
     --bar: #d2d2d9;
     --bar-hover: #b6b7c0;
@@ -73,7 +75,8 @@
     --default: rgb(255 255 255 / 0.05);
     --default-hover: rgb(255 255 255 / 0.08);
 
-    --accent: #6b75e2;
+    --accent: #ececef;
+    --accent-foreground: #101113;
     --success: #4cb782;
     --warning: #e2b340;
     --danger: #eb5f5f;
@@ -85,7 +88,7 @@
 
     --overlay-shadow: 0 0 0 1px rgb(255 255 255 / 0.03), 0 18px 48px rgb(0 0 0 / 0.55), 0 4px 12px rgb(0 0 0 / 0.35);
     --backdrop: rgb(3 3 5 / 0.62);
-    --glow: rgb(107 117 226 / 0.22);
+    --glow: rgb(255 255 255 / 0.07);
 
     --bar: #37383f;
     --bar-hover: #50515a;
@@ -104,7 +107,6 @@
     --surface-foreground: var(--foreground);
     --overlay-foreground: var(--foreground);
     --default-foreground: var(--foreground);
-    --accent-foreground: #ffffff;
     --accent-soft-foreground: var(--accent);
     --focus: var(--accent);
 
@@ -115,7 +117,7 @@
     --field-border: var(--border);
     --field-border-width: 1px;
     --field-focus: var(--field-background);
-    --field-border-focus: var(--accent);
+    --field-border-focus: var(--muted);
 
     --terminal: #0b0c0e;
     --scrollbar-thumb: var(--border);
@@ -145,7 +147,7 @@ body {
 }
 
 ::selection {
-    background: color-mix(in oklab, var(--accent) 28%, transparent);
+    background: color-mix(in oklab, var(--foreground) 22%, transparent);
 }
 
 /* ---------- HeroUI components ---------- */
@@ -190,10 +192,6 @@ body {
     width: 1.75rem;
 }
 
-.button--primary {
-    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.16), 0 1px 2px rgb(0 0 0 / 0.2);
-}
-
 .button--secondary,
 .button--tertiary,
 .button--outline {
@@ -233,17 +231,10 @@ body {
     box-shadow: inset 0 0 0 1px var(--border);
 }
 
-.chip--success,
-.chip--warning,
-.chip--danger,
-.chip--accent {
-    box-shadow: none;
-}
-
-.chip--success { --chip-bg: color-mix(in oklab, var(--success) 13%, transparent); --chip-fg: var(--success); }
-.chip--warning { --chip-bg: color-mix(in oklab, var(--warning) 13%, transparent); --chip-fg: var(--warning); }
-.chip--danger { --chip-bg: color-mix(in oklab, var(--danger) 13%, transparent); --chip-fg: var(--danger); }
-.chip--accent { --chip-bg: color-mix(in oklab, var(--accent) 16%, transparent); --chip-fg: var(--accent); }
+.chip--success { --chip-fg: var(--success); }
+.chip--warning { --chip-fg: var(--warning); }
+.chip--danger { --chip-fg: var(--danger); }
+.chip--accent { --chip-fg: var(--foreground); }
 
 .label {
     font-size: 0.75rem;
@@ -285,8 +276,8 @@ body {
 .textarea[data-focused="true"],
 .select__trigger[data-focused="true"],
 .select__trigger[aria-expanded="true"] {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent) 18%, transparent);
+    border-color: var(--muted);
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--foreground) 10%, transparent);
 }
 
 .table-root--primary {

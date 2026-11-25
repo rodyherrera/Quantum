@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { PageSkeleton } from '@/shared/components/skeletons';
-import { Inbox } from 'lucide-react';
 import PageBar from '@/shared/components/layout/PageBar';
 import PageBody from '@/shared/components/layout/PageBody';
 import ViewTabs from '@/shared/components/layout/ViewTabs';
@@ -53,7 +52,7 @@ const Events = () => {
 
     return (
         <>
-            <PageBar title='Events' icon={Inbox}>
+            <PageBar title='Events'>
                 {history.error === undefined ? (
                     <ViewTabs
                         label='Level'
@@ -72,7 +71,6 @@ const Events = () => {
                     onRetry={history.reload}
                     isEmpty={shown.length === 0}
                     empty={{
-                        icon: Inbox,
                         title: events.length === 0 ? 'No events yet' : 'No matches',
                         description: events.length === 0
                             ? 'Activity from your organization will show up here as it happens.'

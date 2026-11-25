@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { FieldsSkeleton } from '@/shared/components/skeletons';
 import { useNavigate } from 'react-router-dom';
 import { Button, Label, ListBox, ListBoxItem, Select } from '@heroui/react';
-import { FolderGit2 } from 'lucide-react';
 import PageBar from '@/shared/components/layout/PageBar';
 import PageBody from '@/shared/components/layout/PageBody';
 import PageIntro from '@/shared/components/layout/PageIntro';
@@ -12,7 +11,6 @@ import SettingsSection, { SettingsBlock } from '@/shared/components/SettingsSect
 import Form from '@/shared/components/forms/Form';
 import Field from '@/shared/components/forms/Field';
 import EntitySelect from '@/shared/components/EntitySelect';
-import GithubIcon from '@/shared/components/icons/GithubIcon';
 import ConnectGithubButton from '@/modules/github/components/ConnectGithubButton';
 import RepositoryPicker from '@/modules/github/components/RepositoryPicker';
 import { useForm } from '@/shared/hooks/forms/use-form';
@@ -73,7 +71,6 @@ const validateFormValues = (input: unknown): IValidation<CreateRepositoryFormVal
 
 const ConnectGithubPrompt = () => (
     <EmptyState
-        icon={FolderGit2}
         title='Connect GitHub'
         description='Connect your GitHub account to import and deploy a repository.'
     >
@@ -122,7 +119,6 @@ interface SelectedRepositoryProps{
 
 const SelectedRepository = ({ repository, onBack }: SelectedRepositoryProps) => (
     <div className='flex items-center gap-2.5 rounded-lg border border-separator bg-surface py-2 pl-3 pr-2'>
-        <GithubIcon className='size-4 shrink-0 text-muted' />
         <span className='min-w-0 flex-1 truncate'>
             <span className='font-medium text-foreground'>{repository.fullName}</span>
             <span className='ml-2 text-subtle'>{repository.private ? 'Private' : 'Public'}</span>
@@ -296,7 +292,7 @@ const CreateRepository = () => {
 
     return (
         <>
-            <PageBar title='Import a repository' icon={FolderGit2} trail={TRAIL} />
+            <PageBar title='Import a repository' trail={TRAIL} />
 
             <PageBody variant='narrow'>
                 <PageIntro

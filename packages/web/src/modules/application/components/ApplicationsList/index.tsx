@@ -1,32 +1,18 @@
-import { Chip, Dropdown } from '@heroui/react';
-import { Database, GitBranch, Layers, LayoutTemplate, MoreHorizontal } from 'lucide-react';
+import { Dropdown } from '@heroui/react';
+import { MoreHorizontal } from 'lucide-react';
 import ListGroup from '@/shared/components/list/ListGroup';
 import ListRow from '@/shared/components/list/ListRow';
 import InternalAddress from '@/shared/components/InternalAddress';
-import { StatusGlyph } from '@/shared/components/StatusDot';
+import StatusText from '@/shared/components/StatusText';
+import { STATUS_TONE } from '@/shared/utils/status-tone';
 import { isInstallRunning, isInstallTransient } from '@/modules/template/utils/install-status';
-import { addressOf, groupRows, kindOf, linkOf, STATE_STATUS, statusOf } from '@/modules/application/utils/application-rows';
+import { addressOf, groupRows, linkOf, STATE_STATUS, statusOf } from '@/modules/application/utils/application-rows';
 import { formatDate, formatDay } from '@/shared/utils/format-date';
-import type { LucideIcon } from 'lucide-react';
-import type { Row, RowKind } from '@/modules/application/utils/application-rows';
+import type { Row } from '@/modules/application/utils/application-rows';
 import type { TemplateInstallOperation } from '@quantum/contracts/modules/template/http';
 import type { Database as DatabaseEntity } from '@quantum/contracts/modules/database/domain';
 import type { Repository } from '@quantum/contracts/modules/repository/domain';
 import type { TemplateInstall } from '@quantum/contracts/modules/template/domain';
-
-const KIND_ICON: Record<RowKind, LucideIcon> = {
-    repository: GitBranch,
-    stack: Layers,
-    database: Database,
-    template: LayoutTemplate
-};
-
-const KIND_LABEL: Record<RowKind, string> = {
-    repository: 'Repository',
-    stack: 'Stack',
-    database: 'Database',
-    template: 'Template'
-};
 
 export interface RowActionHandlers{
     onNavigate: (path: string) => void;
@@ -81,7 +67,7 @@ const rowActions = (row: Row, handlers: RowActionHandlers) => {
     ];
 };
 
-const COLUMNS = 'grid-cols-[0.875rem_1rem_minmax(0,1fr)_1.75rem] md:grid-cols-[0.875rem_1rem_minmax(0,1fr)_auto_9.5rem_3.5rem_1.75rem]';
+const COLUMNS = 'grid-cols-[minmax(0,1fr)_1.75rem] md:grid-cols-[minmax(0,1fr)_auto_9.5rem_3.5rem_1.75rem]';
 
 interface ApplicationRowProps{
     row: Row;
@@ -90,26 +76,17 @@ interface ApplicationRowProps{
 
 const ApplicationRow = ({ row, handlers }: ApplicationRowProps) => {
     const status = statusOf(row);
-    const kind = kindOf(row);
-    const KindIcon = KIND_ICON[kind];
     const flagged = status.isTransient || status.color === 'danger';
 
     return (
-        <ListRow className={COLUMNS} to={linkOf(row)} label={`Open ${row.name}`}>
-            <span title={status.label}>
-                <StatusGlyph color={status.color} isTransient={status.isTransient} />
-                <span className='sr-only'>{status.label}</span>
-            </span>
-
-            <KindIcon aria-label={KIND_LABEL[kind]} className='size-[0.9375rem] text-subtle' />
-
+        <ListRow className={`${COLUMNS} pl-7.5`} to={linkOf(row)} label={`Open ${row.name}`}>
             <span className='min-w-0 truncate'>
                 <span className='font-medium text-foreground'>{row.name}</span>
                 <span className='ml-2 text-subtle'>{row.subtitle}</span>
             </span>
 
             <span className='hidden md:block'>
-                {flagged && <Chip color={status.color}>{status.label}</Chip>}
+                {flagged && <StatusText color={status.color} label={status.label} className='text-xs font-medium' />}
             </span>
 
             <span className='hidden min-w-0 md:block'><InternalAddress address={addressOf(row)} /></span>
@@ -145,12 +122,7 @@ const ApplicationsList = ({ rows, ...handlers }: ApplicationsListProps) => (
             const status = STATE_STATUS[group.state];
 
             return (
-                <ListGroup
-                    key={group.state}
-                    label={status.label}
-                    count={group.rows.length}
-                    icon={<StatusGlyph color={status.color} isTransient={status.isTransient} />}
-                >
+                <ListGroup key={group.state} label={status.label} count={group.rows.length} tone={STATUS_TONE[status.color]}>
                     {group.rows.map((row) => <ApplicationRow key={row.key} row={row} handlers={handlers} />)}
                 </ListGroup>
             );

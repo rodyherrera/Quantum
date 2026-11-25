@@ -1,19 +1,15 @@
 import { Chip } from '@heroui/react';
 import ListGroup from '@/shared/components/list/ListGroup';
 import ListRow from '@/shared/components/list/ListRow';
-import { StatusGlyph } from '@/shared/components/StatusDot';
+import StatusText from '@/shared/components/StatusText';
 import { activityLevelColor, activityLevelLabel } from '@/modules/activity/utils/level';
 import { groupByDay } from '@/modules/activity/utils/event-days';
 import { formatClock, formatDate } from '@/shared/utils/format-date';
-import { ActivityLevel } from '@quantum/contracts/modules/activity/domain';
 import type { ActivityEvent } from '@quantum/contracts/modules/activity/domain';
 
 const EventRow = ({ event }: { event: ActivityEvent }) => (
-    <ListRow className='grid-cols-[0.875rem_minmax(0,1fr)_4rem] py-2 sm:grid-cols-[0.875rem_minmax(0,1fr)_auto_4rem]'>
-        <span title={activityLevelLabel(event.level)}>
-            <StatusGlyph color={activityLevelColor(event.level)} isTransient={event.level === ActivityLevel.Progress} />
-            <span className='sr-only'>{activityLevelLabel(event.level)}</span>
-        </span>
+    <ListRow className='grid-cols-[5.25rem_minmax(0,1fr)_4rem] py-2 pl-7.5 sm:grid-cols-[5.25rem_minmax(0,1fr)_auto_4rem]'>
+        <StatusText color={activityLevelColor(event.level)} label={activityLevelLabel(event.level)} className='text-xs font-medium' />
 
         <p className='min-w-0 break-words'>
             <span className='text-foreground'>{event.title}</span>

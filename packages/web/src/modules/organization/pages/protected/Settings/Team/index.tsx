@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { FieldsSkeleton } from '@/shared/components/skeletons';
 import { Button, Chip, Label } from '@heroui/react';
-import { Plus, Trash2, Users } from 'lucide-react';
+import { Trash2 } from 'lucide-react';
 import typia from 'typia';
 import PageBar from '@/shared/components/layout/PageBar';
 import PageBody from '@/shared/components/layout/PageBody';
@@ -237,14 +237,13 @@ const Team = () => {
     const loaded = organizationId !== null && !members.loading && members.error === undefined;
     const inviteButton = (
         <Button size='sm' onPress={() => setInviteOpen(true)}>
-            <Plus aria-hidden='true' />
             Invite member
         </Button>
     );
 
     return (
         <>
-            <PageBar title='Team' icon={Users} trail={SETTINGS_TRAIL} actions={loaded ? inviteButton : undefined} />
+            <PageBar title='Team' trail={SETTINGS_TRAIL} actions={loaded ? inviteButton : undefined} />
 
             <PageBody variant='narrow'>
                 <div className='flex flex-col gap-8'>
@@ -260,7 +259,6 @@ const Team = () => {
                         onRetry={members.refresh}
                         isEmpty={items.length === 0}
                         empty={{
-                            icon: Users,
                             title: 'No members yet',
                             description: 'Invite an existing Quantum user to collaborate in this organization.',
                             action: inviteButton

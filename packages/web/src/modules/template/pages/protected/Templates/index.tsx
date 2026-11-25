@@ -1,6 +1,5 @@
 import { useMemo, useState } from 'react';
 import { SplitSkeleton } from '@/shared/components/skeletons';
-import { Boxes, LayoutTemplate } from 'lucide-react';
 import PageBar from '@/shared/components/layout/PageBar';
 import PageBody from '@/shared/components/layout/PageBody';
 import ListPageShell from '@/shared/components/ListPageShell';
@@ -35,7 +34,6 @@ const Templates = () => {
         <>
             <PageBar
                 title='Templates'
-                icon={LayoutTemplate}
                 actions={ready ? (
                     <span className='text-xs tabular-nums text-subtle'>
                         {visible.length} {visible.length === 1 ? 'template' : 'templates'}
@@ -58,7 +56,6 @@ const Templates = () => {
                             {shown === null ? (
                                 <CenterState className='h-full'>
                                     <EmptyState
-                                        icon={Boxes}
                                         title='No templates available'
                                         description='Templates you can install into a project will appear here.'
                                     />

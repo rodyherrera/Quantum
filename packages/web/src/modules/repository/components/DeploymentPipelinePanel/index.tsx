@@ -1,6 +1,6 @@
 import { Button, Spinner } from '@heroui/react';
-import { StatusGlyph } from '@/shared/components/StatusDot';
-import { activityLevelColor, activityLevelLabel } from '@/modules/activity/utils/level';
+import { STATUS_TONE } from '@/shared/utils/status-tone';
+import { activityLevelLabel } from '@/modules/activity/utils/level';
 import { formatStepDuration, pipelineSteps, stepDurationMs } from '@/modules/repository/utils/deployment-steps';
 import { ActivityLevel } from '@quantum/contracts/modules/activity/domain';
 import type { CSSProperties } from 'react';
@@ -8,9 +8,9 @@ import type { ActivityEvent } from '@quantum/contracts/modules/activity/domain';
 
 const STEP_FILL: Record<ActivityLevel, string> = {
     [ActivityLevel.Info]: 'w-full bg-subtle',
-    [ActivityLevel.Success]: 'w-full bg-success',
-    [ActivityLevel.Progress]: 'w-1/2 animate-pulse bg-warning motion-reduce:animate-none',
-    [ActivityLevel.Warn]: 'w-full bg-warning',
+    [ActivityLevel.Success]: 'w-full bg-muted',
+    [ActivityLevel.Progress]: 'w-1/2 animate-pulse bg-foreground motion-reduce:animate-none',
+    [ActivityLevel.Warn]: 'w-full bg-muted',
     [ActivityLevel.Error]: 'w-full bg-danger'
 };
 
@@ -27,10 +27,9 @@ const PipelineStep = ({ event }: PipelineStepProps) => {
                 <span className={`block h-full rounded-full ${STEP_FILL[event.level]}`} />
             </span>
 
-            <span className='flex min-w-0 items-center gap-1.5 text-xs font-medium text-foreground'>
-                <StatusGlyph color={activityLevelColor(event.level)} isTransient={event.level === ActivityLevel.Progress} />
-                <span className='sr-only'>{activityLevelLabel(event.level)}:</span>
-                <span className='truncate'>{event.title}</span>
+            <span className='min-w-0 truncate text-xs font-medium text-foreground'>
+                <span className='sr-only'>{activityLevelLabel(event.level)}: </span>
+                {event.title}
             </span>
 
             {duration !== null && <span className='text-xs tabular-nums text-subtle'>{formatStepDuration(duration)}</span>}
@@ -72,8 +71,7 @@ const DeploymentPipelinePanel = ({ steps, logs, done, onDismiss }: DeploymentPip
     return (
         <section aria-label='Current deployment' className='min-w-0 rounded-lg border border-separator bg-surface'>
             <header className='flex min-h-[2.625rem] flex-wrap items-center gap-2 border-b border-separator px-3.5 py-1.5'>
-                <StatusGlyph color={!done ? 'warning' : hasError ? 'danger' : 'success'} isTransient={!done} />
-                <h3 className='flex-1 font-semibold text-foreground'>{title}</h3>
+                <h3 className={`flex-1 font-semibold ${STATUS_TONE[!done ? 'warning' : hasError ? 'danger' : 'success']}`}>{title}</h3>
                 {done && <Button size='sm' variant='ghost' onPress={onDismiss}>Dismiss</Button>}
             </header>
 

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { FieldsSkeleton } from '@/shared/components/skeletons';
 import { useNavigate } from 'react-router-dom';
 import { Button, Chip } from '@heroui/react';
-import { Building2, Trash2 } from 'lucide-react';
+import { Trash2 } from 'lucide-react';
 import typia from 'typia';
 import PageBar from '@/shared/components/layout/PageBar';
 import PageBody from '@/shared/components/layout/PageBody';
@@ -121,7 +121,7 @@ const OrganizationSettings = () => {
 
     return (
         <>
-            <PageBar title='Organization' icon={Building2} trail={SETTINGS_TRAIL} />
+            <PageBar title='Organization' trail={SETTINGS_TRAIL} />
 
             <PageBody variant='narrow'>
                 <div className='flex flex-col gap-8'>

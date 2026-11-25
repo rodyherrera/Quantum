@@ -1,11 +1,9 @@
 import { Button } from '@heroui/react';
-import { TriangleAlert } from 'lucide-react';
 import ScreenMessage from '@/shared/components/ScreenMessage';
 import type { ErrorFallbackProps } from '@/shared/contracts/boundary';
 
 const ErrorFallback = ({ error, reset }: ErrorFallbackProps) => (
     <ScreenMessage
-        icon={TriangleAlert}
         title='Something went wrong'
         description='An unexpected error interrupted this page. Try again, or reload if it keeps happening.'
     >

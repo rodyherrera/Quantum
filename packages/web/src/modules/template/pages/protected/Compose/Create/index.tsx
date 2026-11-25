@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { Button, Input, TextField } from '@heroui/react';
-import { FileCode, FolderGit2, Info, Layers, Rocket } from 'lucide-react';
 import PageBar from '@/shared/components/layout/PageBar';
 import PageBody from '@/shared/components/layout/PageBody';
 import PageIntro from '@/shared/components/layout/PageIntro';
@@ -12,7 +11,6 @@ import EntitySelect from '@/shared/components/EntitySelect';
 import InlineError from '@/shared/components/InlineError';
 import EmptyState from '@/shared/components/EmptyState';
 import MonacoEditor from '@/shared/components/MonacoEditor';
-import GithubIcon from '@/shared/components/icons/GithubIcon';
 import { FieldsSkeleton } from '@/shared/components/skeletons';
 import ConnectGithubButton from '@/modules/github/components/ConnectGithubButton';
 import GenerateSecretButton from '@/shared/components/forms/GenerateSecretButton';
@@ -38,8 +36,8 @@ import type { CreateComposeInstallInput, CreateSourceInstallInput } from '@quant
 type Mode = 'repository' | 'paste';
 
 const SOURCES: SegmentedOption<Mode>[] = [
-    { value: 'repository', label: <><GithubIcon />From a repository</> },
-    { value: 'paste', label: <><FileCode aria-hidden='true' />Paste a compose file</> }
+    { value: 'repository', label: 'From a repository' },
+    { value: 'paste', label: 'Paste a compose file' }
 ];
 
 const CONTROL = 'w-64 max-w-full';
@@ -63,7 +61,6 @@ const DeployBar = ({ summary, isPending, isDisabled, onDeploy }: DeployBarProps)
     <div className='sticky bottom-0 z-10 mt-auto flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-separator bg-background/90 px-5 py-2.5 backdrop-blur-sm sm:px-7'>
         <p className='min-w-0 flex-1 truncate text-muted'>{summary}</p>
         <Button isPending={isPending} isDisabled={isDisabled} onPress={onDeploy}>
-            <Rocket aria-hidden='true' />
             Deploy stack
         </Button>
     </div>
@@ -198,7 +195,6 @@ const SourceForm = ({ repository, onBack, projects, projectsLoading, projectId, 
                     <SettingsRow
                         title={(
                             <span className='flex min-w-0 items-center gap-2'>
-                                <GithubIcon className='size-3.5 shrink-0 text-subtle' />
                                 <span className='truncate font-mono text-xs'>{repository.fullName}</span>
                             </span>
                         )}
@@ -326,7 +322,7 @@ const FromRepository = (props: StackFormProps) => {
         return (
             <StackBody>
                 <div className='rounded-lg border border-separator bg-surface'>
-                    <EmptyState icon={FolderGit2} title='Connect GitHub' description='Connect your GitHub account to deploy a stack from one of its repositories.' compact>
+                    <EmptyState title='Connect GitHub' description='Connect your GitHub account to deploy a stack from one of its repositories.' compact>
                         <ConnectGithubButton />
                     </EmptyState>
                 </div>
@@ -380,14 +376,12 @@ const FromCompose = ({ projects, projectsLoading, projectId, onProjectChange }: 
                         onChange={setCompose}
                         header={(
                             <>
-                                <FileCode aria-hidden='true' />
                                 <span className='font-medium text-foreground'>Compose file</span>
                             </>
                         )}
                     />
 
                     <p className='flex gap-2 text-xs text-subtle'>
-                        <Info aria-hidden='true' className='mt-px size-3.5 shrink-0' />
                         <span>
                             <Key>image</Key>, <Key>command</Key>, <Key>environment</Key>, <Key>ports</Key>, <Key>volumes</Key> and <Key>depends_on</Key> are
                             honoured. Published ports are assigned by Quantum, and <Key>build:</Key> needs a repository.
@@ -428,7 +422,7 @@ const CreateStack = () => {
 
     return (
         <>
-            <PageBar title='Deploy a stack' icon={Layers} trail={[{ label: 'Applications', to: '/applications' }]} />
+            <PageBar title='Deploy a stack' trail={[{ label: 'Applications', to: '/applications' }]} />
 
             <PageBody variant='narrow' className='flex flex-col items-start gap-5 pb-0'>
                 <PageIntro

@@ -1,8 +1,6 @@
 import { useState } from 'react';
 import { Chip, ComboBox, Input, Label, ListBox, ListBoxItem } from '@heroui/react';
-import { FolderGit2, Info, Lock, Search } from 'lucide-react';
 import EmptyState from '@/shared/components/EmptyState';
-import GithubIcon from '@/shared/components/icons/GithubIcon';
 import ConnectGithubButton from '@/modules/github/components/ConnectGithubButton';
 import type { GithubAccount, GithubRepository } from '@quantum/contracts/modules/github/domain';
 
@@ -22,7 +20,6 @@ const RepositoryPicker = ({ repositories, account = null, onSelect }: Repository
     if(repositories.length === 0){
         return (
             <EmptyState
-                icon={FolderGit2}
                 title='No repositories found'
                 description='Push a repository to your GitHub account to import it here.'
             />
@@ -58,7 +55,7 @@ const RepositoryPicker = ({ repositories, account = null, onSelect }: Repository
                     <ListBox
                         aria-labelledby='repository-picker-label'
                         renderEmptyState={() => (
-                            <EmptyState icon={Search} title='No matches' description='Try a different search term.' compact />
+                            <EmptyState title='No matches' description='Try a different search term.' compact />
                         )}
                     >
                         {visible.map((repository) => (
@@ -68,11 +65,9 @@ const RepositoryPicker = ({ repositories, account = null, onSelect }: Repository
                                 textValue={repository.fullName}
                             >
                                 <div className='flex w-full items-center gap-2.5 text-left'>
-                                    <GithubIcon className='size-3.5 shrink-0 text-subtle' />
                                     <span className='min-w-0 flex-1 truncate font-medium'>{repository.fullName}</span>
                                     {repository.private && (
                                         <Chip size='sm'>
-                                            <Lock aria-hidden='true' className='size-3' />
                                             Private
                                         </Chip>
                                     )}
@@ -103,7 +98,6 @@ const RepositoryPicker = ({ repositories, account = null, onSelect }: Repository
 
             {missingPackages && (
                 <div className='mt-3 flex flex-wrap items-start gap-3 rounded-lg border border-separator bg-surface-secondary px-3 py-2.5'>
-                    <Info aria-hidden='true' className='mt-0.5 size-4 shrink-0 text-subtle' />
                     <p className='min-w-0 flex-1 basis-64 text-muted'>
                         This connection was made before Quantum asked for package access, so private GitHub Container Registry
                         images will not pull. Reconnect once to grant it.

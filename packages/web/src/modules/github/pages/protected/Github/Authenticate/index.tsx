@@ -1,5 +1,4 @@
 import { Navigate } from 'react-router-dom';
-import { LoaderCircle } from 'lucide-react';
 import PageBar from '@/shared/components/layout/PageBar';
 import PageBody from '@/shared/components/layout/PageBody';
 import CenterState from '@/shared/components/CenterState';
@@ -24,7 +23,7 @@ const Authenticate = () => {
             <>
                 <PageBar title='GitHub' />
                 <CenterState>
-                    <EmptyState icon={LoaderCircle} isBusy title='Connecting GitHub' description='Finishing the connection with your GitHub account.' />
+                    <EmptyState isBusy title='Connecting GitHub' description='Finishing the connection with your GitHub account.' />
                 </CenterState>
             </>
         );

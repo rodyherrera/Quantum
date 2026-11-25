@@ -1,13 +1,13 @@
 import { Chip, Dropdown } from '@heroui/react';
-import { Box, GitCommitHorizontal, MoreHorizontal } from 'lucide-react';
+import { MoreHorizontal } from 'lucide-react';
 import ListRow from '@/shared/components/list/ListRow';
-import { StatusGlyph } from '@/shared/components/StatusDot';
-import { deploymentStatusColor, deploymentStatusLabel, isDeploymentInProgress } from '@/modules/repository/utils/deployment-status';
+import StatusText from '@/shared/components/StatusText';
+import { deploymentStatusColor, deploymentStatusLabel } from '@/modules/repository/utils/deployment-status';
 import { formatDate } from '@/shared/utils/format-date';
 import { DeploymentStatus } from '@quantum/contracts/modules/deployment/domain';
 import type { Deployment, DeploymentArtifact } from '@quantum/contracts/modules/deployment/domain';
 
-const COLUMNS = 'grid-cols-[0.875rem_minmax(0,1fr)_1.75rem] md:grid-cols-[0.875rem_2.75rem_minmax(0,1fr)_auto_auto_1.75rem]';
+const COLUMNS = 'grid-cols-[minmax(0,1fr)_1.75rem] md:grid-cols-[2.75rem_minmax(0,1fr)_auto_auto_1.75rem]';
 
 const shortDigest = (digest: string): string => digest.replace(/^sha256:/, '').slice(0, 7);
 
@@ -20,11 +20,9 @@ const RevisionChip = ({ artifact }: RevisionChipProps) => {
     if(artifact === null || artifact.digest === '') return null;
 
     const isCommit = artifact.builder === 'exec';
-    const Icon = isCommit ? GitCommitHorizontal : Box;
 
     return (
         <Chip size='sm' className='rounded-[0.3125rem] font-mono' title={`${isCommit ? 'Commit' : 'Image'} ${artifact.digest}`}>
-            <Icon aria-hidden='true' className='size-3 text-subtle' />
             {shortDigest(artifact.digest)}
         </Chip>
     );
@@ -65,15 +63,9 @@ const DeploymentActions = ({ deployment, onRollback, onDelete }: DeploymentRowPr
 const DeploymentRow = ({ deployment, onRollback, onDelete }: DeploymentRowProps) => {
     const color = deploymentStatusColor(deployment.status);
     const label = deploymentStatusLabel(deployment.status);
-    const isTransient = isDeploymentInProgress(deployment.status);
 
     return (
         <ListRow className={`${COLUMNS} last:border-b-0`}>
-            <span title={label}>
-                <StatusGlyph color={color} isTransient={isTransient} />
-                <span className='sr-only'>{label}</span>
-            </span>
-
             <span className='hidden font-mono text-xs text-subtle md:block'>#{deployment.id}</span>
 
             <div className='min-w-0 py-2'>
@@ -81,7 +73,7 @@ const DeploymentRow = ({ deployment, onRollback, onDelete }: DeploymentRowProps)
                     {deployment.commit === null
                         ? <span className='truncate text-muted'>No commit recorded</span>
                         : <span className='truncate font-medium text-foreground'>{deployment.commit.message}</span>}
-                    {deployment.status !== DeploymentStatus.Success && <Chip size='sm' color={color} className='shrink-0'>{label}</Chip>}
+                    {deployment.status !== DeploymentStatus.Success && <StatusText color={color} label={label} className='shrink-0 text-xs font-medium' />}
                 </div>
 
                 {deployment.error !== null && <p className='mt-0.5 break-words text-xs text-danger'>{deployment.error}</p>}

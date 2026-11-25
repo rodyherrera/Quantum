@@ -1,10 +1,8 @@
 import { Table } from '@heroui/react';
 import { ArrowUpRight } from 'lucide-react';
 import InternalAddress from '@/shared/components/InternalAddress';
-import { StatusGlyph } from '@/shared/components/StatusDot';
 import { portUrl } from '@/shared/hooks/use-public-host';
-import { installStatusColor, installStatusLabel, isInstallTransient } from '@/modules/template/utils/install-status';
-import type { TemplateInstallService, TemplateInstallStatus } from '@quantum/contracts/modules/template/domain';
+import type { TemplateInstallService } from '@quantum/contracts/modules/template/domain';
 
 interface PublishedPortsProps{
     host: string;
@@ -40,11 +38,10 @@ const PublishedPorts = ({ host, service }: PublishedPortsProps) => {
 interface ServicesTableProps{
     host: string;
     services: TemplateInstallService[];
-    status?: TemplateInstallStatus;
 }
 
 /* Services carry no state of their own, so every row shows the state of the stack they belong to. */
-const ServicesTable = ({ host, services, status }: ServicesTableProps) => (
+const ServicesTable = ({ host, services }: ServicesTableProps) => (
     <div className='min-w-0 overflow-hidden rounded-lg border border-separator bg-surface [&_tbody_tr:last-child_td]:border-b-0'>
         <Table>
             <Table.ScrollContainer>
@@ -60,15 +57,7 @@ const ServicesTable = ({ host, services, status }: ServicesTableProps) => (
                         {services.map((service) => (
                             <Table.Row key={service.name}>
                                 <Table.Cell>
-                                    <span className='flex min-w-0 items-center gap-2.5'>
-                                        {status !== undefined && (
-                                            <span title={installStatusLabel(status)} className='flex shrink-0'>
-                                                <StatusGlyph color={installStatusColor(status)} isTransient={isInstallTransient(status)} />
-                                                <span className='sr-only'>{installStatusLabel(status)}</span>
-                                            </span>
-                                        )}
-                                        <span className='truncate font-medium text-foreground'>{service.name}</span>
-                                    </span>
+                                    <span className='block truncate font-medium text-foreground'>{service.name}</span>
                                 </Table.Cell>
                                 <Table.Cell>
                                     <code className='block max-w-[20rem] truncate font-mono text-xs text-subtle' title={service.image}>{service.image}</code>

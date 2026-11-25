@@ -1,5 +1,4 @@
 import { useOutletContext, useParams, useSearchParams } from 'react-router-dom';
-import { Layers } from 'lucide-react';
 import PageBody from '@/shared/components/layout/PageBody';
 import EmptyState from '@/shared/components/EmptyState';
 import CenterState from '@/shared/components/CenterState';
@@ -19,7 +18,6 @@ const InstallLogs = () => {
         return (
             <CenterState className='flex-1 py-10'>
                 <EmptyState
-                    icon={Layers}
                     title='No services yet'
                     description='This stack is still being provisioned. Follow the progress under Services.'
                     compact

@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { Button } from '@heroui/react';
-import VsCodeIcon from '@/shared/components/icons/VsCodeIcon';
 import CodespaceAccessDialog from '@/modules/codespace/components/CodespaceAccessDialog';
 import { useQuery } from '@/shared/hooks/api/use-query';
 import { usePolledQuery } from '@/shared/hooks/api/use-polled-query';
@@ -32,7 +31,7 @@ const open = (kind: WorkspaceTarget['kind'], id: number) =>
 const labelFor = (codespace: Codespace | null): string => {
     if(codespace === null) return 'Open in VS Code';
     if(isCodespaceTransient(codespace.status)) return 'Preparing VS Code';
-    if(codespace.status === CodespaceStatus.Running) return 'VS Code';
+    if(codespace.status === CodespaceStatus.Running) return 'Access VS Code';
     return 'Open in VS Code';
 };
 
@@ -79,7 +78,6 @@ const WorkspaceButton = ({ target }: WorkspaceButtonProps) => {
                 isDisabled={workspace.loading}
                 onPress={() => { if(running) setShowAccess(true); else void launch.run().catch(() => undefined); }}
             >
-                <VsCodeIcon className='size-3.5' />
                 {labelFor(codespace)}
             </Button>
 

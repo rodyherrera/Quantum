@@ -1,5 +1,4 @@
 import { useOutletContext } from 'react-router-dom';
-import { Layers } from 'lucide-react';
 import PageBody from '@/shared/components/layout/PageBody';
 import EmptyState from '@/shared/components/EmptyState';
 import CenterState from '@/shared/components/CenterState';
@@ -21,12 +20,11 @@ const InstallServices = () => {
         <PageBody fill className='gap-5'>
             {showProgress && <DeploymentProgress installId={install.id} active={deploying} />}
 
-            {install.services.length > 0 && <ServicesTable host={host} services={install.services} status={install.status} />}
+            {install.services.length > 0 && <ServicesTable host={host} services={install.services} />}
 
             {install.services.length === 0 && !deploying && (
                 <CenterState>
                     <EmptyState
-                        icon={Layers}
                         title='No services yet'
                         description='The services of this stack appear here once it has been provisioned.'
                         compact

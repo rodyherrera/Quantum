@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { LinesSkeleton } from '@/shared/components/skeletons';
 import { Button, buttonVariants, cn } from '@heroui/react';
-import { ArrowUpRight, Check, Copy, Square } from 'lucide-react';
+import { ArrowUpRight } from 'lucide-react';
 import Modal from '@/shared/components/Modal';
 import InlineError from '@/shared/components/InlineError';
 import { useQuery } from '@/shared/hooks/api/use-query';
@@ -37,7 +37,6 @@ const CopyField = ({ label, value }: CopyFieldProps) => {
                 </code>
 
                 <Button variant='secondary' onPress={handleCopy}>
-                    {copied ? <Check aria-hidden='true' /> : <Copy aria-hidden='true' />}
                     {copied ? 'Copied' : 'Copy'}
                 </Button>
             </div>
@@ -81,7 +80,6 @@ const CodespaceAccessDialog = ({ codespace, onClose, onStop, isStopping = false 
                 <div className='flex flex-wrap items-center justify-end gap-2 pt-1'>
                     {onStop !== undefined && (
                         <Button variant='ghost' className='mr-auto' isPending={isStopping} onPress={onStop}>
-                            <Square aria-hidden='true' />
                             Stop workspace
                         </Button>
                     )}

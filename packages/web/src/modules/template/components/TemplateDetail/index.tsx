@@ -1,5 +1,5 @@
 import { Button, buttonVariants, Chip } from '@heroui/react';
-import { ArrowUpRight, Box, KeyRound } from 'lucide-react';
+import { ArrowUpRight } from 'lucide-react';
 import Panel from '@/modules/template/components/Panel';
 import Property from '@/shared/components/detail/Property';
 import { TemplateSource } from '@quantum/contracts/modules/template/domain';
@@ -31,8 +31,7 @@ const ServiceRow = ({ name, service }: ServiceRowProps) => {
     const ports = service.ports ?? [];
 
     return (
-        <div className='grid min-h-10 grid-cols-[0.875rem_minmax(5rem,0.6fr)_minmax(0,1.4fr)_auto] items-center gap-3 px-4 py-1.5'>
-            <Box aria-hidden='true' className='size-3.5 text-subtle' />
+        <div className='grid min-h-10 grid-cols-[minmax(5rem,0.6fr)_minmax(0,1.4fr)_auto] items-center gap-3 px-4 py-1.5'>
             <span className='truncate font-medium text-foreground'>{name}</span>
             <span className='truncate font-mono text-xs text-subtle'>{service.image ?? service.engine ?? '—'}</span>
             <span className='flex flex-wrap justify-end gap-1'>
@@ -45,8 +44,7 @@ const ServiceRow = ({ name, service }: ServiceRowProps) => {
 };
 
 const InputRow = ({ input }: { input: InputDef }) => (
-    <div className='grid min-h-10 grid-cols-[0.875rem_minmax(0,1fr)_auto] items-center gap-3 px-4 py-1.5'>
-        <KeyRound aria-hidden='true' className='size-3.5 text-subtle' />
+    <div className='grid min-h-10 grid-cols-[minmax(0,1fr)_auto] items-center gap-3 px-4 py-1.5'>
         <span className='flex min-w-0 items-baseline gap-2'>
             <span className='truncate text-foreground'>{input.label}</span>
             <code className='truncate font-mono text-xs text-subtle'>{input.key}</code>

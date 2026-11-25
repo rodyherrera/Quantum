@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { Button } from '@heroui/react';
-import { Check, KeyRound } from 'lucide-react';
 import typia from 'typia';
 import PageBar from '@/shared/components/layout/PageBar';
 import PageBody from '@/shared/components/layout/PageBody';
@@ -40,7 +39,7 @@ const ChangePassword = () => {
 
     return (
         <>
-            <PageBar title='Password' icon={KeyRound} trail={SETTINGS_TRAIL} />
+            <PageBar title='Password' trail={SETTINGS_TRAIL} />
 
             <PageBody variant='narrow'>
                 <div className='flex flex-col gap-8'>
@@ -75,10 +74,7 @@ const ChangePassword = () => {
 
                                 <div className='flex items-center justify-end gap-3'>
                                     {saved && (
-                                        <span className='flex items-center gap-1.5 text-xs text-success'>
-                                            <Check aria-hidden='true' className='size-3.5' />
-                                            Password updated.
-                                        </span>
+                                        <span className='text-xs text-success'>Password updated.</span>
                                     )}
                                     <Button type='submit' isPending={form.submitting} isDisabled={!form.isValid}>
                                         Update password
