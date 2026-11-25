@@ -5,6 +5,7 @@ import PageBar from '@/shared/components/layout/PageBar';
 import PageBody from '@/shared/components/layout/PageBody';
 import DetailView from '@/shared/components/detail/DetailView';
 import DetailHeader from '@/shared/components/detail/DetailHeader';
+import DetailIcon from '@/shared/components/detail/DetailIcon';
 import TabNav from '@/shared/components/detail/TabNav';
 import CenterState from '@/shared/components/CenterState';
 import ErrorState from '@/shared/components/ErrorState';
@@ -52,11 +53,7 @@ interface RepositoryHeaderProps{
 
 const RepositoryHeader = ({ repository, renameError, onRename }: RepositoryHeaderProps) => (
     <DetailHeader
-        icon={(
-            <span aria-hidden='true' className='grid size-7 shrink-0 place-items-center rounded-[0.4375rem] border border-border bg-surface-secondary text-foreground'>
-                <GithubIcon className='size-[0.9375rem]' />
-            </span>
-        )}
+        icon={<DetailIcon><GithubIcon /></DetailIcon>}
         title={(
             <InlineEdit
                 value={displayName(repository)}

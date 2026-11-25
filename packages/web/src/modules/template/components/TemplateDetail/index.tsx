@@ -1,9 +1,7 @@
 import { Button, buttonVariants, Chip } from '@heroui/react';
 import { ArrowUpRight, Box, KeyRound } from 'lucide-react';
-import IconTile from '@/modules/template/components/IconTile';
 import Panel from '@/modules/template/components/Panel';
 import Property from '@/shared/components/detail/Property';
-import { projectHue } from '@/modules/project/utils/project-hue';
 import { TemplateSource } from '@quantum/contracts/modules/template/domain';
 import type { InputDef, Template, TemplateServiceSpec } from '@quantum/contracts/modules/template/domain';
 
@@ -70,7 +68,6 @@ const TemplateDetail = ({ template, onInstall }: TemplateDetailProps) => {
         <div className='h-full overflow-y-auto'>
             <div className='flex max-w-3xl flex-col gap-5.5 px-5 pb-16 pt-8 sm:px-9'>
                 <header className='flex flex-col items-start gap-3'>
-                    <IconTile hue={projectHue(template.id)} size='lg'>{template.name.charAt(0).toUpperCase()}</IconTile>
                     <h2 className='text-[1.625rem] font-semibold leading-tight tracking-[-0.022em] text-foreground'>{template.name}</h2>
                     <p className='max-w-[58ch] text-sm text-muted'>{template.description ?? 'No description provided.'}</p>
 
