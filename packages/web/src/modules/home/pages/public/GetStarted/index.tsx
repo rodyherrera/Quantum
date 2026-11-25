@@ -17,7 +17,7 @@ import { useCurrentStep } from '@/modules/home/hooks/use-current-step';
 import { useGuideStore } from '@/modules/home/store/guide';
 import { USEFUL_COMMANDS, guideFor, targetFor, troublesFor } from '@/modules/home/utils/guide';
 import { GITHUB_URL, ISSUES_URL } from '@/modules/home/utils/links';
-import { EYEBROW, GRADIENT_TITLE, LEDE, WRAP } from '@/modules/home/utils/classes';
+import { LEDE, MONO_LABEL, MONO_TITLE, WRAP } from '@/modules/home/utils/classes';
 
 const NEEDS = [
     {
@@ -57,17 +57,17 @@ const GetStarted = () => {
         <LandingShell>
             <div className={WRAP}>
                 <header id='setup' className='grid scroll-mt-20 grid-cols-1 gap-4 pt-[clamp(2.5rem,7vw,4rem)]'>
-                    <p className={EYEBROW}>
-                        <BookOpen aria-hidden='true' className='ml-1 size-3.5 text-subtle' />
+                    <p className={`${MONO_LABEL} inline-flex items-center gap-2 text-subtle`}>
+                        <BookOpen aria-hidden='true' className='size-3.5' />
                         Self-host guide · {steps.length} steps
                     </p>
 
-                    <h1 className={`${GRADIENT_TITLE} text-[length:clamp(2rem,5vw,3.375rem)] leading-[1.04] tracking-[-0.04em]`}>
+                    <h1 className={`${MONO_TITLE} text-[length:clamp(1.75rem,4.6vw,3.125rem)] leading-[1.06] tracking-[-0.01em]`}>
                         <span className='block'>Install Quantum,</span>{' '}
                         <span className='block'>step by step.</span>
                     </h1>
 
-                    <p className={LEDE}>Copy each command in order. Pick where it will run and the commands change to match.</p>
+                    <p className={`${LEDE} text-muted`}>Copy each command in order. Pick where it will run and the commands change to match.</p>
 
                     <GuideSetupPicker
                         setup={setup}
@@ -103,7 +103,7 @@ const GetStarted = () => {
                             ))}
                         </ol>
 
-                        <div className='grid gap-4 rounded-xl border border-separator bg-surface bg-[radial-gradient(80%_120%_at_100%_0%,var(--glow),transparent_60%)] p-6'>
+                        <div className='grid gap-4 border border-separator bg-surface bg-[radial-gradient(80%_120%_at_100%_0%,var(--glow),transparent_60%)] p-6'>
                             <p className='text-xl font-semibold tracking-[-0.02em]'>
                                 That's it.
                                 <span className='text-muted'> The platform is yours.</span>

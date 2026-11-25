@@ -1,44 +1,48 @@
-import { Link } from 'react-router-dom';
-import { buttonVariants } from '@heroui/react';
-import { ArrowRight, ChevronRight } from 'lucide-react';
+import { ArrowUpRight } from 'lucide-react';
+import DitherField from '@/modules/home/components/DitherField';
+import Crosshair from '@/modules/home/components/Crosshair';
+import PixelLink from '@/modules/home/components/PixelLink';
 import CommandChip from '@/modules/home/components/CommandChip';
-import LandingShot from '@/modules/home/components/LandingShot';
 import { GITHUB_URL } from '@/modules/home/utils/links';
-import { ACCENT_TEXT, EYEBROW, GRADIENT_TITLE, LEDE, WRAP } from '@/modules/home/utils/classes';
+import { FIELD, LEDE, MONO_LABEL, MONO_TITLE } from '@/modules/home/utils/classes';
 
 const INSTALL = `git clone ${GITHUB_URL} && cd Quantum && bash scripts/deploy.sh`;
 
+/* A frame 12px inside the viewport, with a + where its lines cross. */
+const RULES = ['inset-x-0 top-3 h-px', 'inset-x-0 bottom-3 h-px', 'inset-y-0 left-3 w-px', 'inset-y-0 right-3 w-px'];
+const CORNERS = ['left-3 top-3', 'right-3 top-3', 'bottom-3 left-3', 'bottom-3 right-3'];
+
 const LandingHero = () => (
-    <section aria-labelledby='hero-title' className='relative pt-[clamp(3.5rem,8vw,6rem)]'>
-        <div aria-hidden='true' className='pointer-events-none absolute inset-x-0 -top-15 h-[45rem] bg-[radial-gradient(60%_50%_at_50%_0%,var(--glow),transparent_70%)]' />
+    <section aria-labelledby='hero-title' className={`relative isolate flex min-h-[max(40rem,100svh)] flex-col overflow-hidden ${FIELD}`}>
+        <DitherField />
 
-        <div className={`${WRAP} relative grid grid-cols-1 gap-5.5`}>
-            <Link to='/get-started' className={`${EYEBROW} transition-colors hover:text-foreground motion-reduce:transition-none`}>
-                <span className={`shrink-0 rounded-full bg-accent/15 px-2 py-px font-medium ${ACCENT_TEXT}`}>Self-hosted</span>
-                <span className='truncate'>Runs on a Linux server with Docker</span>
-                <ChevronRight aria-hidden='true' className='size-3.5 shrink-0 text-subtle' />
-            </Link>
+        {RULES.map((rule) => <span key={rule} aria-hidden='true' className={`absolute bg-white/20 ${rule}`} />)}
+        {CORNERS.map((corner) => <Crosshair key={corner} className={`text-white/80 ${corner}`} />)}
 
-            <h1 id='hero-title' className={`${GRADIENT_TITLE} text-[length:clamp(2.5rem,7vw,4.75rem)] leading-[1.02] tracking-[-0.045em]`}>
+        <div className='relative mx-auto flex w-full max-w-[62rem] flex-1 flex-col items-center justify-center px-7 pb-20 pt-32 text-center'>
+            <p className={`${MONO_LABEL} text-white/70`}>Self-hosted · Open source</p>
+
+            <h1 id='hero-title' className={`${MONO_TITLE} mt-7 text-[length:clamp(1.75rem,6.6vw,4.75rem)] leading-[1.06] tracking-[0.01em]`}>
                 <span className='block'>Deploy anything.</span>{' '}
                 <span className='block'>On a server you own.</span>
             </h1>
 
-            <p className={LEDE}>
-                Deploy GitHub repositories, databases, one-click templates and Docker Compose stacks on your own server, with logs, a shell,
-                environment variables, persistent volumes, metrics and VS Code in the browser for every one of them.
+            <p className={`${LEDE} mt-6 text-white/80 [text-wrap:balance]`}>
+                GitHub repositories, databases, one-click templates and Docker Compose stacks, with logs, a shell, metrics and
+                VS Code in the browser for every one of them.
             </p>
 
-            <div className='flex flex-wrap items-center gap-2.5'>
-                <Link to='/get-started' className={buttonVariants({ size: 'lg' })}>
-                    Deploy Quantum
-                    <ArrowRight aria-hidden='true' />
-                </Link>
-
-                <CommandChip command={INSTALL} />
+            <div className='mt-11 flex flex-wrap justify-center gap-4'>
+                <PixelLink to='/get-started'>Deploy Quantum</PixelLink>
+                <PixelLink href={GITHUB_URL} tone='paper'>
+                    View on GitHub
+                    <ArrowUpRight aria-hidden='true' />
+                </PixelLink>
             </div>
 
-            <LandingShot />
+            <div className='mt-8 flex w-full justify-center'>
+                <CommandChip command={INSTALL} />
+            </div>
         </div>
     </section>
 );

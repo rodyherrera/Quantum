@@ -7,7 +7,7 @@ const ADDRESSES = [
 ];
 
 const OperateAddresses = () => (
-    <ul className='w-full overflow-hidden rounded-md border border-separator'>
+    <ul className='w-full overflow-hidden border border-separator'>
         {ADDRESSES.map((entry) => (
             <li key={entry.name} className='flex items-center justify-between gap-3 border-t border-separator py-1 pl-2.5 pr-1 first:border-t-0'>
                 <span className='min-w-0 truncate'>

@@ -1,25 +1,27 @@
-import { ACCENT_TEXT } from '@/modules/home/utils/classes';
+import { cn } from '@heroui/react';
+import { MONO_LABEL, MONO_TITLE } from '@/modules/home/utils/classes';
 import type { ReactNode } from 'react';
-import type { LucideIcon } from 'lucide-react';
 
 interface SectionHeadingProps{
     id: string;
-    icon: LucideIcon;
+    index: string;
     label: string;
     title: string;
     lead: ReactNode;
+    className?: string;
 }
 
-const SectionHeading = ({ id, icon: Icon, label, title, lead }: SectionHeadingProps) => (
-    <header className='grid max-w-[47.5rem] gap-3'>
-        <p className={`inline-flex items-center gap-2 font-medium ${ACCENT_TEXT}`}>
-            <Icon aria-hidden='true' className='size-4' />
+const SectionHeading = ({ id, index, label, title, lead, className }: SectionHeadingProps) => (
+    <header className={cn('grid max-w-[47.5rem] gap-4', className)}>
+        <p className={`${MONO_LABEL} text-subtle`}>
+            <span className='text-foreground'>{index}</span>
+            <span aria-hidden='true' className='mx-2'>/</span>
             {label}
         </p>
 
-        <h2 id={id} className='text-[length:clamp(1.75rem,4vw,2.75rem)] font-semibold leading-[1.08] tracking-[-0.035em]'>{title}</h2>
+        <h2 id={id} className={`${MONO_TITLE} text-[length:clamp(1.5rem,3.4vw,2.375rem)] leading-[1.08] tracking-[-0.02em]`}>{title}</h2>
 
-        <p className='max-w-[60ch] text-[0.9375rem] leading-[1.55] text-muted'>{lead}</p>
+        <p className='max-w-[60ch] text-[0.9375rem] leading-[1.6] text-muted'>{lead}</p>
     </header>
 );
 

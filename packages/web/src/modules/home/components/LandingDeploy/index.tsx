@@ -1,5 +1,5 @@
 import { Chip } from '@heroui/react';
-import { Database, FileCode, GitBranch, Layers, LayoutTemplate, Rocket } from 'lucide-react';
+import { Database, FileCode, GitBranch, Layers, LayoutTemplate } from 'lucide-react';
 import GithubIcon from '@/shared/components/icons/GithubIcon';
 import LandingSection from '@/modules/home/components/LandingSection';
 import FeatureGrid from '@/modules/home/components/FeatureGrid';
@@ -12,12 +12,12 @@ const TEMPLATES = ['n8n', 'Directus', 'Ollama'];
 const LandingDeploy = () => (
     <LandingSection
         id='deploy'
-        icon={Rocket}
+        index='01'
         label='Deploy'
-        title='Four ways in. One table to run them.'
+        title='Four ways in. One list to run them.'
         lead='Whatever you deploy lands in Applications, grouped by state, with the internal address other containers reach it at.'
     >
-        <FeatureGrid columns={4}>
+        <FeatureGrid columns={4} flush>
             <FeatureCell
                 icon={GithubIcon}
                 title='Repositories'

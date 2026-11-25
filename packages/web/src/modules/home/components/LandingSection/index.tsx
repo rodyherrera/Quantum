@@ -1,24 +1,21 @@
+import Band from '@/modules/home/components/Band';
 import SectionHeading from '@/modules/home/components/SectionHeading';
-import { WRAP } from '@/modules/home/utils/classes';
 import type { ReactNode } from 'react';
-import type { LucideIcon } from 'lucide-react';
 
 interface LandingSectionProps{
     id: string;
-    icon: LucideIcon;
+    index: string;
     label: string;
     title: string;
     lead: ReactNode;
     children: ReactNode;
 }
 
-const LandingSection = ({ id, icon, label, title, lead, children }: LandingSectionProps) => (
-    <section id={id} aria-labelledby={`${id}-title`} className='pt-[clamp(4.5rem,10vw,7rem)]'>
-        <div className={`${WRAP} grid grid-cols-1 gap-10`}>
-            <SectionHeading id={`${id}-title`} icon={icon} label={label} title={title} lead={lead} />
-            {children}
-        </div>
-    </section>
+const LandingSection = ({ id, index, label, title, lead, children }: LandingSectionProps) => (
+    <Band id={id} labelledBy={`${id}-title`}>
+        <SectionHeading id={`${id}-title`} index={index} label={label} title={title} lead={lead} className='px-5 pb-12 pt-14 sm:px-9 sm:pb-14 sm:pt-18' />
+        {children}
+    </Band>
 );
 
 export default LandingSection;

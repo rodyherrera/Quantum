@@ -1,43 +1,51 @@
-import { Link } from 'react-router-dom';
-import { buttonVariants } from '@heroui/react';
-import { ArrowRight, Server } from 'lucide-react';
-import GithubIcon from '@/shared/components/icons/GithubIcon';
-import SectionHeading from '@/modules/home/components/SectionHeading';
+import { ArrowRight, ArrowUpRight } from 'lucide-react';
+import Band from '@/modules/home/components/Band';
+import DitherField from '@/modules/home/components/DitherField';
+import PixelLink from '@/modules/home/components/PixelLink';
 import CommandBlock from '@/modules/home/components/CommandBlock';
 import GuideText from '@/modules/home/components/GuideText';
 import { GITHUB_URL } from '@/modules/home/utils/links';
-import { WRAP } from '@/modules/home/utils/classes';
+import { FIELD, MONO_LABEL, MONO_TITLE } from '@/modules/home/utils/classes';
 
 const COMMANDS = [`git clone ${GITHUB_URL}`, 'cd Quantum', 'bash scripts/deploy.sh'];
 
 const LandingSelfHost = () => (
-    <section id='self-host' aria-labelledby='self-host-title' className='pt-[clamp(5rem,10vw,7.5rem)]'>
-        <div className={WRAP}>
-            <div className='grid grid-cols-1 gap-4.5 rounded-[0.875rem] border border-separator bg-surface bg-[radial-gradient(80%_120%_at_100%_0%,var(--glow),transparent_60%)] px-5 py-6.5 sm:p-10'>
-                <SectionHeading
-                    id='self-host-title'
-                    icon={Server}
-                    label='Self-host'
-                    title='Three containers and a .env file.'
-                    lead={<GuideText text='The deploy script writes `.env` from `.env.example`, generates the secrets, builds the images and starts quantum-api, quantum-web and quantum-postgres. The dashboard answers on port 5050 and the API on 7080.' />}
-                />
+    <Band id='self-host' labelledBy='self-host-title'>
+        <div className={`relative isolate overflow-hidden px-5 pb-14 pt-16 sm:px-12 sm:pb-16 sm:pt-24 ${FIELD}`}>
+            <DitherField />
 
-                <CommandBlock label='On a Linux machine with Docker' command={COMMANDS} />
+            <div className='relative grid max-w-[44rem] gap-5'>
+                <p className={`${MONO_LABEL} text-white/70`}>
+                    <span className='text-white'>03</span>
+                    <span aria-hidden='true' className='mx-2'>/</span>
+                    Self-host
+                </p>
 
-                <div className='flex flex-wrap gap-2'>
-                    <Link to='/get-started' className={buttonVariants({ size: 'lg' })}>
+                <h2 id='self-host-title' className={`${MONO_TITLE} text-[length:clamp(1.5rem,3.6vw,2.625rem)] leading-[1.08] tracking-[-0.01em]`}>
+                    Three containers and a .env file.
+                </h2>
+
+                <p className='max-w-[60ch] text-[0.9375rem] leading-[1.6] text-white/80'>
+                    <GuideText text='The deploy script writes `.env` from `.env.example`, generates the secrets, builds the images and starts quantum-api, quantum-web and quantum-postgres. The dashboard answers on port 5050 and the API on 7080.' />
+                </p>
+
+                <div className='mt-3 max-w-[34rem]'>
+                    <CommandBlock label='On a Linux machine with Docker' command={COMMANDS} />
+                </div>
+
+                <div className='mt-7 flex flex-wrap gap-4'>
+                    <PixelLink to='/get-started'>
                         Open the guide
                         <ArrowRight aria-hidden='true' />
-                    </Link>
-
-                    <a href={`${GITHUB_URL}#deploy-quantum`} target='_blank' rel='noreferrer' className={buttonVariants({ size: 'lg', variant: 'secondary' })}>
-                        <GithubIcon className='size-3.5' />
+                    </PixelLink>
+                    <PixelLink href={`${GITHUB_URL}#deploy-quantum`} tone='paper'>
                         Read the README
-                    </a>
+                        <ArrowUpRight aria-hidden='true' />
+                    </PixelLink>
                 </div>
             </div>
         </div>
-    </section>
+    </Band>
 );
 
 export default LandingSelfHost;

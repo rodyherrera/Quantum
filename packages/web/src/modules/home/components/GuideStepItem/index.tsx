@@ -48,7 +48,7 @@ const Block = ({ block }: BlockProps) => {
             );
         case 'note':
             return (
-                <p className='flex gap-2.5 rounded-lg border border-separator bg-surface-secondary px-3 py-2.5 leading-[1.55] text-muted'>
+                <p className='flex gap-2.5 border border-separator bg-surface-secondary px-3 py-2.5 leading-[1.55] text-muted'>
                     <Info aria-hidden='true' className='mt-0.5 size-3.5 shrink-0 text-subtle' />
                     <span className='min-w-0'><GuideText text={block.text} /></span>
                 </p>
