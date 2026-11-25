@@ -4,7 +4,7 @@ import ApplicationsHeader from '@/modules/application/components/ApplicationsHea
 import ApplicationsFilters from '@/modules/application/components/ApplicationsFilters';
 import ApplicationsList from '@/modules/application/components/ApplicationsList';
 import { OrganizationTrigger } from '@/modules/organization/components/OrganizationSwitcher';
-import { AccountLink } from '@/modules/auth/components/SessionAvatar';
+import { AccountLink } from '@/modules/auth/components/SessionAccount';
 import { countKinds } from '@/modules/application/utils/application-rows';
 import { DEMO_ROWS } from '@/modules/home/utils/demo/applications';
 import { DEMO_ORGANIZATION, DEMO_USER } from '@/modules/home/utils/demo/entities';
