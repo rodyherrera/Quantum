@@ -1,7 +1,6 @@
 import { Link, NavLink } from 'react-router-dom';
 import { cn } from '@heroui/react';
-import PixelLink from '@/landing/components/PixelLink';
-import { DASHBOARD_URL, GITHUB_URL } from '@/landing/utils/links';
+import { GITHUB_URL } from '@/landing/utils/links';
 import { WRAP } from '@/landing/utils/classes';
 
 interface LandingNavProps{
@@ -26,11 +25,6 @@ const LandingNav = ({ overlay = false }: LandingNavProps) => {
                     <NavLink to='/get-started' className={link}>Guide</NavLink>
                     <a href={GITHUB_URL} target='_blank' rel='noreferrer' className={link}>GitHub</a>
                 </nav>
-
-                <div className='ms-auto flex items-center gap-5'>
-                    <a href={`${DASHBOARD_URL}/sign-in`} className={link}>Log in</a>
-                    <PixelLink href={`${DASHBOARD_URL}/sign-up`} newTab={false} size='sm' tone={overlay ? 'paper' : 'theme'}>Sign up</PixelLink>
-                </div>
             </div>
         </header>
     );

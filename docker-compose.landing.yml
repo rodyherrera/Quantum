@@ -12,7 +12,6 @@ services:
       dockerfile: packages/web/Dockerfile
       args:
         APP: landing
-        VITE_DASHBOARD_URL: ${LANDING_DASHBOARD_URL:-https://quantum.pollium.io}
 
     ports:
       - "${LANDING_PORT:-5060}:80"
