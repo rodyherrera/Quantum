@@ -1,6 +1,6 @@
 import { Link, NavLink } from 'react-router-dom';
 import { buttonVariants } from '@heroui/react';
-import QuantumMark from '@/modules/home/components/QuantumMark';
+import QuantumMark from '@/shared/components/QuantumMark';
 import { GITHUB_URL } from '@/modules/home/utils/links';
 import { WRAP } from '@/modules/home/utils/classes';
 

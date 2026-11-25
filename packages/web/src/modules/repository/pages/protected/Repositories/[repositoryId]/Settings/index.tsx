@@ -234,20 +234,17 @@ const DangerZone = ({ repository }: { repository: Repository }) => {
     const [deleteOpen, setDeleteOpen] = useState(false);
 
     return (
-        <SettingsSection title='Delete repository'>
-            {/* Drawn over the card's hairline so the whole card reads as destructive. */}
-            <div className='-m-px rounded-lg border border-danger/30'>
-                <SettingsRow
-                    title={`Delete ${repository.alias}`}
-                    description='Permanently removes the repository and all of its deployments. This cannot be undone.'
-                    action={(
-                        <Button variant='danger' onPress={() => setDeleteOpen(true)}>
-                            <Trash2 aria-hidden='true' />
-                            Delete repository
-                        </Button>
-                    )}
-                />
-            </div>
+        <SettingsSection title='Delete repository' tone='danger'>
+            <SettingsRow
+                title={`Delete ${repository.alias}`}
+                description='Permanently removes the repository and all of its deployments. This cannot be undone.'
+                action={(
+                    <Button variant='danger' onPress={() => setDeleteOpen(true)}>
+                        <Trash2 aria-hidden='true' />
+                        Delete repository
+                    </Button>
+                )}
+            />
 
             <DeleteRepositoryDialog
                 repository={repository}

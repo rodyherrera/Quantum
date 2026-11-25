@@ -39,7 +39,7 @@ const EntitySelect = <T,>({
         <Select.Popover>
             <ListBox
                 renderEmptyState={() => (
-                    <p className='px-3 py-2.5 text-[0.8125rem] text-muted'>{emptyLabel}</p>
+                    <p className='px-3 py-2.5 text-subtle'>{emptyLabel}</p>
                 )}
             >
                 {items.map((item) => (

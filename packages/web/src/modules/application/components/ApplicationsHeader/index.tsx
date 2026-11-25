@@ -2,9 +2,7 @@ import { Button, buttonVariants, cn, Dropdown } from '@heroui/react';
 import { AppWindow, ChevronDown, Database, Layers, LayoutTemplate, Plus } from 'lucide-react';
 import PageBar from '@/shared/components/layout/PageBar';
 import ViewTabs from '@/shared/components/layout/ViewTabs';
-import type { RowKind } from '@/modules/application/utils/application-rows';
-
-export type KindFilter = 'all' | RowKind;
+import type { KindFilter } from '@/modules/application/utils/application-rows';
 
 const VIEWS: { id: KindFilter; label: string }[] = [
     { id: 'all', label: 'All applications' },

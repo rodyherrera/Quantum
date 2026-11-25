@@ -14,6 +14,8 @@ export type Row =
 
 export type RowKind = 'repository' | 'database' | 'stack' | 'template';
 
+export type KindFilter = 'all' | RowKind;
+
 export type RowState = 'deploying' | 'failed' | 'running' | 'stopped';
 
 export interface RowStatus{
@@ -63,6 +65,12 @@ export const kindOf = (row: Row): RowKind => {
     if(row.kind === 'app') return 'repository';
     if(row.kind === 'database') return 'database';
     return row.install.compose === null ? 'template' : 'stack';
+};
+
+export const countKinds = (rows: Row[]): Record<KindFilter, number> => {
+    const counts: Record<KindFilter, number> = { all: rows.length, repository: 0, stack: 0, database: 0, template: 0 };
+    for(const row of rows) counts[kindOf(row)] += 1;
+    return counts;
 };
 
 export const statusOf = (row: Row): RowStatus => {

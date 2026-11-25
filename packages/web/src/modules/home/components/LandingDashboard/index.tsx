@@ -5,18 +5,14 @@ import ApplicationsFilters from '@/modules/application/components/ApplicationsFi
 import ApplicationsList from '@/modules/application/components/ApplicationsList';
 import { OrganizationTrigger } from '@/modules/organization/components/OrganizationSwitcher';
 import { AccountLink } from '@/modules/auth/components/SessionAvatar';
-import { kindOf } from '@/modules/application/utils/application-rows';
+import { countKinds } from '@/modules/application/utils/application-rows';
 import { DEMO_ROWS } from '@/modules/home/utils/demo/applications';
 import { DEMO_ORGANIZATION, DEMO_USER } from '@/modules/home/utils/demo/entities';
 import { IDLE, IDLE_ROW_ACTIONS } from '@/modules/home/utils/demo/idle';
-import type { KindFilter } from '@/modules/application/components/ApplicationsHeader';
 
 const PROJECTS = [{ id: 1, name: 'Production' }];
 
-const COUNTS = DEMO_ROWS.reduce<Record<KindFilter, number>>(
-    (counts, row) => ({ ...counts, [kindOf(row)]: counts[kindOf(row)] + 1 }),
-    { all: DEMO_ROWS.length, repository: 0, stack: 0, database: 0, template: 0 }
-);
+const COUNTS = countKinds(DEMO_ROWS);
 
 const LandingDashboard = () => (
     <div className='flex h-full bg-canvas text-foreground'>

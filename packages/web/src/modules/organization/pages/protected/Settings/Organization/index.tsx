@@ -93,7 +93,7 @@ const DangerZone = ({ organization }: { organization: Organization }) => {
 
     return (
         <>
-            <SettingsSection title='Delete organization'>
+            <SettingsSection title='Delete organization' tone='danger'>
                 <SettingsRow
                     title={`Delete ${organization.name}`}
                     description='Permanently removes it and all of its projects, environments and resources. This cannot be undone.'

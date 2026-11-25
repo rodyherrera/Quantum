@@ -15,24 +15,33 @@ interface StatusGlyphProps{
     className?: string;
 }
 
-/* Linear's state vocabulary: a ring, a lit ring, a half-filled ring while it changes, a filled cross when it failed. */
-export const StatusGlyph = ({ color, isTransient = false, className }: StatusGlyphProps) => (
-    <svg viewBox='0 0 14 14' aria-hidden='true' className={cn('size-3.5 shrink-0', TONE[color], className)}>
-        {color === 'danger' ? (
-            <>
-                <circle cx='7' cy='7' r='6.4' className='fill-current' />
-                <path d='M5 5l4 4M9 5 5 9' className='stroke-background' strokeWidth='1.5' strokeLinecap='round' />
-            </>
-        ) : (
-            <>
-                <circle cx='7' cy='7' r='5.6' className='fill-none stroke-current' strokeWidth='1.5' />
-                {isTransient || color === 'warning'
-                    ? <path d='M7 3.4a3.6 3.6 0 0 1 0 7.2Z' className='fill-current' />
-                    : color !== 'default' && <circle cx='7' cy='7' r='2.6' className='fill-current' />}
-            </>
-        )}
-    </svg>
-);
+/*
+ * Linear's state vocabulary: an empty ring, a lit ring, a half-filled ring while it changes, and a
+ * filled disc with a mark when it needs attention.
+ */
+export const StatusGlyph = ({ color, isTransient = false, className }: StatusGlyphProps) => {
+    const alarm = color === 'danger' || (color === 'warning' && !isTransient);
+
+    return (
+        <svg viewBox='0 0 14 14' aria-hidden='true' className={cn('size-3.5 shrink-0', TONE[color], className)}>
+            {alarm ? (
+                <>
+                    <circle cx='7' cy='7' r='6.4' className='fill-current' />
+                    {color === 'danger'
+                        ? <path d='M5 5l4 4M9 5 5 9' className='stroke-background' strokeWidth='1.5' strokeLinecap='round' />
+                        : <path d='M7 3.9v3.5M7 9.9v.1' className='stroke-background' strokeWidth='1.6' strokeLinecap='round' />}
+                </>
+            ) : (
+                <>
+                    <circle cx='7' cy='7' r='5.6' className='fill-none stroke-current' strokeWidth='1.5' />
+                    {isTransient
+                        ? <path d='M7 3.4a3.6 3.6 0 0 1 0 7.2Z' className='fill-current' />
+                        : color !== 'default' && <circle cx='7' cy='7' r='2.6' className='fill-current' />}
+                </>
+            )}
+        </svg>
+    );
+};
 
 interface StatusDotProps extends StatusGlyphProps{
     label: string;

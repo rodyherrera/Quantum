@@ -28,13 +28,12 @@ import { templateInstallRoutes } from '@quantum/contracts/modules/template/route
 import { isInstallTransient } from '@/modules/template/utils/install-status';
 import { useCurrentOrganizationId } from '@/modules/organization/hooks/use-current-organization-id';
 import { isDatabaseTransient } from '@/modules/application/utils/status';
-import { buildRows, kindOf } from '@/modules/application/utils/application-rows';
+import { buildRows, countKinds, kindOf } from '@/modules/application/utils/application-rows';
 import { formatDate } from '@/shared/utils/format-date';
 import { applicationErrorMessages } from '@/modules/application/utils/error-messages';
 import { errorCopy } from '@/shared/utils/error-copy';
 import { DatabaseEngine } from '@quantum/contracts/modules/database/domain';
-import type { KindFilter } from '@/modules/application/components/ApplicationsHeader';
-import type { Row } from '@/modules/application/utils/application-rows';
+import type { KindFilter } from '@/modules/application/utils/application-rows';
 import type { TemplateInstallOperation } from '@quantum/contracts/modules/template/http';
 import type { Database } from '@quantum/contracts/modules/database/domain';
 import type { CreateDatabaseInput } from '@quantum/contracts/modules/database/http';
@@ -324,12 +323,6 @@ const UninstallDialog = ({ install, onClose, onRemoved }: UninstallDialogProps) 
         onRemoved={onRemoved}
     />
 );
-
-const countKinds = (rows: Row[]): Record<KindFilter, number> => {
-    const counts: Record<KindFilter, number> = { all: rows.length, repository: 0, stack: 0, database: 0, template: 0 };
-    for(const row of rows) counts[kindOf(row)] += 1;
-    return counts;
-};
 
 const LoadError = ({ title, error, onRetry }: { title: string; error: Error; onRetry: () => void }) => (
     <>

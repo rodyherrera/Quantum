@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import QuantumMark from '@/modules/home/components/QuantumMark';
+import QuantumMark from '@/shared/components/QuantumMark';
 import { GITHUB_URL, ISSUES_URL, LICENSE_URL, SUPPORT_URL } from '@/modules/home/utils/links';
 import { WRAP } from '@/modules/home/utils/classes';
 

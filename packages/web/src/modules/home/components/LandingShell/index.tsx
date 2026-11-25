@@ -8,7 +8,7 @@ interface LandingShellProps{
 }
 
 const LandingShell = ({ children }: LandingShellProps) => (
-    <div className='flex min-h-dvh flex-col overflow-x-clip bg-background text-foreground [--glow:color-mix(in_oklab,var(--accent)_20%,transparent)]'>
+    <div className='flex min-h-dvh flex-col overflow-x-clip bg-background text-foreground'>
         <ScrollRestoration />
         <LandingNav />
         <main className='flex-1'>{children}</main>
