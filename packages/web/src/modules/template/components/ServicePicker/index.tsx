@@ -11,7 +11,7 @@ const ServicePicker = ({ services, value, onChange }: ServicePickerProps) => {
     if(services.length < 2) return null;
 
     return (
-        <div className='w-56'>
+        <div className='w-48'>
             <EntitySelect
                 items={services}
                 getKey={(service) => service.name}

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
-import { Button, FieldError, Input, Label, TextField } from '@heroui/react';
+import { Button, Chip, FieldError, Input, Label, TextField } from '@heroui/react';
+import { Boxes, Dices } from 'lucide-react';
 import Modal from '@/shared/components/Modal';
 import InlineError from '@/shared/components/InlineError';
 import EntitySelect from '@/shared/components/EntitySelect';
@@ -50,6 +51,8 @@ const InstallTemplateDialog = ({ template, onClose, onInstalled }: InstallTempla
         }));
 
     const fields = (template?.inputsSchema ?? []).filter((def) => !def.generate);
+    const generated = (template?.inputsSchema ?? []).length - fields.length;
+    const services = Object.keys(template?.spec.services ?? {}).length;
 
     const selectProject = (id: number) => {
         setProjectId(id);
@@ -115,7 +118,7 @@ const InstallTemplateDialog = ({ template, onClose, onInstalled }: InstallTempla
                     />
 
                     {projects.data !== null && projects.data.length === 0 && (
-                        <p className='text-[0.8125rem] text-muted'>
+                        <p className='text-muted'>
                             A template installs into a project, and this organization has none yet.{' '}
                             <RouterLink
                                 to='/projects'
@@ -126,6 +129,19 @@ const InstallTemplateDialog = ({ template, onClose, onInstalled }: InstallTempla
                             </RouterLink>
                             .
                         </p>
+                    )}
+                </div>
+
+                <div className='flex flex-wrap gap-1.5'>
+                    <Chip>
+                        <Boxes aria-hidden='true' className='size-3 text-subtle' />
+                        {services} {services === 1 ? 'service' : 'services'}
+                    </Chip>
+                    {generated > 0 && (
+                        <Chip>
+                            <Dices aria-hidden='true' className='size-3 text-subtle' />
+                            {generated} {generated === 1 ? 'value' : 'values'} generated for you
+                        </Chip>
                     )}
                 </div>
 
@@ -148,8 +164,8 @@ const InstallTemplateDialog = ({ template, onClose, onInstalled }: InstallTempla
 
                 {install.error !== undefined && <InlineError>{copy(install.error)}</InlineError>}
 
-                <div className='flex justify-end gap-2'>
-                    <Button variant='secondary' isDisabled={install.loading} onPress={onClose}>Cancel</Button>
+                <div className='mt-1 flex justify-end gap-2 border-t border-separator pt-4'>
+                    <Button variant='ghost' isDisabled={install.loading} onPress={onClose}>Cancel</Button>
                     <Button
                         isPending={install.loading}
                         isDisabled={projectId === null || name.trim() === ''}
