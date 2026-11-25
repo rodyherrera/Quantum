@@ -1,5 +1,4 @@
 import { Button, Spinner } from '@heroui/react';
-import { TriangleAlert } from 'lucide-react';
 import type { ReactNode, Ref } from 'react';
 
 interface TerminalFrameProps{
@@ -36,7 +35,6 @@ const TerminalFrame = ({ title, description, connection, actions, error, onDismi
         {error !== null && (
             <div role='alert' className='flex items-center justify-between gap-3 rounded-lg border border-danger/30 bg-danger/10 px-3 py-2 text-danger'>
                 <span className='flex items-center gap-2'>
-                    <TriangleAlert className='size-4 shrink-0' aria-hidden='true' />
                     {error}
                 </span>
                 <Button size='sm' variant='secondary' onPress={onDismissError}>Dismiss</Button>

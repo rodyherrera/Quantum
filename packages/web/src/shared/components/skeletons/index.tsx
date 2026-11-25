@@ -73,10 +73,7 @@ export const DetailSkeleton = ({ actions = 4, tabs = 4 }: DetailSkeletonProps) =
     <Loading className='grid min-h-0 flex-1 xl:grid-cols-[minmax(0,1fr)_18.75rem]'>
         <div className='flex min-w-0 flex-col'>
             <div className='flex flex-wrap items-start justify-between gap-4 px-5 pt-6 sm:px-7'>
-                <div className='flex items-center gap-2.5'>
-                    <Skeleton className='size-7 rounded-lg' />
-                    <Skeleton className='h-6 w-56 max-w-full' />
-                </div>
+                <Skeleton className='h-6 w-56 max-w-full' />
                 <div className='flex gap-1.5'>
                     {Array.from({ length: actions }, (_, index) => <Skeleton key={index} className='h-8 w-20' />)}
                 </div>
@@ -146,15 +143,14 @@ export const SplitSkeleton = () => (
         <div className='flex w-full shrink-0 flex-col gap-1 border-b border-separator p-2.5 lg:w-[20.625rem] lg:border-b-0 lg:border-r'>
             <Skeleton className='mb-2 h-8 w-full' />
             {Array.from({ length: 9 }, (_, index) => (
-                <div key={index} className='flex items-center gap-2.5 px-2 py-1.5'>
-                    <Skeleton className='size-7 rounded-lg' />
+                <div key={index} className='flex flex-col gap-1.5 px-2.5 py-2'>
                     <Skeleton className={cn('h-3', WIDTHS[index % WIDTHS.length])} />
+                    <Skeleton className='h-2.5 w-4/5' />
                 </div>
             ))}
         </div>
         <div className='flex-1 px-9 pt-8'>
-            <Skeleton className='size-11 rounded-xl' />
-            <Skeleton className='mt-4 h-7 w-56 max-w-full' />
+            <Skeleton className='h-7 w-56 max-w-full' />
             <Skeleton className='mt-3 h-3.5 w-full max-w-lg' />
             <Skeleton className='mt-6 h-9 w-28' />
         </div>

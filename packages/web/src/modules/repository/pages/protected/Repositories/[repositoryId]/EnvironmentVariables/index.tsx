@@ -1,6 +1,5 @@
 import { useParams } from 'react-router-dom';
 import { FieldsSkeleton } from '@/shared/components/skeletons';
-import { Rocket } from 'lucide-react';
 import ErrorState from '@/shared/components/ErrorState';
 import EmptyState from '@/shared/components/EmptyState';
 import CenterState from '@/shared/components/CenterState';
@@ -16,7 +15,6 @@ const copy = errorCopy(deploymentErrorMessages);
 const NoDeploymentYet = () => (
     <CenterState>
         <EmptyState
-            icon={Rocket}
             title='No deployment yet'
             description='Environment variables become available after your first deploy.'
         />

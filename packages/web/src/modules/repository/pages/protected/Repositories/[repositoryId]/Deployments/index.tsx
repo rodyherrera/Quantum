@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { TableSkeleton } from '@/shared/components/skeletons';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { Button } from '@heroui/react';
-import { Play, Rocket, RotateCw, Square } from 'lucide-react';
 import ListPageShell from '@/shared/components/ListPageShell';
 import EmptyState from '@/shared/components/EmptyState';
 import CenterState from '@/shared/components/CenterState';
@@ -53,7 +52,6 @@ const DeploymentsHeader = ({ repository, isOperating, onOperate }: DeploymentsHe
                     isDisabled={isRunning || isOperating}
                     onPress={() => onOperate(RepositoryOperation.Start)}
                 >
-                    <Play aria-hidden='true' />
                     Start
                 </Button>
                 <Button
@@ -62,11 +60,9 @@ const DeploymentsHeader = ({ repository, isOperating, onOperate }: DeploymentsHe
                     isDisabled={!isRunning || isOperating}
                     onPress={() => onOperate(RepositoryOperation.Stop)}
                 >
-                    <Square aria-hidden='true' />
                     Stop
                 </Button>
                 <Button size='sm' variant='secondary' isDisabled={isOperating} onPress={() => onOperate(RepositoryOperation.Restart)}>
-                    <RotateCw aria-hidden='true' />
                     Restart
                 </Button>
             </div>
@@ -249,7 +245,6 @@ const Deployments = () => {
                 !activeJobId && (
                     <CenterState>
                         <EmptyState
-                            icon={Rocket}
                             title='No deployments yet'
                             description='Start this application to create its first deployment.'
                         />

@@ -3,10 +3,8 @@ import ErrorState from '@/shared/components/ErrorState';
 import CenterState from '@/shared/components/CenterState';
 import { TableSkeleton } from '@/shared/components/skeletons';
 import type { ReactNode } from 'react';
-import type { LucideIcon } from 'lucide-react';
 
 export interface ListPageStateSpec{
-    icon: LucideIcon;
     title: string;
     description?: string;
     action?: ReactNode;
@@ -50,7 +48,7 @@ const ListPageShell = ({
 
     if(showPrompt && prompt !== undefined){
         return wrap(
-            <EmptyState icon={prompt.icon} title={prompt.title} description={prompt.description}>
+            <EmptyState title={prompt.title} description={prompt.description}>
                 {prompt.action}
             </EmptyState>
         );
@@ -64,7 +62,7 @@ const ListPageShell = ({
 
     if(isEmpty && empty !== undefined){
         return wrap(
-            <EmptyState icon={empty.icon} title={empty.title} description={empty.description}>
+            <EmptyState title={empty.title} description={empty.description}>
                 {empty.action}
             </EmptyState>
         );

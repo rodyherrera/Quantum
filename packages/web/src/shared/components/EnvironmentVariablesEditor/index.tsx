@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Button, cn, Input, TextField } from '@heroui/react';
-import { Eye, EyeOff, KeyRound, Plus, Trash2 } from 'lucide-react';
+import { Eye, EyeOff, Trash2 } from 'lucide-react';
 import EmptyState from '@/shared/components/EmptyState';
 import CenterState from '@/shared/components/CenterState';
 import InlineError from '@/shared/components/InlineError';
@@ -137,7 +137,6 @@ const EnvironmentVariablesEditor = ({
                 <div className='flex shrink-0 items-center gap-3'>
                     <SaveStatus state={saver.state} />
                     <Button size='sm' variant='secondary' onPress={add}>
-                        <Plus aria-hidden='true' />
                         Add variable
                     </Button>
                 </div>
@@ -145,9 +144,8 @@ const EnvironmentVariablesEditor = ({
 
             {empty ? (
                 <CenterState className='flex-1 border-t border-separator'>
-                    <EmptyState icon={KeyRound} title='No environment variables' description={emptyDescription} compact>
+                    <EmptyState title='No environment variables' description={emptyDescription} compact>
                         <Button size='sm' onPress={add}>
-                            <Plus aria-hidden='true' />
                             Add variable
                         </Button>
                     </EmptyState>

@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { LinesSkeleton, PageSkeleton, TableSkeleton } from '@/shared/components/skeletons';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Button, Input, Label, ListBox, ListBoxItem, Select, TextField } from '@heroui/react';
-import { AppWindow, Plus } from 'lucide-react';
 import PageBar from '@/shared/components/layout/PageBar';
 import PageBody from '@/shared/components/layout/PageBody';
 import ListPageShell from '@/shared/components/ListPageShell';
@@ -326,7 +325,7 @@ const UninstallDialog = ({ install, onClose, onRemoved }: UninstallDialogProps) 
 
 const LoadError = ({ title, error, onRetry }: { title: string; error: Error; onRetry: () => void }) => (
     <>
-        <PageBar title='Applications' icon={AppWindow} />
+        <PageBar title='Applications' />
         <CenterState>
             <ErrorState title={title} description={copy(error)} onRetry={onRetry} />
         </CenterState>
@@ -456,14 +455,12 @@ const Applications = () => {
                     onRetry={databases.reload}
                     isEmpty={filtered.length === 0}
                     empty={{
-                        icon: AppWindow,
                         title: narrowed ? 'No matches' : 'No applications yet',
                         description: narrowed
                             ? 'Try another search or show all applications.'
                             : 'Import a repository, deploy a compose stack, or install a template from the catalogue.',
                         action: narrowed ? undefined : (
                             <Button onPress={() => navigate('/repositories/create')}>
-                                <Plus aria-hidden='true' />
                                 New application
                             </Button>
                         )

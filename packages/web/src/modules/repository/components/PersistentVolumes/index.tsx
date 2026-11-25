@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Button, Input, TextField } from '@heroui/react';
-import { HardDrive, Plus, Trash2 } from 'lucide-react';
+import { Trash2 } from 'lucide-react';
 import SettingsSection, { SettingsBlock } from '@/shared/components/SettingsSection';
 import InlineError from '@/shared/components/InlineError';
 import { useMutation } from '@/shared/hooks/api/use-mutation';
@@ -39,7 +39,6 @@ const PersistentVolumes = ({ repository, onSaved }: PersistentVolumesProps) => {
             {paths.length === 0 && (
                 <SettingsBlock>
                     <p className='flex items-center gap-2 text-subtle'>
-                        <HardDrive aria-hidden='true' className='size-4' />
                         Nothing outside /app is kept between deploys yet.
                     </p>
                 </SettingsBlock>
@@ -77,7 +76,6 @@ const PersistentVolumes = ({ repository, onSaved }: PersistentVolumesProps) => {
 
             <div className='flex flex-wrap items-center justify-between gap-2 px-4 py-2.5'>
                 <Button size='sm' variant='ghost' onPress={() => setPaths((current) => (current.includes('') ? current : [...current, '']))}>
-                    <Plus aria-hidden='true' />
                     Add path
                 </Button>
                 <Button size='sm' isPending={update.loading} isDisabled={!dirty} onPress={() => { void save(); }}>

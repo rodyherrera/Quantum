@@ -1,5 +1,5 @@
 import { Button, buttonVariants, cn, Dropdown } from '@heroui/react';
-import { AppWindow, ChevronDown, Database, Layers, LayoutTemplate, Plus } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 import PageBar from '@/shared/components/layout/PageBar';
 import ViewTabs from '@/shared/components/layout/ViewTabs';
 import type { KindFilter } from '@/modules/application/utils/application-rows';
@@ -35,11 +35,9 @@ const ApplicationsHeader = ({
 }: ApplicationsHeaderProps) => (
     <PageBar
         title='Applications'
-        icon={AppWindow}
         actions={(
             <div className='flex'>
                 <Button size='sm' className='rounded-r-none' onPress={onAddApplication}>
-                    <Plus aria-hidden='true' />
                     <span className='hidden sm:inline'>New application</span>
                 </Button>
 
@@ -53,18 +51,9 @@ const ApplicationsHeader = ({
 
                     <Dropdown.Popover placement='bottom end'>
                         <Dropdown.Menu aria-label='Deploy'>
-                            <Dropdown.Item key='compose' onAction={onAddCompose}>
-                                <Layers aria-hidden='true' className='size-4 text-subtle' />
-                                Deploy a stack
-                            </Dropdown.Item>
-                            <Dropdown.Item key='database' isDisabled={!canAddDatabase} onAction={onAddDatabase}>
-                                <Database aria-hidden='true' className='size-4 text-subtle' />
-                                New database
-                            </Dropdown.Item>
-                            <Dropdown.Item key='template' onAction={onInstallTemplate}>
-                                <LayoutTemplate aria-hidden='true' className='size-4 text-subtle' />
-                                Install a template
-                            </Dropdown.Item>
+                            <Dropdown.Item key='compose' onAction={onAddCompose}>Deploy a stack</Dropdown.Item>
+                            <Dropdown.Item key='database' isDisabled={!canAddDatabase} onAction={onAddDatabase}>New database</Dropdown.Item>
+                            <Dropdown.Item key='template' onAction={onInstallTemplate}>Install a template</Dropdown.Item>
                         </Dropdown.Menu>
                     </Dropdown.Popover>
                 </Dropdown>

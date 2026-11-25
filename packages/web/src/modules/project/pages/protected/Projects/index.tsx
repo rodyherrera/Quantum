@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { PageSkeleton } from '@/shared/components/skeletons';
 import { Button, Chip, Dropdown } from '@heroui/react';
-import { FolderClosed, MoreHorizontal, Plus } from 'lucide-react';
+import { MoreHorizontal } from 'lucide-react';
 import PageBar from '@/shared/components/layout/PageBar';
 import PageBody from '@/shared/components/layout/PageBody';
 import ListRow from '@/shared/components/list/ListRow';
@@ -13,7 +13,6 @@ import { useResource } from '@/shared/hooks/api/use-resource';
 import { projectApi } from '@/modules/project/api/api';
 import { projectRoutes } from '@quantum/contracts/modules/project/routes';
 import { useCurrentOrganizationId } from '@/modules/organization/hooks/use-current-organization-id';
-import { projectHue } from '@/modules/project/utils/project-hue';
 import { projectErrorMessages } from '@/modules/project/utils/error-messages';
 import { errorCopy } from '@/shared/utils/error-copy';
 import { formatDate, formatDay } from '@/shared/utils/format-date';
@@ -55,7 +54,6 @@ interface ProjectRowProps{
 const ProjectRow = ({ project, onRename, onDelete }: ProjectRowProps) => (
     <ListRow className={COLUMNS} to={`/applications?project=${project.id}`} label={`Open ${project.name}`}>
         <span className='flex min-w-0 items-center gap-2.5'>
-            <span aria-hidden='true' className='size-2 shrink-0 rounded-[0.15625rem]' style={{ backgroundColor: projectHue(project.id) }} />
             <span className='truncate font-medium text-foreground'>{project.name}</span>
             {project.isDefault && <Chip size='sm'>Default</Chip>}
         </span>
@@ -119,14 +117,13 @@ const Projects = () => {
     const items = projects.data ?? [];
     const newProject = (
         <Button size='sm' onPress={() => setCreateOpen(true)}>
-            <Plus aria-hidden='true' />
             New project
         </Button>
     );
 
     return (
         <>
-            <PageBar title='Projects' icon={FolderClosed} actions={projects.error === undefined ? newProject : undefined} />
+            <PageBar title='Projects' actions={projects.error === undefined ? newProject : undefined} />
 
             <PageBody variant='flush' fill>
                 <ListPageShell
@@ -136,7 +133,6 @@ const Projects = () => {
                     onRetry={projects.refresh}
                     isEmpty={items.length === 0}
                     empty={{
-                        icon: FolderClosed,
                         title: 'No projects yet',
                         description: 'Projects group related deployments. Create your first one to get started.',
                         action: newProject

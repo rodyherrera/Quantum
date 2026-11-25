@@ -2,7 +2,6 @@ import { Fragment } from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronRight } from 'lucide-react';
 import type { ReactNode } from 'react';
-import type { LucideIcon } from 'lucide-react';
 
 export interface Crumb{
     label: string;
@@ -11,14 +10,13 @@ export interface Crumb{
 
 interface PageBarProps{
     title: string;
-    icon?: LucideIcon;
     trail?: Crumb[];
     children?: ReactNode;
     actions?: ReactNode;
 }
 
 /* The 44px bar on top of every page: where you are on the left, what you can do on the right. */
-const PageBar = ({ title, icon: Icon, trail = [], children, actions }: PageBarProps) => (
+const PageBar = ({ title, trail = [], children, actions }: PageBarProps) => (
     <header className='sticky top-0 z-20 flex h-[var(--bar-height)] shrink-0 items-center gap-2 border-b border-separator bg-background px-4'>
         <nav aria-label='Breadcrumb' className='flex min-w-0 items-center gap-1.5'>
             {trail.map((crumb) => (
@@ -33,10 +31,7 @@ const PageBar = ({ title, icon: Icon, trail = [], children, actions }: PageBarPr
                 </Fragment>
             ))}
 
-            <h1 className='flex min-w-[min(7rem,40vw)] items-center gap-2 font-medium text-foreground'>
-                {Icon !== undefined && <Icon aria-hidden='true' className='size-[0.9375rem] shrink-0 text-subtle' />}
-                <span className='truncate'>{title}</span>
-            </h1>
+            <h1 className='min-w-[min(7rem,40vw)] truncate font-medium text-foreground'>{title}</h1>
         </nav>
 
         {children !== undefined && (

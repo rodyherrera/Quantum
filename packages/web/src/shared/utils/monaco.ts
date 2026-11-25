@@ -4,7 +4,7 @@ import type { Theme } from '@/shared/utils/theme';
 
 loader.config({ monaco });
 
-/* Monaco only takes hex colours, so these mirror the tokens in index.css. */
+/* Monaco only takes hex colours, so these mirror the tokens in index.css. Syntax is greys, like the rest. */
 const PALETTE = {
     light: {
         base: 'vs',
@@ -15,11 +15,11 @@ const PALETTE = {
         subtle: '#8c8d97',
         separator: '#e8e8ec',
         border: '#dcdce2',
-        accent: '#5e6ad2',
-        key: '#4e59c4',
-        string: '#1f8a5a',
-        literal: '#b07700',
-        comment: '#9a9ba4'
+        accent: '#1b1c20',
+        key: '#1b1c20',
+        string: '#5a5b65',
+        literal: '#3d3e46',
+        comment: '#a5a6ae'
     },
     dark: {
         base: 'vs-dark',
@@ -30,10 +30,10 @@ const PALETTE = {
         subtle: '#6c6d77',
         separator: '#212227',
         border: '#2b2c32',
-        accent: '#6b75e2',
-        key: '#a3aaff',
-        string: '#7fd1a8',
-        literal: '#e2b340',
+        accent: '#ececef',
+        key: '#ececef',
+        string: '#a2a3ac',
+        literal: '#c9cad1',
         comment: '#5e606a'
     }
 } as const;
@@ -53,12 +53,12 @@ export const defineEditorThemes = (instance: typeof monaco) => {
             inherit: true,
             rules: [
                 { token: '', foreground: hex(palette.foreground) },
-                { token: 'type', foreground: hex(palette.key) },
                 { token: 'string', foreground: hex(palette.string) },
                 { token: 'string.yaml', foreground: hex(palette.string) },
                 { token: 'number', foreground: hex(palette.literal) },
                 { token: 'keyword', foreground: hex(palette.literal) },
                 { token: 'comment', foreground: hex(palette.comment), fontStyle: 'italic' },
+                { token: 'type', foreground: hex(palette.key), fontStyle: 'bold' },
                 { token: 'operators', foreground: hex(palette.subtle) },
                 { token: 'delimiter', foreground: hex(palette.subtle) }
             ],
@@ -69,15 +69,15 @@ export const defineEditorThemes = (instance: typeof monaco) => {
                 'editorLineNumber.foreground': palette.subtle,
                 'editorLineNumber.activeForeground': palette.muted,
                 'editorCursor.foreground': palette.accent,
-                'editor.selectionBackground': `${palette.accent}47`,
-                'editor.inactiveSelectionBackground': `${palette.accent}24`,
+                'editor.selectionBackground': `${palette.accent}30`,
+                'editor.inactiveSelectionBackground': `${palette.accent}18`,
                 'editor.lineHighlightBorder': '#00000000',
                 'editorIndentGuide.background1': palette.separator,
                 'editorIndentGuide.activeBackground1': palette.border,
                 'editorWidget.background': palette.overlay,
                 'editorWidget.border': palette.border,
-                'editorSuggestWidget.selectedBackground': `${palette.accent}29`,
-                'focusBorder': palette.accent,
+                'editorSuggestWidget.selectedBackground': `${palette.accent}1f`,
+                'focusBorder': palette.border,
                 'scrollbarSlider.background': `${palette.border}b3`,
                 'scrollbarSlider.hoverBackground': palette.border,
                 'scrollbarSlider.activeBackground': palette.subtle

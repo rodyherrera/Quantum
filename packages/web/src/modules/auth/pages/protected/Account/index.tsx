@@ -1,7 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { FieldsSkeleton } from '@/shared/components/skeletons';
 import { Button, Chip } from '@heroui/react';
-import { ArrowRight, UserRound } from 'lucide-react';
 import { useSession } from '@/modules/auth/hooks/use-session';
 import Avatar from '@/shared/components/Avatar';
 import PageBar from '@/shared/components/layout/PageBar';
@@ -34,7 +33,7 @@ const Account = () => {
 
     return (
         <>
-            <PageBar title='Account' icon={UserRound} trail={SETTINGS_TRAIL} />
+            <PageBar title='Account' trail={SETTINGS_TRAIL} />
 
             <PageBody variant='narrow'>
                 <div className='flex flex-col gap-8'>
@@ -58,7 +57,6 @@ const Account = () => {
                                     action={(
                                         <Button size='sm' variant='secondary' onPress={() => navigate('/change-password')}>
                                             Change password
-                                            <ArrowRight aria-hidden='true' />
                                         </Button>
                                     )}
                                 />

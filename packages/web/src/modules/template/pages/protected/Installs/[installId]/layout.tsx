@@ -1,35 +1,16 @@
 import { Outlet, useParams } from 'react-router-dom';
 import { DetailSkeleton } from '@/shared/components/skeletons';
 import { Button } from '@heroui/react';
-import {
-    Boxes,
-    CalendarDays,
-    FileCode,
-    GitBranch,
-    KeyRound,
-    Layers,
-    LayoutTemplate,
-    Play,
-    RefreshCw,
-    RotateCw,
-    ScrollText,
-    SlidersHorizontal,
-    Square,
-    SquareTerminal,
-    Zap
-} from 'lucide-react';
 import PageBar from '@/shared/components/layout/PageBar';
 import DetailView from '@/shared/components/detail/DetailView';
 import DetailHeader from '@/shared/components/detail/DetailHeader';
-import DetailIcon from '@/shared/components/detail/DetailIcon';
 import TabNav from '@/shared/components/detail/TabNav';
 import Property, { PropertyGroup } from '@/shared/components/detail/Property';
 import ErrorState from '@/shared/components/ErrorState';
 import CenterState from '@/shared/components/CenterState';
-import StatusDot from '@/shared/components/StatusDot';
+import StatusText from '@/shared/components/StatusText';
 import InlineError from '@/shared/components/InlineError';
 import InlineEdit from '@/shared/components/InlineEdit';
-import GithubIcon from '@/shared/components/icons/GithubIcon';
 import WorkspaceButton from '@/modules/codespace/components/WorkspaceButton';
 import { useQuery } from '@/shared/hooks/api/use-query';
 import { usePolledQuery } from '@/shared/hooks/api/use-polled-query';
@@ -40,7 +21,6 @@ import { deployTriggerLabel } from '@/modules/template/utils/deploy-trigger';
 import { templateErrorMessages } from '@/modules/template/utils/error-messages';
 import { errorCopy } from '@/shared/utils/error-copy';
 import { formatDate } from '@/shared/utils/format-date';
-import type { LucideIcon } from 'lucide-react';
 import type { TabNavItem } from '@/shared/components/detail/TabNav';
 import type { TemplateInstall } from '@quantum/contracts/modules/template/domain';
 import type { TemplateInstallOperation } from '@quantum/contracts/modules/template/http';
@@ -51,35 +31,19 @@ const copy = errorCopy(templateErrorMessages);
 const LOADING_TRAIL = [{ label: 'Applications', to: '/applications' }];
 
 const tabsFor = (install: TemplateInstall): TabNavItem[] => [
-    { label: 'Services', to: 'services', icon: Boxes, count: install.services.length },
-    { label: 'Logs', to: 'logs', icon: ScrollText },
-    { label: 'Shell', to: 'shell', icon: SquareTerminal },
-    { label: 'Environment', to: 'environment', icon: KeyRound },
+    { label: 'Services', to: 'services', count: install.services.length },
+    { label: 'Logs', to: 'logs' },
+    { label: 'Shell', to: 'shell' },
+    { label: 'Environment', to: 'environment' },
     ...(install.compose === null ? [] : [
-        { label: 'Compose', to: 'compose', icon: FileCode },
-        { label: 'Settings', to: 'settings', icon: SlidersHorizontal }
+        { label: 'Compose', to: 'compose' },
+        { label: 'Settings', to: 'settings' }
     ])
 ];
 
-const kindIcon = (install: TemplateInstall): LucideIcon => (install.compose === null ? LayoutTemplate : Layers);
-
-const SourceLabel = ({ install }: { install: TemplateInstall }) => {
-    if(install.source !== null){
-        return (
-            <span className='inline-flex min-w-0 items-center gap-1.5'>
-                <GithubIcon className='size-3.5 text-subtle' />
-                <span className='truncate'>{install.source.owner}/{install.source.repo}</span>
-            </span>
-        );
-    }
-
-    const Icon = install.compose === null ? LayoutTemplate : FileCode;
-    return (
-        <span className='inline-flex items-center gap-1.5'>
-            <Icon aria-hidden='true' className='size-3.5 text-subtle' />
-            {install.compose === null ? 'Template' : 'Docker Compose'}
-        </span>
-    );
+const sourceLabel = (install: TemplateInstall): string => {
+    if(install.source !== null) return `${install.source.owner}/${install.source.repo}`;
+    return install.compose === null ? 'Template' : 'Docker Compose';
 };
 
 interface InstallHeaderProps{
@@ -97,11 +61,9 @@ const InstallHeader = ({ install, isOperating, isRedeploying, redeployError, ren
     const running = isInstallRunning(install.status);
     const busy = isOperating || isInstallTransient(install.status);
     const published = install.services.filter((service) => service.ports.length > 0).length;
-    const KindIcon = kindIcon(install);
 
     return (
         <DetailHeader
-            icon={<DetailIcon><KindIcon /></DetailIcon>}
             title={(
                 <InlineEdit
                     value={install.name}
@@ -113,18 +75,9 @@ const InstallHeader = ({ install, isOperating, isRedeploying, redeployError, ren
             error={renameError !== undefined ? <InlineError>{copy(renameError)}</InlineError> : undefined}
             meta={(
                 <>
-                    <StatusDot
-                        color={installStatusColor(install.status)}
-                        label={installStatusLabel(install.status)}
-                        isTransient={isInstallTransient(install.status)}
-                    />
-                    <SourceLabel install={install} />
-                    {install.source !== null && (
-                        <span className='inline-flex items-center gap-1.5'>
-                            <GitBranch aria-hidden='true' className='size-3.5 text-subtle' />
-                            <span className='font-mono text-xs'>{install.source.branch}</span>
-                        </span>
-                    )}
+                    <StatusText color={installStatusColor(install.status)} label={installStatusLabel(install.status)} />
+                    <span className='truncate'>{sourceLabel(install)}</span>
+                    {install.source !== null && <span className='font-mono text-xs'>{install.source.branch}</span>}
                     <span>
                         {install.services.length} {install.services.length === 1 ? 'service' : 'services'} · {published} published
                     </span>
@@ -134,22 +87,10 @@ const InstallHeader = ({ install, isOperating, isRedeploying, redeployError, ren
                 <>
                     <div className='flex flex-wrap items-start gap-1.5'>
                         <WorkspaceButton target={{ kind: 'install', id: install.id }} />
-                        <Button variant='secondary' isDisabled={running || busy} onPress={() => onOperate('start')}>
-                            <Play aria-hidden='true' />
-                            Start
-                        </Button>
-                        <Button variant='secondary' isDisabled={!running || busy} onPress={() => onOperate('stop')}>
-                            <Square aria-hidden='true' />
-                            Stop
-                        </Button>
-                        <Button variant='secondary' isDisabled={busy} onPress={() => onOperate('restart')}>
-                            <RotateCw aria-hidden='true' />
-                            Restart
-                        </Button>
-                        <Button isDisabled={busy} isPending={isRedeploying} onPress={onRedeploy}>
-                            <RefreshCw aria-hidden='true' />
-                            Redeploy
-                        </Button>
+                        <Button variant='secondary' isDisabled={running || busy} onPress={() => onOperate('start')}>Start</Button>
+                        <Button variant='secondary' isDisabled={!running || busy} onPress={() => onOperate('stop')}>Stop</Button>
+                        <Button variant='secondary' isDisabled={busy} onPress={() => onOperate('restart')}>Restart</Button>
+                        <Button isDisabled={busy} isPending={isRedeploying} onPress={onRedeploy}>Redeploy</Button>
                     </div>
                     {redeployError !== undefined && <InlineError>{copy(redeployError)}</InlineError>}
                 </>
@@ -166,50 +107,35 @@ const InstallProperties = ({ install }: { install: TemplateInstall }) => {
         <>
             <PropertyGroup title='Properties'>
                 <Property label='Status'>
-                    <StatusDot
-                        color={installStatusColor(install.status)}
-                        label={installStatusLabel(install.status)}
-                        isTransient={isInstallTransient(install.status)}
-                    />
+                    <StatusText color={installStatusColor(install.status)} label={installStatusLabel(install.status)} />
                 </Property>
                 <Property label='Source'>
-                    {source === null ? <SourceLabel install={install} /> : (
-                        <a
-                            href={`https://github.com/${source.owner}/${source.repo}`}
-                            target='_blank'
-                            rel='noreferrer'
-                            className='flex min-w-0 items-center gap-1.5 hover:underline'
-                        >
-                            <GithubIcon className='size-3.5 shrink-0 text-subtle' />
-                            <span className='truncate'>{source.owner}/{source.repo}</span>
+                    {source === null ? sourceLabel(install) : (
+                        <a href={`https://github.com/${source.owner}/${source.repo}`} target='_blank' rel='noreferrer' className='truncate underline-offset-2 hover:underline'>
+                            {sourceLabel(install)}
                         </a>
                     )}
                 </Property>
                 {source !== null && (
                     <>
                         <Property label='Branch'>
-                            <GitBranch aria-hidden='true' />
                             <span className='truncate font-mono text-xs font-normal'>{source.branch}</span>
                         </Property>
                         <Property label='Compose file'>
-                            <FileCode aria-hidden='true' />
                             <span className='truncate font-mono text-xs font-normal'>{source.composePath}</span>
                         </Property>
                         <Property label='Deploy on'>
-                            <Zap aria-hidden='true' />
                             <span className='truncate'>{deployTriggerLabel(source.deployOn, source.branch)}</span>
                         </Property>
                     </>
                 )}
                 <Property label='Created'>
-                    <CalendarDays aria-hidden='true' />
                     <time dateTime={install.createdAt} className='truncate'>{formatDate(install.createdAt)}</time>
                 </Property>
             </PropertyGroup>
 
             <PropertyGroup title='Network'>
                 <Property label='Services'>
-                    <Boxes aria-hidden='true' />
                     {install.services.length}
                 </Property>
                 <Property label='Published'>
@@ -250,7 +176,7 @@ const InstallLayout = () => {
     if(install.loading){
         return (
             <>
-                <PageBar title='Stack' icon={Layers} trail={LOADING_TRAIL} />
+                <PageBar title='Stack' trail={LOADING_TRAIL} />
                 <DetailSkeleton actions={5} tabs={4} />
             </>
         );
@@ -259,7 +185,7 @@ const InstallLayout = () => {
     if(install.error !== undefined){
         return (
             <>
-                <PageBar title='Stack' icon={Layers} trail={LOADING_TRAIL} />
+                <PageBar title='Stack' trail={LOADING_TRAIL} />
                 <CenterState>
                     <ErrorState title='Could not load the install' description={copy(install.error)} onRetry={install.reload} />
                 </CenterState>
@@ -273,7 +199,6 @@ const InstallLayout = () => {
         <>
             <PageBar
                 title={install.data.name}
-                icon={kindIcon(install.data)}
                 trail={[{ label: 'Applications', to: `/applications?project=${install.data.projectId}` }]}
             />
 

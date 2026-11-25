@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { FieldsSkeleton } from '@/shared/components/skeletons';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Button } from '@heroui/react';
-import { Box, FileCode2, SquareTerminal, Trash2, Zap } from 'lucide-react';
+import { Trash2 } from 'lucide-react';
 import typia from 'typia';
 import ErrorState from '@/shared/components/ErrorState';
 import SettingsSection, { SettingsBlock } from '@/shared/components/SettingsSection';
@@ -20,33 +20,13 @@ import { BUILD_STRATEGIES, BUILD_STRATEGY_LABELS } from '@/modules/repository/ut
 import { repositoryErrorMessages } from '@/modules/repository/utils/error-messages';
 import { errorCopy } from '@/shared/utils/error-copy';
 import { BuildStrategy } from '@quantum/contracts/modules/repository/domain';
-import type { LucideIcon } from 'lucide-react';
 import type { IValidation } from 'typia';
 import type { Repository } from '@quantum/contracts/modules/repository/domain';
 import type { UpdateRepositoryInput } from '@quantum/contracts/modules/repository/http';
 
 const copy = errorCopy(repositoryErrorMessages);
 
-const BUILD_STRATEGY_ICONS: Record<BuildStrategy, LucideIcon> = {
-    [BuildStrategy.Auto]: Zap,
-    [BuildStrategy.Dockerfile]: FileCode2,
-    [BuildStrategy.PrebuiltImage]: Box,
-    [BuildStrategy.Exec]: SquareTerminal
-};
-
-const BUILD_STRATEGY_OPTIONS = BUILD_STRATEGIES.map((strategy) => {
-    const Icon = BUILD_STRATEGY_ICONS[strategy];
-
-    return {
-        value: strategy,
-        label: (
-            <>
-                <Icon aria-hidden='true' />
-                {BUILD_STRATEGY_LABELS[strategy]}
-            </>
-        )
-    };
-});
+const BUILD_STRATEGY_OPTIONS = BUILD_STRATEGIES.map((strategy) => ({ value: strategy, label: BUILD_STRATEGY_LABELS[strategy] }));
 
 interface RepositorySettingsFormValues{
     alias: string;

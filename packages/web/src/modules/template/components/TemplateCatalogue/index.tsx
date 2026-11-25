@@ -41,7 +41,7 @@ const TemplateCatalogue = ({ templates, search, onSearchChange, selectedId, onSe
 
         <div className='max-h-80 overflow-y-auto p-1.5 lg:max-h-none lg:min-h-0 lg:flex-1'>
             {templates.length === 0 ? (
-                <EmptyState icon={Search} title='No matches' description='Try a different search.' compact />
+                <EmptyState title='No matches' description='Try a different search.' compact />
             ) : (
                 <div className='flex flex-col gap-px'>
                     {templates.map((template) => (

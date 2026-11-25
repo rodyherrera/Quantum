@@ -1,19 +1,19 @@
 import { cn } from '@heroui/react';
-import { StatusGlyph } from '@/shared/components/StatusDot';
+import { STATUS_TONE } from '@/shared/utils/status-tone';
 import { activityLevelColor, activityLevelLabel } from '@/modules/activity/utils/level';
 import { ActivityLevel } from '@quantum/contracts/modules/activity/domain';
 import type { ActivityEvent } from '@quantum/contracts/modules/activity/domain';
 import type { StatusColor } from '@/shared/utils/status';
 
 const BAR: Record<StatusColor, string> = {
-    success: 'bg-success',
-    warning: 'bg-warning',
+    success: 'bg-muted',
+    warning: 'bg-muted',
     danger: 'bg-danger',
-    accent: 'bg-accent',
+    accent: 'bg-muted',
     default: 'bg-border'
 };
 
-const RUNNING_BAR = 'bg-[linear-gradient(90deg,var(--warning)_55%,var(--border)_55%)]';
+const RUNNING_BAR = 'bg-[linear-gradient(90deg,var(--foreground)_55%,var(--border)_55%)]';
 
 const duration = (event: ActivityEvent): string | null => {
     const ms = event.meta.durationMs;
@@ -29,11 +29,8 @@ const Step = ({ step }: { step: ActivityEvent }) => {
         <li className='flex min-w-0 flex-col gap-2'>
             <span aria-hidden='true' className={cn('h-1 rounded-sm', running ? RUNNING_BAR : BAR[color])} />
             <div className='flex min-w-0 flex-col gap-1 pr-3 text-xs'>
-                <span className='flex min-w-0 items-start gap-1.5 font-medium text-foreground'>
-                    <StatusGlyph color={color} isTransient={running} className='mt-px' />
-                    <span className='min-w-0 break-words'>{step.title}</span>
-                </span>
-                <span className='tabular-nums text-subtle'>
+                <span className='min-w-0 break-words font-medium text-foreground'>{step.title}</span>
+                <span className={cn('tabular-nums', color === 'default' || color === 'success' ? 'text-subtle' : STATUS_TONE[color])}>
                     {running ? activityLevelLabel(step.level) : duration(step) ?? activityLevelLabel(step.level)}
                 </span>
                 {step.message !== '' && <span className='break-words text-muted'>{step.message}</span>}

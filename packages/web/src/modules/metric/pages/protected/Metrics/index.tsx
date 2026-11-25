@@ -1,7 +1,6 @@
 import { useMemo } from 'react';
 import { BoardSkeleton, PageSkeleton } from '@/shared/components/skeletons';
 import { useRememberedSelection } from '@/shared/hooks/use-remembered-selection';
-import { Activity } from 'lucide-react';
 import PageBody from '@/shared/components/layout/PageBody';
 import PageBar from '@/shared/components/layout/PageBar';
 import ListPageShell from '@/shared/components/ListPageShell';
@@ -57,7 +56,6 @@ const Metrics = () => {
         <>
             <PageBar
                 title='Metrics'
-                icon={Activity}
                 actions={(
                     <div className='w-64 max-w-[50vw]'>
                         <EntitySelect
@@ -83,13 +81,11 @@ const Metrics = () => {
                     onRetry={metrics.reload}
                     showPrompt={containerId === null}
                     prompt={{
-                        icon: Activity,
                         title: 'Select an application',
                         description: 'Choose a repository, a database or a stack service to see its CPU, memory, network and processes.'
                     }}
                     isEmpty={latest === undefined}
                     empty={{
-                        icon: Activity,
                         title: 'No samples yet',
                         description: 'This container has not reported any usage yet. Samples appear once it starts.'
                     }}

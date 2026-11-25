@@ -11,7 +11,7 @@ import {
     AutocompleteFilter,
     useFilter
 } from '@heroui/react';
-import { ChevronDown, Plus } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 import Modal from '@/shared/components/Modal';
 import CreateOrganizationForm from '@/modules/organization/components/CreateOrganizationForm';
 import { useTenancy } from '@/modules/organization/hooks/use-tenancy';
@@ -119,7 +119,6 @@ const OrganizationSwitcher = () => {
                                 setCreating(true);
                             }}
                         >
-                            <Plus aria-hidden='true' className='size-4' />
                             Create organization
                         </button>
                     </Popover.Dialog>

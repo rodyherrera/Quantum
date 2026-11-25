@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Button } from '@heroui/react';
-import { Plus, Trash2 } from 'lucide-react';
+import { Trash2 } from 'lucide-react';
 import typia from 'typia';
 import SettingsSection from '@/shared/components/SettingsSection';
 import SettingsRow from '@/shared/components/SettingsRow';
@@ -119,7 +119,6 @@ const RegistrySection = ({ organizationId }: RegistrySectionProps) => {
 
                 <div className='px-2.5 py-2'>
                     <Button size='sm' variant='ghost' onPress={() => setAdding(true)}>
-                        <Plus aria-hidden='true' />
                         Add registry
                     </Button>
                 </div>

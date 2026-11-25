@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { Button, Chip, FieldError, Input, Label, TextField } from '@heroui/react';
-import { Boxes, Dices } from 'lucide-react';
 import Modal from '@/shared/components/Modal';
 import InlineError from '@/shared/components/InlineError';
 import EntitySelect from '@/shared/components/EntitySelect';
@@ -134,12 +133,10 @@ const InstallTemplateDialog = ({ template, onClose, onInstalled }: InstallTempla
 
                 <div className='flex flex-wrap gap-1.5'>
                     <Chip>
-                        <Boxes aria-hidden='true' className='size-3 text-subtle' />
                         {services} {services === 1 ? 'service' : 'services'}
                     </Chip>
                     {generated > 0 && (
                         <Chip>
-                            <Dices aria-hidden='true' className='size-3 text-subtle' />
                             {generated} {generated === 1 ? 'value' : 'values'} generated for you
                         </Chip>
                     )}
