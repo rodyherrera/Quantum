@@ -1,5 +1,8 @@
 # The public landing page for Quantum's own site. A self-hosted install never needs it, so it lives
 # apart from docker-compose.yml:  docker compose -f docker-compose.landing.yml up -d --build
+# Its own project name keeps compose from treating Quantum's own containers as orphans of this one.
+name: quantum-landing
+
 services:
   landing:
     container_name: quantum-landing
