@@ -22,10 +22,10 @@ type PixelLinkProps = {
     children: ReactNode;
 } & ({ to: string; href?: never } | { href: string; to?: never });
 
-/* A square mono button with a pixel at each corner. href opens another site in a new tab. */
+/* A square button with a pixel at each corner. href opens another site in a new tab. */
 const PixelLink = ({ tone = 'ink', size = 'md', children, ...target }: PixelLinkProps) => {
     const className = cn(
-        'relative inline-flex shrink-0 items-center justify-center gap-2 font-mono text-[0.6875rem] font-medium uppercase tracking-[0.14em] outline-none transition-colors',
+        'relative inline-flex shrink-0 items-center justify-center gap-2 text-sm font-medium outline-none transition-colors',
         'focus-visible:outline-1 focus-visible:outline-offset-4 focus-visible:outline-current motion-reduce:transition-none [&>svg]:size-3.5',
         TONE[tone].body,
         SIZE[size]
