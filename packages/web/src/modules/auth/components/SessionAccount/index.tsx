@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom';
-import Avatar from '@/shared/components/Avatar';
 import { useSession } from '@/modules/auth/hooks/use-session';
 import { useSidebarStore } from '@/shared/store/sidebar';
 import type { User } from '@quantum/contracts/modules/user/domain';
@@ -14,12 +13,11 @@ export const AccountLink = ({ user }: AccountLinkProps) => (
         aria-label={`Account settings for ${user.fullname}`}
         className='hidden min-w-0 items-center gap-2 rounded-md px-1.5 py-1 font-medium text-foreground transition-colors hover:bg-default focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-accent motion-reduce:transition-none lg:flex'
     >
-        <Avatar fullname={user.fullname} className='size-5' />
         <span className='truncate'>{user.username}</span>
     </Link>
 );
 
-const SessionAvatar = () => {
+const SessionAccount = () => {
     const { user } = useSession();
     const collapsed = useSidebarStore((state) => state.collapsed);
 
@@ -29,4 +27,4 @@ const SessionAvatar = () => {
     return <AccountLink user={user} />;
 };
 
-export default SessionAvatar;
+export default SessionAccount;

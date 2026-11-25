@@ -10,7 +10,6 @@ import Segmented from '@/shared/components/layout/Segmented';
 import SettingsSection from '@/shared/components/SettingsSection';
 import ListPageShell from '@/shared/components/ListPageShell';
 import InlineError from '@/shared/components/InlineError';
-import Avatar from '@/shared/components/Avatar';
 import DeleteConfirmDialog from '@/shared/components/DeleteConfirmDialog';
 import SingleFieldDialog from '@/shared/components/SingleFieldDialog';
 import Field from '@/shared/components/forms/Field';
@@ -110,15 +109,12 @@ const MemberRow = ({ member, isYou, isBusy, onRoleChange, onRemove }: MemberRowP
 
     return (
         <div className='flex min-h-14 flex-wrap items-center gap-x-4 gap-y-2 px-4 py-2.5'>
-            <div className='flex min-w-0 flex-1 basis-56 items-center gap-2.5'>
-                <Avatar fullname={name} className='size-7 text-[0.6875rem]' />
-                <div className='flex min-w-0 flex-col'>
-                    <span className='truncate font-medium text-foreground'>
-                        {name}
-                        {isYou && <span className='font-normal text-subtle'> (you)</span>}
-                    </span>
-                    <span className='truncate text-xs text-subtle'>{member.email}</span>
-                </div>
+            <div className='flex min-w-0 flex-1 basis-56 flex-col'>
+                <span className='truncate font-medium text-foreground'>
+                    {name}
+                    {isYou && <span className='font-normal text-subtle'> (you)</span>}
+                </span>
+                <span className='truncate text-xs text-subtle'>{member.email}</span>
             </div>
 
             <div className='flex shrink-0 items-center gap-3'>

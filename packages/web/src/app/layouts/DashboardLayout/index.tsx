@@ -3,7 +3,7 @@ import AppSidebar from '@/shared/components/layout/AppSidebar';
 import CommandPalette from '@/shared/components/CommandPalette';
 import OrganizationSwitcher from '@/modules/organization/components/OrganizationSwitcher';
 import ProjectShortcuts from '@/modules/project/components/ProjectShortcuts';
-import SessionAvatar from '@/modules/auth/components/SessionAvatar';
+import SessionAccount from '@/modules/auth/components/SessionAccount';
 import { useResourceStream } from '@/shared/hooks/api/use-resource-stream';
 import { useSidebarStore } from '@/shared/store/sidebar';
 
@@ -25,7 +25,7 @@ const DashboardLayout = () => {
                 panel={panel}
                 collapsed={collapsed}
                 organization={<OrganizationSwitcher />}
-                account={<SessionAvatar />}
+                account={<SessionAccount />}
                 shortcuts={<ProjectShortcuts />}
             />
 
