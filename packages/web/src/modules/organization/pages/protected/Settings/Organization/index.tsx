@@ -1,12 +1,14 @@
 import { useState } from 'react';
 import { FieldsSkeleton } from '@/shared/components/skeletons';
 import { useNavigate } from 'react-router-dom';
-import { Button } from '@heroui/react';
-import { ArrowRight } from 'lucide-react';
+import { Button, Chip } from '@heroui/react';
+import { Building2, Trash2 } from 'lucide-react';
 import typia from 'typia';
+import PageBar from '@/shared/components/layout/PageBar';
 import PageBody from '@/shared/components/layout/PageBody';
-import PageHeader from '@/shared/components/layout/PageHeader';
+import PageIntro from '@/shared/components/layout/PageIntro';
 import SettingsSection from '@/shared/components/SettingsSection';
+import SettingsRow from '@/shared/components/SettingsRow';
 import DeleteConfirmDialog from '@/shared/components/DeleteConfirmDialog';
 import Form from '@/shared/components/forms/Form';
 import Field from '@/shared/components/forms/Field';
@@ -15,19 +17,21 @@ import { useForm } from '@/shared/hooks/forms/use-form';
 import { useTenancy } from '@/modules/organization/hooks/use-tenancy';
 import { organizationApi } from '@/modules/organization/api/api';
 import { tenancyErrorMessages } from '@/modules/organization/utils/error-messages';
+import { SETTINGS_TRAIL } from '@/modules/organization/utils/settings-trail';
 import { errorCopy } from '@/shared/utils/error-copy';
+import { formatDate } from '@/shared/utils/format-date';
 import { useTenantStore } from '@/shared/store/tenant';
 import type { Organization } from '@quantum/contracts/modules/organization/domain';
 import type { UpdateOrganizationInput } from '@quantum/contracts/modules/organization/http';
 
 const copy = errorCopy(tenancyErrorMessages);
 
-interface RenameOrganizationFormProps{
+interface OrganizationFormProps{
     organization: Organization;
     onSaved: () => void;
 }
 
-const RenameOrganizationForm = ({ organization, onSaved }: RenameOrganizationFormProps) => {
+const RenameOrganizationForm = ({ organization, onSaved }: OrganizationFormProps) => {
     const form = useForm<UpdateOrganizationInput>({
         validate: typia.createValidate<UpdateOrganizationInput>(),
         submitErrorMessages: tenancyErrorMessages,
@@ -39,36 +43,26 @@ const RenameOrganizationForm = ({ organization, onSaved }: RenameOrganizationFor
     });
 
     return (
-        <SettingsSection title='Rename organization' description='Change the display name of this organization.'>
-            <Form form={form} className='flex max-w-md flex-col gap-4'>
+        <Form form={form} className='flex flex-wrap items-start justify-end gap-2 [&>p]:basis-full [&>p]:text-right [&_.label]:sr-only'>
+            <div className='w-56'>
                 <Field form={form} name='name' label='Name' placeholder='my-organization' />
+            </div>
 
-                <div>
-                    <Button type='submit' isPending={form.submitting} isDisabled={!form.isValid}>
-                        Save
-                        <ArrowRight aria-hidden='true' className='size-4' />
-                    </Button>
-                </div>
-            </Form>
-        </SettingsSection>
+            <Button type='submit' variant='secondary' isPending={form.submitting} isDisabled={!form.isValid}>Save</Button>
+        </Form>
     );
 };
 
-const OrganizationDetails = ({ organization }: { organization: Organization }) => (
-    <SettingsSection title='Details' description='Reference information for this organization.'>
-        <dl className='flex flex-col'>
-            {[
-                ['Name', organization.name],
-                ['Slug', organization.slug],
-                ['Type', organization.isPersonal ? 'Personal' : 'Team'],
-                ['Created', new Date(organization.createdAt).toLocaleDateString()]
-            ].map(([label, value]) => (
-                <div key={label} className='flex justify-between gap-4 border-b border-separator py-3 last:border-0'>
-                    <dt className='text-sm text-muted'>{label}</dt>
-                    <dd className='font-mono text-[0.8125rem] text-foreground'>{value}</dd>
-                </div>
-            ))}
-        </dl>
+const General = ({ organization, onSaved }: OrganizationFormProps) => (
+    <SettingsSection title='General'>
+        <SettingsRow
+            title='Name'
+            description='How the organization shows up in the switcher.'
+            action={<RenameOrganizationForm key={organization.id} organization={organization} onSaved={onSaved} />}
+        />
+        <SettingsRow title='Slug' action={<span className='font-mono text-xs text-muted'>{organization.slug}</span>} />
+        <SettingsRow title='Type' action={<Chip size='sm'>{organization.isPersonal ? 'Personal' : 'Team'}</Chip>} />
+        <SettingsRow title='Created' action={<span className='text-muted'>{formatDate(organization.createdAt)}</span>} />
     </SettingsSection>
 );
 
@@ -98,15 +92,19 @@ const DangerZone = ({ organization }: { organization: Organization }) => {
     const [deleteOpen, setDeleteOpen] = useState(false);
 
     return (
-        <SettingsSection
-            title='Delete organization'
-            description='Deleting an organization permanently removes it and all of its projects, environments and resources. This action cannot be undone.'
-        >
-            <div>
-                <Button variant='danger' onPress={() => setDeleteOpen(true)}>
-                    Delete organization
-                </Button>
-            </div>
+        <>
+            <SettingsSection title='Delete organization'>
+                <SettingsRow
+                    title={`Delete ${organization.name}`}
+                    description='Permanently removes it and all of its projects, environments and resources. This cannot be undone.'
+                    action={(
+                        <Button size='sm' variant='danger' onPress={() => setDeleteOpen(true)}>
+                            <Trash2 aria-hidden='true' />
+                            Delete organization
+                        </Button>
+                    )}
+                />
+            </SettingsSection>
 
             <DeleteOrganizationDialog
                 organization={organization}
@@ -114,37 +112,34 @@ const DangerZone = ({ organization }: { organization: Organization }) => {
                 onClose={setDeleteOpen}
                 onRemoved={() => { clearTenant(); navigate('/applications'); }}
             />
-        </SettingsSection>
+        </>
     );
 };
 
 const OrganizationSettings = () => {
     const { current, reload } = useTenancy();
 
-    if(current === null){
-        return (
-            <PageBody>
-                
-                <FieldsSkeleton className='mt-10' rows={3} />
-            </PageBody>
-        );
-    }
-
     return (
-        <PageBody>
-            <PageHeader
-                eyebrow='Settings'
-                title='Organization'
-                description='Rename the selected organization, review its details, manage registry credentials, or delete it.'
-            />
+        <>
+            <PageBar title='Organization' icon={Building2} trail={SETTINGS_TRAIL} />
 
-            <div className='mt-10 flex flex-col'>
-                <RenameOrganizationForm key={current.id} organization={current} onSaved={reload} />
-                <OrganizationDetails organization={current} />
-                <RegistrySection key={`registries-${current.id}`} organizationId={current.id} />
-                <DangerZone organization={current} />
-            </div>
-        </PageBody>
+            <PageBody variant='narrow'>
+                <div className='flex flex-col gap-8'>
+                    <PageIntro
+                        title='Organization'
+                        description='Rename it, review its details, manage registry credentials, or delete it.'
+                    />
+
+                    {current === null ? <FieldsSkeleton rows={3} /> : (
+                        <>
+                            <General organization={current} onSaved={reload} />
+                            <RegistrySection key={`registries-${current.id}`} organizationId={current.id} />
+                            <DangerZone organization={current} />
+                        </>
+                    )}
+                </div>
+            </PageBody>
+        </>
     );
 };
 

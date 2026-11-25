@@ -1,12 +1,16 @@
 import { useState } from 'react';
-import { PageSkeleton } from '@/shared/components/skeletons';
-import { Button, Label, Table } from '@heroui/react';
-import { ArrowRight, Trash2, Users } from 'lucide-react';
+import { FieldsSkeleton } from '@/shared/components/skeletons';
+import { Button, Chip, Label } from '@heroui/react';
+import { Plus, Trash2, Users } from 'lucide-react';
 import typia from 'typia';
+import PageBar from '@/shared/components/layout/PageBar';
 import PageBody from '@/shared/components/layout/PageBody';
-import PageHeader from '@/shared/components/layout/PageHeader';
+import PageIntro from '@/shared/components/layout/PageIntro';
+import Segmented from '@/shared/components/layout/Segmented';
+import SettingsSection from '@/shared/components/SettingsSection';
 import ListPageShell from '@/shared/components/ListPageShell';
 import InlineError from '@/shared/components/InlineError';
+import Avatar from '@/shared/components/Avatar';
 import DeleteConfirmDialog from '@/shared/components/DeleteConfirmDialog';
 import SingleFieldDialog from '@/shared/components/SingleFieldDialog';
 import Field from '@/shared/components/forms/Field';
@@ -14,11 +18,14 @@ import EntitySelect from '@/shared/components/EntitySelect';
 import { useForm } from '@/shared/hooks/forms/use-form';
 import { useResource } from '@/shared/hooks/api/use-resource';
 import { useMutation } from '@/shared/hooks/api/use-mutation';
+import { useSession } from '@/modules/auth/hooks/use-session';
 import { organizationRoutes } from '@quantum/contracts/modules/organization/routes';
 import { organizationApi } from '@/modules/organization/api/api';
 import { useCurrentOrganizationId } from '@/modules/organization/hooks/use-current-organization-id';
 import { tenancyErrorMessages } from '@/modules/organization/utils/error-messages';
+import { SETTINGS_TRAIL } from '@/modules/organization/utils/settings-trail';
 import { errorCopy } from '@/shared/utils/error-copy';
+import { formatDate, formatDay } from '@/shared/utils/format-date';
 import { OrganizationRole } from '@quantum/contracts/modules/organization/domain';
 import type { Member } from '@quantum/contracts/modules/organization/domain';
 import type { InviteMemberInput, UpdateMemberInput } from '@quantum/contracts/modules/organization/http';
@@ -70,15 +77,13 @@ const InviteMemberDialog = ({ organizationId, onClose, onInvited }: InviteMember
             extra={(
                 <Field form={form} name='role'>
                     {(binding) => (
-                        <div className='flex flex-col gap-1.5'>
+                        <div className='flex flex-col items-start gap-1.5'>
                             <Label>Role</Label>
-                            <EntitySelect
-                                items={ROLES}
-                                getKey={(role) => role}
-                                getLabel={(role) => ROLE_LABELS[role]}
+                            <Segmented
+                                label='Role'
+                                options={ROLES.map((role) => ({ value: role, label: ROLE_LABELS[role] }))}
                                 value={binding.value as OrganizationRole}
-                                onChange={(key) => binding.onChange(key as OrganizationRole)}
-                                ariaLabel='Role'
+                                onChange={(role) => binding.onChange(role)}
                                 isDisabled={form.submitting}
                             />
                         </div>
@@ -91,66 +96,62 @@ const InviteMemberDialog = ({ organizationId, onClose, onInvited }: InviteMember
     );
 };
 
-interface TeamHeaderProps{
-    onInvite: () => void;
-}
-
-const TeamHeader = ({ onInvite }: TeamHeaderProps) => (
-    <PageHeader
-        eyebrow='Settings'
-        title='Team'
-        description='Manage who can access this organization.'
-        actions={(
-            <Button onPress={onInvite}>
-                Invite member
-                <ArrowRight aria-hidden='true' className='size-4' />
-            </Button>
-        )}
-    />
-);
-
-interface TeamRowProps{
+interface MemberRowProps{
     member: Member;
+    isYou: boolean;
     isBusy: boolean;
     onRoleChange: (role: OrganizationRole) => void;
     onRemove: () => void;
 }
 
-const TeamRow = ({ member, isBusy, onRoleChange, onRemove }: TeamRowProps) => {
+const MemberRow = ({ member, isYou, isBusy, onRoleChange, onRemove }: MemberRowProps) => {
     const isOwner = member.role === OrganizationRole.Owner;
+    const name = member.fullname === '' ? member.username : member.fullname;
 
     return (
-        <Table.Row>
-            <Table.Cell>
-                <span className='font-medium text-foreground'>{member.username}</span>
-                {member.fullname !== '' && <span className='ml-2 text-muted'>{member.fullname}</span>}
-            </Table.Cell>
-            <Table.Cell>
-                <span className='font-mono text-[0.8125rem]'>{member.email}</span>
-            </Table.Cell>
-            <Table.Cell>
-                <EntitySelect
-                    items={ROLES}
-                    getKey={(role) => role}
-                    getLabel={(role) => ROLE_LABELS[role]}
-                    ariaLabel={`Role of ${member.username}`}
-                    value={member.role}
-                    onChange={(key) => onRoleChange(key as OrganizationRole)}
-                    isDisabled={isOwner || isBusy}
-                />
-            </Table.Cell>
-            <Table.Cell>
-                <button
-                    type='button'
-                    disabled={isOwner}
-                    onClick={onRemove}
+        <div className='flex min-h-14 flex-wrap items-center gap-x-4 gap-y-2 px-4 py-2.5'>
+            <div className='flex min-w-0 flex-1 basis-56 items-center gap-2.5'>
+                <Avatar fullname={name} className='size-7 text-[0.6875rem]' />
+                <div className='flex min-w-0 flex-col'>
+                    <span className='truncate font-medium text-foreground'>
+                        {name}
+                        {isYou && <span className='font-normal text-subtle'> (you)</span>}
+                    </span>
+                    <span className='truncate text-xs text-subtle'>{member.email}</span>
+                </div>
+            </div>
+
+            <div className='flex shrink-0 items-center gap-3'>
+                <time dateTime={member.createdAt} title={formatDate(member.createdAt)} className='hidden text-xs text-subtle sm:block'>
+                    Joined {formatDay(member.createdAt)}
+                </time>
+
+                {isOwner ? <Chip size='sm'>{ROLE_LABELS[member.role]}</Chip> : (
+                    <div className='w-28'>
+                        <EntitySelect
+                            items={ROLES}
+                            getKey={(role) => role}
+                            getLabel={(role) => ROLE_LABELS[role]}
+                            ariaLabel={`Role of ${member.username}`}
+                            value={member.role}
+                            onChange={(key) => onRoleChange(key as OrganizationRole)}
+                            isDisabled={isBusy}
+                        />
+                    </div>
+                )}
+
+                <Button
+                    isIconOnly
+                    size='sm'
+                    variant='ghost'
+                    isDisabled={isOwner}
                     aria-label={`Remove ${member.username}`}
-                    className='flex p-1.5 text-muted transition-colors hover:text-foreground focus-visible:outline-1 focus-visible:outline-offset-2 focus-visible:outline-foreground disabled:pointer-events-none disabled:opacity-30 motion-reduce:transition-none'
+                    onPress={onRemove}
                 >
-                    <Trash2 aria-hidden='true' className='size-4' />
-                </button>
-            </Table.Cell>
-        </Table.Row>
+                    <Trash2 aria-hidden='true' />
+                </Button>
+            </div>
+        </div>
     );
 };
 
@@ -179,14 +180,15 @@ const RemoveMemberDialog = ({ organizationId, member, onClose, onRemoved, onOpti
     />
 );
 
-interface TeamTableProps{
+interface MembersProps{
     organizationId: number;
     members: Member[];
     onChanged: () => void;
     onOptimisticRemove: (id: number) => () => void;
 }
 
-const TeamTable = ({ organizationId, members, onChanged, onOptimisticRemove }: TeamTableProps) => {
+const Members = ({ organizationId, members, onChanged, onOptimisticRemove }: MembersProps) => {
+    const { user } = useSession();
     const updateRole = useMutation((memberId: number, body: UpdateMemberInput) =>
         organizationApi.updateMember({ path: { orgId: organizationId, id: memberId }, body }));
     const [removeTarget, setRemoveTarget] = useState<Member | null>(null);
@@ -196,31 +198,19 @@ const TeamTable = ({ organizationId, members, onChanged, onOptimisticRemove }: T
     };
 
     return (
-        <div className='flex flex-col gap-4'>
-            <Table>
-                <Table.ScrollContainer>
-                    <Table.Content aria-label='Team members'>
-                        <Table.Header>
-                            <Table.Column isRowHeader>Member</Table.Column>
-                            <Table.Column>Email</Table.Column>
-                            <Table.Column>Role</Table.Column>
-                            <Table.Column><span className='sr-only'>Actions</span></Table.Column>
-                        </Table.Header>
-
-                        <Table.Body>
-                            {members.map((member) => (
-                                <TeamRow
-                                    key={member.id}
-                                    member={member}
-                                    isBusy={updateRole.loading}
-                                    onRoleChange={(role) => changeRole(member, role)}
-                                    onRemove={() => setRemoveTarget(member)}
-                                />
-                            ))}
-                        </Table.Body>
-                    </Table.Content>
-                </Table.ScrollContainer>
-            </Table>
+        <div className='flex flex-col gap-3'>
+            <SettingsSection title='Members'>
+                {members.map((member) => (
+                    <MemberRow
+                        key={member.id}
+                        member={member}
+                        isYou={member.userId === user?.id}
+                        isBusy={updateRole.loading}
+                        onRoleChange={(role) => changeRole(member, role)}
+                        onRemove={() => setRemoveTarget(member)}
+                    />
+                ))}
+            </SettingsSection>
 
             {updateRole.error !== undefined && <InlineError>{copy(updateRole.error)}</InlineError>}
 
@@ -243,61 +233,59 @@ const Team = () => {
     });
     const [inviteOpen, setInviteOpen] = useState(false);
 
-    if(organizationId === null || members.loading || members.error !== undefined){
-        return (
-            <ListPageShell
-                fill
-                loading={organizationId === null || members.loading}
-                skeleton={<PageSkeleton actions={1} columns={4} />}
-                error={organizationId === null ? undefined : members.error}
-                errorTitle='Could not load team members'
-                getErrorDescription={copy}
-                onRetry={members.refresh}
-            />
-        );
-    }
-
     const items = members.data ?? [];
+    const loaded = organizationId !== null && !members.loading && members.error === undefined;
+    const inviteButton = (
+        <Button size='sm' onPress={() => setInviteOpen(true)}>
+            <Plus aria-hidden='true' />
+            Invite member
+        </Button>
+    );
 
     return (
-        <PageBody fill>
-            <TeamHeader onInvite={() => setInviteOpen(true)} />
+        <>
+            <PageBar title='Team' icon={Users} trail={SETTINGS_TRAIL} actions={loaded ? inviteButton : undefined} />
 
-            <div className='mt-10 flex flex-1 flex-col'>
-                <ListPageShell
-                    errorTitle='Could not load team members'
-                    getErrorDescription={copy}
-                    onRetry={members.refresh}
-                    isEmpty={items.length === 0}
-                    empty={{
-                        icon: Users,
-                        title: 'No members yet',
-                        description: 'Invite an existing Quantum user to collaborate in this organization.',
-                        action: (
-                            <Button onPress={() => setInviteOpen(true)}>
-                                Invite member
-                                <ArrowRight aria-hidden='true' className='size-4' />
-                            </Button>
-                        )
-                    }}
-                >
-                    <TeamTable
-                        organizationId={organizationId}
-                        members={items}
-                        onChanged={members.refresh}
-                        onOptimisticRemove={(id) => members.patch((list) => list.filter((item) => item.id !== id))}
-                    />
-                </ListPageShell>
-            </div>
+            <PageBody variant='narrow'>
+                <div className='flex flex-col gap-8'>
+                    <PageIntro title='Team' description='Manage who can access this organization.' />
 
-            {inviteOpen && (
+                    <ListPageShell
+                        bare
+                        loading={organizationId === null || members.loading}
+                        skeleton={<FieldsSkeleton rows={3} />}
+                        error={organizationId === null ? undefined : members.error}
+                        errorTitle='Could not load team members'
+                        getErrorDescription={copy}
+                        onRetry={members.refresh}
+                        isEmpty={items.length === 0}
+                        empty={{
+                            icon: Users,
+                            title: 'No members yet',
+                            description: 'Invite an existing Quantum user to collaborate in this organization.',
+                            action: inviteButton
+                        }}
+                    >
+                        {organizationId !== null && (
+                            <Members
+                                organizationId={organizationId}
+                                members={items}
+                                onChanged={members.refresh}
+                                onOptimisticRemove={(id) => members.patch((list) => list.filter((item) => item.id !== id))}
+                            />
+                        )}
+                    </ListPageShell>
+                </div>
+            </PageBody>
+
+            {inviteOpen && organizationId !== null && (
                 <InviteMemberDialog
                     organizationId={organizationId}
                     onClose={() => setInviteOpen(false)}
                     onInvited={members.refresh}
                 />
             )}
-        </PageBody>
+        </>
     );
 };
 
