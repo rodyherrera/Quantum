@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Chip, ComboBox, Input, Label, ListBox, ListBoxItem } from '@heroui/react';
-import { FolderGit2, Search } from 'lucide-react';
+import { FolderGit2, Info, Lock, Search } from 'lucide-react';
 import EmptyState from '@/shared/components/EmptyState';
-import CenterState from '@/shared/components/CenterState';
+import GithubIcon from '@/shared/components/icons/GithubIcon';
 import ConnectGithubButton from '@/modules/github/components/ConnectGithubButton';
 import type { GithubAccount, GithubRepository } from '@quantum/contracts/modules/github/domain';
 
@@ -21,13 +21,11 @@ const RepositoryPicker = ({ repositories, account = null, onSelect }: Repository
 
     if(repositories.length === 0){
         return (
-            <CenterState className='h-full'>
-                <EmptyState
-                    icon={FolderGit2}
-                    title='No repositories found'
-                    description='Push a repository to your GitHub account to import it here.'
-                />
-            </CenterState>
+            <EmptyState
+                icon={FolderGit2}
+                title='No repositories found'
+                description='Push a repository to your GitHub account to import it here.'
+            />
         );
     }
 
@@ -37,7 +35,7 @@ const RepositoryPicker = ({ repositories, account = null, onSelect }: Repository
         : repositories.filter((repository) => repository.fullName.toLowerCase().includes(needle));
 
     return (
-        <div className='flex w-full max-w-xl flex-col gap-1.5'>
+        <div className='flex w-full flex-col gap-1.5'>
             <Label id='repository-picker-label'>Repository</Label>
 
             <ComboBox
@@ -52,7 +50,7 @@ const RepositoryPicker = ({ repositories, account = null, onSelect }: Repository
                 fullWidth
             >
                 <ComboBox.InputGroup>
-                    <Input className='font-mono' placeholder='Search your repositories…' autoComplete='off' />
+                    <Input placeholder='Search your repositories…' autoComplete='off' />
                     <ComboBox.Trigger />
                 </ComboBox.InputGroup>
 
@@ -69,11 +67,15 @@ const RepositoryPicker = ({ repositories, account = null, onSelect }: Repository
                                 id={repository.fullName}
                                 textValue={repository.fullName}
                             >
-                                <div className='flex w-full items-center justify-between gap-4 py-0.5 text-left'>
-                                    <span className='truncate font-mono text-[0.8125rem]'>{repository.fullName}</span>
-                                    <Chip size='sm' variant='soft'>
-                                        {repository.private ? 'Private' : 'Public'}
-                                    </Chip>
+                                <div className='flex w-full items-center gap-2.5 text-left'>
+                                    <GithubIcon className='size-3.5 shrink-0 text-subtle' />
+                                    <span className='min-w-0 flex-1 truncate font-medium'>{repository.fullName}</span>
+                                    {repository.private && (
+                                        <Chip size='sm'>
+                                            <Lock aria-hidden='true' className='size-3' />
+                                            Private
+                                        </Chip>
+                                    )}
                                 </div>
                             </ListBoxItem>
                         ))}
@@ -81,7 +83,7 @@ const RepositoryPicker = ({ repositories, account = null, onSelect }: Repository
                 </ComboBox.Popover>
             </ComboBox>
 
-            <p className='text-[0.8125rem] text-muted'>
+            <p className='text-xs text-subtle'>
                 {repositories.length} {repositories.length === 1 ? 'repository' : 'repositories'} available. Type to narrow them down.
                 {account?.organizationAccessUrl && (
                     <>
@@ -90,7 +92,7 @@ const RepositoryPicker = ({ repositories, account = null, onSelect }: Repository
                             href={account.organizationAccessUrl}
                             target='_blank'
                             rel='noreferrer'
-                            className='text-foreground underline underline-offset-4 hover:no-underline'
+                            className='text-muted underline underline-offset-2 transition-colors hover:text-foreground motion-reduce:transition-none'
                         >
                             Grant Quantum access to it on GitHub
                         </a>
@@ -100,8 +102,9 @@ const RepositoryPicker = ({ repositories, account = null, onSelect }: Repository
             </p>
 
             {missingPackages && (
-                <div className='mt-2 flex flex-col gap-3'>
-                    <p className='text-[0.8125rem] text-muted'>
+                <div className='mt-3 flex flex-wrap items-start gap-3 rounded-lg border border-separator bg-surface-secondary px-3 py-2.5'>
+                    <Info aria-hidden='true' className='mt-0.5 size-4 shrink-0 text-subtle' />
+                    <p className='min-w-0 flex-1 basis-64 text-muted'>
                         This connection was made before Quantum asked for package access, so private GitHub Container Registry
                         images will not pull. Reconnect once to grant it.
                     </p>

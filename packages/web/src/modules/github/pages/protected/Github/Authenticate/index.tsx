@@ -1,6 +1,9 @@
 import { Navigate } from 'react-router-dom';
+import { LoaderCircle } from 'lucide-react';
+import PageBar from '@/shared/components/layout/PageBar';
 import PageBody from '@/shared/components/layout/PageBody';
-import { PageSkeleton } from '@/shared/components/skeletons';
+import CenterState from '@/shared/components/CenterState';
+import EmptyState from '@/shared/components/EmptyState';
 import ErrorState from '@/shared/components/ErrorState';
 import { useQuery } from '@/shared/hooks/api/use-query';
 import { useMutation } from '@/shared/hooks/api/use-mutation';
@@ -16,17 +19,29 @@ const Authenticate = () => {
         onSuccess: ({ url }) => { window.location.href = url; }
     });
 
-    if(account.loading) return <PageSkeleton actions={2} columns={5} />;
+    if(account.loading){
+        return (
+            <>
+                <PageBar title='GitHub' />
+                <CenterState>
+                    <EmptyState icon={LoaderCircle} isBusy title='Connecting GitHub' description='Finishing the connection with your GitHub account.' />
+                </CenterState>
+            </>
+        );
+    }
 
     if(account.error !== undefined){
         return (
-            <PageBody>
-                <ErrorState
-                    title='Could not connect to GitHub'
-                    description={copy(account.error)}
-                    onRetry={() => { void restart.run().catch(() => undefined); }}
-                />
-            </PageBody>
+            <>
+                <PageBar title='GitHub' />
+                <PageBody variant='narrow'>
+                    <ErrorState
+                        title='Could not connect to GitHub'
+                        description={copy(account.error)}
+                        onRetry={() => { void restart.run().catch(() => undefined); }}
+                    />
+                </PageBody>
+            </>
         );
     }
 

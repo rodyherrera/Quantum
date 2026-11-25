@@ -14,7 +14,7 @@ import { errorCopy } from '@/shared/utils/error-copy';
 const copy = errorCopy(deploymentErrorMessages);
 
 const NoDeploymentYet = () => (
-    <CenterState className='h-full'>
+    <CenterState>
         <EmptyState
             icon={Rocket}
             title='No deployment yet'
@@ -36,7 +36,7 @@ const EnvironmentVariables = () => {
         if(isNotFound(environment.error)) return <NoDeploymentYet />;
 
         return (
-            <CenterState className='h-full'>
+            <CenterState>
                 <ErrorState
                     title='Could not load environment variables'
                     description={copy(environment.error)}

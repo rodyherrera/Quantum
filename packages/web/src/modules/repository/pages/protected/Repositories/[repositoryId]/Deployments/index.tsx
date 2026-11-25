@@ -21,7 +21,6 @@ import { deploymentRoutes } from '@quantum/contracts/modules/deployment/routes';
 import { activityApi } from '@/modules/activity/api/api';
 import { isDeploymentInProgress } from '@/modules/repository/utils/deployment-status';
 import { isContainerRunning } from '@/modules/application/utils/container-status';
-import PublishedPorts from '@/modules/repository/components/PublishedPorts';
 import { repositoryDetailErrorMessages } from '@/modules/repository/utils/error-messages';
 import { errorCopy } from '@/shared/utils/error-copy';
 import { RepositoryOperation } from '@quantum/contracts/modules/repository/domain';
@@ -44,34 +43,30 @@ const DeploymentsHeader = ({ repository, isOperating, onOperate }: DeploymentsHe
     const isRunning = isContainerRunning(repository.containerStatus);
 
     return (
-        <div className='flex flex-wrap items-end justify-between gap-4'>
-            <div>
-                <h2 className='text-[0.9375rem] font-medium text-foreground'>Deployments</h2>
-                <p className='mt-1 text-[0.8125rem] text-muted'>Continuously generated from {repository.alias}.</p>
-                <div className='mt-2'>
-                    <PublishedPorts ports={repository.ports} />
-                </div>
-            </div>
+        <div className='flex flex-wrap items-center justify-between gap-3'>
+            <p className='text-subtle'>Every deployment of {repository.alias}, newest first.</p>
 
-            <div className='flex flex-wrap items-center gap-2'>
+            <div className='flex flex-wrap items-center gap-1.5'>
                 <Button
+                    size='sm'
                     variant='secondary'
                     isDisabled={isRunning || isOperating}
                     onPress={() => onOperate(RepositoryOperation.Start)}
                 >
-                    <Play aria-hidden='true' className='size-4' />
+                    <Play aria-hidden='true' />
                     Start
                 </Button>
                 <Button
+                    size='sm'
                     variant='secondary'
                     isDisabled={!isRunning || isOperating}
                     onPress={() => onOperate(RepositoryOperation.Stop)}
                 >
-                    <Square aria-hidden='true' className='size-4' />
+                    <Square aria-hidden='true' />
                     Stop
                 </Button>
-                <Button variant='secondary' isDisabled={isOperating} onPress={() => onOperate(RepositoryOperation.Restart)}>
-                    <RotateCw aria-hidden='true' className='size-4' />
+                <Button size='sm' variant='secondary' isDisabled={isOperating} onPress={() => onOperate(RepositoryOperation.Restart)}>
+                    <RotateCw aria-hidden='true' />
                     Restart
                 </Button>
             </div>
@@ -237,34 +232,32 @@ const Deployments = () => {
     const deployments = deploymentsQuery.data ?? [];
 
     return (
-        <div className='flex min-h-0 flex-1 flex-col'>
+        <div className='flex min-h-0 flex-1 flex-col gap-4'>
             <DeploymentsHeader
                 repository={repository.data}
                 isOperating={operate.loading}
                 onOperate={(operation) => { void handleOperate(operation); }}
             />
 
-            {operate.error !== undefined && <InlineError className='mt-4'>{copy(operate.error)}</InlineError>}
+            {operate.error !== undefined && <InlineError>{copy(operate.error)}</InlineError>}
 
             {activeJobId && (
                 <DeploymentPipelinePanel steps={steps} logs={logs} done={pipelineDone} onDismiss={handleDismiss} />
             )}
 
-            <div className='mt-6 flex flex-1 flex-col'>
-                {deployments.length === 0 ? (
-                    !activeJobId && (
-                        <CenterState>
-                            <EmptyState
-                                icon={Rocket}
-                                title='No deployments yet'
-                                description='Start this application to create its first deployment.'
-                            />
-                        </CenterState>
-                    )
-                ) : (
-                    <DeploymentsTable deployments={deployments} onRollback={setRollbackTarget} onDelete={setDeleteTarget} />
-                )}
-            </div>
+            {deployments.length === 0 ? (
+                !activeJobId && (
+                    <CenterState>
+                        <EmptyState
+                            icon={Rocket}
+                            title='No deployments yet'
+                            description='Start this application to create its first deployment.'
+                        />
+                    </CenterState>
+                )
+            ) : (
+                <DeploymentsTable deployments={deployments} onRollback={setRollbackTarget} onDelete={setDeleteTarget} />
+            )}
 
             <RollbackDeploymentDialog
                 deployment={rollbackTarget}

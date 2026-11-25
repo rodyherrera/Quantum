@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Button, Input, TextField } from '@heroui/react';
-import { ArrowRight, HardDrive, Plus, Trash2 } from 'lucide-react';
-import SettingsSection from '@/shared/components/SettingsSection';
+import { HardDrive, Plus, Trash2 } from 'lucide-react';
+import SettingsSection, { SettingsBlock } from '@/shared/components/SettingsSection';
 import InlineError from '@/shared/components/InlineError';
 import { useMutation } from '@/shared/hooks/api/use-mutation';
 import { repositoryApi } from '@/modules/repository/api/api';
@@ -10,8 +10,6 @@ import { errorCopy } from '@/shared/utils/error-copy';
 import type { Repository } from '@quantum/contracts/modules/repository/domain';
 
 const copy = errorCopy(repositoryErrorMessages);
-
-const ROW_GRID = 'grid grid-cols-[minmax(0,1fr)_2.5rem] items-center gap-3';
 
 const cleaned = (paths: string[]): string[] => paths.map((path) => path.trim()).filter((path) => path !== '');
 
@@ -38,50 +36,53 @@ const PersistentVolumes = ({ repository, onSaved }: PersistentVolumesProps) => {
             title='Persistent volumes'
             description='Paths inside the container whose contents survive deploys and restarts. The checkout at /app already does.'
         >
-            <div className='flex flex-col gap-3'>
-                {paths.length === 0 && (
-                    <p className='flex items-center gap-2 text-[0.8125rem] text-muted'>
+            {paths.length === 0 && (
+                <SettingsBlock>
+                    <p className='flex items-center gap-2 text-subtle'>
                         <HardDrive aria-hidden='true' className='size-4' />
                         Nothing outside /app is kept between deploys yet.
                     </p>
-                )}
+                </SettingsBlock>
+            )}
 
-                {paths.map((path, index) => (
-                    <div key={index} className={ROW_GRID}>
-                        <TextField
-                            aria-label='Container path'
-                            value={path}
-                            onChange={(value) => setPaths((current) => current.map((entry, position) => (position === index ? value : entry)))}
-                            validationBehavior='aria'
-                            fullWidth
-                        >
-                            <Input className='font-mono' placeholder='/var/lib/app/uploads' autoComplete='off' />
-                        </TextField>
+            {paths.map((path, index) => (
+                <div key={index} className='grid grid-cols-[minmax(0,1fr)_2rem] items-center gap-2 px-4 py-2.5'>
+                    <TextField
+                        aria-label='Container path'
+                        value={path}
+                        onChange={(value) => setPaths((current) => current.map((entry, position) => (position === index ? value : entry)))}
+                        validationBehavior='aria'
+                        fullWidth
+                    >
+                        <Input className='font-mono' placeholder='/var/lib/app/uploads' autoComplete='off' />
+                    </TextField>
 
-                        <Button
-                            isIconOnly
-                            variant='ghost'
-                            className='text-muted hover:text-foreground'
-                            aria-label={path === '' ? 'Remove volume' : `Remove ${path}`}
-                            onPress={() => setPaths((current) => current.filter((_, position) => position !== index))}
-                        >
-                            <Trash2 aria-hidden='true' className='size-4' />
-                        </Button>
-                    </div>
-                ))}
-
-                {update.error !== undefined && <InlineError>{copy(update.error)}</InlineError>}
-
-                <div className='flex flex-wrap items-center gap-2'>
-                    <Button variant='secondary' onPress={() => setPaths((current) => (current.includes('') ? current : [...current, '']))}>
-                        <Plus aria-hidden='true' className='size-4' />
-                        Add path
-                    </Button>
-                    <Button isPending={update.loading} isDisabled={!dirty} onPress={() => { void save(); }}>
-                        Save and redeploy
-                        <ArrowRight aria-hidden='true' className='size-4' />
+                    <Button
+                        isIconOnly
+                        variant='ghost'
+                        className='text-subtle hover:text-foreground'
+                        aria-label={path === '' ? 'Remove volume' : `Remove ${path}`}
+                        onPress={() => setPaths((current) => current.filter((_, position) => position !== index))}
+                    >
+                        <Trash2 aria-hidden='true' />
                     </Button>
                 </div>
+            ))}
+
+            {update.error !== undefined && (
+                <div className='px-4 py-2.5'>
+                    <InlineError>{copy(update.error)}</InlineError>
+                </div>
+            )}
+
+            <div className='flex flex-wrap items-center justify-between gap-2 px-4 py-2.5'>
+                <Button size='sm' variant='ghost' onPress={() => setPaths((current) => (current.includes('') ? current : [...current, '']))}>
+                    <Plus aria-hidden='true' />
+                    Add path
+                </Button>
+                <Button size='sm' isPending={update.loading} isDisabled={!dirty} onPress={() => { void save(); }}>
+                    Save and redeploy
+                </Button>
             </div>
         </SettingsSection>
     );
