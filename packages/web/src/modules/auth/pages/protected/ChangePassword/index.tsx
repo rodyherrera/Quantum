@@ -1,15 +1,17 @@
 import { useState } from 'react';
 import { Button } from '@heroui/react';
-import { ArrowRight } from 'lucide-react';
+import { Check, KeyRound } from 'lucide-react';
 import typia from 'typia';
+import PageBar from '@/shared/components/layout/PageBar';
 import PageBody from '@/shared/components/layout/PageBody';
-import PageHeader from '@/shared/components/layout/PageHeader';
-import SettingsSection from '@/shared/components/SettingsSection';
+import PageIntro from '@/shared/components/layout/PageIntro';
+import SettingsSection, { SettingsBlock } from '@/shared/components/SettingsSection';
 import Form from '@/shared/components/forms/Form';
 import Field from '@/shared/components/forms/Field';
 import { useForm } from '@/shared/hooks/forms/use-form';
 import { authApi } from '@/modules/auth/api/api';
 import { authErrorMessages } from '@/modules/auth/utils/error-messages';
+import { SETTINGS_TRAIL } from '@/modules/organization/utils/settings-trail';
 import { useSessionStore } from '@/shared/store/session';
 import type { AuthSubmitErrorCode } from '@/modules/auth/utils/error-messages';
 import type { UpdatePasswordInput } from '@quantum/contracts/modules/auth/http';
@@ -37,53 +39,57 @@ const ChangePassword = () => {
     });
 
     return (
-        <PageBody>
-            <PageHeader eyebrow='Settings / Account' title='Change password' />
+        <>
+            <PageBar title='Password' icon={KeyRound} trail={SETTINGS_TRAIL} />
 
-            <div className='mt-10'>
-                <SettingsSection
-                    title='New password'
-                    description='We ask for the current one first so a left-open session cannot change it.'
-                >
-                    <Form form={form} className='flex max-w-md flex-col gap-4'>
-                        <Field
-                            form={form}
-                            name='passwordCurrent'
-                            label='Current password'
-                            type='password'
-                            placeholder='Current password'
-                            autoComplete='current-password'
-                        />
+            <PageBody variant='narrow'>
+                <div className='flex flex-col gap-8'>
+                    <PageIntro title='Password' description='Pick a new password. You need the current one to do it.' />
 
-                        <Field
-                            form={form}
-                            name='password'
-                            label='New password'
-                            type='password'
-                            placeholder='New password'
-                            autoComplete='new-password'
-                        />
+                    <SettingsSection title='Change password'>
+                        <SettingsBlock>
+                            <Form form={form} className='flex flex-col gap-3.5'>
+                                <Field
+                                    form={form}
+                                    name='passwordCurrent'
+                                    label='Current password'
+                                    type='password'
+                                    autoComplete='current-password'
+                                />
 
-                        <Field
-                            form={form}
-                            name='passwordConfirm'
-                            label='Confirm new password'
-                            type='password'
-                            placeholder='Confirm new password'
-                            autoComplete='new-password'
-                        />
+                                <Field
+                                    form={form}
+                                    name='password'
+                                    label='New password'
+                                    type='password'
+                                    autoComplete='new-password'
+                                />
 
-                        <div className='flex items-center gap-4'>
-                            <Button type='submit' isPending={form.submitting} isDisabled={!form.isValid}>
-                                Update password
-                                <ArrowRight aria-hidden='true' className='size-4' />
-                            </Button>
-                            {saved && <span className='label-caps text-muted'>Password updated.</span>}
-                        </div>
-                    </Form>
-                </SettingsSection>
-            </div>
-        </PageBody>
+                                <Field
+                                    form={form}
+                                    name='passwordConfirm'
+                                    label='Confirm new password'
+                                    type='password'
+                                    autoComplete='new-password'
+                                />
+
+                                <div className='flex items-center justify-end gap-3'>
+                                    {saved && (
+                                        <span className='flex items-center gap-1.5 text-xs text-success'>
+                                            <Check aria-hidden='true' className='size-3.5' />
+                                            Password updated.
+                                        </span>
+                                    )}
+                                    <Button type='submit' isPending={form.submitting} isDisabled={!form.isValid}>
+                                        Update password
+                                    </Button>
+                                </div>
+                            </Form>
+                        </SettingsBlock>
+                    </SettingsSection>
+                </div>
+            </PageBody>
+        </>
     );
 };
 

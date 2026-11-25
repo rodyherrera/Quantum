@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { PageSkeleton } from '@/shared/components/skeletons';
-import { Button, Chip, Dropdown, Table } from '@heroui/react';
-import { ArrowRight, FolderKanban, MoreVertical } from 'lucide-react';
+import { Button, Chip, Dropdown } from '@heroui/react';
+import { FolderClosed, MoreHorizontal, Plus } from 'lucide-react';
+import PageBar from '@/shared/components/layout/PageBar';
 import PageBody from '@/shared/components/layout/PageBody';
-import PageHeader from '@/shared/components/layout/PageHeader';
+import ListRow from '@/shared/components/list/ListRow';
 import ListPageShell from '@/shared/components/ListPageShell';
 import DeleteConfirmDialog from '@/shared/components/DeleteConfirmDialog';
 import CreateProjectDialog from '@/modules/project/components/CreateProjectDialog';
@@ -12,29 +13,15 @@ import { useResource } from '@/shared/hooks/api/use-resource';
 import { projectApi } from '@/modules/project/api/api';
 import { projectRoutes } from '@quantum/contracts/modules/project/routes';
 import { useCurrentOrganizationId } from '@/modules/organization/hooks/use-current-organization-id';
+import { projectHue } from '@/modules/project/utils/project-hue';
 import { projectErrorMessages } from '@/modules/project/utils/error-messages';
 import { errorCopy } from '@/shared/utils/error-copy';
-import { formatDate } from '@/shared/utils/format-date';
+import { formatDate, formatDay } from '@/shared/utils/format-date';
 import type { Project } from '@quantum/contracts/modules/project/domain';
 
 const copy = errorCopy(projectErrorMessages);
 
-interface ProjectsHeaderProps{
-    onCreate: () => void;
-}
-
-const ProjectsHeader = ({ onCreate }: ProjectsHeaderProps) => (
-    <PageHeader
-        title='Projects'
-        description='Group related deployments by organization.'
-        actions={(
-            <Button onPress={onCreate}>
-                New project
-                <ArrowRight aria-hidden='true' className='size-4' />
-            </Button>
-        )}
-    />
-);
+const COLUMNS = 'grid-cols-[minmax(0,1fr)_1.75rem] sm:grid-cols-[minmax(0,1fr)_12rem_4.5rem_1.75rem]';
 
 interface DeleteProjectDialogProps{
     project: Project | null;
@@ -59,66 +46,60 @@ const DeleteProjectDialog = ({ project, onClose, onDeleted, onOptimisticDelete }
     />
 );
 
-interface ProjectsTableProps{
+interface ProjectRowProps{
+    project: Project;
+    onRename: (project: Project) => void;
+    onDelete: (project: Project) => void;
+}
+
+const ProjectRow = ({ project, onRename, onDelete }: ProjectRowProps) => (
+    <ListRow className={COLUMNS} to={`/applications?project=${project.id}`} label={`Open ${project.name}`}>
+        <span className='flex min-w-0 items-center gap-2.5'>
+            <span aria-hidden='true' className='size-2 shrink-0 rounded-[0.15625rem]' style={{ backgroundColor: projectHue(project.id) }} />
+            <span className='truncate font-medium text-foreground'>{project.name}</span>
+            {project.isDefault && <Chip size='sm'>Default</Chip>}
+        </span>
+
+        <span className='hidden truncate font-mono text-xs text-subtle sm:block'>{project.slug}</span>
+
+        <time dateTime={project.createdAt} title={formatDate(project.createdAt)} className='hidden text-right text-xs tabular-nums text-subtle sm:block'>
+            {formatDay(project.createdAt)}
+        </time>
+
+        <Dropdown>
+            <Dropdown.Trigger
+                aria-label={`Actions for ${project.name}`}
+                className='flex size-7 items-center justify-center rounded-md text-subtle transition-colors hover:bg-default hover:text-foreground focus-visible:outline-2 focus-visible:outline-accent motion-reduce:transition-none'
+            >
+                <MoreHorizontal aria-hidden='true' className='size-4' />
+            </Dropdown.Trigger>
+
+            <Dropdown.Popover placement='bottom end'>
+                <Dropdown.Menu aria-label={`Actions for ${project.name}`}>
+                    <Dropdown.Item onAction={() => onRename(project)}>Rename</Dropdown.Item>
+                    <Dropdown.Item variant='danger' onAction={() => onDelete(project)}>Delete</Dropdown.Item>
+                </Dropdown.Menu>
+            </Dropdown.Popover>
+        </Dropdown>
+    </ListRow>
+);
+
+interface ProjectsListProps{
     projects: Project[];
     onRename: (project: Project) => void;
     onDelete: (project: Project) => void;
 }
 
-const ProjectsTable = ({ projects, onRename, onDelete }: ProjectsTableProps) => (
-    <Table>
-        <Table.ScrollContainer>
-            <Table.Content aria-label='Projects'>
-                <Table.Header>
-                    <Table.Column isRowHeader>Project</Table.Column>
-                    <Table.Column>Slug</Table.Column>
-                    <Table.Column>Created</Table.Column>
-                    <Table.Column><span className='sr-only'>Actions</span></Table.Column>
-                </Table.Header>
+const ProjectsList = ({ projects, onRename, onDelete }: ProjectsListProps) => (
+    <div>
+        <div aria-hidden='true' className={`sticky top-[var(--bar-height)] z-10 hidden h-8 items-center gap-3 border-b border-separator bg-background px-4 text-xs font-medium text-subtle sm:grid ${COLUMNS}`}>
+            <span>Project</span>
+            <span>Slug</span>
+            <span className='text-right'>Created</span>
+        </div>
 
-                <Table.Body>
-                    {projects.map((project) => (
-                        <Table.Row key={project.id}>
-                            <Table.Cell>
-                                <div className='flex items-center gap-2'>
-                                    <span className='font-medium text-foreground'>{project.name}</span>
-                                    {project.isDefault && <Chip size='sm' variant='soft'>Default</Chip>}
-                                </div>
-                            </Table.Cell>
-
-                            <Table.Cell>
-                                <span className='font-mono text-[0.8125rem] text-muted'>{project.slug}</span>
-                            </Table.Cell>
-
-                            <Table.Cell>{formatDate(project.createdAt)}</Table.Cell>
-
-                            <Table.Cell>
-                                <div className='flex justify-end'>
-                                    <Dropdown>
-                                        <Dropdown.Trigger
-                                            aria-label={`Actions for ${project.name}`}
-                                            className='p-1.5 text-muted transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground'
-                                        >
-                                            <MoreVertical aria-hidden='true' className='size-4' />
-                                        </Dropdown.Trigger>
-
-                                        <Dropdown.Popover placement='bottom end'>
-                                            <Dropdown.Menu aria-label={`Actions for ${project.name}`}>
-<Dropdown.Item onAction={() => onRename(project)}>Rename</Dropdown.Item>
-                                                 <Dropdown.Item variant='danger' onAction={() => onDelete(project)}>
-                                                    Delete
-                                                </Dropdown.Item>
-                                            </Dropdown.Menu>
-                                        </Dropdown.Popover>
-                                    </Dropdown>
-                                </div>
-                            </Table.Cell>
-                        </Table.Row>
-                    ))}
-                </Table.Body>
-            </Table.Content>
-        </Table.ScrollContainer>
-    </Table>
+        {projects.map((project) => <ProjectRow key={project.id} project={project} onRename={onRename} onDelete={onDelete} />)}
+    </div>
 );
 
 const Projects = () => {
@@ -131,51 +112,39 @@ const Projects = () => {
     const [renameTarget, setRenameTarget] = useState<Project | null>(null);
     const [deleteTarget, setDeleteTarget] = useState<Project | null>(null);
 
-    if(organizationId === null || projects.loading || projects.error !== undefined){
-        return (
-            <ListPageShell
-                fill
-                loading={organizationId === null || projects.loading}
-                skeleton={<PageSkeleton actions={1} columns={4} />}
-                error={organizationId === null ? undefined : projects.error}
-                errorTitle='Could not load projects'
-                getErrorDescription={copy}
-                onRetry={projects.refresh}
-            />
-        );
+    if(organizationId === null || projects.loading){
+        return <PageSkeleton actions={1} columns={3} />;
     }
 
     const items = projects.data ?? [];
+    const newProject = (
+        <Button size='sm' onPress={() => setCreateOpen(true)}>
+            <Plus aria-hidden='true' />
+            New project
+        </Button>
+    );
 
     return (
-        <PageBody fill>
-            <ProjectsHeader onCreate={() => setCreateOpen(true)} />
+        <>
+            <PageBar title='Projects' icon={FolderClosed} actions={projects.error === undefined ? newProject : undefined} />
 
-            <div className='mt-6 flex flex-1 flex-col'>
+            <PageBody variant='flush' fill>
                 <ListPageShell
+                    error={projects.error}
                     errorTitle='Could not load projects'
                     getErrorDescription={copy}
                     onRetry={projects.refresh}
                     isEmpty={items.length === 0}
                     empty={{
-                        icon: FolderKanban,
+                        icon: FolderClosed,
                         title: 'No projects yet',
                         description: 'Projects group related deployments. Create your first one to get started.',
-                        action: (
-                            <Button onPress={() => setCreateOpen(true)}>
-                                New project
-                                <ArrowRight aria-hidden='true' className='size-4' />
-                            </Button>
-                        )
+                        action: newProject
                     }}
                 >
-                    <ProjectsTable
-                        projects={items}
-                        onRename={setRenameTarget}
-                        onDelete={setDeleteTarget}
-                    />
+                    <ProjectsList projects={items} onRename={setRenameTarget} onDelete={setDeleteTarget} />
                 </ListPageShell>
-            </div>
+            </PageBody>
 
             <CreateProjectDialog
                 organizationId={organizationId}
@@ -199,7 +168,7 @@ const Projects = () => {
                     (items) => items.filter((item) => item.id !== deleteTarget?.id)
                 )}
             />
-        </PageBody>
+        </>
     );
 };
 

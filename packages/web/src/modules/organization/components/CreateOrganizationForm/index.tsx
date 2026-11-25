@@ -1,5 +1,4 @@
 import { Button } from '@heroui/react';
-import { ArrowRight } from 'lucide-react';
 import typia from 'typia';
 import Form from '@/shared/components/forms/Form';
 import Field from '@/shared/components/forms/Field';
@@ -28,13 +27,10 @@ const CreateOrganizationForm = ({ onCreated }: CreateOrganizationFormProps) => {
     });
 
     return (
-        <Form form={form} className='flex w-full max-w-sm flex-col gap-4'>
+        <Form form={form} className='flex w-full flex-col gap-3.5'>
             <Field form={form} name='name' label='Organization name' placeholder='Acme Inc.' />
 
-            <Button type='submit' isPending={form.submitting}>
-                Create organization
-                <ArrowRight aria-hidden='true' className='size-4' />
-            </Button>
+            <Button type='submit' fullWidth isPending={form.submitting}>Create organization</Button>
         </Form>
     );
 };

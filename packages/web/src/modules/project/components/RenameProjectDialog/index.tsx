@@ -34,7 +34,7 @@ const RenameProjectDialog = ({ project, onClose, onRenamed }: RenameProjectDialo
             title='Rename project'
             form={form}
             fieldName='name'
-            fieldLabel='Name'
+            fieldLabel='Project name'
             submitLabel='Save'
             submitDisabled={name.trim() === ''}
             onCancel={onClose}

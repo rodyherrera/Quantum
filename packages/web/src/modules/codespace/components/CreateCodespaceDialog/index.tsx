@@ -29,12 +29,11 @@ const CreateCodespaceDialog = ({ projectId, isOpen, onClose, onCreated }: Create
             isOpen={isOpen}
             onOpenChange={(open) => { if(!open && !form.submitting) onClose(false); }}
             title='New codespace'
-            description='Spin up a cloud dev environment for this project.'
             form={form}
             fieldName='name'
             fieldLabel='Name'
             fieldPlaceholder='my-codespace'
-            submitLabel='Create'
+            submitLabel='Create codespace'
             submitDisabled={!form.isValid}
             onCancel={() => onClose(false)}
         />

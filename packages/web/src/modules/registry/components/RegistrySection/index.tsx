@@ -49,20 +49,23 @@ const AddRegistryDialog = ({ isOpen, onClose, onAdd }: AddRegistryDialogProps) =
     };
 
     return (
-        <Modal isOpen={isOpen} onOpenChange={(open) => { if(!open) cancel(); }} title='Add registry credentials'>
-            <Form form={form} className='flex flex-col gap-4'>
-                <p className='text-[0.875rem] text-muted'>
-                    For GitHub Container Registry use your GitHub username and a classic personal access token with the
-                    read:packages scope.
-                </p>
+        <Modal isOpen={isOpen} onOpenChange={(open) => { if(!open) cancel(); }} title='Add registry'>
+            <Form form={form} className='flex flex-col gap-3.5'>
+                <Field form={form} name='registry' label='Registry host' placeholder='ghcr.io' autoComplete='off' />
 
-                <Field form={form} name='registry' label='Registry' placeholder='ghcr.io' autoComplete='off' />
-                <Field form={form} name='username' label='Username' placeholder='octocat' autoComplete='off' />
-                <Field form={form} name='secret' label='Token or password' type='password' autoComplete='off' />
+                <div className='grid gap-3.5 sm:grid-cols-2'>
+                    <Field form={form} name='username' label='Username' placeholder='octocat' autoComplete='off' />
+                    <Field form={form} name='secret' label='Token or password' type='password' autoComplete='off' />
+                </div>
+
+                <p className='text-xs text-subtle'>
+                    For GitHub Container Registry, use your GitHub username and a classic personal access token with
+                    the <span className='font-mono'>read:packages</span> scope.
+                </p>
 
                 <div className='flex justify-end gap-2'>
                     <Button variant='secondary' isDisabled={form.submitting} onPress={cancel}>Cancel</Button>
-                    <Button type='submit' isPending={form.submitting} isDisabled={!complete(form.values)}>Add</Button>
+                    <Button type='submit' isPending={form.submitting} isDisabled={!complete(form.values)}>Add registry</Button>
                 </div>
             </Form>
         </Modal>
@@ -84,43 +87,43 @@ const RegistrySection = ({ organizationId }: RegistrySectionProps) => {
     const rows = credentials.data ?? [];
 
     return (
-        <SettingsSection
-            title='Container registries'
-            description='Credentials Docker uses to pull private images, one per registry. Without an entry for ghcr.io, Quantum falls back to the connected GitHub account.'
-        >
-            <div className='flex flex-col'>
+        <>
+            <SettingsSection
+                title='Container registries'
+                description='Credentials Docker uses to pull private images, one per registry. Without an entry for ghcr.io, Quantum falls back to the connected GitHub account.'
+            >
                 {rows.length === 0 && !credentials.loading && (
-                    <p className='text-[0.8125rem] text-muted'>No registry credentials yet. Public images need none.</p>
+                    <p className='px-4 py-3 text-muted'>No registry credentials yet. Public images need none.</p>
                 )}
 
                 {rows.map((credential) => (
                     <SettingsRow
                         key={credential.id}
-                        title={credential.registry}
+                        title={<span className='font-mono'>{credential.registry}</span>}
                         description={credential.username}
                         action={(
                             <Button
                                 isIconOnly
+                                size='sm'
                                 variant='ghost'
-                                className='text-muted hover:text-foreground'
                                 aria-label={`Remove credentials for ${credential.registry}`}
                                 onPress={() => setRemoving(credential)}
                             >
-                                <Trash2 aria-hidden='true' className='size-4' />
+                                <Trash2 aria-hidden='true' />
                             </Button>
                         )}
                     />
                 ))}
-            </div>
 
-            {credentials.error !== undefined && <InlineError>{copy(credentials.error)}</InlineError>}
+                {credentials.error !== undefined && <InlineError className='px-4 py-3'>{copy(credentials.error)}</InlineError>}
 
-            <div>
-                <Button variant='secondary' onPress={() => setAdding(true)}>
-                    <Plus aria-hidden='true' className='size-4' />
-                    Add registry
-                </Button>
-            </div>
+                <div className='px-2.5 py-2'>
+                    <Button size='sm' variant='ghost' onPress={() => setAdding(true)}>
+                        <Plus aria-hidden='true' />
+                        Add registry
+                    </Button>
+                </div>
+            </SettingsSection>
 
             <AddRegistryDialog
                 isOpen={adding}
@@ -141,7 +144,7 @@ const RegistrySection = ({ organizationId }: RegistrySectionProps) => {
                 onClose={() => setRemoving(null)}
                 onRemoved={credentials.refresh}
             />
-        </SettingsSection>
+        </>
     );
 };
 

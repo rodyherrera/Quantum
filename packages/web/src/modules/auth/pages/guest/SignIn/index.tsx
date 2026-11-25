@@ -1,5 +1,4 @@
 import { Button } from '@heroui/react';
-import { ArrowRight } from 'lucide-react';
 import Form from '@/shared/components/forms/Form';
 import Field from '@/shared/components/forms/Field';
 import AuthShell from '@/modules/auth/components/AuthShell';
@@ -7,22 +6,10 @@ import Reveal from '@/modules/auth/components/Reveal';
 import { useIdentifierFlow } from '@/modules/auth/hooks/use-identifier-flow';
 import type { IdentifierStep } from '@/modules/auth/hooks/use-identifier-flow';
 
-const EYEBROW: Record<IdentifierStep, string> = {
-    email: 'Sign in',
-    password: 'Sign in',
-    signup: 'Sign up'
-};
-
 const TITLE: Record<IdentifierStep, string> = {
     email: 'Sign in to Quantum',
     password: 'Sign in to Quantum',
     signup: 'Create your account'
-};
-
-const SUBTITLE: Record<IdentifierStep, string> = {
-    email: 'Your applications are waiting for you.',
-    password: 'Your applications are waiting for you.',
-    signup: 'Deploy and manage applications on Quantum.'
 };
 
 const SUBMIT_LABEL: Record<IdentifierStep, string> = {
@@ -35,21 +22,16 @@ const SignIn = () => {
     const { step, form, back } = useIdentifierFlow();
 
     return (
-        <AuthShell aside={<span className='label-caps text-muted'>{step === 'signup' ? 'New account' : 'Welcome back'}</span>}>
-            <p className='label-caps text-muted'>{EYEBROW[step]}</p>
-            <h1 className='title-display mt-5 text-[2.75rem] leading-[1.02] text-foreground sm:text-[3.25rem]'>
-                {TITLE[step]}
-            </h1>
-            <p className='mt-4 text-sm text-muted'>{SUBTITLE[step]}</p>
-
-            <Form form={form} className='mt-10 flex flex-col'>
+        <AuthShell
+            title={TITLE[step]}
+            description={step === 'signup' ? 'There is no account for this email yet.' : undefined}
+        >
+            <Form form={form} className='flex flex-col [&_.input]:h-9 [&_.label]:sr-only'>
                 <Field form={form} name='email' label='Email' type='email' placeholder='Email' autoComplete='email' />
 
                 <Reveal show={step === 'signup'}>
-                    <div className='grid gap-5 sm:grid-cols-2'>
-                        <Field form={form} name='fullname' label='Full name' placeholder='Full name' autoComplete='name' />
-                        <Field form={form} name='username' label='Username' placeholder='Username' autoComplete='username' />
-                    </div>
+                    <Field form={form} name='fullname' label='Full name' placeholder='Full name' autoComplete='name' />
+                    <Field form={form} name='username' label='Username' placeholder='Username' autoComplete='username' />
                 </Reveal>
 
                 <Reveal show={step !== 'email'}>
@@ -74,23 +56,25 @@ const SignIn = () => {
                     />
                 </Reveal>
 
-                <div className='mt-7 flex items-center gap-6'>
-                    <Button type='submit' isPending={form.submitting}>
-                        {SUBMIT_LABEL[step]}
-                        <ArrowRight aria-hidden='true' className='size-4' />
-                    </Button>
+                <Button type='submit' size='lg' fullWidth isPending={form.submitting} className='mb-1 mt-3'>
+                    {SUBMIT_LABEL[step]}
+                </Button>
+            </Form>
 
-                    {step !== 'email' && (
+            <p className='text-center text-xs text-subtle'>
+                {step === 'email' ? 'No account yet? Enter your email to create one.' : (
+                    <>
+                        {step === 'signup' ? 'Already have an account? ' : 'Not your account? '}
                         <button
                             type='button'
                             onClick={back}
-                            className='label-caps text-muted transition-colors hover:text-foreground motion-reduce:transition-none'
+                            className='rounded font-medium text-foreground hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent'
                         >
-                            Back
+                            Use another email
                         </button>
-                    )}
-                </div>
-            </Form>
+                    </>
+                )}
+            </p>
         </AuthShell>
     );
 };
