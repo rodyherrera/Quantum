@@ -259,6 +259,19 @@ On boot, and every five minutes after, the API reconciles what is running agains
 containers that should be up are started, addresses are refreshed. A host reboot brings
 everything back without any action.
 
+## The landing page
+
+Quantum's public landing page and self-host guide are a separate app from the dashboard, so a
+self-hosted install serves the dashboard alone and opens straight onto **Applications**. The
+landing shares the dashboard's code but builds on its own, and runs from its own compose file:
+
+```sh
+docker compose -f docker-compose.landing.yml up -d --build   # LANDING_PORT, 5060 by default
+pnpm --filter web dev:landing                                  # locally
+```
+
+Its **Log in** and **Sign up** go to `LANDING_DASHBOARD_URL`.
+
 ## Support
 
 Issues and pull requests are welcome. If Quantum is useful to you, you can

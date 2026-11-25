@@ -1,5 +1,9 @@
+# APP=landing builds the public landing page instead of the dashboard a self-hosted Quantum serves.
 FROM node:24-alpine AS build
 
+ARG APP=dashboard
+ARG VITE_DASHBOARD_URL=
+ENV VITE_DASHBOARD_URL=$VITE_DASHBOARD_URL
 ARG VITE_SERVER
 ARG VITE_API_SUFFIX=
 ENV VITE_SERVER=$VITE_SERVER
@@ -19,7 +23,7 @@ COPY packages/contracts packages/contracts
 COPY packages/web packages/web
 
 WORKDIR /app/packages/web
-RUN pnpm build
+RUN if [ "$APP" = landing ]; then pnpm build:landing && rm -rf dist && mv dist-landing dist; else pnpm build; fi
 
 FROM nginx:1.27-alpine
 

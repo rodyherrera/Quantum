@@ -1,0 +1,15 @@
+# The public landing page for Quantum's own site. A self-hosted install never needs it, so it lives
+# apart from docker-compose.yml:  docker compose -f docker-compose.landing.yml up -d --build
+services:
+  landing:
+    container_name: quantum-landing
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: packages/web/Dockerfile
+      args:
+        APP: landing
+        VITE_DASHBOARD_URL: ${LANDING_DASHBOARD_URL:-https://quantum.pollium.io}
+
+    ports:
+      - "${LANDING_PORT:-5060}:80"
