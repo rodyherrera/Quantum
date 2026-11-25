@@ -1,6 +1,6 @@
 import { Activity, KeyRound, Network, ScrollText, SquareTerminal } from 'lucide-react';
 import VsCodeIcon from '@/shared/components/icons/VsCodeIcon';
-import LandingSection from '@/landing/components/LandingSection';
+import Band from '@/landing/components/Band';
 import FeatureGrid from '@/landing/components/FeatureGrid';
 import FeatureCell from '@/landing/components/FeatureCell';
 import GuideText from '@/landing/components/GuideText';
@@ -9,13 +9,7 @@ import OperateMetrics from '@/landing/components/OperateMetrics';
 import OperateAddresses from '@/landing/components/OperateAddresses';
 
 const LandingOperate = () => (
-    <LandingSection
-        id='operate'
-        index='02'
-        label='Operate'
-        title='Everything a running app needs.'
-        lead='Start, stop, restart and redeploy from the top of every application. The rest lives in its tabs.'
-    >
+    <Band id='operate' label='Operate'>
         <FeatureGrid columns={3} flush>
             <FeatureCell icon={ScrollText} title='Logs' body='Follow the output of one service at a time, live.'>
                 <OperateLogs />
@@ -39,7 +33,7 @@ const LandingOperate = () => (
                 <OperateAddresses />
             </FeatureCell>
         </FeatureGrid>
-    </LandingSection>
+    </Band>
 );
 
 export default LandingOperate;

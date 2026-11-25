@@ -17,29 +17,13 @@ import { useCurrentStep } from '@/landing/hooks/use-current-step';
 import { useGuideStore } from '@/landing/store/guide';
 import { USEFUL_COMMANDS, guideFor, targetFor, troublesFor } from '@/landing/utils/guide';
 import { GITHUB_URL, ISSUES_URL } from '@/landing/utils/links';
-import { LEDE, MONO_LABEL, MONO_TITLE, WRAP } from '@/landing/utils/classes';
+import { MONO_LABEL, MONO_TITLE, WRAP } from '@/landing/utils/classes';
 
 const NEEDS = [
-    {
-        icon: Server,
-        title: 'A Linux server',
-        body: 'From any provider. On Ubuntu or Debian every command works as written.'
-    },
-    {
-        icon: SquareTerminal,
-        title: 'A terminal',
-        body: 'To paste the commands into. Mac, Windows and Linux all come with one, and with SSH to reach a server.'
-    },
-    {
-        icon: Globe,
-        title: 'A domain',
-        body: "Optional, for HTTPS at your own address. Without one, you open Quantum at the server's IP."
-    },
-    {
-        icon: GithubIcon,
-        title: 'A GitHub account',
-        body: 'Optional, to deploy your own repositories. Templates, databases and compose files work without it.'
-    }
+    { icon: Server, title: 'A Linux server' },
+    { icon: SquareTerminal, title: 'A terminal' },
+    { icon: Globe, title: 'A domain (optional)' },
+    { icon: GithubIcon, title: 'A GitHub account (optional)' }
 ];
 
 const GetStarted = () => {
@@ -67,8 +51,6 @@ const GetStarted = () => {
                         <span className='block'>step by step.</span>
                     </h1>
 
-                    <p className={`${LEDE} text-muted`}>Copy each command in order. Pick where it will run and the commands change to match.</p>
-
                     <GuideSetupPicker
                         setup={setup}
                         ip={ip}
@@ -87,7 +69,7 @@ const GetStarted = () => {
                     <div className='grid min-w-0 grid-cols-1 gap-14'>
                         <GuideSection id='requirements' title='What you need'>
                             <FeatureGrid columns={2}>
-                                {NEEDS.map((need) => <FeatureCell key={need.title} icon={need.icon} title={need.title} body={need.body} />)}
+                                {NEEDS.map((need) => <FeatureCell key={need.title} icon={need.icon} title={need.title} />)}
                             </FeatureGrid>
                         </GuideSection>
 
@@ -122,11 +104,7 @@ const GetStarted = () => {
                             </div>
                         </div>
 
-                        <GuideSection
-                            id='troubleshooting'
-                            title='If something goes wrong'
-                            lead='The script stops with a message that says what is missing. Find yours below.'
-                        >
+                        <GuideSection id='troubleshooting' title='If something goes wrong'>
                             <GuideTroubles troubles={troublesFor(setup, target)} />
 
                             <a href={ISSUES_URL} target='_blank' rel='noreferrer' className='inline-flex w-fit items-center gap-1.5 text-muted transition-colors hover:text-foreground motion-reduce:transition-none'>

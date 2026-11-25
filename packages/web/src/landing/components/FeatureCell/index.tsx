@@ -4,7 +4,7 @@ import type { ComponentType, ReactNode } from 'react';
 interface FeatureCellProps{
     icon: ComponentType<{ className?: string }>;
     title: string;
-    body: ReactNode;
+    body?: ReactNode;
     children?: ReactNode;
 }
 
@@ -15,7 +15,7 @@ const FeatureCell = ({ icon: Icon, title, body, children }: FeatureCellProps) =>
             {title}
         </h3>
 
-        <p className='leading-[1.6] text-muted'>{body}</p>
+        {body !== undefined && <p className='leading-[1.6] text-muted'>{body}</p>}
 
         {children !== undefined && <div className='mt-2 flex min-w-0 flex-wrap gap-1.5'>{children}</div>}
     </article>
