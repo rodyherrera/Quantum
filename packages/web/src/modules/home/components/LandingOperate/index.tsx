@@ -11,12 +11,12 @@ import OperateAddresses from '@/modules/home/components/OperateAddresses';
 const LandingOperate = () => (
     <LandingSection
         id='operate'
-        icon={SquareTerminal}
+        index='02'
         label='Operate'
         title='Everything a running app needs.'
         lead='Start, stop, restart and redeploy from the top of every application. The rest lives in its tabs.'
     >
-        <FeatureGrid columns={3}>
+        <FeatureGrid columns={3} flush>
             <FeatureCell icon={ScrollText} title='Logs' body='Follow the output of one service at a time, live.'>
                 <OperateLogs />
             </FeatureCell>

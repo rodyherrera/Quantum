@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import QuantumMark from '@/shared/components/QuantumMark';
 import { GITHUB_URL, ISSUES_URL, LICENSE_URL, SUPPORT_URL } from '@/modules/home/utils/links';
-import { WRAP } from '@/modules/home/utils/classes';
+import { MONO_LABEL, WRAP } from '@/modules/home/utils/classes';
 
 const LINK = 'transition-colors hover:text-foreground motion-reduce:transition-none';
 
@@ -12,16 +12,16 @@ const EXTERNAL = [
 ];
 
 const LandingFooter = () => (
-    <footer className='mt-15 border-t border-separator'>
-        <div className={`${WRAP} flex min-h-16 flex-wrap items-center gap-x-5 gap-y-2 py-4 text-xs text-subtle`}>
-            <Link to='/' className='inline-flex items-center gap-2 font-semibold text-foreground'>
+    <footer className='border-t border-separator'>
+        <div className={`${WRAP} ${MONO_LABEL} flex min-h-16 flex-wrap items-center gap-x-6 gap-y-2 py-5 text-subtle`}>
+            <Link to='/' className='inline-flex items-center gap-2 font-sans text-xs font-semibold normal-case tracking-normal text-foreground'>
                 <QuantumMark className='size-4' />
                 Quantum
             </Link>
 
             <a href={LICENSE_URL} target='_blank' rel='noreferrer' className={LINK}>MIT License</a>
 
-            <nav aria-label='Footer' className='flex flex-wrap items-center gap-x-5 gap-y-2 sm:ms-auto'>
+            <nav aria-label='Footer' className='flex flex-wrap items-center gap-x-6 gap-y-2 sm:ms-auto'>
                 <Link to='/get-started' className={LINK}>Self-host guide</Link>
                 <Link to={{ pathname: '/get-started', hash: 'troubleshooting' }} className={LINK}>Troubleshooting</Link>
 
