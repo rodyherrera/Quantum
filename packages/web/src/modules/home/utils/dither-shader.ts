@@ -7,9 +7,8 @@ void main(){
 `;
 
 /*
- * One pixel per dither cell: a night-to-haze blue ramp from the top edge down, thin veins of drifting
- * smoke along the ridges of a warped noise field, and an 8x8 Bayer matrix that breaks every step of
- * the ramp into grain.
+ * One pixel per dither cell: a night-to-haze blue ramp from the top edge down, soft drifting haze from
+ * a warped noise field, and an 8x8 Bayer matrix that breaks every step of the ramp into grain.
  */
 export const DITHER_FRAGMENT = `
 precision highp float;
@@ -73,12 +72,10 @@ void main(){
 
     vec2 strand = vec2(p.x * 0.9 + p.y * 0.7, p.y * 2.4 - p.x * 0.45);
     vec2 warp = vec2(fbm(strand * 1.2 + vec2(t, 0.0)), fbm(strand * 1.2 + vec2(3.1, 7.7) - t));
-    float field = fbm(strand * 2.6 + warp * 2.2 + vec2(0.0, t));
-    float veins = pow(1.0 - abs(field * 2.0 - 1.0), 10.0);
     float haze = smoothstep(0.55, 0.9, fbm(strand * 1.1 - warp + vec2(t, 2.0)));
 
     float shade = 0.03 + pow(depth, 1.45) * 0.94;
-    shade += veins * (0.08 + 0.26 * (1.0 - depth)) + haze * 0.06;
+    shade += haze * 0.06;
     shade += (hash(cell) - 0.5) * 0.06;
 
     float steps = 9.0;
