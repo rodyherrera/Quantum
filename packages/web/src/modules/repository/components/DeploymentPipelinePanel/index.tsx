@@ -1,40 +1,18 @@
 import { Button, Spinner } from '@heroui/react';
-import { CheckCircle2, CircleDashed, XCircle } from 'lucide-react';
+import { StatusGlyph } from '@/shared/components/StatusDot';
+import { activityLevelColor, activityLevelLabel } from '@/modules/activity/utils/level';
+import { formatStepDuration, pipelineSteps, stepDurationMs } from '@/modules/repository/utils/deployment-steps';
 import { ActivityLevel } from '@quantum/contracts/modules/activity/domain';
+import type { CSSProperties } from 'react';
 import type { ActivityEvent } from '@quantum/contracts/modules/activity/domain';
 
-const stepIcon = (level: ActivityLevel) => {
-    switch(level){
-        case ActivityLevel.Progress:
-            return <Spinner size='sm' color='current' className='text-muted' />;
-        case ActivityLevel.Success:
-            return <CheckCircle2 aria-hidden='true' className='size-4 shrink-0 text-foreground' />;
-        case ActivityLevel.Error:
-            return <XCircle aria-hidden='true' className='size-4 shrink-0 text-danger' />;
-        default:
-            return <CircleDashed aria-hidden='true' className='size-4 shrink-0 text-muted' />;
-    }
+const STEP_FILL: Record<ActivityLevel, string> = {
+    [ActivityLevel.Info]: 'w-full bg-subtle',
+    [ActivityLevel.Success]: 'w-full bg-success',
+    [ActivityLevel.Progress]: 'w-1/2 animate-pulse bg-warning motion-reduce:animate-none',
+    [ActivityLevel.Warn]: 'w-full bg-warning',
+    [ActivityLevel.Error]: 'w-full bg-danger'
 };
-
-const formatStepDuration = (durationMs: number): string =>
-    durationMs < 1000 ? `${durationMs}ms` : `${(durationMs / 1000).toFixed(1)}s`;
-
-const stepDurationMs = (event: ActivityEvent): number | null => {
-    const value = event.meta.durationMs;
-    return typeof value === 'number' ? value : null;
-};
-
-const stepIndex = (event: ActivityEvent): number | null => {
-    const value = event.meta.stepIndex;
-    return typeof value === 'number' ? value : null;
-};
-
-const sortSteps = (events: ActivityEvent[]): ActivityEvent[] =>
-    [...events].sort((a, b) => {
-        const indexA = stepIndex(a);
-        const indexB = stepIndex(b);
-        return indexA === null || indexB === null ? 0 : indexA - indexB;
-    });
 
 interface PipelineStepProps{
     event: ActivityEvent;
@@ -44,10 +22,18 @@ const PipelineStep = ({ event }: PipelineStepProps) => {
     const duration = stepDurationMs(event);
 
     return (
-        <li className='flex items-center gap-3 border-t border-separator px-5 py-3 first:border-t-0'>
-            {stepIcon(event.level)}
-            <span className='flex-1 truncate text-[0.875rem] text-foreground'>{event.title}</span>
-            {duration !== null && <span className='font-mono text-[0.8125rem] text-muted'>{formatStepDuration(duration)}</span>}
+        <li className='grid min-w-0 gap-1.5'>
+            <span aria-hidden='true' className='h-1 overflow-hidden rounded-full bg-separator'>
+                <span className={`block h-full rounded-full ${STEP_FILL[event.level]}`} />
+            </span>
+
+            <span className='flex min-w-0 items-center gap-1.5 text-xs font-medium text-foreground'>
+                <StatusGlyph color={activityLevelColor(event.level)} isTransient={event.level === ActivityLevel.Progress} />
+                <span className='sr-only'>{activityLevelLabel(event.level)}:</span>
+                <span className='truncate'>{event.title}</span>
+            </span>
+
+            {duration !== null && <span className='text-xs tabular-nums text-subtle'>{formatStepDuration(duration)}</span>}
         </li>
     );
 };
@@ -60,11 +46,13 @@ const PipelineLogs = ({ lines }: PipelineLogsProps) => {
     if(lines.length === 0) return null;
 
     return (
-        <details className='border-t border-separator px-5 py-3'>
-            <summary className='label-caps cursor-pointer text-muted transition-colors hover:text-foreground motion-reduce:transition-none'>
+        <details className='border-t border-separator px-3.5 py-2.5'>
+            <summary className='cursor-pointer text-xs font-medium text-muted transition-colors hover:text-foreground motion-reduce:transition-none'>
                 Raw logs
             </summary>
-            <pre className='mt-3 max-h-64 overflow-y-auto font-mono text-[0.75rem] whitespace-pre-wrap text-muted'>{lines.join('\n')}</pre>
+            <pre className='mt-2.5 max-h-64 overflow-y-auto whitespace-pre-wrap rounded-md border border-separator bg-surface-secondary p-3 font-mono text-xs text-muted'>
+                {lines.join('\n')}
+            </pre>
         </details>
     );
 };
@@ -78,39 +66,33 @@ interface DeploymentPipelinePanelProps{
 
 const DeploymentPipelinePanel = ({ steps, logs, done, onDismiss }: DeploymentPipelinePanelProps) => {
     const hasError = steps.some((event) => event.level === ActivityLevel.Error);
-    const ordered = sortSteps(steps);
+    const ordered = pipelineSteps(steps);
+    const title = !done ? 'Deploying your application' : hasError ? 'Deployment failed' : 'Deployment finished';
 
     return (
-        <div className='mt-6 border border-border'>
-            <div className='flex items-center gap-3 border-b border-border px-5 py-3.5'>
-                {!done ? (
-                    <Spinner size='sm' color='current' className='text-muted' />
-                ) : hasError ? (
-                    <XCircle aria-hidden='true' className='size-4 shrink-0 text-danger' />
-                ) : (
-                    <CheckCircle2 aria-hidden='true' className='size-4 shrink-0 text-foreground' />
-                )}
-
-                <span className='label-caps flex-1 text-muted'>
-                    {!done ? 'Deploying your application' : hasError ? 'Deployment failed' : 'Deployment finished'}
-                </span>
-
+        <section aria-label='Current deployment' className='min-w-0 rounded-lg border border-separator bg-surface'>
+            <header className='flex min-h-[2.625rem] flex-wrap items-center gap-2 border-b border-separator px-3.5 py-1.5'>
+                <StatusGlyph color={!done ? 'warning' : hasError ? 'danger' : 'success'} isTransient={!done} />
+                <h3 className='flex-1 font-semibold text-foreground'>{title}</h3>
                 {done && <Button size='sm' variant='ghost' onPress={onDismiss}>Dismiss</Button>}
-            </div>
+            </header>
 
-            <ol>
-                {ordered.length === 0 ? (
-                    <li className='flex items-center gap-3 px-5 py-3 text-[0.875rem] text-muted'>
-                        <Spinner size='sm' color='current' />
-                        Queued — waiting for the build to start…
-                    </li>
-                ) : (
-                    ordered.map((event) => <PipelineStep key={event.id} event={event} />)
-                )}
-            </ol>
+            {ordered.length === 0 ? (
+                <p className='flex items-center gap-2 px-3.5 py-3 text-muted'>
+                    <Spinner size='sm' color='current' />
+                    Queued — waiting for the build to start…
+                </p>
+            ) : (
+                <ol
+                    className='flex flex-col gap-3 px-3.5 pb-3.5 pt-3 sm:grid sm:gap-0.5 sm:[grid-template-columns:var(--steps)]'
+                    style={{ '--steps': `repeat(${ordered.length}, minmax(0, 1fr))` } as CSSProperties}
+                >
+                    {ordered.map((event) => <PipelineStep key={event.id} event={event} />)}
+                </ol>
+            )}
 
             <PipelineLogs lines={logs} />
-        </div>
+        </section>
     );
 };
 
