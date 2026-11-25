@@ -1,4 +1,4 @@
-import { createBrowserRouter } from 'react-router-dom';
+import { createBrowserRouter, Navigate } from 'react-router-dom';
 import type { RouteObject } from 'react-router-dom';
 import { discoverRoutes } from '@/app/routes';
 import { lazyElement } from '@/app/lazy-element';
@@ -74,6 +74,8 @@ if(protectedChildren.length){
     });
 }
 
+// The landing is a separate app, so the dashboard opens straight onto the applications.
+children.push({ index: true, element: <Navigate to='/applications' replace /> });
 children.push({ path: '*', element: <NotFound /> });
 
 export const router = withViewTransitions(createBrowserRouter([

@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:landing": "vite --mode landing",
     "build": "tsc -b && vite build",
+    "build:landing": "tsc -b && vite build --mode landing",
     "lint": "oxlint --deny-warnings",
     "test": "vitest run",
     "test:watch": "vitest",
