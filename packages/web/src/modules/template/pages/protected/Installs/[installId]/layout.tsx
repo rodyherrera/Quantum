@@ -21,6 +21,7 @@ import {
 import PageBar from '@/shared/components/layout/PageBar';
 import DetailView from '@/shared/components/detail/DetailView';
 import DetailHeader from '@/shared/components/detail/DetailHeader';
+import DetailIcon from '@/shared/components/detail/DetailIcon';
 import TabNav from '@/shared/components/detail/TabNav';
 import Property, { PropertyGroup } from '@/shared/components/detail/Property';
 import ErrorState from '@/shared/components/ErrorState';
@@ -29,7 +30,6 @@ import StatusDot from '@/shared/components/StatusDot';
 import InlineError from '@/shared/components/InlineError';
 import InlineEdit from '@/shared/components/InlineEdit';
 import GithubIcon from '@/shared/components/icons/GithubIcon';
-import IconTile from '@/modules/template/components/IconTile';
 import WorkspaceButton from '@/modules/codespace/components/WorkspaceButton';
 import { useQuery } from '@/shared/hooks/api/use-query';
 import { usePolledQuery } from '@/shared/hooks/api/use-polled-query';
@@ -38,7 +38,6 @@ import { templateInstallApi } from '@/modules/template/api/api';
 import { installStatusColor, installStatusLabel, isInstallRunning, isInstallTransient } from '@/modules/template/utils/install-status';
 import { deployTriggerLabel } from '@/modules/template/utils/deploy-trigger';
 import { templateErrorMessages } from '@/modules/template/utils/error-messages';
-import { projectHue } from '@/modules/project/utils/project-hue';
 import { errorCopy } from '@/shared/utils/error-copy';
 import { formatDate } from '@/shared/utils/format-date';
 import type { LucideIcon } from 'lucide-react';
@@ -102,7 +101,7 @@ const InstallHeader = ({ install, isOperating, isRedeploying, redeployError, ren
 
     return (
         <DetailHeader
-            icon={<IconTile hue={projectHue(install.projectId)}><KindIcon /></IconTile>}
+            icon={<DetailIcon><KindIcon /></DetailIcon>}
             title={(
                 <InlineEdit
                     value={install.name}

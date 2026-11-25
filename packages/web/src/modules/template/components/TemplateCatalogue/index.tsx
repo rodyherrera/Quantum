@@ -1,8 +1,6 @@
 import { Input, Label, TextField } from '@heroui/react';
 import { Search } from 'lucide-react';
 import EmptyState from '@/shared/components/EmptyState';
-import IconTile from '@/modules/template/components/IconTile';
-import { projectHue } from '@/modules/project/utils/project-hue';
 import type { Template } from '@quantum/contracts/modules/template/domain';
 
 interface CatalogueRowProps{
@@ -16,13 +14,10 @@ const CatalogueRow = ({ template, isSelected, onSelect }: CatalogueRowProps) => 
         type='button'
         onClick={onSelect}
         aria-current={isSelected}
-        className='grid w-full grid-cols-[1.75rem_minmax(0,1fr)] items-center gap-2.5 rounded-[0.4375rem] px-2 py-1.5 text-left outline-none transition-colors hover:bg-default focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-accent aria-[current=true]:bg-default aria-[current=true]:shadow-[inset_0_0_0_1px_var(--border)] motion-reduce:transition-none'
+        className='block w-full rounded-[0.4375rem] px-2.5 py-1.5 text-left outline-none transition-colors hover:bg-default focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-accent aria-[current=true]:bg-default aria-[current=true]:shadow-[inset_0_0_0_1px_var(--border)] motion-reduce:transition-none'
     >
-        <IconTile hue={projectHue(template.id)}>{template.name.charAt(0).toUpperCase()}</IconTile>
-        <span className='min-w-0'>
-            <span className='block truncate font-medium text-foreground'>{template.name}</span>
-            <span className='block truncate text-xs text-subtle'>{template.description ?? template.slug}</span>
-        </span>
+        <span className='block truncate font-medium text-foreground'>{template.name}</span>
+        <span className='block truncate text-xs text-subtle'>{template.description ?? template.slug}</span>
     </button>
 );
 
