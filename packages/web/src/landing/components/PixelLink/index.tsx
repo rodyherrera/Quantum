@@ -20,9 +20,9 @@ type PixelLinkProps = {
     tone?: keyof typeof TONE;
     size?: keyof typeof SIZE;
     children: ReactNode;
-} & ({ to: string; href?: never; newTab?: never } | { href: string; newTab?: boolean; to?: never });
+} & ({ to: string; href?: never } | { href: string; to?: never });
 
-/* A square button with a pixel at each corner. href opens another site, in a new tab unless newTab is false. */
+/* A square button with a pixel at each corner. href opens another site in a new tab. */
 const PixelLink = ({ tone = 'ink', size = 'md', children, ...target }: PixelLinkProps) => {
     const className = cn(
         'relative inline-flex shrink-0 items-center justify-center gap-2 text-sm font-medium outline-none transition-colors',
@@ -38,12 +38,9 @@ const PixelLink = ({ tone = 'ink', size = 'md', children, ...target }: PixelLink
         </>
     );
 
-    if(target.href !== undefined){
-        return target.newTab === false
-            ? <a href={target.href} className={className}>{content}</a>
-            : <a href={target.href} target='_blank' rel='noreferrer' className={className}>{content}</a>;
-    }
-    return <Link to={target.to} className={className}>{content}</Link>;
+    return target.href !== undefined
+        ? <a href={target.href} target='_blank' rel='noreferrer' className={className}>{content}</a>
+        : <Link to={target.to} className={className}>{content}</Link>;
 };
 
 export default PixelLink;

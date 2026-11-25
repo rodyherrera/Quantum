@@ -270,8 +270,6 @@ docker compose -f docker-compose.landing.yml up -d --build   # LANDING_PORT, 506
 pnpm --filter web dev:landing                                  # locally
 ```
 
-Its **Log in** and **Sign up** go to `LANDING_DASHBOARD_URL`.
-
 ## Support
 
 Issues and pull requests are welcome. If Quantum is useful to you, you can
