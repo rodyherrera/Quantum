@@ -37,7 +37,8 @@ const ApplicationsHeader = ({
         title='Applications'
         actions={(
             <div className='flex'>
-                <Button size='sm' className='rounded-r-none!' onPress={onAddApplication}>
+                <Button size='sm' aria-label='New application' className='rounded-r-none!' onPress={onAddApplication}>
+                    <span className='sm:hidden'>New</span>
                     <span className='hidden sm:inline'>New application</span>
                 </Button>
 

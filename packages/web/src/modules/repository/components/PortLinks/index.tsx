@@ -4,7 +4,7 @@ import type { RepositoryPort } from '@quantum/contracts/modules/repository/domai
 
 interface PortLinkProps{
     host: string;
-    port: RepositoryPort;
+    port: Pick<RepositoryPort, 'internalPort' | 'externalPort'>;
 }
 
 export const PortLink = ({ host, port }: PortLinkProps) => {

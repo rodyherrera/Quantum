@@ -12,6 +12,8 @@ import StatusText from '@/shared/components/StatusText';
 import InlineError from '@/shared/components/InlineError';
 import InlineEdit from '@/shared/components/InlineEdit';
 import WorkspaceButton from '@/modules/codespace/components/WorkspaceButton';
+import { PortLink } from '@/modules/repository/components/PortLinks';
+import { usePublicHost } from '@/shared/hooks/use-public-host';
 import { useQuery } from '@/shared/hooks/api/use-query';
 import { usePolledQuery } from '@/shared/hooks/api/use-polled-query';
 import { useMutation } from '@/shared/hooks/api/use-mutation';
@@ -101,6 +103,7 @@ const InstallHeader = ({ install, isOperating, isRedeploying, redeployError, ren
 
 const InstallProperties = ({ install }: { install: TemplateInstall }) => {
     const { source } = install;
+    const host = usePublicHost();
     const published = install.services.flatMap((service) => service.ports.map((port) => ({ service: service.name, port })));
 
     return (
@@ -140,11 +143,11 @@ const InstallProperties = ({ install }: { install: TemplateInstall }) => {
                 </Property>
                 <Property label='Published'>
                     {published.length === 0 ? <span className='font-normal text-subtle'>None</span> : (
-                        <ul className='flex w-full min-w-0 flex-col gap-1 py-1.5'>
+                        <ul className='grid min-w-0 grid-cols-[minmax(0,max-content)_auto] items-center justify-items-start gap-x-2 gap-y-1 py-1.5'>
                             {published.map(({ service, port }) => (
-                                <li key={`${service}:${port.externalPort}`} className='flex min-w-0 items-baseline justify-between gap-2'>
-                                    <span className='truncate font-normal text-muted'>{service}</span>
-                                    <span className='shrink-0 font-mono text-xs font-normal'>:{port.externalPort} → {port.internalPort}</span>
+                                <li key={`${service}:${port.externalPort}`} className='contents'>
+                                    <span className='min-w-0 truncate font-normal text-muted'>{service}</span>
+                                    <PortLink host={host} port={port} />
                                 </li>
                             ))}
                         </ul>

@@ -1,10 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
-import { Terminal } from '@xterm/xterm';
-import { FitAddon } from '@xterm/addon-fit';
-import '@xterm/xterm/css/xterm.css';
 import { useChannel } from '@/shared/hooks/socket/use-channel';
-import { TERMINAL_THEME } from '@/shared/components/terminal/theme';
+import { mountTerminal } from '@/shared/components/terminal/mount';
 import TerminalFrame from '@/shared/components/terminal/TerminalFrame';
+import type { Terminal } from '@xterm/xterm';
 import type { ReactNode } from 'react';
 import type { ChannelApi, ChannelStatus } from '@/shared/contracts/channel';
 import type { TerminalExit } from '@quantum/contracts/modules/repository/gateway';
@@ -74,11 +72,7 @@ const ShellTerminal = ({ channelPath, joinPayload = {}, title = 'Shell', descrip
     useEffect(() => {
         if(!containerRef.current) return;
 
-        const term = new Terminal({ cursorBlink: true, convertEol: true, theme: TERMINAL_THEME });
-        const fitAddon = new FitAddon();
-        term.loadAddon(fitAddon);
-        term.open(containerRef.current);
-        fitAddon.fit();
+        const { term, unmount } = mountTerminal(containerRef.current, { cursorBlink: true, convertEol: true });
         terminalRef.current = term;
 
         const offData = term.onData((data) => {
@@ -91,15 +85,11 @@ const ShellTerminal = ({ channelPath, joinPayload = {}, title = 'Shell', descrip
             channelRef.current.send('terminal.resize', { cols, rows });
         });
 
-        const observer = new ResizeObserver(() => fitAddon.fit());
-        observer.observe(containerRef.current);
-
         return () => {
-            observer.disconnect();
             offData.dispose();
             offResize.dispose();
-            term.dispose();
             terminalRef.current = null;
+            unmount();
         };
     }, []);
 

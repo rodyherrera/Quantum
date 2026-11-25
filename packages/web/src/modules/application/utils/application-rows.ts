@@ -30,7 +30,7 @@ export interface RowGroup{
 }
 
 const installSubtitle = (install: TemplateInstall): string => {
-    if(install.source !== null) return `${install.source.owner}/${install.source.repo} @ ${install.source.branch}`;
+    if(install.source !== null) return `${install.source.owner}/${install.source.repo} · ${install.source.branch}`;
     return install.compose === null ? 'Template' : 'Docker Compose';
 };
 

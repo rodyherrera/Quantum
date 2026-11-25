@@ -116,8 +116,9 @@ const Codespaces = () => {
     }
 
     const newCodespace = (
-        <Button size='sm' isDisabled={projectId === null} onPress={() => setCreateOpen(true)}>
-            <span className='sr-only sm:not-sr-only'>New codespace</span>
+        <Button size='sm' aria-label='New codespace' isDisabled={projectId === null} onPress={() => setCreateOpen(true)}>
+            <span className='sm:hidden'>New</span>
+            <span className='hidden sm:inline'>New codespace</span>
         </Button>
     );
 
@@ -125,7 +126,7 @@ const Codespaces = () => {
         <>
             <PageBar title='Codespaces' actions={projects.error === undefined ? newCodespace : undefined}>
                 {projects.error === undefined ? (
-                    <div className='w-44 py-1 pl-1'>
+                    <div className='w-32 py-1 pl-1 sm:w-44'>
                         <EntitySelect
                             items={projects.data ?? []}
                             getKey={(project) => project.id}

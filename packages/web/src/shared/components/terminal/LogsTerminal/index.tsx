@@ -1,10 +1,8 @@
 import { useEffect, useRef } from 'react';
-import { Terminal } from '@xterm/xterm';
-import { FitAddon } from '@xterm/addon-fit';
-import '@xterm/xterm/css/xterm.css';
 import { useChannel } from '@/shared/hooks/socket/use-channel';
-import { TERMINAL_THEME } from '@/shared/components/terminal/theme';
+import { mountTerminal } from '@/shared/components/terminal/mount';
 import TerminalFrame from '@/shared/components/terminal/TerminalFrame';
+import type { Terminal } from '@xterm/xterm';
 import type { ReactNode } from 'react';
 import type { ChannelStatus } from '@/shared/contracts/channel';
 
@@ -46,28 +44,18 @@ const LogsTerminal = ({ channelPath, subscribePayload = {}, title = 'Logs', desc
     useEffect(() => {
         if(!containerRef.current) return;
 
-        const term = new Terminal({
+        const { term, unmount } = mountTerminal(containerRef.current, {
             convertEol: true,
             disableStdin: true,
             cursorBlink: false,
             cursorStyle: 'bar',
-            scrollback: SCROLLBACK,
-            theme: TERMINAL_THEME
+            scrollback: SCROLLBACK
         });
-
-        const fitAddon = new FitAddon();
-        term.loadAddon(fitAddon);
-        term.open(containerRef.current);
-        fitAddon.fit();
         terminalRef.current = term;
 
-        const observer = new ResizeObserver(() => fitAddon.fit());
-        observer.observe(containerRef.current);
-
         return () => {
-            observer.disconnect();
-            term.dispose();
             terminalRef.current = null;
+            unmount();
         };
     }, []);
 
