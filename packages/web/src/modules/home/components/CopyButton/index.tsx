@@ -25,10 +25,10 @@ const CopyButton = ({ value, label = 'Copy to clipboard' }: CopyButtonProps) => 
             variant='ghost'
             size='sm'
             aria-label={copied ? 'Copied' : label}
-            className='m-1.5 size-8 shrink-0 text-muted hover:text-foreground'
+            className='size-7 min-w-7 shrink-0 text-subtle hover:text-foreground'
             onPress={() => { void copy(); }}
         >
-            {copied ? <Check aria-hidden='true' className='size-4' /> : <Copy aria-hidden='true' className='size-4' />}
+            {copied ? <Check aria-hidden='true' className='text-success' /> : <Copy aria-hidden='true' />}
         </Button>
     );
 };
