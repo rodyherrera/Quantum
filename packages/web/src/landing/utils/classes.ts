@@ -10,10 +10,8 @@ export const MONO_LABEL = 'font-mono text-[0.6875rem] uppercase tracking-[0.16em
 
 export const MONO_TITLE = 'font-mono font-medium uppercase [text-wrap:balance]';
 
-export const LEDE = 'max-w-[56ch] text-[length:clamp(0.9375rem,1.6vw,1.0625rem)] leading-[1.6]';
 
 export const CARD = 'min-w-0 overflow-hidden border border-separator bg-surface';
 
 export const CARD_LABEL = 'flex items-center justify-between gap-2 border-b border-separator pl-3 text-xs text-subtle';
 
-export const MONO_CHIP = 'rounded-[0.3125rem] font-mono [&>svg]:size-3';
