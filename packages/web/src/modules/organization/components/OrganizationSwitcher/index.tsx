@@ -31,19 +31,14 @@ export const OrganizationTrigger = ({ name, loading, collapsed }: OrganizationTr
         size='sm'
         aria-haspopup='dialog'
         aria-label={`Organization: ${name ?? 'none'}`}
-        className={`h-8 w-full gap-2 px-1.5 font-semibold text-foreground ${collapsed ? 'justify-center' : 'justify-center lg:justify-start'}`}
+        className={`h-8 w-full gap-1.5 px-2 font-semibold text-foreground ${collapsed ? 'justify-center' : 'justify-center lg:justify-start'}`}
     >
-        <span aria-hidden='true' className='grid size-5 shrink-0 place-items-center rounded-[0.3125rem] bg-accent text-[0.6875rem] font-semibold uppercase text-accent-foreground'>
-            {(name ?? '?').slice(0, 1)}
-        </span>
         {!collapsed && (
-            <>
-                <span className='hidden min-w-0 flex-1 truncate text-left capitalize lg:inline'>
-                    {loading ? <Skeleton className='inline-block h-3 w-20' /> : name ?? 'No organization'}
-                </span>
-                <ChevronDown aria-hidden='true' className='hidden text-subtle lg:block' />
-            </>
+            <span className='hidden min-w-0 flex-1 truncate text-left capitalize lg:inline'>
+                {loading ? <Skeleton className='inline-block h-3 w-20' /> : name ?? 'No organization'}
+            </span>
         )}
+        <ChevronDown aria-hidden='true' className='shrink-0 text-subtle' />
     </Button>
 );
 

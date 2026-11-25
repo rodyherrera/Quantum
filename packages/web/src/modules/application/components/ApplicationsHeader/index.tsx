@@ -37,14 +37,14 @@ const ApplicationsHeader = ({
         title='Applications'
         actions={(
             <div className='flex'>
-                <Button size='sm' className='rounded-r-none' onPress={onAddApplication}>
+                <Button size='sm' className='rounded-r-none!' onPress={onAddApplication}>
                     <span className='hidden sm:inline'>New application</span>
                 </Button>
 
                 <Dropdown>
                     <Dropdown.Trigger
                         aria-label='More ways to deploy'
-                        className={cn(buttonVariants({ size: 'sm', isIconOnly: true }), 'rounded-l-none border-l border-accent-foreground/20')}
+                        className={cn(buttonVariants({ size: 'sm', isIconOnly: true }), 'rounded-l-none! border-l border-accent-foreground/20')}
                     >
                         <ChevronDown aria-hidden='true' />
                     </Dropdown.Trigger>
