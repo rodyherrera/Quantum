@@ -221,7 +221,7 @@ export default class ContainerOps{
 
     async #join(containerRef: string): Promise<void>{
         try{
-            const alias = await this.#reachedThroughEdge() ? undefined : internalHostname(this.container);
+            const alias = await this.#reachedThroughEdge(containerRef) ? undefined : internalHostname(this.container);
             await joinOrganizationNetwork(containerRef, this.container.organizationId, alias);
         }catch(error){
             logger.warn(
@@ -245,10 +245,15 @@ export default class ContainerOps{
         if(this.container.isRepositoryContainer) await ensureEdge(this.container);
     }
 
-    /* A repository app with published ports is reached through its edge, which also holds its hostname. */
-    async #reachedThroughEdge(): Promise<boolean>{
+    /*
+     * A repository app with published ports is reached through its edge, which also holds its hostname.
+     * One from before edges still publishes its own ports, and keeps its hostname until its next release.
+     */
+    async #reachedThroughEdge(containerRef: string): Promise<boolean>{
         if(!this.container.isRepositoryContainer) return false;
-        return (await PortBinding.countBy({ containerId: this.container.id })) > 0;
+        if((await PortBinding.countBy({ containerId: this.container.id })) === 0) return false;
+        const info = await this.#docker.getContainer(containerRef).inspect().catch(() => null);
+        return info === null || hostPortsOf(info).size === 0;
     }
 
     async #pullBaseImage(imageOverride?: string): Promise<void>{
