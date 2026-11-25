@@ -50,7 +50,6 @@
 
     --overlay-shadow: 0 0 0 1px rgb(15 15 30 / 0.06), 0 16px 40px rgb(20 20 45 / 0.14), 0 3px 10px rgb(20 20 45 / 0.07);
     --backdrop: rgb(22 22 34 / 0.26);
-    --glow: rgb(20 20 30 / 0.06);
 
     --bar: #d2d2d9;
     --bar-hover: #b6b7c0;
@@ -88,7 +87,6 @@
 
     --overlay-shadow: 0 0 0 1px rgb(255 255 255 / 0.03), 0 18px 48px rgb(0 0 0 / 0.55), 0 4px 12px rgb(0 0 0 / 0.35);
     --backdrop: rgb(3 3 5 / 0.62);
-    --glow: rgb(255 255 255 / 0.07);
 
     --bar: #37383f;
     --bar-hover: #50515a;

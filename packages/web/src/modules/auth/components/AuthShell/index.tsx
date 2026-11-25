@@ -1,4 +1,3 @@
-import QuantumMark from '@/shared/components/QuantumMark';
 import type { ReactNode } from 'react';
 
 interface AuthShellProps{
@@ -8,22 +7,11 @@ interface AuthShellProps{
 }
 
 const AuthShell = ({ title, description, children }: AuthShellProps) => (
-    <main className='screen-view relative grid min-h-dvh place-items-center overflow-hidden bg-background px-4 pb-28 pt-16 text-foreground'>
-        <div
-            aria-hidden='true'
-            className='pointer-events-none absolute inset-x-0 top-0 h-[32rem] bg-[radial-gradient(40%_60%_at_50%_0%,var(--glow),transparent)]'
-        />
-
-        <section className='relative flex w-full max-w-[21.25rem] flex-col gap-5'>
-            <header className='flex flex-col items-center gap-[1.125rem] text-center'>
-                <span className='grid size-11 place-items-center rounded-xl border border-border bg-surface-secondary shadow-[var(--overlay-shadow)]'>
-                    <QuantumMark className='size-6' />
-                </span>
-
-                <div className='flex flex-col gap-1.5'>
-                    <h1 className='text-[1.3125rem] font-semibold tracking-[-0.02em] text-foreground'>{title}</h1>
-                    {description !== undefined && <p className='text-muted'>{description}</p>}
-                </div>
+    <main className='screen-view grid min-h-dvh place-items-center bg-background px-4 pb-28 pt-16 text-foreground'>
+        <section className='flex w-full max-w-[21.25rem] flex-col gap-5'>
+            <header className='flex flex-col items-center gap-1.5 text-center'>
+                <h1 className='text-[1.3125rem] font-semibold tracking-[-0.02em] text-foreground'>{title}</h1>
+                {description !== undefined && <p className='text-muted'>{description}</p>}
             </header>
 
             {children}

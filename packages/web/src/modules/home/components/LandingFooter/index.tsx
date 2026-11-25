@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom';
-import QuantumMark from '@/shared/components/QuantumMark';
 import { GITHUB_URL, ISSUES_URL, LICENSE_URL, SUPPORT_URL } from '@/modules/home/utils/links';
 import { WRAP } from '@/modules/home/utils/classes';
 
@@ -14,10 +13,7 @@ const EXTERNAL = [
 const LandingFooter = () => (
     <footer className='border-t border-separator'>
         <div className={`${WRAP} flex min-h-16 flex-wrap items-center gap-x-6 gap-y-2 py-5 text-xs text-subtle`}>
-            <Link to='/' className='inline-flex items-center gap-2 font-semibold text-foreground'>
-                <QuantumMark className='size-4' />
-                Quantum
-            </Link>
+            <Link to='/' className='font-semibold text-foreground'>Quantum</Link>
 
             <a href={LICENSE_URL} target='_blank' rel='noreferrer' className={LINK}>MIT License</a>
 
