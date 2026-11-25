@@ -1,5 +1,6 @@
 import { PanelLeft } from 'lucide-react';
 import { useSidebarStore } from '@/shared/store/sidebar';
+import { iconButtonClass } from '@/shared/components/layout/sidebar-classes';
 
 const SidebarToggle = () => {
     const collapsed = useSidebarStore((state) => state.collapsed);
@@ -11,9 +12,9 @@ const SidebarToggle = () => {
             aria-label={collapsed ? 'Show navigation labels' : 'Collapse navigation'}
             aria-expanded={!collapsed}
             onClick={toggle}
-            className='hidden size-8 shrink-0 items-center justify-center rounded-md text-muted transition-colors hover:text-foreground focus-visible:outline-1 focus-visible:outline-offset-2 focus-visible:outline-foreground motion-reduce:transition-none lg:inline-flex'
+            className={`${iconButtonClass} hidden lg:inline-flex`}
         >
-            <PanelLeft className='size-4' aria-hidden='true' />
+            <PanelLeft className='size-[0.9375rem]' aria-hidden='true' />
         </button>
     );
 };

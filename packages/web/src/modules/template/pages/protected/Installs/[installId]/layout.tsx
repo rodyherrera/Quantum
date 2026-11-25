@@ -1,46 +1,87 @@
-import { NavLink, Outlet, useParams } from 'react-router-dom';
-import { DetailHeaderSkeleton } from '@/shared/components/skeletons';
+import { Outlet, useParams } from 'react-router-dom';
+import { DetailSkeleton } from '@/shared/components/skeletons';
 import { Button } from '@heroui/react';
-import { Play, RefreshCw, RotateCw, Square } from 'lucide-react';
-import PageBody from '@/shared/components/layout/PageBody';
+import {
+    Boxes,
+    CalendarDays,
+    FileCode,
+    GitBranch,
+    KeyRound,
+    Layers,
+    LayoutTemplate,
+    Play,
+    RefreshCw,
+    RotateCw,
+    ScrollText,
+    SlidersHorizontal,
+    Square,
+    SquareTerminal,
+    Zap
+} from 'lucide-react';
+import PageBar from '@/shared/components/layout/PageBar';
+import DetailView from '@/shared/components/detail/DetailView';
+import DetailHeader from '@/shared/components/detail/DetailHeader';
+import TabNav from '@/shared/components/detail/TabNav';
+import Property, { PropertyGroup } from '@/shared/components/detail/Property';
 import ErrorState from '@/shared/components/ErrorState';
+import CenterState from '@/shared/components/CenterState';
 import StatusDot from '@/shared/components/StatusDot';
 import InlineError from '@/shared/components/InlineError';
 import InlineEdit from '@/shared/components/InlineEdit';
+import GithubIcon from '@/shared/components/icons/GithubIcon';
+import IconTile from '@/modules/template/components/IconTile';
 import WorkspaceButton from '@/modules/codespace/components/WorkspaceButton';
 import { useQuery } from '@/shared/hooks/api/use-query';
 import { usePolledQuery } from '@/shared/hooks/api/use-polled-query';
 import { useMutation } from '@/shared/hooks/api/use-mutation';
 import { templateInstallApi } from '@/modules/template/api/api';
 import { installStatusColor, installStatusLabel, isInstallRunning, isInstallTransient } from '@/modules/template/utils/install-status';
+import { deployTriggerLabel } from '@/modules/template/utils/deploy-trigger';
 import { templateErrorMessages } from '@/modules/template/utils/error-messages';
+import { projectHue } from '@/modules/project/utils/project-hue';
 import { errorCopy } from '@/shared/utils/error-copy';
+import { formatDate } from '@/shared/utils/format-date';
+import type { LucideIcon } from 'lucide-react';
+import type { TabNavItem } from '@/shared/components/detail/TabNav';
 import type { TemplateInstall } from '@quantum/contracts/modules/template/domain';
 import type { TemplateInstallOperation } from '@quantum/contracts/modules/template/http';
 
 const copy = errorCopy(templateErrorMessages);
 
-const TABS = [
-    { label: 'Services', to: 'services' },
-    { label: 'Logs', to: 'logs' },
-    { label: 'Shell', to: 'shell' },
-    { label: 'Environment', to: 'environment' }
-] as const;
+/* Before the stack loads its project is unknown, so the trail stops at Applications. */
+const LOADING_TRAIL = [{ label: 'Applications', to: '/applications' }];
 
-const COMPOSE_TAB = { label: 'Compose', to: 'compose' } as const;
-const SETTINGS_TAB = { label: 'Settings', to: 'settings' } as const;
+const tabsFor = (install: TemplateInstall): TabNavItem[] => [
+    { label: 'Services', to: 'services', icon: Boxes, count: install.services.length },
+    { label: 'Logs', to: 'logs', icon: ScrollText },
+    { label: 'Shell', to: 'shell', icon: SquareTerminal },
+    { label: 'Environment', to: 'environment', icon: KeyRound },
+    ...(install.compose === null ? [] : [
+        { label: 'Compose', to: 'compose', icon: FileCode },
+        { label: 'Settings', to: 'settings', icon: SlidersHorizontal }
+    ])
+];
 
-const tabsFor = (install: TemplateInstall) => (install.compose === null ? TABS : [...TABS, COMPOSE_TAB, SETTINGS_TAB]);
+const kindIcon = (install: TemplateInstall): LucideIcon => (install.compose === null ? LayoutTemplate : Layers);
 
-const kindLabel = (install: TemplateInstall): string => {
-    if(install.source !== null) return `${install.source.owner}/${install.source.repo} @ ${install.source.branch}`;
-    return install.compose === null ? 'Template' : 'Docker Compose';
+const SourceLabel = ({ install }: { install: TemplateInstall }) => {
+    if(install.source !== null){
+        return (
+            <span className='inline-flex min-w-0 items-center gap-1.5'>
+                <GithubIcon className='size-3.5 text-subtle' />
+                <span className='truncate'>{install.source.owner}/{install.source.repo}</span>
+            </span>
+        );
+    }
+
+    const Icon = install.compose === null ? LayoutTemplate : FileCode;
+    return (
+        <span className='inline-flex items-center gap-1.5'>
+            <Icon aria-hidden='true' className='size-3.5 text-subtle' />
+            {install.compose === null ? 'Template' : 'Docker Compose'}
+        </span>
+    );
 };
-
-const tabClass = (active: boolean): string =>
-    `label-caps -mb-px shrink-0 whitespace-nowrap border-b pb-3.5 transition-colors focus-visible:outline-1 focus-visible:outline-offset-4 focus-visible:outline-foreground motion-reduce:transition-none ${
-        active ? 'border-foreground text-foreground' : 'border-transparent text-muted hover:text-foreground'
-    }`;
 
 interface InstallHeaderProps{
     install: TemplateInstall;
@@ -57,58 +98,135 @@ const InstallHeader = ({ install, isOperating, isRedeploying, redeployError, ren
     const running = isInstallRunning(install.status);
     const busy = isOperating || isInstallTransient(install.status);
     const published = install.services.filter((service) => service.ports.length > 0).length;
+    const KindIcon = kindIcon(install);
 
     return (
-        <header className='flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between'>
-            <div className='min-w-0'>
-                <p className='label-caps flex items-center gap-2 text-muted'>
-                    <NavLink to={`/applications?project=${install.projectId}`} className='transition-colors hover:text-foreground motion-reduce:transition-none'>
-                        Applications
-                    </NavLink>
-                    <span aria-hidden='true'>/</span>
-                    <span className='truncate text-foreground/70'>{install.name}</span>
-                </p>
-
-                <h1 className='mt-4'>
-                    <InlineEdit value={install.name} ariaLabel='Stack name' onCommit={onRename} className='title-display text-[2.125rem] leading-[1.1] text-foreground' />
-                </h1>
-                {renameError !== undefined && <InlineError className='mt-2'>{copy(renameError)}</InlineError>}
-
-                <div className='mt-3 flex flex-wrap items-center gap-x-3 gap-y-1.5 text-sm text-muted'>
+        <DetailHeader
+            icon={<IconTile hue={projectHue(install.projectId)}><KindIcon /></IconTile>}
+            title={(
+                <InlineEdit
+                    value={install.name}
+                    ariaLabel='Stack name'
+                    onCommit={onRename}
+                    className='-mx-1 rounded px-1 transition-colors hover:bg-default focus-visible:ring-1 focus-visible:ring-accent motion-reduce:transition-none'
+                />
+            )}
+            error={renameError !== undefined ? <InlineError>{copy(renameError)}</InlineError> : undefined}
+            meta={(
+                <>
                     <StatusDot
                         color={installStatusColor(install.status)}
                         label={installStatusLabel(install.status)}
                         isTransient={isInstallTransient(install.status)}
                     />
+                    <SourceLabel install={install} />
+                    {install.source !== null && (
+                        <span className='inline-flex items-center gap-1.5'>
+                            <GitBranch aria-hidden='true' className='size-3.5 text-subtle' />
+                            <span className='font-mono text-xs'>{install.source.branch}</span>
+                        </span>
+                    )}
                     <span>
-                        · {kindLabel(install)} · {install.services.length} {install.services.length === 1 ? 'service' : 'services'} · {published} published
+                        {install.services.length} {install.services.length === 1 ? 'service' : 'services'} · {published} published
                     </span>
-                </div>
-            </div>
+                </>
+            )}
+            actions={(
+                <>
+                    <div className='flex flex-wrap items-start gap-1.5'>
+                        <WorkspaceButton target={{ kind: 'install', id: install.id }} />
+                        <Button variant='secondary' isDisabled={running || busy} onPress={() => onOperate('start')}>
+                            <Play aria-hidden='true' />
+                            Start
+                        </Button>
+                        <Button variant='secondary' isDisabled={!running || busy} onPress={() => onOperate('stop')}>
+                            <Square aria-hidden='true' />
+                            Stop
+                        </Button>
+                        <Button variant='secondary' isDisabled={busy} onPress={() => onOperate('restart')}>
+                            <RotateCw aria-hidden='true' />
+                            Restart
+                        </Button>
+                        <Button isDisabled={busy} isPending={isRedeploying} onPress={onRedeploy}>
+                            <RefreshCw aria-hidden='true' />
+                            Redeploy
+                        </Button>
+                    </div>
+                    {redeployError !== undefined && <InlineError>{copy(redeployError)}</InlineError>}
+                </>
+            )}
+        />
+    );
+};
 
-            <div className='flex shrink-0 flex-col gap-2 lg:items-end'>
-                <div className='flex flex-wrap gap-2'>
-                    <WorkspaceButton target={{ kind: 'install', id: install.id }} />
-                    <Button variant='secondary' isDisabled={running || busy} onPress={() => onOperate('start')}>
-                        <Play aria-hidden='true' className='size-4' />
-                        Start
-                    </Button>
-                    <Button variant='secondary' isDisabled={!running || busy} onPress={() => onOperate('stop')}>
-                        <Square aria-hidden='true' className='size-4' />
-                        Stop
-                    </Button>
-                    <Button variant='secondary' isDisabled={busy} onPress={() => onOperate('restart')}>
-                        <RotateCw aria-hidden='true' className='size-4' />
-                        Restart
-                    </Button>
-                    <Button variant='secondary' isDisabled={busy} isPending={isRedeploying} onPress={onRedeploy}>
-                        <RefreshCw aria-hidden='true' className='size-4' />
-                        Redeploy
-                    </Button>
-                </div>
-                {redeployError !== undefined && <InlineError>{copy(redeployError)}</InlineError>}
-            </div>
-        </header>
+const InstallProperties = ({ install }: { install: TemplateInstall }) => {
+    const { source } = install;
+    const published = install.services.flatMap((service) => service.ports.map((port) => ({ service: service.name, port })));
+
+    return (
+        <>
+            <PropertyGroup title='Properties'>
+                <Property label='Status'>
+                    <StatusDot
+                        color={installStatusColor(install.status)}
+                        label={installStatusLabel(install.status)}
+                        isTransient={isInstallTransient(install.status)}
+                    />
+                </Property>
+                <Property label='Source'>
+                    {source === null ? <SourceLabel install={install} /> : (
+                        <a
+                            href={`https://github.com/${source.owner}/${source.repo}`}
+                            target='_blank'
+                            rel='noreferrer'
+                            className='flex min-w-0 items-center gap-1.5 hover:underline'
+                        >
+                            <GithubIcon className='size-3.5 shrink-0 text-subtle' />
+                            <span className='truncate'>{source.owner}/{source.repo}</span>
+                        </a>
+                    )}
+                </Property>
+                {source !== null && (
+                    <>
+                        <Property label='Branch'>
+                            <GitBranch aria-hidden='true' />
+                            <span className='truncate font-mono text-xs font-normal'>{source.branch}</span>
+                        </Property>
+                        <Property label='Compose file'>
+                            <FileCode aria-hidden='true' />
+                            <span className='truncate font-mono text-xs font-normal'>{source.composePath}</span>
+                        </Property>
+                        <Property label='Deploy on'>
+                            <Zap aria-hidden='true' />
+                            <span className='truncate'>{deployTriggerLabel(source.deployOn, source.branch)}</span>
+                        </Property>
+                    </>
+                )}
+                <Property label='Created'>
+                    <CalendarDays aria-hidden='true' />
+                    <time dateTime={install.createdAt} className='truncate'>{formatDate(install.createdAt)}</time>
+                </Property>
+            </PropertyGroup>
+
+            <PropertyGroup title='Network'>
+                <Property label='Services'>
+                    <Boxes aria-hidden='true' />
+                    {install.services.length}
+                </Property>
+                <Property label='Published'>
+                    {published.length === 0 ? <span className='font-normal text-subtle'>None</span> : (
+                        <ul className='flex w-full min-w-0 flex-col gap-1 py-1.5'>
+                            {published.map(({ service, port }) => (
+                                <li key={`${service}:${port.externalPort}`} className='flex min-w-0 items-baseline justify-between gap-2'>
+                                    <span className='truncate font-normal text-muted'>{service}</span>
+                                    <span className='shrink-0 font-mono text-xs font-normal'>:{port.externalPort} → {port.internalPort}</span>
+                                </li>
+                            ))}
+                        </ul>
+                    )}
+                </Property>
+            </PropertyGroup>
+        </>
     );
 };
 
@@ -132,47 +250,53 @@ const InstallLayout = () => {
 
     if(install.loading){
         return (
-            <PageBody width='wide' height='full'>
-                <DetailHeaderSkeleton actions={5} tabs={4} />
-            </PageBody>
+            <>
+                <PageBar title='Stack' icon={Layers} trail={LOADING_TRAIL} />
+                <DetailSkeleton actions={5} tabs={4} />
+            </>
         );
     }
 
     if(install.error !== undefined){
         return (
-            <PageBody width='wide'>
-                <ErrorState title='Could not load the install' description={copy(install.error)} onRetry={install.reload} />
-            </PageBody>
+            <>
+                <PageBar title='Stack' icon={Layers} trail={LOADING_TRAIL} />
+                <CenterState>
+                    <ErrorState title='Could not load the install' description={copy(install.error)} onRetry={install.reload} />
+                </CenterState>
+            </>
         );
     }
 
     if(install.data === null || id === undefined) return null;
 
     return (
-        <PageBody width='wide' height='full'>
-            <InstallHeader
-                install={install.data}
-                isOperating={operate.loading}
-                isRedeploying={redeploy.loading}
-                redeployError={redeploy.error}
-                renameError={rename.error}
-                onOperate={(operation) => { void operate.run(id, operation).catch(() => undefined); }}
-                onRedeploy={() => { void redeploy.run(id).catch(() => undefined); }}
-                onRename={(name) => rename.run(id, name)}
+        <>
+            <PageBar
+                title={install.data.name}
+                icon={kindIcon(install.data)}
+                trail={[{ label: 'Applications', to: `/applications?project=${install.data.projectId}` }]}
             />
 
-            <nav aria-label='Install' className='mt-8 flex shrink-0 gap-8 overflow-x-auto border-b border-border'>
-                {tabsFor(install.data).map((tab) => (
-                    <NavLink key={tab.to} to={tab.to} className={({ isActive }) => tabClass(isActive)}>
-                        {tab.label}
-                    </NavLink>
-                ))}
-            </nav>
-
-            <div className='flex min-h-0 flex-1 flex-col pt-8'>
+            <DetailView
+                header={(
+                    <InstallHeader
+                        install={install.data}
+                        isOperating={operate.loading}
+                        isRedeploying={redeploy.loading}
+                        redeployError={redeploy.error}
+                        renameError={rename.error}
+                        onOperate={(operation) => { void operate.run(id, operation).catch(() => undefined); }}
+                        onRedeploy={() => { void redeploy.run(id).catch(() => undefined); }}
+                        onRename={(name) => rename.run(id, name)}
+                    />
+                )}
+                tabs={<TabNav label='Install' items={tabsFor(install.data)} />}
+                rail={<InstallProperties install={install.data} />}
+            >
                 <Outlet context={install.data} />
-            </div>
-        </PageBody>
+            </DetailView>
+        </>
     );
 };
 

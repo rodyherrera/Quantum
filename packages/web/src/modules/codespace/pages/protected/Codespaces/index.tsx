@@ -1,14 +1,15 @@
 import { useState, useMemo } from 'react';
 import { PageSkeleton, TableSkeleton } from '@/shared/components/skeletons';
 import { useRememberedSelection } from '@/shared/hooks/use-remembered-selection';
-import { Button, Table } from '@heroui/react';
-import { Plus, Terminal } from 'lucide-react';
+import { Button } from '@heroui/react';
+import { Code2, Plus, Trash2 } from 'lucide-react';
+import PageBar from '@/shared/components/layout/PageBar';
 import PageBody from '@/shared/components/layout/PageBody';
-import PageHeader from '@/shared/components/layout/PageHeader';
+import ListRow from '@/shared/components/list/ListRow';
 import ListPageShell from '@/shared/components/ListPageShell';
 import DeleteConfirmDialog from '@/shared/components/DeleteConfirmDialog';
 import EntitySelect from '@/shared/components/EntitySelect';
-import CodespaceStatusChip from '@/modules/codespace/components/CodespaceStatus';
+import CodespaceStatus from '@/modules/codespace/components/CodespaceStatus';
 import CreateCodespaceDialog from '@/modules/codespace/components/CreateCodespaceDialog';
 import CodespaceAccessDialog from '@/modules/codespace/components/CodespaceAccessDialog';
 import { useQuery } from '@/shared/hooks/api/use-query';
@@ -20,27 +21,16 @@ import { useCurrentOrganizationId } from '@/modules/organization/hooks/use-curre
 import { isCodespaceTransient } from '@/modules/codespace/utils/status';
 import { codespaceErrorMessages } from '@/modules/codespace/utils/error-messages';
 import { errorCopy } from '@/shared/utils/error-copy';
+import { formatBytes } from '@/shared/utils/format-bytes';
+import { formatDate, formatDay } from '@/shared/utils/format-date';
 import type { Codespace } from '@quantum/contracts/modules/codespace/domain';
 
 const copy = errorCopy(codespaceErrorMessages);
 
-interface CodespacesHeaderProps{
-    canAdd: boolean;
-    onAdd: () => void;
-}
+const COLUMNS = 'grid-cols-[1rem_minmax(0,1fr)_auto_auto] md:grid-cols-[1rem_minmax(0,1fr)_7.5rem_minmax(0,14rem)_3.5rem_auto]';
 
-const CodespacesHeader = ({ canAdd, onAdd }: CodespacesHeaderProps) => (
-    <PageHeader
-        title='Codespaces'
-        description='Cloud dev environments for a project.'
-        actions={(
-            <Button isDisabled={!canAdd} onPress={onAdd}>
-                <Plus aria-hidden='true' className='size-4' />
-                New codespace
-            </Button>
-        )}
-    />
-);
+const resourcesOf = (codespace: Codespace): string =>
+    `${codespace.cpuCores} CPU · ${formatBytes(codespace.memoryMb * 1024 * 1024)} memory · ${codespace.diskGb} GB disk`;
 
 interface DeleteCodespaceDialogProps{
     codespace: Codespace | null;
@@ -63,46 +53,40 @@ const DeleteCodespaceDialog = ({ codespace, onClose, onRemoved }: DeleteCodespac
     />
 );
 
-interface CodespacesTableProps{
-    codespaces: Codespace[];
+interface CodespaceRowProps{
+    codespace: Codespace;
     onAccess: (codespace: Codespace) => void;
     onDelete: (codespace: Codespace) => void;
 }
 
-const CodespacesTable = ({ codespaces, onAccess, onDelete }: CodespacesTableProps) => (
-    <Table>
-        <Table.ScrollContainer>
-            <Table.Content aria-label='Codespaces'>
-                <Table.Header>
-                    <Table.Column isRowHeader>Name</Table.Column>
-                    <Table.Column>Status</Table.Column>
-                    <Table.Column><span className='sr-only'>Actions</span></Table.Column>
-                </Table.Header>
+const CodespaceRow = ({ codespace, onAccess, onDelete }: CodespaceRowProps) => (
+    <ListRow className={COLUMNS}>
+        <Code2 aria-hidden='true' className='size-[0.9375rem] text-subtle' />
 
-                <Table.Body>
-                    {codespaces.map((codespace) => (
-                        <Table.Row key={codespace.id}>
-                            <Table.Cell><span className='font-medium text-foreground'>{codespace.name}</span></Table.Cell>
-                            <Table.Cell><CodespaceStatusChip status={codespace.status} /></Table.Cell>
-                            <Table.Cell>
-                                <div className='flex justify-end gap-2'>
-                                    <Button
-                                        size='sm'
-                                        variant='secondary'
-                                        isDisabled={isCodespaceTransient(codespace.status)}
-                                        onPress={() => onAccess(codespace)}
-                                    >
-                                        Access
-                                    </Button>
-                                    <Button size='sm' variant='danger-soft' onPress={() => onDelete(codespace)}>Delete</Button>
-                                </div>
-                            </Table.Cell>
-                        </Table.Row>
-                    ))}
-                </Table.Body>
-            </Table.Content>
-        </Table.ScrollContainer>
-    </Table>
+        <span className='min-w-0 truncate'>
+            <span className='font-medium text-foreground'>{codespace.name}</span>
+            <span className='ml-2 hidden text-subtle sm:inline'>{resourcesOf(codespace)}</span>
+        </span>
+
+        <CodespaceStatus status={codespace.status} />
+
+        <span title={codespace.accessUrl ?? undefined} className='hidden truncate font-mono text-xs text-muted md:block'>
+            {codespace.accessUrl ?? '—'}
+        </span>
+
+        <time dateTime={codespace.createdAt} title={formatDate(codespace.createdAt)} className='hidden text-right text-xs tabular-nums text-subtle md:block'>
+            {formatDay(codespace.createdAt)}
+        </time>
+
+        <span className='flex items-center justify-end gap-1'>
+            <Button size='sm' variant='secondary' isDisabled={isCodespaceTransient(codespace.status)} onPress={() => onAccess(codespace)}>
+                Access
+            </Button>
+            <Button isIconOnly size='sm' variant='ghost' aria-label={`Delete ${codespace.name}`} onPress={() => onDelete(codespace)}>
+                <Trash2 aria-hidden='true' />
+            </Button>
+        </span>
+    </ListRow>
 );
 
 const Codespaces = () => {
@@ -128,72 +112,69 @@ const Codespaces = () => {
     const [accessTarget, setAccessTarget] = useState<Codespace | null>(null);
     const [deleteTarget, setDeleteTarget] = useState<Codespace | null>(null);
 
-    if(organizationId === null || projects.loading || projects.error !== undefined){
-        return (
-            <ListPageShell
-                bare
-                loading={organizationId === null || projects.loading}
-                skeleton={<PageSkeleton actions={1} columns={3} />}
-                error={organizationId === null ? undefined : projects.error}
-                errorTitle='Could not load projects'
-                getErrorDescription={copy}
-                onRetry={projects.refresh}
-            />
-        );
+    if(organizationId === null || projects.loading){
+        return <PageSkeleton actions={1} columns={3} />;
     }
 
-    const projectItems = projects.data ?? [];
+    const newCodespace = (
+        <Button size='sm' isDisabled={projectId === null} onPress={() => setCreateOpen(true)}>
+            <Plus aria-hidden='true' />
+            <span className='sr-only sm:not-sr-only'>New codespace</span>
+        </Button>
+    );
 
     return (
-        <PageBody width='wide' height='full'>
-            <CodespacesHeader canAdd={projectId !== null} onAdd={() => setCreateOpen(true)} />
+        <>
+            <PageBar title='Codespaces' icon={Code2} actions={projects.error === undefined ? newCodespace : undefined}>
+                {projects.error === undefined ? (
+                    <div className='w-44 py-1 pl-1'>
+                        <EntitySelect
+                            items={projects.data ?? []}
+                            getKey={(project) => project.id}
+                            getLabel={(project) => project.name}
+                            value={projectId}
+                            onChange={(key) => setProjectId(Number(key))}
+                            placeholder='Select a project'
+                            ariaLabel='Project'
+                        />
+                    </div>
+                ) : undefined}
+            </PageBar>
 
-            <div className='mt-6 max-w-sm'>
-                <EntitySelect
-                    items={projectItems}
-                    getKey={(project) => project.id}
-                    getLabel={(project) => project.name}
-                    value={projectId}
-                    onChange={(key) => setProjectId(Number(key))}
-                    placeholder='Select a project'
-                    ariaLabel='Project'
-                />
-            </div>
-
-            <div className='mt-6 flex flex-1 flex-col'>
+            <PageBody variant='flush' fill>
                 <ListPageShell
-                    loading={codespaces.loading}
+                    loading={projects.error === undefined && codespaces.loading}
                     skeleton={<TableSkeleton columns={3} />}
-                    error={codespaces.error}
-                    errorTitle='Could not load codespaces'
+                    error={projects.error ?? codespaces.error}
+                    errorTitle={projects.error === undefined ? 'Could not load codespaces' : 'Could not load projects'}
                     getErrorDescription={copy}
-                    onRetry={codespaces.reload}
-                    showPrompt={projectId === null}
+                    onRetry={projects.error === undefined ? codespaces.reload : projects.refresh}
+                    showPrompt={projects.error === undefined && projectId === null}
                     prompt={{
-                        icon: Terminal,
+                        icon: Code2,
                         title: 'Select a project',
-                        description: 'Choose one of your projects above to view and manage its codespaces.'
+                        description: 'Pick one of your projects to see its codespaces.'
                     }}
                     isEmpty={(codespaces.data ?? []).length === 0}
                     empty={{
-                        icon: Terminal,
+                        icon: Code2,
                         title: 'No codespaces yet',
-                        description: 'This project has no codespaces. Create one to get a cloud dev environment.',
+                        description: 'Create one to get a cloud dev environment for this project.',
                         action: (
                             <Button onPress={() => setCreateOpen(true)}>
-                                <Plus aria-hidden='true' className='size-4' />
+                                <Plus aria-hidden='true' />
                                 New codespace
                             </Button>
                         )
                     }}
                 >
-                    <CodespacesTable
-                        codespaces={codespaces.data ?? []}
-                        onAccess={setAccessTarget}
-                        onDelete={setDeleteTarget}
-                    />
+                    <div>
+                        {(codespaces.data ?? []).map((codespace) => (
+                            <CodespaceRow key={codespace.id} codespace={codespace} onAccess={setAccessTarget} onDelete={setDeleteTarget} />
+                        ))}
+                    </div>
                 </ListPageShell>
-            </div>
+            </PageBody>
 
             {projectId !== null && (
                 <CreateCodespaceDialog
@@ -215,7 +196,7 @@ const Codespaces = () => {
                 onClose={() => setDeleteTarget(null)}
                 onRemoved={codespaces.reload}
             />
-        </PageBody>
+        </>
     );
 };
 

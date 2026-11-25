@@ -1,11 +1,12 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { MemoryRouter } from 'react-router-dom';
+import { useThemeStore } from '@/shared/store/theme';
 import { useMirroredStyles } from '@/modules/home/hooks/use-mirrored-styles';
 import type { ReactNode } from 'react';
 import type { Root } from 'react-dom/client';
 
-const SHEET_DOCUMENT = '<!doctype html><html><head><style>html,body{height:100%;margin:0;overflow:hidden}</style></head><body class="dark bg-background font-sans text-foreground antialiased"></body></html>';
+const SHEET_DOCUMENT = '<!doctype html><html><head><style>html,body{height:100%;margin:0;overflow:hidden}</style></head><body class="bg-canvas font-sans text-foreground antialiased"></body></html>';
 
 interface Layout{
     width: number;
@@ -17,16 +18,23 @@ interface LandingSheetProps{
     width: number;
     height: number;
     path: string;
-    isLive?: boolean;
     children: ReactNode;
 }
 
-const LandingSheet = ({ title, width, height, path, isLive = false, children }: LandingSheetProps) => {
+const LandingSheet = ({ title, width, height, path, children }: LandingSheetProps) => {
     const frame = useRef<HTMLDivElement>(null);
     const [layout, setLayout] = useState<Layout>({ width, scale: 0 });
     const [sheet, setSheet] = useState<Document | null>(null);
     const [root, setRoot] = useState<Root | null>(null);
+    const theme = useThemeStore((state) => state.theme);
     useMirroredStyles(sheet);
+
+    useEffect(() => {
+        if(sheet === null) return;
+
+        sheet.documentElement.classList.toggle('dark', theme === 'dark');
+        sheet.documentElement.dataset.theme = theme;
+    }, [sheet, theme]);
 
     useLayoutEffect(() => {
         const node = frame.current;
@@ -74,11 +82,11 @@ const LandingSheet = ({ title, width, height, path, isLive = false, children }: 
         <div ref={frame} className='relative w-full overflow-hidden' style={{ aspectRatio: `${width} / ${height}` }}>
             <iframe
                 title={title}
-                aria-hidden={isLive ? undefined : true}
-                tabIndex={isLive ? undefined : -1}
+                aria-hidden='true'
+                tabIndex={-1}
                 srcDoc={SHEET_DOCUMENT}
                 onLoad={(event) => setSheet(event.currentTarget.contentDocument)}
-                className={`absolute left-0 top-0 block origin-top-left border-0 bg-black ${isLive ? '' : 'pointer-events-none'} ${layout.scale === 0 || root === null ? 'invisible' : ''}`}
+                className={`absolute left-0 top-0 block origin-top-left border-0 bg-canvas pointer-events-none ${layout.scale === 0 || root === null ? 'invisible' : ''}`}
                 style={{ width: layout.width, height: (height * layout.width) / width, transform: `scale(${layout.scale || 1})` }}
             />
         </div>

@@ -1,72 +1,34 @@
 import { Link } from 'react-router-dom';
+import QuantumMark from '@/shared/components/QuantumMark';
 import { GITHUB_URL, ISSUES_URL, LICENSE_URL, SUPPORT_URL } from '@/modules/home/utils/links';
-import { order } from '@/modules/home/utils/order';
-import type { To } from 'react-router-dom';
+import { WRAP } from '@/modules/home/utils/classes';
 
-type FooterLink =
-    | { label: string; to: To }
-    | { label: string; href: string };
+const LINK = 'transition-colors hover:text-foreground motion-reduce:transition-none';
 
-const COLUMNS: { heading: string; links: FooterLink[] }[] = [
-    {
-        heading: 'Product',
-        links: [
-            { label: 'Deploy', to: { pathname: '/', hash: 'deploy' } },
-            { label: 'Operate', to: { pathname: '/', hash: 'operate' } },
-            { label: 'Self-host', to: { pathname: '/', hash: 'self-host' } }
-        ]
-    },
-    {
-        heading: 'Guide',
-        links: [
-            { label: 'Get started', to: '/get-started' },
-            { label: 'What you need', to: { pathname: '/get-started', hash: 'requirements' } },
-            { label: 'Troubleshooting', to: { pathname: '/get-started', hash: 'troubleshooting' } }
-        ]
-    },
-    {
-        heading: 'Project',
-        links: [
-            { label: 'GitHub', href: GITHUB_URL },
-            { label: 'Issues', href: ISSUES_URL },
-            { label: 'MIT License', href: LICENSE_URL },
-            { label: 'Buy me a coffee', href: SUPPORT_URL }
-        ]
-    }
+const EXTERNAL = [
+    { label: 'GitHub', href: GITHUB_URL },
+    { label: 'Issues', href: ISSUES_URL },
+    { label: 'Buy me a coffee', href: SUPPORT_URL }
 ];
 
-const WORDMARK = [...'QUANTUM'];
-
 const LandingFooter = () => (
-    <footer className='lp-rule @container overflow-hidden'>
-        <div className='lp-wrap grid gap-14 pb-14 pt-[clamp(56px,6vw,96px)] md:grid-cols-12 md:gap-6'>
-            <div className='flex flex-col gap-4 md:col-span-5'>
-                <Link to='/' className='wordmark w-fit text-white'>Quantum</Link>
-                <p className='lp-body max-w-[36ch]'>A self-hosted platform for your repositories, databases, templates and Compose stacks.</p>
-            </div>
+    <footer className='mt-15 border-t border-separator'>
+        <div className={`${WRAP} flex min-h-16 flex-wrap items-center gap-x-5 gap-y-2 py-4 text-xs text-subtle`}>
+            <Link to='/' className='inline-flex items-center gap-2 font-semibold text-foreground'>
+                <QuantumMark className='size-4' />
+                Quantum
+            </Link>
 
-            <nav aria-label='Footer' className='grid grid-cols-2 gap-10 sm:grid-cols-3 md:col-span-7'>
-                {COLUMNS.map((column) => (
-                    <div key={column.heading} className='flex flex-col gap-3.5'>
-                        <p className='label-caps lp-faint mb-1'>{column.heading}</p>
+            <a href={LICENSE_URL} target='_blank' rel='noreferrer' className={LINK}>MIT License</a>
 
-                        {column.links.map((link) => 'href' in link ? (
-                            <a key={link.label} href={link.href} target='_blank' rel='noreferrer' className='lp-link w-fit text-[0.9375rem]'>{link.label}</a>
-                        ) : (
-                            <Link key={link.label} to={link.to} className='lp-link w-fit text-[0.9375rem]'>{link.label}</Link>
-                        ))}
-                    </div>
+            <nav aria-label='Footer' className='flex flex-wrap items-center gap-x-5 gap-y-2 sm:ms-auto'>
+                <Link to='/get-started' className={LINK}>Self-host guide</Link>
+                <Link to={{ pathname: '/get-started', hash: 'troubleshooting' }} className={LINK}>Troubleshooting</Link>
+
+                {EXTERNAL.map((link) => (
+                    <a key={link.href} href={link.href} target='_blank' rel='noreferrer' className={LINK}>{link.label}</a>
                 ))}
             </nav>
-        </div>
-
-        <div className='lp-wrap flex flex-wrap items-center justify-between gap-4 border-t border-[var(--lp-line)] py-6'>
-            <span className='label-caps lp-faint'>© {new Date().getFullYear()} Quantum · MIT License</span>
-            <span className='label-caps lp-faint'>Self-hosted · Open source</span>
-        </div>
-
-        <div aria-hidden='true' className='lp-wordmark lp-reveal px-[var(--lp-gutter)] pb-[clamp(16px,2vw,32px)] pt-6'>
-            {WORDMARK.map((letter, index) => <span key={index} style={order(index)}>{letter}</span>)}
         </div>
     </footer>
 );

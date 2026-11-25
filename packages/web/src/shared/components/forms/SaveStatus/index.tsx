@@ -27,7 +27,7 @@ interface SaveStatusProps{
 const SaveStatus = ({ state, className = '' }: SaveStatusProps) => (
     <span
         aria-live='polite'
-        className={`label-caps flex items-center gap-2 ${state === 'error' ? 'text-danger' : 'text-muted'} ${className}`}
+        className={`flex items-center gap-1.5 text-xs ${state === 'error' ? 'text-danger' : 'text-subtle'} ${className}`}
     >
         {ICON[state]}
         {LABEL[state]}

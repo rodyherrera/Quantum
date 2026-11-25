@@ -1,12 +1,11 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { act } from 'react';
 import { createRoot } from 'react-dom/client';
+import { MemoryRouter } from 'react-router-dom';
 import CreateRepository from '@/modules/repository/pages/protected/Repositories/Create';
 import { githubApi } from '@/modules/github/api/api';
 import type { Root } from 'react-dom/client';
 import type { GithubAccount, GithubRepository } from '@quantum/contracts/modules/github/domain';
-
-vi.mock('react-router-dom', () => ({ useNavigate: () => () => undefined }));
 
 const repository = (fullName: string, isPrivate = false): GithubRepository => ({
     name: fullName.split('/')[1],
@@ -35,7 +34,7 @@ const render = async () => {
     container = document.createElement('div');
     document.body.appendChild(container);
     root = createRoot(container);
-    await act(async () => { root?.render(<CreateRepository />); });
+    await act(async () => { root?.render(<MemoryRouter><CreateRepository /></MemoryRouter>); });
     for(let i = 0; i < 12; i += 1) await act(async () => undefined);
 };
 

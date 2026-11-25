@@ -1,6 +1,7 @@
 import { useRef } from 'react';
 import { FieldsSkeleton } from '@/shared/components/skeletons';
 import { useOutletContext, useParams } from 'react-router-dom';
+import PageBody from '@/shared/components/layout/PageBody';
 import ErrorState from '@/shared/components/ErrorState';
 import CenterState from '@/shared/components/CenterState';
 import EnvironmentVariablesEditor from '@/shared/components/EnvironmentVariablesEditor';
@@ -20,12 +21,12 @@ const InstallEnvironment = () => {
     const overrides = useRef<ServiceEnvironment>(install.environment);
 
     if(id === undefined || environment.loading){
-        return <FieldsSkeleton rows={4} />;
+        return <PageBody><FieldsSkeleton rows={4} /></PageBody>;
     }
 
     if(environment.error !== undefined || environment.data === null){
         return (
-            <CenterState className='h-full'>
+            <CenterState className='flex-1 py-10'>
                 <ErrorState
                     title='Could not load environment variables'
                     description={copy(environment.error ?? 'TemplateInstall::NotFound')}
@@ -42,8 +43,8 @@ const InstallEnvironment = () => {
     };
 
     return (
-        <div className='flex flex-col gap-10'>
-            <p className='max-w-[58ch] text-[0.8125rem] text-muted'>
+        <PageBody className='flex flex-col gap-5'>
+            <p className='max-w-[60ch] text-muted'>
                 One set of variables per service. Changes are saved automatically and applied the next time the
                 services are redeployed.
             </p>
@@ -60,7 +61,7 @@ const InstallEnvironment = () => {
                     fills={false}
                 />
             ))}
-        </div>
+        </PageBody>
     );
 };
 

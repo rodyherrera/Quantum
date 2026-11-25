@@ -29,12 +29,12 @@ const CreateProjectDialog = ({ organizationId, isOpen, onClose, onCreated }: Cre
             isOpen={isOpen}
             onOpenChange={(open) => { if(!open && !form.submitting) onClose(false); }}
             title='New project'
-            description='Create a project to group related deployments.'
+            description='Projects group related applications.'
             form={form}
             fieldName='name'
-            fieldLabel='Name'
-            fieldPlaceholder='my-awesome-project'
-            submitLabel='Create'
+            fieldLabel='Project name'
+            fieldPlaceholder='Marketing'
+            submitLabel='Create project'
             submitDisabled={!form.isValid}
             onCancel={() => onClose(false)}
         />

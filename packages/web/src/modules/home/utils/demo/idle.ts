@@ -1,4 +1,4 @@
-import type { RowActionHandlers } from '@/modules/application/components/ApplicationsTable';
+import type { RowActionHandlers } from '@/modules/application/components/ApplicationsList';
 
 export const IDLE = (): void => undefined;
 

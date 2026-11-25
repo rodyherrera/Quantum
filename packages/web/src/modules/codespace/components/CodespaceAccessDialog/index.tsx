@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { LinesSkeleton } from '@/shared/components/skeletons';
-import { Button } from '@heroui/react';
+import { Button, buttonVariants, cn } from '@heroui/react';
 import { ArrowUpRight, Check, Copy, Square } from 'lucide-react';
 import Modal from '@/shared/components/Modal';
 import InlineError from '@/shared/components/InlineError';
@@ -29,15 +29,15 @@ const CopyField = ({ label, value }: CopyFieldProps) => {
 
     return (
         <div className='flex flex-col gap-1.5'>
-            <span className='text-[0.8125rem] text-muted'>{label}</span>
+            <span className='text-xs font-medium text-muted'>{label}</span>
 
             <div className='flex items-center gap-2'>
-                <code className='min-w-0 flex-1 truncate rounded-md bg-surface px-3 py-2 text-[0.8125rem] text-foreground'>
+                <code className='block h-8 min-w-0 flex-1 truncate rounded-md border border-border bg-surface-secondary px-2.5 font-mono text-xs leading-[1.875rem] text-foreground'>
                     {value}
                 </code>
 
                 <Button variant='secondary' onPress={handleCopy}>
-                    {copied ? <Check aria-hidden='true' className='size-4' /> : <Copy aria-hidden='true' className='size-4' />}
+                    {copied ? <Check aria-hidden='true' /> : <Copy aria-hidden='true' />}
                     {copied ? 'Copied' : 'Copy'}
                 </Button>
             </div>
@@ -61,13 +61,13 @@ const CodespaceAccessDialog = ({ codespace, onClose, onStop, isStopping = false 
             onOpenChange={(isOpen) => { if(!isOpen) onClose(); }}
             title={codespace === null ? 'Access' : `Access · ${codespace.name}`}
         >
-            <div className='flex flex-col gap-4'>
+            <div className='flex flex-col gap-3.5'>
                 {access.loading && <LinesSkeleton lines={2} />}
 
                 {!access.loading && access.error !== undefined && (
-                    <div className='flex flex-col gap-2'>
+                    <div className='flex flex-col items-start gap-2'>
                         <InlineError>{copy(access.error)}</InlineError>
-                        <Button variant='secondary' onPress={access.reload}>Try again</Button>
+                        <Button size='sm' variant='secondary' onPress={access.reload}>Try again</Button>
                     </div>
                 )}
 
@@ -78,10 +78,10 @@ const CodespaceAccessDialog = ({ codespace, onClose, onStop, isStopping = false 
                     </>
                 )}
 
-                <div className='flex flex-wrap justify-end gap-2'>
+                <div className='flex flex-wrap items-center justify-end gap-2 pt-1'>
                     {onStop !== undefined && (
-                        <Button variant='secondary' isPending={isStopping} onPress={onStop}>
-                            <Square aria-hidden='true' className='size-4' />
+                        <Button variant='ghost' className='mr-auto' isPending={isStopping} onPress={onStop}>
+                            <Square aria-hidden='true' />
                             Stop workspace
                         </Button>
                     )}
@@ -91,10 +91,10 @@ const CodespaceAccessDialog = ({ codespace, onClose, onStop, isStopping = false 
                             href={access.data.accessUrl}
                             target='_blank'
                             rel='noreferrer'
-                            className='inline-flex items-center gap-1.5 bg-foreground px-4 py-2 text-[0.8125rem] font-medium text-background transition-opacity hover:opacity-90 motion-reduce:transition-none'
+                            className={cn(buttonVariants({ variant: 'primary' }), 'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent')}
                         >
                             Open VS Code
-                            <ArrowUpRight aria-hidden='true' className='size-4' />
+                            <ArrowUpRight aria-hidden='true' />
                         </a>
                     )}
                 </div>

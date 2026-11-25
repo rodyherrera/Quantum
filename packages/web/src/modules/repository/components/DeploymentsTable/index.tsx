@@ -1,9 +1,104 @@
-import { Button, Table } from '@heroui/react';
-import { ExternalLink } from 'lucide-react';
-import StatusDot from '@/shared/components/StatusDot';
+import { Chip, Dropdown } from '@heroui/react';
+import { Box, GitCommitHorizontal, MoreHorizontal } from 'lucide-react';
+import ListRow from '@/shared/components/list/ListRow';
+import { StatusGlyph } from '@/shared/components/StatusDot';
 import { deploymentStatusColor, deploymentStatusLabel, isDeploymentInProgress } from '@/modules/repository/utils/deployment-status';
 import { formatDate } from '@/shared/utils/format-date';
-import type { Deployment } from '@quantum/contracts/modules/deployment/domain';
+import { DeploymentStatus } from '@quantum/contracts/modules/deployment/domain';
+import type { Deployment, DeploymentArtifact } from '@quantum/contracts/modules/deployment/domain';
+
+const COLUMNS = 'grid-cols-[0.875rem_minmax(0,1fr)_1.75rem] md:grid-cols-[0.875rem_2.75rem_minmax(0,1fr)_auto_auto_1.75rem]';
+
+const shortDigest = (digest: string): string => digest.replace(/^sha256:/, '').slice(0, 7);
+
+interface RevisionChipProps{
+    artifact: DeploymentArtifact | null;
+}
+
+/* Exec builds record the commit they checked out; image builds record the image id. */
+const RevisionChip = ({ artifact }: RevisionChipProps) => {
+    if(artifact === null || artifact.digest === '') return null;
+
+    const isCommit = artifact.builder === 'exec';
+    const Icon = isCommit ? GitCommitHorizontal : Box;
+
+    return (
+        <Chip size='sm' className='rounded-[0.3125rem] font-mono' title={`${isCommit ? 'Commit' : 'Image'} ${artifact.digest}`}>
+            <Icon aria-hidden='true' className='size-3 text-subtle' />
+            {shortDigest(artifact.digest)}
+        </Chip>
+    );
+};
+
+interface DeploymentRowProps{
+    deployment: Deployment;
+    onRollback: (deployment: Deployment) => void;
+    onDelete: (deployment: Deployment) => void;
+}
+
+const DeploymentActions = ({ deployment, onRollback, onDelete }: DeploymentRowProps) => {
+    const label = `Actions for deployment #${deployment.id}`;
+    const items = [
+        ...(deployment.url === null ? [] : [
+            <Dropdown.Item key='open' href={deployment.url} target='_blank' rel='noreferrer'>Open URL</Dropdown.Item>
+        ]),
+        <Dropdown.Item key='rollback' isDisabled={deployment.artifact === null} onAction={() => onRollback(deployment)}>Roll back</Dropdown.Item>,
+        <Dropdown.Item key='delete' variant='danger' onAction={() => onDelete(deployment)}>Delete</Dropdown.Item>
+    ];
+
+    return (
+        <Dropdown>
+            <Dropdown.Trigger
+                aria-label={label}
+                className='flex size-7 items-center justify-center rounded-md text-subtle transition-colors hover:bg-default hover:text-foreground focus-visible:outline-2 focus-visible:outline-accent motion-reduce:transition-none'
+            >
+                <MoreHorizontal aria-hidden='true' className='size-4' />
+            </Dropdown.Trigger>
+
+            <Dropdown.Popover placement='bottom end'>
+                <Dropdown.Menu aria-label={label}>{items}</Dropdown.Menu>
+            </Dropdown.Popover>
+        </Dropdown>
+    );
+};
+
+const DeploymentRow = ({ deployment, onRollback, onDelete }: DeploymentRowProps) => {
+    const color = deploymentStatusColor(deployment.status);
+    const label = deploymentStatusLabel(deployment.status);
+    const isTransient = isDeploymentInProgress(deployment.status);
+
+    return (
+        <ListRow className={`${COLUMNS} last:border-b-0`}>
+            <span title={label}>
+                <StatusGlyph color={color} isTransient={isTransient} />
+                <span className='sr-only'>{label}</span>
+            </span>
+
+            <span className='hidden font-mono text-xs text-subtle md:block'>#{deployment.id}</span>
+
+            <div className='min-w-0 py-2'>
+                <div className='flex min-w-0 items-center gap-2'>
+                    {deployment.commit === null
+                        ? <span className='truncate text-muted'>No commit recorded</span>
+                        : <span className='truncate font-medium text-foreground'>{deployment.commit.message}</span>}
+                    {deployment.status !== DeploymentStatus.Success && <Chip size='sm' color={color} className='shrink-0'>{label}</Chip>}
+                </div>
+
+                {deployment.error !== null && <p className='mt-0.5 break-words text-xs text-danger'>{deployment.error}</p>}
+            </div>
+
+            <span className='hidden md:block'>
+                <RevisionChip artifact={deployment.artifact} />
+            </span>
+
+            <time dateTime={deployment.createdAt} className='hidden whitespace-nowrap text-right text-xs tabular-nums text-subtle md:block'>
+                {formatDate(deployment.createdAt)}
+            </time>
+
+            <DeploymentActions deployment={deployment} onRollback={onRollback} onDelete={onDelete} />
+        </ListRow>
+    );
+};
 
 interface DeploymentsTableProps{
     deployments: Deployment[];
@@ -12,74 +107,11 @@ interface DeploymentsTableProps{
 }
 
 const DeploymentsTable = ({ deployments, onRollback, onDelete }: DeploymentsTableProps) => (
-    <Table>
-        <Table.ScrollContainer>
-            <Table.Content aria-label='Deployments'>
-                <Table.Header>
-                    <Table.Column isRowHeader>Commit</Table.Column>
-                    <Table.Column>Status</Table.Column>
-                    <Table.Column>Date</Table.Column>
-                    <Table.Column>URL</Table.Column>
-                    <Table.Column><span className='sr-only'>Actions</span></Table.Column>
-                </Table.Header>
-
-                <Table.Body>
-                    {deployments.map((deployment) => (
-                        <Table.Row key={deployment.id}>
-                            <Table.Cell>
-                                <div className='flex max-w-[420px] flex-col gap-1'>
-                                    <span className='text-[0.8125rem] text-foreground'>
-                                        {deployment.commit?.message ?? 'No commit recorded'}
-                                    </span>
-
-                                    {}
-                                    {deployment.error !== null && (
-                                        <span className='block text-[0.8125rem] break-words text-[var(--danger)]'>
-                                            {deployment.error}
-                                        </span>
-                                    )}
-                                </div>
-                            </Table.Cell>
-                            <Table.Cell>
-                                <StatusDot
-                                    color={deploymentStatusColor(deployment.status)}
-                                    label={deploymentStatusLabel(deployment.status)}
-                                    isTransient={isDeploymentInProgress(deployment.status)}
-                                />
-                            </Table.Cell>
-                            <Table.Cell>{formatDate(deployment.createdAt)}</Table.Cell>
-                            <Table.Cell>
-                                {deployment.url ? (
-                                    <a
-                                        href={deployment.url}
-                                        target='_blank'
-                                        rel='noreferrer'
-                                        className='inline-flex items-center gap-1 font-mono text-[0.8125rem] transition-colors hover:text-foreground motion-reduce:transition-none'
-                                    >
-                                        <span className='max-w-[220px] truncate'>{deployment.url}</span>
-                                        <ExternalLink aria-hidden='true' className='size-3.5 shrink-0' />
-                                    </a>
-                                ) : '—'}
-                            </Table.Cell>
-                            <Table.Cell>
-                                <div className='flex justify-end gap-2'>
-                                    <Button
-                                        size='sm'
-                                        variant='secondary'
-                                        isDisabled={deployment.artifact === null}
-                                        onPress={() => onRollback(deployment)}
-                                    >
-                                        Rollback
-                                    </Button>
-                                    <Button size='sm' variant='danger' onPress={() => onDelete(deployment)}>Delete</Button>
-                                </div>
-                            </Table.Cell>
-                        </Table.Row>
-                    ))}
-                </Table.Body>
-            </Table.Content>
-        </Table.ScrollContainer>
-    </Table>
+    <section aria-label='Deployments' className='min-w-0 overflow-hidden rounded-lg border border-separator bg-surface'>
+        {deployments.map((deployment) => (
+            <DeploymentRow key={deployment.id} deployment={deployment} onRollback={onRollback} onDelete={onDelete} />
+        ))}
+    </section>
 );
 
 export default DeploymentsTable;

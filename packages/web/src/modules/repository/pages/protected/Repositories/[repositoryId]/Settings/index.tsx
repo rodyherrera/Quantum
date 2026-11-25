@@ -1,40 +1,52 @@
 import { useState } from 'react';
 import { FieldsSkeleton } from '@/shared/components/skeletons';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Button, Label, ListBox, ListBoxItem, Select } from '@heroui/react';
-import { ArrowRight } from 'lucide-react';
+import { Button } from '@heroui/react';
+import { Box, FileCode2, SquareTerminal, Trash2, Zap } from 'lucide-react';
 import typia from 'typia';
 import ErrorState from '@/shared/components/ErrorState';
-import SettingsSection from '@/shared/components/SettingsSection';
+import SettingsSection, { SettingsBlock } from '@/shared/components/SettingsSection';
+import SettingsRow from '@/shared/components/SettingsRow';
+import Segmented from '@/shared/components/layout/Segmented';
 import DeleteConfirmDialog from '@/shared/components/DeleteConfirmDialog';
 import Form from '@/shared/components/forms/Form';
 import Field from '@/shared/components/forms/Field';
 import PersistentVolumes from '@/modules/repository/components/PersistentVolumes';
+import PublishedPorts from '@/modules/repository/components/PublishedPorts';
 import { useForm } from '@/shared/hooks/forms/use-form';
 import { useQuery } from '@/shared/hooks/api/use-query';
 import { repositoryApi } from '@/modules/repository/api/api';
+import { BUILD_STRATEGIES, BUILD_STRATEGY_LABELS } from '@/modules/repository/utils/build-strategy';
 import { repositoryErrorMessages } from '@/modules/repository/utils/error-messages';
 import { errorCopy } from '@/shared/utils/error-copy';
 import { BuildStrategy } from '@quantum/contracts/modules/repository/domain';
+import type { LucideIcon } from 'lucide-react';
 import type { IValidation } from 'typia';
 import type { Repository } from '@quantum/contracts/modules/repository/domain';
 import type { UpdateRepositoryInput } from '@quantum/contracts/modules/repository/http';
 
 const copy = errorCopy(repositoryErrorMessages);
 
-const BUILD_STRATEGIES: BuildStrategy[] = [
-    BuildStrategy.Auto,
-    BuildStrategy.Dockerfile,
-    BuildStrategy.PrebuiltImage,
-    BuildStrategy.Exec
-];
-
-const BUILD_STRATEGY_LABELS: Record<BuildStrategy, string> = {
-    [BuildStrategy.Auto]: 'Auto',
-    [BuildStrategy.Dockerfile]: 'Dockerfile',
-    [BuildStrategy.PrebuiltImage]: 'Prebuilt image',
-    [BuildStrategy.Exec]: 'Exec'
+const BUILD_STRATEGY_ICONS: Record<BuildStrategy, LucideIcon> = {
+    [BuildStrategy.Auto]: Zap,
+    [BuildStrategy.Dockerfile]: FileCode2,
+    [BuildStrategy.PrebuiltImage]: Box,
+    [BuildStrategy.Exec]: SquareTerminal
 };
+
+const BUILD_STRATEGY_OPTIONS = BUILD_STRATEGIES.map((strategy) => {
+    const Icon = BUILD_STRATEGY_ICONS[strategy];
+
+    return {
+        value: strategy,
+        label: (
+            <>
+                <Icon aria-hidden='true' />
+                {BUILD_STRATEGY_LABELS[strategy]}
+            </>
+        )
+    };
+});
 
 interface RepositorySettingsFormValues{
     alias: string;
@@ -134,100 +146,68 @@ const RepositorySettingsForm = ({ repository, onSaved }: RepositorySettingsFormP
     });
 
     return (
-        <Form form={form} className='flex flex-col'>
+        <Form form={form} className='flex flex-col gap-7'>
             <SettingsSection title='General' description='How this repository is named and which branch is deployed.'>
-                <div className='grid gap-5 sm:grid-cols-2'>
-                    <Field form={form} name='alias' label='Alias' placeholder='my-repository' />
-                    <Field form={form} name='branch' label='Branch' placeholder='main' />
-                </div>
+                <SettingsBlock>
+                    <div className='grid gap-4 sm:grid-cols-2'>
+                        <Field form={form} name='alias' label='Alias' placeholder='my-repository' />
+                        <Field form={form} name='branch' label='Branch' placeholder='main' />
+                    </div>
+                </SettingsBlock>
             </SettingsSection>
 
             <SettingsSection title='Build' description='The runtime it runs on and the commands that build and start it.'>
-                <div className='grid gap-5 sm:grid-cols-2'>
-                    <Field form={form} name='framework' label='Framework' placeholder='Next.js' />
-                    <Field form={form} name='runtime' label='Runtime' placeholder='node' />
-                    <Field form={form} name='runtimeVersion' label='Runtime version' placeholder='20' />
-                    <Field form={form} name='port' label='Port' type='number' placeholder='3000' />
-                </div>
+                <SettingsBlock>
+                    <div className='grid gap-4 sm:grid-cols-2'>
+                        <Field form={form} name='framework' label='Framework' placeholder='Next.js' />
+                        <Field form={form} name='runtime' label='Runtime' placeholder='node' />
+                        <Field form={form} name='runtimeVersion' label='Runtime version' placeholder='20' />
+                        <Field form={form} name='port' label='Port' type='number' placeholder='3000' />
+                    </div>
 
-                <div className='grid gap-5 sm:grid-cols-3'>
-                    <Field form={form} name='installCommand' label='Install command' placeholder='npm install' />
-                    <Field form={form} name='buildCommand' label='Build command' placeholder='npm run build' />
-                    <Field form={form} name='startCommand' label='Start command' placeholder='npm start' />
-                </div>
+                    <div className='grid gap-4 sm:grid-cols-3'>
+                        <Field form={form} name='installCommand' label='Install command' placeholder='npm install' />
+                        <Field form={form} name='buildCommand' label='Build command' placeholder='npm run build' />
+                        <Field form={form} name='startCommand' label='Start command' placeholder='npm start' />
+                    </div>
 
-                <div className='grid gap-5 sm:grid-cols-2'>
-                    <Field form={form} name='rootDirectory' label='Root directory' placeholder='/' />
-                    <Field form={form} name='outputDirectory' label='Output directory' placeholder='dist' />
-                </div>
+                    <div className='grid gap-4 sm:grid-cols-2'>
+                        <Field form={form} name='rootDirectory' label='Root directory' placeholder='/' />
+                        <Field form={form} name='outputDirectory' label='Output directory' placeholder='dist' />
+                    </div>
+                </SettingsBlock>
             </SettingsSection>
 
             <SettingsSection title='Build strategy' description='Let Quantum detect the build, or point it at a Dockerfile or a prebuilt image.'>
-                <Field form={form} name='buildStrategy'>
-                    {(binding) => (
-                        <div className='flex flex-col gap-1.5'>
-                            <Label>Build strategy</Label>
-                            <Select
-                                aria-label='Build strategy'
-                                selectedKey={binding.value as BuildStrategy}
+                <SettingsBlock>
+                    <Field form={form} name='buildStrategy'>
+                        {(binding) => (
+                            <Segmented
+                                label='Build strategy'
+                                options={BUILD_STRATEGY_OPTIONS}
+                                value={binding.value as BuildStrategy}
                                 isDisabled={form.submitting}
-                                onSelectionChange={(key) => binding.onChange(key as BuildStrategy)}
-                            >
-                                <Select.Trigger>
-                                    <Select.Value />
-                                    <Select.Indicator />
-                                </Select.Trigger>
+                                onChange={binding.onChange}
+                            />
+                        )}
+                    </Field>
 
-                                <Select.Popover>
-                                    <ListBox>
-                                        {BUILD_STRATEGIES.map((strategy) => (
-                                            <ListBoxItem key={strategy} id={strategy} textValue={BUILD_STRATEGY_LABELS[strategy]}>
-                                                {BUILD_STRATEGY_LABELS[strategy]}
-                                            </ListBoxItem>
-                                        ))}
-                                    </ListBox>
-                                </Select.Popover>
-                            </Select>
-                        </div>
+                    {form.values.buildStrategy === BuildStrategy.Dockerfile && (
+                        <Field form={form} name='dockerfilePath' label='Dockerfile path' placeholder='Dockerfile' />
                     )}
-                </Field>
 
-                {form.values.buildStrategy === BuildStrategy.Dockerfile && (
-                    <Field form={form} name='dockerfilePath' label='Dockerfile path' placeholder='Dockerfile' />
-                )}
-
-                {form.values.buildStrategy === BuildStrategy.PrebuiltImage && (
-                    <Field form={form} name='image' label='Image' placeholder='registry.example.com/app:latest' />
-                )}
+                    {form.values.buildStrategy === BuildStrategy.PrebuiltImage && (
+                        <Field form={form} name='image' label='Image' placeholder='registry.example.com/app:latest' />
+                    )}
+                </SettingsBlock>
             </SettingsSection>
 
-            <div className='border-t border-border py-6'>
-                <Button type='submit' isPending={form.submitting} isDisabled={!form.isValid}>
-                    Save
-                    <ArrowRight aria-hidden='true' className='size-4' />
-                </Button>
+            <div>
+                <Button type='submit' isPending={form.submitting} isDisabled={!form.isValid}>Save changes</Button>
             </div>
         </Form>
     );
 };
-
-const RepositoryDetails = ({ repository }: { repository: Repository }) => (
-    <SettingsSection title='Details' description='Reference information for this repository.'>
-        <dl className='flex flex-col'>
-            {[
-                ['Name', repository.name],
-                ['URL', repository.url],
-                ['Owner', repository.owner ?? '—'],
-                ['Created', new Date(repository.createdAt).toLocaleDateString()]
-            ].map(([label, value]) => (
-                <div key={label} className='flex items-center justify-between gap-4 border-b border-separator py-3 first:pt-0 last:border-0'>
-                    <dt className='label-caps shrink-0 text-muted'>{label}</dt>
-                    <dd className='min-w-0 truncate font-mono text-[0.8125rem] text-foreground'>{value}</dd>
-                </div>
-            ))}
-        </dl>
-    </SettingsSection>
-);
 
 interface DeleteRepositoryDialogProps{
     repository: Repository;
@@ -254,13 +234,17 @@ const DangerZone = ({ repository }: { repository: Repository }) => {
     const [deleteOpen, setDeleteOpen] = useState(false);
 
     return (
-        <SettingsSection
-            title='Delete repository'
-            description='Deleting a repository permanently removes it and all of its deployments. This action cannot be undone.'
-        >
-            <div>
-                <Button variant='danger' onPress={() => setDeleteOpen(true)}>Delete repository</Button>
-            </div>
+        <SettingsSection title='Delete repository' tone='danger'>
+            <SettingsRow
+                title={`Delete ${repository.alias}`}
+                description='Permanently removes the repository and all of its deployments. This cannot be undone.'
+                action={(
+                    <Button variant='danger' onPress={() => setDeleteOpen(true)}>
+                        <Trash2 aria-hidden='true' />
+                        Delete repository
+                    </Button>
+                )}
+            />
 
             <DeleteRepositoryDialog
                 repository={repository}
@@ -291,26 +275,15 @@ const RepositorySettings = () => {
     if(repository.data === null) return null;
 
     return (
-        <div>
-            <div className='flex flex-wrap items-end justify-between gap-4'>
-                <div>
-                    <h2 className='text-[0.9375rem] font-medium text-foreground'>Settings</h2>
-                    <p className='mt-1 text-[0.8125rem] text-muted'>
-                        Update how {repository.data.alias} is built and run, review its details, or delete it.
-                    </p>
-                </div>
-            </div>
-
-            <div className='mt-6 flex flex-col'>
-                <RepositorySettingsForm
-                    key={repository.data.id}
-                    repository={repository.data}
-                    onSaved={repository.reload}
-                />
-                <PersistentVolumes key={`volumes-${repository.data.id}`} repository={repository.data} onSaved={repository.reload} />
-                <RepositoryDetails repository={repository.data} />
-                <DangerZone repository={repository.data} />
-            </div>
+        <div className='flex w-full max-w-[46rem] flex-col gap-7'>
+            <RepositorySettingsForm
+                key={repository.data.id}
+                repository={repository.data}
+                onSaved={repository.reload}
+            />
+            <PersistentVolumes key={`volumes-${repository.data.id}`} repository={repository.data} onSaved={repository.reload} />
+            <PublishedPorts ports={repository.data.ports} />
+            <DangerZone repository={repository.data} />
         </div>
     );
 };

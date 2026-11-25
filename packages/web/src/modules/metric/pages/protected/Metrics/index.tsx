@@ -1,9 +1,9 @@
 import { useMemo } from 'react';
-import { ChartSkeleton, FieldsSkeleton, PageSkeleton, StatBandSkeleton } from '@/shared/components/skeletons';
+import { BoardSkeleton, PageSkeleton } from '@/shared/components/skeletons';
 import { useRememberedSelection } from '@/shared/hooks/use-remembered-selection';
 import { Activity } from 'lucide-react';
 import PageBody from '@/shared/components/layout/PageBody';
-import PageHeader from '@/shared/components/layout/PageHeader';
+import PageBar from '@/shared/components/layout/PageBar';
 import ListPageShell from '@/shared/components/ListPageShell';
 import EntitySelect from '@/shared/components/EntitySelect';
 import MetricsOverview from '@/modules/metric/components/MetricsOverview';
@@ -40,7 +40,7 @@ const Metrics = () => {
             <ListPageShell
                 bare
                 loading={containers.loading}
-                skeleton={<PageSkeleton><FieldsSkeleton rows={1} className='max-w-sm' /><div className='mt-6'><StatBandSkeleton columns={5} /></div><ChartSkeleton className='mt-10' /></PageSkeleton>}
+                skeleton={<PageSkeleton actions={1}><BoardSkeleton stats={5} /></PageSkeleton>}
                 error={containers.error}
                 errorTitle='Could not load applications'
                 getErrorDescription={copy}
@@ -54,25 +54,29 @@ const Metrics = () => {
     const latest = samples[samples.length - 1];
 
     return (
-        <PageBody width='wide' height='full'>
-            <PageHeader title='Metrics' />
+        <>
+            <PageBar
+                title='Metrics'
+                icon={Activity}
+                actions={(
+                    <div className='w-64 max-w-[50vw]'>
+                        <EntitySelect
+                            items={items}
+                            getKey={(container) => container.containerId}
+                            getLabel={containerLabel}
+                            value={containerId}
+                            onChange={(key) => setContainerId(Number(key))}
+                            placeholder='Select an application'
+                            ariaLabel='Application'
+                        />
+                    </div>
+                )}
+            />
 
-            <div className='mt-6 max-w-sm'>
-                <EntitySelect
-                    items={items}
-                    getKey={(container) => container.containerId}
-                    getLabel={containerLabel}
-                    value={containerId}
-                    onChange={(key) => setContainerId(Number(key))}
-                    placeholder='Select an application'
-                    ariaLabel='Application'
-                />
-            </div>
-
-            <div className='mt-6 flex flex-1 flex-col'>
+            <PageBody variant='flush' fill>
                 <ListPageShell
                     loading={metrics.loading}
-                    skeleton={<><StatBandSkeleton columns={5} /><ChartSkeleton className='mt-10' /></>}
+                    skeleton={<BoardSkeleton stats={5} />}
                     error={metrics.error}
                     errorTitle='Could not load metrics'
                     getErrorDescription={copy}
@@ -81,20 +85,19 @@ const Metrics = () => {
                     prompt={{
                         icon: Activity,
                         title: 'Select an application',
-                        description: 'Choose a repository, a database or a stack service above to view its live resource usage.'
+                        description: 'Choose a repository, a database or a stack service to see its CPU, memory, network and processes.'
                     }}
                     isEmpty={latest === undefined}
                     empty={{
                         icon: Activity,
                         title: 'No samples yet',
-                        description: 'This container has no metric samples yet. Samples appear once it starts reporting usage.'
+                        description: 'This container has not reported any usage yet. Samples appear once it starts.'
                     }}
                 >
-                    {}
                     {latest !== undefined && <MetricsOverview samples={samples} latest={latest} />}
                 </ListPageShell>
-            </div>
-        </PageBody>
+            </PageBody>
+        </>
     );
 };
 

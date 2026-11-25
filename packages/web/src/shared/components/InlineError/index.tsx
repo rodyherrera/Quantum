@@ -6,7 +6,7 @@ interface InlineErrorProps{
 }
 
 const InlineError = ({ children, className }: InlineErrorProps) => (
-    <p role='alert' className={cn('text-[0.8125rem] text-[var(--danger)]', className)}>
+    <p role='alert' className={cn('text-danger', className)}>
         {children}
     </p>
 );

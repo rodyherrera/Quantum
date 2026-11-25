@@ -1,11 +1,10 @@
 import { useEffect, useRef } from 'react';
 import { Terminal } from '@xterm/xterm';
 import { FitAddon } from '@xterm/addon-fit';
-import { Button, Spinner } from '@heroui/react';
-import { TriangleAlert } from 'lucide-react';
 import '@xterm/xterm/css/xterm.css';
 import { useChannel } from '@/shared/hooks/socket/use-channel';
 import { TERMINAL_THEME } from '@/shared/components/terminal/theme';
+import TerminalFrame from '@/shared/components/terminal/TerminalFrame';
 import type { ReactNode } from 'react';
 import type { ChannelStatus } from '@/shared/contracts/channel';
 
@@ -73,40 +72,15 @@ const LogsTerminal = ({ channelPath, subscribePayload = {}, title = 'Logs', desc
     }, []);
 
     return (
-        <div className='flex min-h-0 flex-1 flex-col'>
-            <div className='flex flex-wrap items-end justify-between gap-4'>
-                <div>
-                    <h2 className='text-[0.9375rem] font-medium text-foreground'>{title}</h2>
-                    <p className='mt-1 text-[0.8125rem] text-muted'>{description}</p>
-                </div>
-
-                <div className='flex flex-wrap items-center gap-4'>
-                    {status !== 'open' && (
-                        <span className='label-caps flex items-center gap-2 text-muted'>
-                            <Spinner size='sm' color='current' />
-                            {CONNECTION_LABEL[status]}
-                        </span>
-                    )}
-
-                    {actions}
-                </div>
-            </div>
-
-            {channel.lastError && (
-                <div className='mt-4 flex items-center justify-between gap-3 border-b border-separator pb-3 text-[0.8125rem] text-danger'>
-                    <span className='flex items-center gap-2'>
-                        <TriangleAlert className='size-4 shrink-0' aria-hidden='true' />
-                        {channel.lastError}
-                    </span>
-                    <Button size='sm' variant='secondary' onPress={channel.clearError}>Dismiss</Button>
-                </div>
-            )}
-
-            {}
-            <div className='mt-6 flex min-h-[24rem] flex-1 flex-col border border-border lg:min-h-0'>
-                <div ref={containerRef} className='min-h-0 flex-1 overflow-hidden bg-black p-2' />
-            </div>
-        </div>
+        <TerminalFrame
+            title={title}
+            description={description}
+            connection={status === 'open' ? undefined : CONNECTION_LABEL[status]}
+            actions={actions}
+            error={channel.lastError ?? null}
+            onDismissError={channel.clearError}
+            containerRef={containerRef}
+        />
     );
 };
 

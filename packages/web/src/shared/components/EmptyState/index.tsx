@@ -22,35 +22,19 @@ const EmptyState = ({
     <EmptyStateRoot
         role={isBusy ? 'status' : undefined}
         aria-live={isBusy ? 'polite' : undefined}
-        className={cn(
-            'dot-grid flex flex-col items-center text-center',
-            compact ? 'px-4 py-10' : 'px-6 py-20'
-        )}
+        className={cn('flex flex-col items-center px-6 text-center', compact ? 'py-10' : 'py-20')}
     >
         {Icon !== undefined && (
-            <Icon
-                aria-hidden='true'
-                className={cn('size-5 text-muted', isBusy && 'animate-spin motion-reduce:animate-none')}
-            />
+            <span aria-hidden='true' className='grid size-9 place-items-center rounded-lg border border-border bg-surface-secondary text-muted'>
+                <Icon className={cn('size-4', isBusy && 'animate-spin motion-reduce:animate-none')} />
+            </span>
         )}
 
-        <h2
-            className={cn(
-                'title-display text-foreground',
-                compact ? 'mt-4 text-xl' : 'mt-6 text-[2rem] leading-[1.05]',
-                Icon === undefined && 'mt-0'
-            )}
-        >
-            {title}
-        </h2>
+        <h2 className={cn('text-sm font-semibold text-foreground', Icon !== undefined && 'mt-4')}>{title}</h2>
 
-        {description && (
-            <p className={cn('text-muted', compact ? 'mt-2 max-w-sm text-[0.8125rem]' : 'mt-4 max-w-md text-sm')}>
-                {description}
-            </p>
-        )}
+        {description && <p className='mt-1.5 max-w-sm text-muted'>{description}</p>}
 
-        {children && <div className={compact ? 'mt-5' : 'mt-8'}>{children}</div>}
+        {children && <div className='mt-5'>{children}</div>}
     </EmptyStateRoot>
 );
 

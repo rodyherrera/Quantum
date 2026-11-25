@@ -1,218 +1,181 @@
 import { useState } from 'react';
-import { ChartSkeleton, PageSkeleton, StatBandSkeleton } from '@/shared/components/skeletons';
-import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
-import { Activity } from 'lucide-react';
+import { BoardSkeleton, PageSkeleton } from '@/shared/components/skeletons';
+import { Gauge } from 'lucide-react';
+import PageBar from '@/shared/components/layout/PageBar';
 import PageBody from '@/shared/components/layout/PageBody';
-import PageHeader from '@/shared/components/layout/PageHeader';
+import Segmented from '@/shared/components/layout/Segmented';
 import ListPageShell from '@/shared/components/ListPageShell';
+import ListRow from '@/shared/components/list/ListRow';
 import StatTile from '@/shared/components/StatTile';
 import StatBand from '@/shared/components/StatBand';
-import ChartPanel from '@/shared/components/charts/ChartPanel';
-import ChartLegend from '@/shared/components/charts/ChartLegend';
-import ChartTooltip from '@/shared/components/charts/ChartTooltip';
-import { AXIS, CURSOR, GRID_STROKE } from '@/shared/components/charts/axes';
+import BoardSection from '@/shared/components/board/BoardSection';
+import BoardSplit from '@/shared/components/board/BoardSplit';
+import MeterList from '@/shared/components/board/MeterList';
 import { useQuery } from '@/shared/hooks/api/use-query';
 import { dockerApi } from '@/modules/docker/api/api';
+import { serverApi } from '@/shared/api/server-api';
+import { projectHue } from '@/modules/project/utils/project-hue';
 import { formatBytes } from '@/shared/utils/format-bytes';
-import { rate } from '@/shared/utils/format-metrics';
+import { rate, share } from '@/shared/utils/format-metrics';
 import type { NetworkUsageStat, ResourceUsageStat } from '@quantum/contracts/modules/docker/domain';
 
-interface TimeWindow{
-    label: string;
-    minutes: number;
-}
-
-const WINDOWS: TimeWindow[] = [
-    { label: 'Last 15 minutes', minutes: 15 },
-    { label: 'Last hour', minutes: 60 },
-    { label: 'Last 6 hours', minutes: 360 },
-    { label: 'Last 24 hours', minutes: 1440 }
+const WINDOWS = [
+    { value: 15, label: '15 min' },
+    { value: 60, label: '1 hour' },
+    { value: 360, label: '6 hours' },
+    { value: 1440, label: '24 hours' }
 ];
 
-interface WindowSelectProps{
-    value: number;
-    onChange: (minutes: number) => void;
+interface ProjectUsage{
+    projectId: number;
+    projectName: string;
+    incoming: number;
+    outgoing: number;
+    avgCpu: number;
+    avgMem: number;
+    maxMem: number;
 }
 
-const WindowSelect = ({ value, onChange }: WindowSelectProps) => (
-    <div role='group' aria-label='Time window' className='inline-flex h-9 max-w-full overflow-x-auto border border-border'>
-        {WINDOWS.map((entry, index) => {
-            const active = entry.minutes === value;
+const joinUsage = (network: NetworkUsageStat[], resources: ResourceUsageStat[]): ProjectUsage[] => {
+    const byId = new Map<number, ProjectUsage>();
+    const entry = (projectId: number, projectName: string): ProjectUsage => {
+        const found = byId.get(projectId) ?? { projectId, projectName, incoming: 0, outgoing: 0, avgCpu: 0, avgMem: 0, maxMem: 0 };
+        byId.set(projectId, found);
+        return found;
+    };
 
-            return (
-                <button
-                    key={entry.minutes}
-                    type='button'
-                    aria-pressed={active}
-                    onClick={() => onChange(entry.minutes)}
-                    className={`label-caps shrink-0 whitespace-nowrap px-3.5 transition-colors ${index > 0 ? 'border-l border-border ' : ''}${active ? 'bg-foreground text-background' : 'text-muted hover:text-foreground'}`}
-                >
-                    {entry.label}
-                </button>
-            );
-        })}
+    for(const stat of network) Object.assign(entry(stat.projectId, stat.projectName), { incoming: stat.incoming, outgoing: stat.outgoing });
+    for(const stat of resources) Object.assign(entry(stat.projectId, stat.projectName), { avgCpu: stat.avgCpu, avgMem: stat.avgMem, maxMem: stat.maxMem });
+
+    return [...byId.values()].sort((a, b) => (b.incoming + b.outgoing) - (a.incoming + a.outgoing));
+};
+
+const ProjectDot = ({ projectId }: { projectId: number }) => (
+    <span aria-hidden='true' className='size-2 shrink-0 rounded-[0.15625rem]' style={{ backgroundColor: projectHue(projectId) }} />
+);
+
+const COLUMNS = 'grid-cols-[minmax(0,1fr)_4.75rem_4.75rem] sm:grid-cols-[minmax(0,1fr)_5rem_5rem_4.5rem_5.5rem]';
+
+const ProjectsTable = ({ usage }: { usage: ProjectUsage[] }) => (
+    <div role='table' aria-label='Usage by project'>
+        <div role='row' className={`grid h-8 items-center gap-3 border-b border-separator px-5 text-xs font-medium text-subtle ${COLUMNS}`}>
+            <span role='columnheader'>Project</span>
+            <span role='columnheader' className='text-right'>In</span>
+            <span role='columnheader' className='text-right'>Out</span>
+            <span role='columnheader' className='hidden text-right sm:block'>Avg CPU</span>
+            <span role='columnheader' className='hidden text-right sm:block'>Peak memory</span>
+        </div>
+
+        {usage.map((project) => (
+            <ListRow key={project.projectId} className={`px-5 ${COLUMNS}`} to={`/applications?project=${project.projectId}`} label={`Open ${project.projectName}`}>
+                <span role='cell' className='flex min-w-0 items-center gap-2'>
+                    <ProjectDot projectId={project.projectId} />
+                    <span className='truncate font-medium text-foreground'>{project.projectName}</span>
+                </span>
+                <span role='cell' className='text-right tabular-nums text-foreground'>{formatBytes(project.incoming)}</span>
+                <span role='cell' className='text-right tabular-nums text-foreground'>{formatBytes(project.outgoing)}</span>
+                <span role='cell' className='hidden text-right tabular-nums text-muted sm:block'>{rate(project.avgCpu)}%</span>
+                <span role='cell' className='hidden text-right tabular-nums text-muted sm:block'>{formatBytes(project.maxMem)}</span>
+            </ListRow>
+        ))}
     </div>
 );
 
-interface NetworkTooltipProps{
-    active?: boolean;
-    payload?: Array<{ payload: NetworkUsageStat }>;
-}
-
-const NetworkTooltip = ({ active, payload }: NetworkTooltipProps) => {
-    const point = payload?.[0]?.payload;
-    if(active !== true || point === undefined) return null;
+const ServerHealth = () => {
+    const health = useQuery(serverApi.health, []);
+    const data = health.data;
+    if(data === null) return null;
 
     return (
-        <ChartTooltip
-            title={point.projectName}
-            rows={[
-                { label: 'In', value: formatBytes(point.incoming) },
-                { label: 'Out', value: formatBytes(point.outgoing) }
-            ]}
-        />
+        <div className='mt-6'>
+            <h3 className='mb-3 font-medium text-foreground'>Server</h3>
+            <MeterList
+                max={100}
+                entries={[
+                    { key: 'cpu', label: 'CPU', value: data.cpuPercent, display: `${rate(data.cpuPercent)}%` },
+                    { key: 'memory', label: 'Memory', value: data.ramPercent, display: `${rate(data.ramPercent)}%` }
+                ]}
+            />
+            <p className='mt-2.5 text-xs text-subtle'>{formatBytes(data.memTotal - data.memFree)} of {formatBytes(data.memTotal)} memory in use</p>
+        </div>
     );
 };
-
-interface ResourceTooltipProps{
-    active?: boolean;
-    payload?: Array<{ payload: ResourceUsageStat }>;
-}
-
-const ResourceTooltip = ({ active, payload }: ResourceTooltipProps) => {
-    const point = payload?.[0]?.payload;
-    if(active !== true || point === undefined) return null;
-
-    return (
-        <ChartTooltip
-            title={point.projectName}
-            rows={[
-                { label: 'Avg CPU', value: `${rate(point.avgCpu)}%` },
-                { label: 'Avg memory', value: formatBytes(point.avgMem) },
-                { label: 'Peak memory', value: formatBytes(point.maxMem) }
-            ]}
-        />
-    );
-};
-
-const NETWORK_LEGEND = [
-    { label: 'Incoming', className: 'bg-foreground' },
-    { label: 'Outgoing', className: 'bg-muted' }
-];
-
-interface NetworkChartProps{
-    stats: NetworkUsageStat[];
-}
-
-const NetworkChart = ({ stats }: NetworkChartProps) => (
-    <ChartPanel title='Network' meta={`${stats.length} ${stats.length === 1 ? 'project' : 'projects'}`}>
-        <div style={{ height: Math.max(140, stats.length * 56) }}>
-            <ResponsiveContainer width='100%' height='100%'>
-                <BarChart data={stats} layout='vertical' margin={{ top: 4, right: 8, bottom: 0, left: 0 }} barGap={2}>
-                    <CartesianGrid horizontal={false} stroke={GRID_STROKE} />
-                    <XAxis type='number' tickFormatter={formatBytes} {...AXIS} />
-                    <YAxis type='category' dataKey='projectName' width={120} {...AXIS} />
-                    <Tooltip content={<NetworkTooltip />} cursor={CURSOR} />
-                    <Bar dataKey='incoming' fill='var(--foreground)' radius={[0, 4, 4, 0]} maxBarSize={24} />
-                    <Bar dataKey='outgoing' fill='var(--muted)' radius={[0, 4, 4, 0]} maxBarSize={24} />
-                </BarChart>
-            </ResponsiveContainer>
-        </div>
-
-        <ChartLegend entries={NETWORK_LEGEND} />
-    </ChartPanel>
-);
-
-interface ResourceChartProps{
-    stats: ResourceUsageStat[];
-}
-
-const ResourceChart = ({ stats }: ResourceChartProps) => (
-    <ChartPanel title='CPU' meta='Average over the window'>
-        <div style={{ height: Math.max(140, stats.length * 44) }}>
-            <ResponsiveContainer width='100%' height='100%'>
-                <BarChart data={stats} layout='vertical' margin={{ top: 4, right: 8, bottom: 0, left: 0 }} barGap={2}>
-                    <CartesianGrid horizontal={false} stroke={GRID_STROKE} />
-                    <XAxis type='number' unit='%' {...AXIS} />
-                    <YAxis type='category' dataKey='projectName' width={120} {...AXIS} />
-                    <Tooltip content={<ResourceTooltip />} cursor={CURSOR} />
-                    <Bar dataKey='avgCpu' fill='var(--foreground)' radius={[0, 4, 4, 0]} maxBarSize={24} />
-                </BarChart>
-            </ResponsiveContainer>
-        </div>
-    </ChartPanel>
-);
 
 const Usage = () => {
-    const [minutes, setMinutes] = useState(WINDOWS[1].minutes);
+    const [minutes, setMinutes] = useState(60);
     const network = useQuery((query: { minutes?: number }) => dockerApi.networkUsage({ query }), [{ minutes }]);
     const resources = useQuery((query: { minutes?: number }) => dockerApi.resourceUsage({ query }), [{ minutes }]);
 
     const retry = () => { network.reload(); resources.reload(); };
     const describe = () => 'Something went wrong loading usage data. Please try again.';
 
-    if(network.loading || resources.loading || network.error !== undefined || resources.error !== undefined){
-        return (
-            <ListPageShell
-                fill
-                loading={network.loading || resources.loading}
-                skeleton={<PageSkeleton><StatBandSkeleton columns={4} /><div className='mt-10 grid gap-x-14 gap-y-10 lg:grid-cols-2'><ChartSkeleton /><ChartSkeleton /></div></PageSkeleton>}
-                error={network.error ?? resources.error}
-                errorTitle='Could not load usage'
-                getErrorDescription={describe}
-                onRetry={retry}
-            />
-        );
+    const bar = (
+        <PageBar
+            title='Usage'
+            icon={Gauge}
+            actions={<Segmented label='Time window' options={WINDOWS} value={minutes} onChange={setMinutes} />}
+        />
+    );
+
+    if(network.loading || resources.loading){
+        return <PageSkeleton actions={1}><BoardSkeleton stats={4} /></PageSkeleton>;
     }
 
-    const networkStats = network.data ?? [];
-    const resourceStats = resources.data ?? [];
-
-    const incoming = networkStats.reduce((total, stat) => total + stat.incoming, 0);
-    const outgoing = networkStats.reduce((total, stat) => total + stat.outgoing, 0);
-    const peakMemory = Math.max(0, ...resourceStats.map((stat) => stat.maxMem));
-    const busiest = [...resourceStats].sort((a, b) => b.avgCpu - a.avgCpu)[0];
+    const usage = joinUsage(network.data ?? [], resources.data ?? []);
+    const incoming = usage.reduce((total, project) => total + project.incoming, 0);
+    const outgoing = usage.reduce((total, project) => total + project.outgoing, 0);
+    const transferred = incoming + outgoing;
+    const peak = [...usage].sort((a, b) => b.maxMem - a.maxMem)[0];
+    const busiest = [...usage].sort((a, b) => b.avgCpu - a.avgCpu)[0];
 
     return (
-        <PageBody width='wide' height='full'>
-            <PageHeader
-                title='Usage'
-                description='Network and resource usage across your projects.'
-                filter={<WindowSelect value={minutes} onChange={setMinutes} />}
-            />
+        <>
+            {bar}
 
-            <div className='mt-6 flex flex-1 flex-col'>
+            <PageBody variant='flush' fill>
                 <ListPageShell
+                    error={network.error ?? resources.error}
                     errorTitle='Could not load usage'
                     getErrorDescription={describe}
                     onRetry={retry}
-                    isEmpty={networkStats.length === 0 && resourceStats.length === 0}
+                    isEmpty={usage.length === 0}
                     empty={{
-                        icon: Activity,
+                        icon: Gauge,
                         title: 'No usage yet',
-                        description: 'Usage data will appear here once your projects have running containers.'
+                        description: 'Transfer, CPU and memory per project appear here once your projects have running containers.'
                     }}
                 >
-                    <div className='flex flex-col gap-10'>
-                        <StatBand columns={4}>
-                            <StatTile label='Transferred in' value={formatBytes(incoming)} hint='Across all projects' />
-                            <StatTile label='Transferred out' value={formatBytes(outgoing)} hint='Across all projects' />
-                            <StatTile label='Peak memory' value={formatBytes(peakMemory)} hint='Highest of any project' />
-                            <StatTile
-                                label='Busiest project'
-                                value={busiest === undefined ? '—' : `${rate(busiest.avgCpu)}%`}
-                                hint={busiest?.projectName ?? 'No CPU samples'}
-                            />
-                        </StatBand>
+                    <StatBand columns={4}>
+                        <StatTile label='Transferred in' value={formatBytes(incoming)} hint={`Across ${usage.length} ${usage.length === 1 ? 'project' : 'projects'}`} />
+                        <StatTile label='Transferred out' value={formatBytes(outgoing)} hint={`Across ${usage.length} ${usage.length === 1 ? 'project' : 'projects'}`} />
+                        <StatTile label='Peak memory' value={formatBytes(peak?.maxMem ?? 0)} hint={peak === undefined ? 'No memory samples' : `Highest of any project · ${peak.projectName}`} />
+                        <StatTile
+                            label='Busiest project'
+                            value={busiest === undefined ? '—' : <><ProjectDot projectId={busiest.projectId} />{busiest.projectName}</>}
+                            hint={busiest === undefined ? 'No CPU samples' : `${rate(busiest.avgCpu)}% average CPU`}
+                        />
+                    </StatBand>
 
-                        <div className='grid gap-x-14 gap-y-10 lg:grid-cols-2'>
-                            {networkStats.length > 0 && <NetworkChart stats={networkStats} />}
-                            {resourceStats.length > 0 && <ResourceChart stats={resourceStats} />}
-                        </div>
-                    </div>
+                    <BoardSplit layout='main'>
+                        <BoardSection title='Projects' meta={`${usage.length} ${usage.length === 1 ? 'project' : 'projects'}`} flush>
+                            <ProjectsTable usage={usage} />
+                        </BoardSection>
+
+                        <BoardSection title='Share of transfer' meta='In and out'>
+                            <MeterList
+                                entries={usage.map((project) => ({
+                                    key: String(project.projectId),
+                                    label: <><ProjectDot projectId={project.projectId} />{project.projectName}</>,
+                                    value: project.incoming + project.outgoing,
+                                    display: share(project.incoming + project.outgoing, transferred)
+                                }))}
+                            />
+                            <ServerHealth />
+                        </BoardSection>
+                    </BoardSplit>
                 </ListPageShell>
-            </div>
-        </PageBody>
+            </PageBody>
+        </>
     );
 };
 

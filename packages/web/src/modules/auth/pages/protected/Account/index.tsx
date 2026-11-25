@@ -1,72 +1,73 @@
 import { useNavigate } from 'react-router-dom';
-import { FieldsSkeleton, PageHeaderSkeleton } from '@/shared/components/skeletons';
-import { Button } from '@heroui/react';
-import { ArrowRight } from 'lucide-react';
+import { FieldsSkeleton } from '@/shared/components/skeletons';
+import { Button, Chip } from '@heroui/react';
+import { ArrowRight, UserRound } from 'lucide-react';
 import { useSession } from '@/modules/auth/hooks/use-session';
+import Avatar from '@/shared/components/Avatar';
+import PageBar from '@/shared/components/layout/PageBar';
 import PageBody from '@/shared/components/layout/PageBody';
-import PageHeader from '@/shared/components/layout/PageHeader';
+import PageIntro from '@/shared/components/layout/PageIntro';
 import SettingsRow from '@/shared/components/SettingsRow';
 import SettingsSection from '@/shared/components/SettingsSection';
+import { SETTINGS_TRAIL } from '@/modules/organization/utils/settings-trail';
+import { UserRole } from '@quantum/contracts/modules/user/domain';
+import type { User } from '@quantum/contracts/modules/user/domain';
+
+const ROLE_LABEL: Record<UserRole, string> = {
+    [UserRole.User]: 'User',
+    [UserRole.Admin]: 'Admin'
+};
+
+const Identity = ({ user }: { user: User }) => (
+    <div className='flex items-center gap-3 rounded-lg border border-separator bg-surface px-4 py-4'>
+        <Avatar fullname={user.fullname} className='size-10 text-sm' />
+        <div className='flex min-w-0 flex-col gap-0.5'>
+            <span className='truncate text-[0.9375rem] font-medium text-foreground'>{user.fullname}</span>
+            <span className='truncate text-subtle'>@{user.username}</span>
+        </div>
+    </div>
+);
 
 const Account = () => {
     const { user } = useSession();
     const navigate = useNavigate();
 
-    if(user === null){
-        return (
-            <PageBody>
-                <PageHeaderSkeleton />
-                <FieldsSkeleton className='mt-10' rows={4} />
-            </PageBody>
-        );
-    }
-
-    const facts: [string, string, boolean][] = [
-        ['Username', user.username, true],
-        ['Full name', user.fullname, false],
-        ['Email', user.email, true],
-        ['Role', user.role, false]
-    ];
-
     return (
-        <PageBody>
-            <PageHeader
-                eyebrow='Settings'
-                title='Account'
-                description='Who you are to Quantum, and how you sign in.'
-            />
+        <>
+            <PageBar title='Account' icon={UserRound} trail={SETTINGS_TRAIL} />
 
-            <div className='mt-10 flex flex-col'>
-                <SettingsSection title='Profile' description='What Quantum knows about you.'>
-                    <div className='flex flex-col'>
-                        {facts.map(([label, value, isIdentifier]) => (
-                            <div
-                                key={label}
-                                className='flex items-center justify-between gap-4 border-b border-separator py-3 last:border-0'
-                            >
-                                <span className='text-sm text-foreground'>{label}</span>
-                                <span className={isIdentifier ? 'font-mono text-[0.8125rem] text-muted' : 'text-sm text-muted'}>
-                                    {value}
-                                </span>
-                            </div>
-                        ))}
-                    </div>
-                </SettingsSection>
+            <PageBody variant='narrow'>
+                <div className='flex flex-col gap-8'>
+                    <PageIntro title='Account' description='Who you are to Quantum, and how you sign in.' />
 
-                <SettingsSection title='Security'>
-                    <SettingsRow
-                        title='Password'
-                        description='Changing it needs the one you use today, so it stays behind a step.'
-                        action={(
-                            <Button variant='secondary' onPress={() => navigate('/change-password')}>
-                                Change password
-                                <ArrowRight aria-hidden='true' className='size-4' />
-                            </Button>
-                        )}
-                    />
-                </SettingsSection>
-            </div>
-        </PageBody>
+                    {user === null ? <FieldsSkeleton rows={4} /> : (
+                        <>
+                            <Identity user={user} />
+
+                            <SettingsSection title='Profile' description='What Quantum knows about you.'>
+                                <SettingsRow title='Username' action={<span className='font-mono text-xs text-muted'>{user.username}</span>} />
+                                <SettingsRow title='Full name' action={<span className='text-muted'>{user.fullname}</span>} />
+                                <SettingsRow title='Email' action={<span className='font-mono text-xs text-muted'>{user.email}</span>} />
+                                <SettingsRow title='Role' action={<Chip size='sm'>{ROLE_LABEL[user.role]}</Chip>} />
+                            </SettingsSection>
+
+                            <SettingsSection title='Security'>
+                                <SettingsRow
+                                    title='Password'
+                                    description='Changing it needs the one you use today.'
+                                    action={(
+                                        <Button size='sm' variant='secondary' onPress={() => navigate('/change-password')}>
+                                            Change password
+                                            <ArrowRight aria-hidden='true' />
+                                        </Button>
+                                    )}
+                                />
+                            </SettingsSection>
+                        </>
+                    )}
+                </div>
+            </PageBody>
+        </>
     );
 };
 

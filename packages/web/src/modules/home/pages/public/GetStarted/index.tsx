@@ -1,36 +1,42 @@
 import { useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { buttonVariants } from '@heroui/react';
-import { ArrowRight, ArrowUpRight } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, BookOpen, Globe, Server, SquareTerminal } from 'lucide-react';
 import GithubIcon from '@/shared/components/icons/GithubIcon';
 import LandingShell from '@/modules/home/components/LandingShell';
-import LandingSection from '@/modules/home/components/LandingSection';
-import LandingWords from '@/modules/home/components/LandingWords';
+import FeatureGrid from '@/modules/home/components/FeatureGrid';
+import FeatureCell from '@/modules/home/components/FeatureCell';
 import CommandBlock from '@/modules/home/components/CommandBlock';
+import GuideSection from '@/modules/home/components/GuideSection';
 import GuideSetupPicker from '@/modules/home/components/GuideSetupPicker';
 import GuideStepItem from '@/modules/home/components/GuideStepItem';
 import GuideRail from '@/modules/home/components/GuideRail';
+import GuideText from '@/modules/home/components/GuideText';
 import GuideTroubles from '@/modules/home/components/GuideTroubles';
 import { useCurrentStep } from '@/modules/home/hooks/use-current-step';
 import { useGuideStore } from '@/modules/home/store/guide';
 import { USEFUL_COMMANDS, guideFor, targetFor, troublesFor } from '@/modules/home/utils/guide';
 import { GITHUB_URL, ISSUES_URL } from '@/modules/home/utils/links';
-import { order } from '@/modules/home/utils/order';
+import { EYEBROW, GRADIENT_TITLE, LEDE, WRAP } from '@/modules/home/utils/classes';
 
 const NEEDS = [
     {
+        icon: Server,
         title: 'A Linux server',
         body: 'From any provider. On Ubuntu or Debian every command works as written.'
     },
     {
+        icon: SquareTerminal,
         title: 'A terminal',
         body: 'To paste the commands into. Mac, Windows and Linux all come with one, and with SSH to reach a server.'
     },
     {
+        icon: Globe,
         title: 'A domain',
         body: "Optional, for HTTPS at your own address. Without one, you open Quantum at the server's IP."
     },
     {
+        icon: GithubIcon,
         title: 'A GitHub account',
         body: 'Optional, to deploy your own repositories. Templates, databases and compose files work without it.'
     }
@@ -49,133 +55,99 @@ const GetStarted = () => {
 
     return (
         <LandingShell>
-            <div className='lp-guide'>
-                <section aria-labelledby='guide-title' className='lp-wrap pb-[clamp(96px,10vw,176px)] pt-[clamp(64px,9vw,152px)]'>
-                    <p className='label-caps lp-dim lp-enter' style={order(0)}>Self-host guide</p>
+            <div className={WRAP}>
+                <header id='setup' className='grid scroll-mt-20 grid-cols-1 gap-4 pt-[clamp(2.5rem,7vw,4rem)]'>
+                    <p className={EYEBROW}>
+                        <BookOpen aria-hidden='true' className='ml-1 size-3.5 text-subtle' />
+                        Self-host guide · {steps.length} steps
+                    </p>
 
-                    <h1 id='guide-title' className='lp-display mt-8'>
-                        <span className='block'><LandingWords text='Install Quantum,' from={0} /></span>
-                        <span className='block lp-dim'><LandingWords text='step by step.' from={2} /></span>
+                    <h1 className={`${GRADIENT_TITLE} text-[length:clamp(2rem,5vw,3.375rem)] leading-[1.04] tracking-[-0.04em]`}>
+                        <span className='block'>Install Quantum,</span>{' '}
+                        <span className='block'>step by step.</span>
                     </h1>
 
-                    <ul id='requirements' aria-label='What you need' className='lp-grid lp-enter scroll-mt-24 mt-[clamp(56px,6vw,96px)] grid-cols-1 sm:grid-cols-2 lg:grid-cols-4' style={order(1)}>
-                        {NEEDS.map((need) => (
-                            <li key={need.title} className='lp-cell'>
-                                <p className='flex flex-col gap-3'>
-                                    <span className='text-[1.0625rem] tracking-[-0.01em] text-white'>{need.title}</span>
-                                    <span className='lp-body'>{need.body}</span>
-                                </p>
-                            </li>
-                        ))}
-                    </ul>
-                </section>
+                    <p className={LEDE}>Copy each command in order. Pick where it will run and the commands change to match.</p>
 
-                <LandingSection
-                    id='setup'
-                    index='01'
-                    label='Choose'
-                    title='Where will it run?'
-                    subtitle='Pick one to begin.'
-                >
-                    <div className='lp-reveal'>
-                        <GuideSetupPicker
-                            setup={setup}
-                            ip={ip}
-                            domain={domain}
-                            onSetupChange={choose}
-                            onIpChange={setIp}
-                            onDomainChange={setDomain}
-                        />
-                    </div>
-                </LandingSection>
+                    <GuideSetupPicker
+                        setup={setup}
+                        ip={ip}
+                        domain={domain}
+                        onSetupChange={choose}
+                        onIpChange={setIp}
+                        onDomainChange={setDomain}
+                    />
+                </header>
 
-                <LandingSection
-                    id='steps'
-                    index='02'
-                    label='Install'
-                    title='Copy, paste, Enter.'
-                    subtitle={`${steps.length} steps, in order.`}
-                >
-                    <div className='grid gap-10 lg:grid-cols-12 lg:gap-6'>
-                        <aside className='hidden lg:col-span-3 lg:block'>
-                            <div className='sticky top-24 pr-10'>
-                                <GuideRail steps={steps} finished={finished} current={current} isDone={isDone} />
-                            </div>
-                        </aside>
+                <div className='grid grid-cols-1 gap-8 pb-[clamp(4rem,9vw,6rem)] pt-12 lg:grid-cols-[15rem_minmax(0,1fr)] lg:gap-14'>
+                    <aside className='min-w-0 lg:sticky lg:top-21 lg:self-start'>
+                        <GuideRail steps={steps} finished={finished} current={current} isDone={isDone} />
+                    </aside>
 
-                        <div className='min-w-0 lg:col-span-9'>
-                            <p className='lp-index mb-6 lg:hidden'>{finished} of {steps.length} steps done</p>
+                    <div className='grid min-w-0 grid-cols-1 gap-14'>
+                        <GuideSection id='requirements' title='What you need'>
+                            <FeatureGrid columns={2}>
+                                {NEEDS.map((need) => <FeatureCell key={need.title} icon={need.icon} title={need.title} body={need.body} />)}
+                            </FeatureGrid>
+                        </GuideSection>
 
-                            <ol ref={list} className='lp-rule'>
-                                {steps.map((step, index) => (
-                                    <GuideStepItem
-                                        key={`${setup}-${step.id}`}
-                                        step={step}
-                                        number={index + 1}
-                                        isDone={isDone(step.id)}
-                                        onToggle={() => toggle(keyOf(step.id))}
-                                    />
-                                ))}
-                            </ol>
+                        <ol id='steps' ref={list} aria-label='Install steps' className='grid scroll-mt-24 grid-cols-1 gap-12'>
+                            {steps.map((step, index) => (
+                                <GuideStepItem
+                                    key={`${setup}-${step.id}`}
+                                    step={step}
+                                    number={index + 1}
+                                    isDone={isDone(step.id)}
+                                    onToggle={() => toggle(keyOf(step.id))}
+                                />
+                            ))}
+                        </ol>
 
-                            <div className='flex flex-col items-start gap-8 pt-[clamp(56px,6vw,96px)]'>
-                                <p className='text-[clamp(2.25rem,4.4vw,4.5rem)] font-light leading-[0.98] tracking-[-0.045em]'>
-                                    That's it.
-                                    <span className='block lp-dim'>The platform is yours.</span>
-                                </p>
+                        <div className='grid gap-4 rounded-xl border border-separator bg-surface bg-[radial-gradient(80%_120%_at_100%_0%,var(--glow),transparent_60%)] p-6'>
+                            <p className='text-xl font-semibold tracking-[-0.02em]'>
+                                That's it.
+                                <span className='text-muted'> The platform is yours.</span>
+                            </p>
 
-                                <div className='flex flex-wrap gap-3'>
-                                    <Link to={{ pathname: '/', hash: 'deploy' }} className={buttonVariants({ size: 'lg' })}>
-                                        See what you can deploy
-                                        <ArrowRight aria-hidden='true' className='size-4' />
-                                    </Link>
+                            <div className='flex flex-wrap gap-2'>
+                                <Link to={{ pathname: '/', hash: 'deploy' }} className={buttonVariants()}>
+                                    See what you can deploy
+                                    <ArrowRight aria-hidden='true' />
+                                </Link>
 
-                                    <a href={GITHUB_URL} target='_blank' rel='noreferrer' className={buttonVariants({ size: 'lg', variant: 'secondary' })}>
-                                        <GithubIcon className='size-4' />
-                                        Star on GitHub
-                                    </a>
-                                </div>
+                                <a href={GITHUB_URL} target='_blank' rel='noreferrer' className={buttonVariants({ variant: 'secondary' })}>
+                                    <GithubIcon className='size-3.5' />
+                                    Star on GitHub
+                                </a>
                             </div>
                         </div>
-                    </div>
-                </LandingSection>
 
-                <LandingSection
-                    id='troubleshooting'
-                    index='03'
-                    label='Help'
-                    title='If something goes wrong.'
-                    subtitle='Most fixes are one command.'
-                    lead='The script stops with a message that says what is missing. Find yours below.'
-                >
-                    <div className='grid gap-10 lg:grid-cols-12 lg:gap-6'>
-                        <div className='lp-reveal min-w-0 lg:col-span-9 lg:col-start-4'>
+                        <GuideSection
+                            id='troubleshooting'
+                            title='If something goes wrong'
+                            lead='The script stops with a message that says what is missing. Find yours below.'
+                        >
                             <GuideTroubles troubles={troublesFor(setup, target)} />
 
-                            <a href={ISSUES_URL} target='_blank' rel='noreferrer' className='label-caps lp-link mt-10 inline-flex items-center gap-2'>
+                            <a href={ISSUES_URL} target='_blank' rel='noreferrer' className='inline-flex w-fit items-center gap-1.5 text-muted transition-colors hover:text-foreground motion-reduce:transition-none'>
                                 Still stuck? Open an issue
                                 <ArrowUpRight aria-hidden='true' className='size-3.5' />
                             </a>
-                        </div>
-                    </div>
-                </LandingSection>
+                        </GuideSection>
 
-                <LandingSection
-                    id='commands'
-                    index='04'
-                    label='Everyday'
-                    title='Commands worth keeping.'
-                    subtitle='Run them in the Quantum folder.'
-                    lead='Coming back in a new terminal? Run cd Quantum first, then any of these.'
-                >
-                    <div className='grid gap-10 lg:grid-cols-12 lg:gap-6'>
-                        <div className='lp-reveal grid min-w-0 gap-6 md:grid-cols-2 lg:col-span-9 lg:col-start-4'>
-                            {USEFUL_COMMANDS.map((command) => (
-                                <CommandBlock key={command.code} label={command.label} command={command.code} />
-                            ))}
-                        </div>
+                        <GuideSection
+                            id='commands'
+                            title='Commands worth keeping'
+                            lead={<GuideText text='Coming back in a new terminal? Run `cd Quantum` first, then any of these.' />}
+                        >
+                            <div className='grid gap-3 md:grid-cols-2'>
+                                {USEFUL_COMMANDS.map((command) => (
+                                    <CommandBlock key={command.code} label={command.label} command={command.code} />
+                                ))}
+                            </div>
+                        </GuideSection>
                     </div>
-                </LandingSection>
+                </div>
             </div>
         </LandingShell>
     );

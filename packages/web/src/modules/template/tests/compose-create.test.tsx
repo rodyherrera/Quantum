@@ -61,10 +61,7 @@ const type = async (input: HTMLInputElement, value: string) => {
 };
 
 const inputLabelled = (label: string): HTMLInputElement => {
-    const labels = [...(container?.querySelectorAll('label') ?? [])];
-    const match = labels.find((node) => node.textContent?.trim().startsWith(label));
-    const id = match?.getAttribute('for');
-    const input = id ? container?.querySelector<HTMLInputElement>(`#${id}`) : null;
+    const input = container?.querySelector<HTMLInputElement>(`input[aria-label="${label}"]`);
     if(!input) throw new Error(`no ${label} input`);
     return input;
 };

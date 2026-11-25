@@ -2,7 +2,7 @@ import SocketChannel from '@/shared/services/socket/SocketChannel';
 import { defineErrors } from '@/shared/errors/define-errors';
 import type { PoolEntry } from '@/shared/contracts/channel';
 
-export const ChannelError = defineErrors({
+const ChannelError = defineErrors({
     domain: 'Channel',
     causes: {
         AlreadyAcquired: 500

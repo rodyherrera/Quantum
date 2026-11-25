@@ -15,7 +15,7 @@ const InternalAddress = ({ address }: InternalAddressProps) => {
 
     const ip = address?.ip ?? null;
     if(address === null || ip === null){
-        return <span className='text-[0.8125rem] text-muted'>—</span>;
+        return <span className='text-subtle'>—</span>;
     }
 
     const copy = async () => {
@@ -26,13 +26,13 @@ const InternalAddress = ({ address }: InternalAddressProps) => {
 
     return (
         <div className='flex min-w-0 flex-col'>
-            <span className='flex items-center gap-1.5'>
-                <code className='font-mono text-[0.8125rem] text-foreground'>{ip}</code>
+            <span className='flex items-center gap-1'>
+                <code className='truncate font-mono text-xs text-muted'>{ip}</code>
                 <Button
                     isIconOnly
                     variant='ghost'
                     size='sm'
-                    className='size-6 text-muted hover:text-foreground'
+                    className='size-5 min-w-5 text-subtle hover:text-foreground'
                     aria-label={`Copy ${ip}`}
                     onPress={() => { void copy(); }}
                 >

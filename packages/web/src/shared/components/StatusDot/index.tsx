@@ -1,35 +1,55 @@
 import { cn } from '@heroui/react';
 import type { StatusColor } from '@/shared/utils/status';
 
-interface StatusDotProps{
+const TONE: Record<StatusColor, string> = {
+    success: 'text-success',
+    accent: 'text-accent',
+    default: 'text-subtle',
+    warning: 'text-warning',
+    danger: 'text-danger'
+};
+
+interface StatusGlyphProps{
     color: StatusColor;
-    label: string;
     isTransient?: boolean;
     className?: string;
 }
 
-const DOT: Record<StatusColor, string> = {
-    success: 'bg-foreground',
-    accent: 'bg-foreground',
-    default: 'bg-foreground/30',
-    warning: 'bg-warning',
-    danger: 'bg-danger'
+/*
+ * Linear's state vocabulary: an empty ring, a lit ring, a half-filled ring while it changes, and a
+ * filled disc with a mark when it needs attention.
+ */
+export const StatusGlyph = ({ color, isTransient = false, className }: StatusGlyphProps) => {
+    const alarm = color === 'danger' || (color === 'warning' && !isTransient);
+
+    return (
+        <svg viewBox='0 0 14 14' aria-hidden='true' className={cn('size-3.5 shrink-0', TONE[color], className)}>
+            {alarm ? (
+                <>
+                    <circle cx='7' cy='7' r='6.4' className='fill-current' />
+                    {color === 'danger'
+                        ? <path d='M5 5l4 4M9 5 5 9' className='stroke-background' strokeWidth='1.5' strokeLinecap='round' />
+                        : <path d='M7 3.9v3.5M7 9.9v.1' className='stroke-background' strokeWidth='1.6' strokeLinecap='round' />}
+                </>
+            ) : (
+                <>
+                    <circle cx='7' cy='7' r='5.6' className='fill-none stroke-current' strokeWidth='1.5' />
+                    {isTransient
+                        ? <path d='M7 3.4a3.6 3.6 0 0 1 0 7.2Z' className='fill-current' />
+                        : color !== 'default' && <circle cx='7' cy='7' r='2.6' className='fill-current' />}
+                </>
+            )}
+        </svg>
+    );
 };
 
-const TEXT: Record<StatusColor, string> = {
-    success: 'text-foreground',
-    accent: 'text-foreground',
-    default: 'text-muted',
-    warning: 'text-foreground',
-    danger: 'text-foreground'
-};
+interface StatusDotProps extends StatusGlyphProps{
+    label: string;
+}
 
 const StatusDot = ({ color, label, isTransient = false, className }: StatusDotProps) => (
-    <span className={cn('inline-flex items-center gap-2.5 whitespace-nowrap text-sm', TEXT[color], className)}>
-        <span
-            aria-hidden='true'
-            className={cn('size-[7px] shrink-0 rounded-full', isTransient ? 'status-dot-transient' : DOT[color])}
-        />
+    <span className={cn('inline-flex items-center gap-2 whitespace-nowrap', color === 'default' ? 'text-muted' : 'text-foreground', className)}>
+        <StatusGlyph color={color} isTransient={isTransient} />
         {label}
     </span>
 );

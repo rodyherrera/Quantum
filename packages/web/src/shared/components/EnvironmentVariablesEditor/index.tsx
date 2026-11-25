@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { Button, Input, InputGroup, TextField } from '@heroui/react';
-import { KeyRound, Plus, Trash2 } from 'lucide-react';
+import { Button, cn, Input, TextField } from '@heroui/react';
+import { Eye, EyeOff, KeyRound, Plus, Trash2 } from 'lucide-react';
 import EmptyState from '@/shared/components/EmptyState';
 import CenterState from '@/shared/components/CenterState';
 import InlineError from '@/shared/components/InlineError';
@@ -18,7 +18,15 @@ import {
 } from '@/shared/utils/env-vars';
 import type { EnvVarRow } from '@/shared/utils/env-vars';
 
-const ROW_GRID = 'grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_2.5rem] items-center gap-3';
+const ROW_GRID = 'grid grid-cols-[minmax(7.5rem,0.8fr)_minmax(0,1.4fr)_5.25rem] items-center gap-x-1 px-1';
+
+/* The inputs read as plain text until the row is hovered or the field is focused. */
+const BLEND_INPUT = 'border-transparent bg-transparent font-mono hover:border-border focus:bg-field';
+
+/* Generate and remove stay out of the way until the row is hovered or focused; touch screens always show them. */
+const HOVER_ONLY = 'opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100 pointer-coarse:opacity-100 motion-reduce:transition-none';
+
+const ICON_BUTTON = 'size-7 text-subtle hover:text-foreground';
 
 interface EnvironmentVariableRowProps{
     row: EnvVarRow;
@@ -26,48 +34,66 @@ interface EnvironmentVariableRowProps{
     onRemove: () => void;
 }
 
-const EnvironmentVariableRow = ({ row, onChange, onRemove }: EnvironmentVariableRowProps) => (
-    <div className={ROW_GRID}>
-        <TextField
-            aria-label='Key'
-            value={row.key}
-            onChange={(key) => onChange(key, row.value)}
-            validationBehavior='aria'
-            fullWidth
-        >
-            <Input className='font-mono' placeholder='e.g. DATABASE_URL' autoComplete='off' />
-        </TextField>
+const EnvironmentVariableRow = ({ row, onChange, onRemove }: EnvironmentVariableRowProps) => {
+    const [revealed, setRevealed] = useState(false);
+    const secret = isSecretVariable(row.key);
 
-        <TextField
-            aria-label='Value'
-            value={row.value}
-            onChange={(value) => onChange(row.key, value)}
-            validationBehavior='aria'
-            fullWidth
-        >
-            {isSecretVariable(row.key) ? (
-                <InputGroup fullWidth>
-                    <InputGroup.Input className='min-w-0 font-mono' placeholder='Value' autoComplete='off' />
-                    <InputGroup.Suffix>
-                        <GenerateSecretButton name={row.key} onGenerate={(value) => onChange(row.key, value)} />
-                    </InputGroup.Suffix>
-                </InputGroup>
-            ) : (
-                <Input className='font-mono' placeholder='Value' autoComplete='off' />
-            )}
-        </TextField>
+    return (
+        <div className={cn(ROW_GRID, 'group min-h-11 transition-colors hover:bg-default motion-reduce:transition-none')}>
+            <TextField
+                aria-label='Key'
+                value={row.key}
+                onChange={(key) => onChange(key, row.value)}
+                validationBehavior='aria'
+                fullWidth
+            >
+                <Input className={BLEND_INPUT} placeholder='e.g. DATABASE_URL' autoComplete='off' />
+            </TextField>
 
-        <Button
-            isIconOnly
-            variant='ghost'
-            className='text-muted hover:text-foreground'
-            aria-label={row.key === '' ? 'Remove variable' : `Remove ${row.key}`}
-            onPress={onRemove}
-        >
-            <Trash2 aria-hidden='true' className='size-4' />
-        </Button>
-    </div>
-);
+            <TextField
+                aria-label='Value'
+                type={secret && !revealed ? 'password' : 'text'}
+                value={row.value}
+                onChange={(value) => onChange(row.key, value)}
+                validationBehavior='aria'
+                fullWidth
+            >
+                <Input className={BLEND_INPUT} placeholder='Value' autoComplete='off' />
+            </TextField>
+
+            <div className='flex items-center justify-end'>
+                {secret && (
+                    <>
+                        <Button
+                            isIconOnly
+                            variant='ghost'
+                            size='sm'
+                            className={ICON_BUTTON}
+                            aria-label={revealed ? `Hide ${row.key}` : `Show ${row.key}`}
+                            onPress={() => setRevealed(!revealed)}
+                        >
+                            {revealed ? <EyeOff aria-hidden='true' /> : <Eye aria-hidden='true' />}
+                        </Button>
+                        <span className={cn('inline-flex', HOVER_ONLY)}>
+                            <GenerateSecretButton name={row.key} onGenerate={(value) => onChange(row.key, value)} />
+                        </span>
+                    </>
+                )}
+
+                <Button
+                    isIconOnly
+                    variant='ghost'
+                    size='sm'
+                    className={cn(ICON_BUTTON, HOVER_ONLY)}
+                    aria-label={row.key === '' ? 'Remove variable' : `Remove ${row.key}`}
+                    onPress={onRemove}
+                >
+                    <Trash2 aria-hidden='true' />
+                </Button>
+            </div>
+        </div>
+    );
+};
 
 interface EnvironmentVariablesEditorProps{
     variables: Record<string, string>;
@@ -83,7 +109,7 @@ const EnvironmentVariablesEditor = ({
     variables,
     save,
     getErrorMessage,
-    title = 'Environment Variables',
+    title = 'Environment variables',
     description,
     emptyDescription,
     fills = true
@@ -98,56 +124,57 @@ const EnvironmentVariablesEditor = ({
     });
 
     const add = () => setRows((current) => addEnvVarRow(current));
+    const empty = rows.length === 0;
 
     return (
-        <div className={`flex flex-col ${fills ? 'min-h-0 flex-1' : ''}`}>
-            <div className='flex flex-wrap items-end justify-between gap-4'>
-                <div>
-                    <h2 className='text-[0.9375rem] font-medium text-foreground'>{title}</h2>
-                    <p className='mt-1 max-w-[58ch] text-[0.8125rem] text-muted'>{description}</p>
+        <section className={cn('flex min-w-0 flex-col rounded-lg border border-separator bg-surface', fills && empty && 'min-h-0 flex-1')}>
+            <header className='flex min-h-[2.625rem] flex-wrap items-center justify-between gap-x-4 gap-y-2 px-4 py-2'>
+                <div className='min-w-0 flex-1 basis-64'>
+                    <h3 className='font-semibold text-foreground'>{title}</h3>
+                    <p className='mt-0.5 max-w-[60ch] text-xs text-subtle'>{description}</p>
                 </div>
 
-                <div className='flex flex-wrap items-center gap-4'>
+                <div className='flex shrink-0 items-center gap-3'>
                     <SaveStatus state={saver.state} />
-                    <Button variant='secondary' onPress={add}>
-                        <Plus aria-hidden='true' className='size-4' />
+                    <Button size='sm' variant='secondary' onPress={add}>
+                        <Plus aria-hidden='true' />
                         Add variable
                     </Button>
                 </div>
-            </div>
+            </header>
 
-            <div className={`mt-6 flex flex-col gap-3 ${fills ? 'flex-1' : ''}`}>
-                {rows.length === 0 ? (
-                    <CenterState>
-                        <EmptyState icon={KeyRound} title='No environment variables' description={emptyDescription}>
-                            <Button onPress={add}>
-                                <Plus aria-hidden='true' className='size-4' />
-                                Add variable
-                            </Button>
-                        </EmptyState>
-                    </CenterState>
-                ) : (
-                    <>
-                        <div className={`${ROW_GRID} border-b border-border pb-2`}>
-                            <span className='label-caps text-muted'>Key</span>
-                            <span className='label-caps text-muted'>Value</span>
-                            <span className='sr-only'>Actions</span>
-                        </div>
+            {empty ? (
+                <CenterState className='flex-1 border-t border-separator'>
+                    <EmptyState icon={KeyRound} title='No environment variables' description={emptyDescription} compact>
+                        <Button size='sm' onPress={add}>
+                            <Plus aria-hidden='true' />
+                            Add variable
+                        </Button>
+                    </EmptyState>
+                </CenterState>
+            ) : (
+                <div className='border-t border-separator [&>*+*]:border-t [&>*+*]:border-separator'>
+                    <div className={cn(ROW_GRID, 'h-8 text-xs font-medium text-subtle [&>span]:px-3')}>
+                        <span>Key</span>
+                        <span>Value</span>
+                        <span className='sr-only'>Actions</span>
+                    </div>
 
-                        {rows.map((row, index) => (
-                            <EnvironmentVariableRow
-                                key={index}
-                                row={row}
-                                onChange={(key, value) => setRows((current) => updateEnvVarRow(current, index, key, value))}
-                                onRemove={() => setRows((current) => removeEnvVarRow(current, index))}
-                            />
-                        ))}
-                    </>
-                )}
+                    {rows.map((row, index) => (
+                        <EnvironmentVariableRow
+                            key={index}
+                            row={row}
+                            onChange={(key, value) => setRows((current) => updateEnvVarRow(current, index, key, value))}
+                            onRemove={() => setRows((current) => removeEnvVarRow(current, index))}
+                        />
+                    ))}
+                </div>
+            )}
 
-                {update.error !== undefined && <InlineError>{getErrorMessage(update.error)}</InlineError>}
-            </div>
-        </div>
+            {update.error !== undefined && (
+                <InlineError className='border-t border-separator px-4 py-2.5'>{getErrorMessage(update.error)}</InlineError>
+            )}
+        </section>
     );
 };
 

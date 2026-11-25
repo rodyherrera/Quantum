@@ -1,9 +1,9 @@
-import { Chip } from '@heroui/react';
-import { codespaceStatusColor, codespaceStatusLabel } from '@/modules/codespace/utils/status';
-import type { CodespaceStatus } from '@quantum/contracts/modules/codespace/domain';
+import StatusDot from '@/shared/components/StatusDot';
+import { codespaceStatusColor, codespaceStatusLabel, isCodespaceTransient } from '@/modules/codespace/utils/status';
+import type { CodespaceStatus as Status } from '@quantum/contracts/modules/codespace/domain';
 
-const CodespaceStatusChip = ({ status }: { status: CodespaceStatus }) => (
-    <Chip size='sm' variant='soft' color={codespaceStatusColor(status)}>{codespaceStatusLabel(status)}</Chip>
+const CodespaceStatus = ({ status }: { status: Status }) => (
+    <StatusDot color={codespaceStatusColor(status)} label={codespaceStatusLabel(status)} isTransient={isCodespaceTransient(status)} />
 );
 
-export default CodespaceStatusChip;
+export default CodespaceStatus;

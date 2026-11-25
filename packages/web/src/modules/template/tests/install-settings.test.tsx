@@ -51,4 +51,26 @@ describe('stack settings', () => {
         expect(inputs).toContain('DATABASE_URL');
         expect(inputs).toContain('postgres://db/learn');
     });
+
+    it('masks secret values until you reveal them, and can still generate one', async () => {
+        vi.spyOn(templateInstallApi, 'variables').mockResolvedValue({ DATABASE_URL: 'postgres://db/learn', POSTGRES_PASSWORD: 'Zp7Lq2vX' });
+
+        container = document.createElement('div');
+        document.body.appendChild(container);
+        root = createRoot(container);
+        await act(async () => { root?.render(<InstallSettings />); });
+        await settle();
+
+        const valueOf = (value: string) => [...(container?.querySelectorAll('input') ?? [])].find((input) => input.value === value);
+        expect(valueOf('postgres://db/learn')?.type).toBe('text');
+        expect(valueOf('Zp7Lq2vX')?.type).toBe('password');
+        expect(container.querySelector('button[aria-label="Show DATABASE_URL"]')).toBeNull();
+        expect(container.querySelector('button[aria-label="Generate POSTGRES_PASSWORD"]')).not.toBeNull();
+
+        await act(async () => { container?.querySelector<HTMLButtonElement>('button[aria-label="Show POSTGRES_PASSWORD"]')?.click(); });
+        await settle();
+
+        expect(valueOf('Zp7Lq2vX')?.type).toBe('text');
+        expect(container.querySelector('button[aria-label="Hide POSTGRES_PASSWORD"]')).not.toBeNull();
+    });
 });

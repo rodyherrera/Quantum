@@ -1,19 +1,21 @@
-import { Input, Label, TextField } from '@heroui/react';
 import AppSidebar from '@/shared/components/layout/AppSidebar';
 import PageBody from '@/shared/components/layout/PageBody';
-import EntitySelect from '@/shared/components/EntitySelect';
 import ApplicationsHeader from '@/modules/application/components/ApplicationsHeader';
-import ApplicationsTable from '@/modules/application/components/ApplicationsTable';
+import ApplicationsFilters from '@/modules/application/components/ApplicationsFilters';
+import ApplicationsList from '@/modules/application/components/ApplicationsList';
 import { OrganizationTrigger } from '@/modules/organization/components/OrganizationSwitcher';
 import { AccountLink } from '@/modules/auth/components/SessionAvatar';
+import { countKinds } from '@/modules/application/utils/application-rows';
 import { DEMO_ROWS } from '@/modules/home/utils/demo/applications';
 import { DEMO_ORGANIZATION, DEMO_USER } from '@/modules/home/utils/demo/entities';
 import { IDLE, IDLE_ROW_ACTIONS } from '@/modules/home/utils/demo/idle';
 
 const PROJECTS = [{ id: 1, name: 'Production' }];
 
+const COUNTS = countKinds(DEMO_ROWS);
+
 const LandingDashboard = () => (
-    <div className='flex h-full bg-background text-foreground'>
+    <div className='flex h-full bg-canvas text-foreground'>
         <AppSidebar
             panel='app'
             collapsed={false}
@@ -21,31 +23,30 @@ const LandingDashboard = () => (
             account={<AccountLink user={DEMO_USER} />}
         />
 
-        <main className='min-w-0 flex-1 overflow-hidden'>
-            <PageBody width='wide' height='full'>
-                <ApplicationsHeader canAddDatabase onAddApplication={IDLE} onAddCompose={IDLE} onAddDatabase={IDLE} />
+        <main className='my-2 mr-2 flex min-w-0 flex-1 flex-col overflow-hidden rounded-[0.625rem] border border-separator bg-background'>
+            <ApplicationsHeader
+                kind='all'
+                counts={COUNTS}
+                canAddDatabase
+                onKindChange={IDLE}
+                onAddApplication={IDLE}
+                onAddCompose={IDLE}
+                onAddDatabase={IDLE}
+                onInstallTemplate={IDLE}
+            />
 
-                <div className='mt-6 flex flex-wrap items-center gap-3'>
-                    <div className='max-w-xs flex-1'>
-                        <EntitySelect
-                            items={PROJECTS}
-                            getKey={(project) => project.id}
-                            getLabel={(project) => project.name}
-                            value={1}
-                            onChange={IDLE}
-                            ariaLabel='Project'
-                        />
-                    </div>
+            <ApplicationsFilters
+                projects={PROJECTS}
+                projectId={1}
+                search=''
+                shown={DEMO_ROWS.length}
+                total={DEMO_ROWS.length}
+                onProjectChange={IDLE}
+                onSearchChange={IDLE}
+            />
 
-                    <TextField value='' onChange={IDLE} validationBehavior='aria' className='max-w-xs flex-1'>
-                        <Label className='sr-only'>Search</Label>
-                        <Input placeholder='Search by name' autoComplete='off' />
-                    </TextField>
-                </div>
-
-                <div className='mt-6 flex flex-1 flex-col'>
-                    <ApplicationsTable rows={DEMO_ROWS} {...IDLE_ROW_ACTIONS} />
-                </div>
+            <PageBody variant='flush' fill>
+                <ApplicationsList rows={DEMO_ROWS} {...IDLE_ROW_ACTIONS} />
             </PageBody>
         </main>
     </div>
