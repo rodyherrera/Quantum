@@ -15,7 +15,10 @@ interface PageBarProps{
     actions?: ReactNode;
 }
 
-/* The 44px bar on top of every page: where you are on the left, what you can do on the right. */
+/*
+ * The 44px bar on top of every page: where you are on the left, what you can do on the right.
+ * Filters in the middle scroll, so on a narrow screen they give up their room before the title does.
+ */
 const PageBar = ({ title, trail = [], children, actions }: PageBarProps) => (
     <header className='sticky top-0 z-20 flex h-[var(--bar-height)] shrink-0 items-center gap-2 border-b border-separator bg-background px-4'>
         <nav aria-label='Breadcrumb' className='flex min-w-0 items-center gap-1.5'>
@@ -35,7 +38,7 @@ const PageBar = ({ title, trail = [], children, actions }: PageBarProps) => (
         </nav>
 
         {children !== undefined && (
-            <div className='ml-1.5 flex min-w-0 items-center gap-1 overflow-x-auto [scrollbar-width:none]'>{children}</div>
+            <div className='ml-1.5 flex min-w-0 shrink-100 items-center gap-1 overflow-x-auto [scrollbar-width:none]'>{children}</div>
         )}
 
         {actions !== undefined && <div className='ml-auto flex shrink-0 items-center gap-1.5'>{actions}</div>}

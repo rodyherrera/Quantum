@@ -103,7 +103,7 @@ const GetStarted = () => {
                             ))}
                         </ol>
 
-                        <div className='grid gap-4 border border-separator bg-surface bg-[radial-gradient(80%_120%_at_100%_0%,var(--glow),transparent_60%)] p-6'>
+                        <div className='grid gap-4 border border-separator bg-surface p-6'>
                             <p className='text-xl font-semibold tracking-[-0.02em]'>
                                 That's it.
                                 <span className='text-muted'> The platform is yours.</span>

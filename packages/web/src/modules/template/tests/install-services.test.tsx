@@ -51,7 +51,7 @@ describe('install services', () => {
         expect(text).toContain('Internal only');
 
         const link = container.querySelector('a[href="http://203.0.113.10:20001"]');
-        expect(link?.textContent).toContain('203.0.113.10:20001');
+        expect(link?.getAttribute('aria-label')).toContain('203.0.113.10:20001');
         expect(link?.textContent).toContain('8080');
     });
 });

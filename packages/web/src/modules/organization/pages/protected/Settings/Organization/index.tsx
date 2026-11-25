@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { FieldsSkeleton } from '@/shared/components/skeletons';
 import { useNavigate } from 'react-router-dom';
 import { Button, Chip } from '@heroui/react';
-import { Trash2 } from 'lucide-react';
 import typia from 'typia';
 import PageBar from '@/shared/components/layout/PageBar';
 import PageBody from '@/shared/components/layout/PageBody';
@@ -12,8 +11,10 @@ import SettingsRow from '@/shared/components/SettingsRow';
 import DeleteConfirmDialog from '@/shared/components/DeleteConfirmDialog';
 import Form from '@/shared/components/forms/Form';
 import Field from '@/shared/components/forms/Field';
+import SaveStatus from '@/shared/components/forms/SaveStatus';
 import RegistrySection from '@/modules/registry/components/RegistrySection';
 import { useForm } from '@/shared/hooks/forms/use-form';
+import { useSavedFlash } from '@/shared/hooks/forms/use-saved-flash';
 import { useTenancy } from '@/modules/organization/hooks/use-tenancy';
 import { organizationApi } from '@/modules/organization/api/api';
 import { tenancyErrorMessages } from '@/modules/organization/utils/error-messages';
@@ -32,12 +33,14 @@ interface OrganizationFormProps{
 }
 
 const RenameOrganizationForm = ({ organization, onSaved }: OrganizationFormProps) => {
+    const [saved, flashSaved] = useSavedFlash();
     const form = useForm<UpdateOrganizationInput>({
         validate: typia.createValidate<UpdateOrganizationInput>(),
         submitErrorMessages: tenancyErrorMessages,
         initialValues: { name: organization.name },
         onSubmit: async (values) => {
             await organizationApi.update({ path: { id: organization.id }, body: values });
+            flashSaved();
             onSaved();
         }
     });
@@ -48,6 +51,7 @@ const RenameOrganizationForm = ({ organization, onSaved }: OrganizationFormProps
                 <Field form={form} name='name' label='Name' placeholder='my-organization' />
             </div>
 
+            {saved && <SaveStatus state='saved' className='self-center' />}
             <Button type='submit' variant='secondary' isPending={form.submitting} isDisabled={!form.isValid}>Save</Button>
         </Form>
     );
@@ -99,7 +103,6 @@ const DangerZone = ({ organization }: { organization: Organization }) => {
                     description='Permanently removes it and all of its projects, environments and resources. This cannot be undone.'
                     action={(
                         <Button size='sm' variant='danger' onPress={() => setDeleteOpen(true)}>
-                            <Trash2 aria-hidden='true' />
                             Delete organization
                         </Button>
                     )}

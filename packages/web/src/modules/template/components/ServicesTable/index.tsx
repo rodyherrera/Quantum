@@ -1,7 +1,6 @@
 import { Table } from '@heroui/react';
-import { ArrowUpRight } from 'lucide-react';
 import InternalAddress from '@/shared/components/InternalAddress';
-import { portUrl } from '@/shared/hooks/use-public-host';
+import { PortLink } from '@/modules/repository/components/PortLinks';
 import type { TemplateInstallService } from '@quantum/contracts/modules/template/domain';
 
 interface PublishedPortsProps{
@@ -16,21 +15,7 @@ const PublishedPorts = ({ host, service }: PublishedPortsProps) => {
 
     return (
         <div className='flex flex-wrap items-center gap-1'>
-            {service.ports.map((port) => (
-                <a
-                    key={`${port.internalPort}/${port.protocol}`}
-                    href={portUrl(host, port.externalPort)}
-                    target='_blank'
-                    rel='noreferrer'
-                    title={`Open ${host}:${port.externalPort}`}
-                    className='inline-flex h-[1.375rem] items-center gap-1 whitespace-nowrap rounded-[0.3125rem] border border-border px-1.5 font-mono text-[0.71875rem] text-muted transition-colors hover:border-subtle hover:text-foreground motion-reduce:transition-none'
-                >
-                    <span><span className='sr-only'>{host}</span>:{port.externalPort}</span>
-                    <span aria-hidden='true'>→</span>
-                    <span className='font-medium text-foreground'>{port.internalPort}</span>
-                    <ArrowUpRight aria-hidden='true' className='size-3 text-subtle' />
-                </a>
-            ))}
+            {service.ports.map((port) => <PortLink key={`${port.internalPort}/${port.protocol}`} host={host} port={port} />)}
         </div>
     );
 };

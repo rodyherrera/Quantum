@@ -1,6 +1,5 @@
 import { Link, NavLink } from 'react-router-dom';
 import { cn } from '@heroui/react';
-import QuantumMark from '@/shared/components/QuantumMark';
 import PixelLink from '@/modules/home/components/PixelLink';
 import { GITHUB_URL } from '@/modules/home/utils/links';
 import { WRAP } from '@/modules/home/utils/classes';
@@ -19,10 +18,7 @@ const LandingNav = ({ overlay = false }: LandingNavProps) => {
     return (
         <header className={overlay ? 'absolute inset-x-0 top-3 z-30 text-white' : 'sticky top-0 z-30 border-b border-separator bg-background/85 backdrop-blur-md'}>
             <div className={cn('flex h-15 items-center gap-7', overlay ? 'mx-auto w-full max-w-[70rem] px-7' : WRAP)}>
-                <Link to='/' className='inline-flex items-center gap-2 text-sm font-semibold tracking-[-0.01em]'>
-                    <QuantumMark className='size-5.5' />
-                    Quantum
-                </Link>
+                <Link to='/' className='text-sm font-semibold tracking-[-0.01em]'>Quantum</Link>
 
                 <nav aria-label='Sections' className='hidden items-center gap-6 md:flex'>
                     <Link to={{ pathname: '/', hash: 'deploy' }} className={link}>Deploy</Link>

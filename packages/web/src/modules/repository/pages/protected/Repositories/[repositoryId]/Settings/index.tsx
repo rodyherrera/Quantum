@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { FieldsSkeleton } from '@/shared/components/skeletons';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Button } from '@heroui/react';
-import { Trash2 } from 'lucide-react';
 import typia from 'typia';
 import ErrorState from '@/shared/components/ErrorState';
 import SettingsSection, { SettingsBlock } from '@/shared/components/SettingsSection';
@@ -11,9 +10,11 @@ import Segmented from '@/shared/components/layout/Segmented';
 import DeleteConfirmDialog from '@/shared/components/DeleteConfirmDialog';
 import Form from '@/shared/components/forms/Form';
 import Field from '@/shared/components/forms/Field';
+import SaveStatus from '@/shared/components/forms/SaveStatus';
 import PersistentVolumes from '@/modules/repository/components/PersistentVolumes';
 import PublishedPorts from '@/modules/repository/components/PublishedPorts';
 import { useForm } from '@/shared/hooks/forms/use-form';
+import { useSavedFlash } from '@/shared/hooks/forms/use-saved-flash';
 import { useQuery } from '@/shared/hooks/api/use-query';
 import { repositoryApi } from '@/modules/repository/api/api';
 import { BUILD_STRATEGIES, BUILD_STRATEGY_LABELS } from '@/modules/repository/utils/build-strategy';
@@ -115,12 +116,14 @@ interface RepositorySettingsFormProps{
 }
 
 const RepositorySettingsForm = ({ repository, onSaved }: RepositorySettingsFormProps) => {
+    const [saved, flashSaved] = useSavedFlash();
     const form = useForm<RepositorySettingsFormValues>({
         validate: validateRepositorySettingsForm,
         submitErrorMessages: repositoryErrorMessages,
         initialValues: toRepositorySettingsFormValues(repository),
         onSubmit: async (values) => {
             await repositoryApi.update({ path: { id: repository.id }, body: toUpdateRepositoryInput(values) });
+            flashSaved();
             onSaved();
         }
     });
@@ -182,8 +185,9 @@ const RepositorySettingsForm = ({ repository, onSaved }: RepositorySettingsFormP
                 </SettingsBlock>
             </SettingsSection>
 
-            <div>
+            <div className='flex items-center gap-3'>
                 <Button type='submit' isPending={form.submitting} isDisabled={!form.isValid}>Save changes</Button>
+                {saved && <SaveStatus state='saved' />}
             </div>
         </Form>
     );
@@ -220,7 +224,6 @@ const DangerZone = ({ repository }: { repository: Repository }) => {
                 description='Permanently removes the repository and all of its deployments. This cannot be undone.'
                 action={(
                     <Button variant='danger' onPress={() => setDeleteOpen(true)}>
-                        <Trash2 aria-hidden='true' />
                         Delete repository
                     </Button>
                 )}

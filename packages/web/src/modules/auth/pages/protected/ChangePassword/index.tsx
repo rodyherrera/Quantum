@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Button } from '@heroui/react';
 import typia from 'typia';
 import PageBar from '@/shared/components/layout/PageBar';
@@ -8,6 +7,7 @@ import SettingsSection, { SettingsBlock } from '@/shared/components/SettingsSect
 import Form from '@/shared/components/forms/Form';
 import Field from '@/shared/components/forms/Field';
 import { useForm } from '@/shared/hooks/forms/use-form';
+import { useSavedFlash } from '@/shared/hooks/forms/use-saved-flash';
 import { authApi } from '@/modules/auth/api/api';
 import { authErrorMessages } from '@/modules/auth/utils/error-messages';
 import { SETTINGS_TRAIL } from '@/modules/organization/utils/settings-trail';
@@ -20,7 +20,7 @@ const changePasswordErrorFields: Partial<Record<AuthSubmitErrorCode, keyof Updat
 };
 
 const ChangePassword = () => {
-    const [saved, setSaved] = useState(false);
+    const [saved, flashSaved] = useSavedFlash();
     const setToken = useSessionStore((state) => state.setToken);
 
     const form = useForm<UpdatePasswordInput>({
@@ -32,8 +32,7 @@ const ChangePassword = () => {
             const session = await authApi.updatePassword({ body: values });
             setToken(session.token);
             form.reset();
-            setSaved(true);
-            setTimeout(() => setSaved(false), 3000);
+            flashSaved();
         }
     });
 
