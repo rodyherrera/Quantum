@@ -79,11 +79,11 @@ const WorkspaceButton = ({ target }: WorkspaceButtonProps) => {
                 isDisabled={workspace.loading}
                 onPress={() => { if(running) setShowAccess(true); else void launch.run().catch(() => undefined); }}
             >
-                <VsCodeIcon className='size-4' />
+                <VsCodeIcon className='size-3.5' />
                 {labelFor(codespace)}
             </Button>
 
-            {error !== undefined && <span className='text-[0.75rem] text-danger'>{copy(error)}</span>}
+            {error !== undefined && <span role='alert' className='max-w-xs text-right text-xs text-danger'>{copy(error)}</span>}
 
             <CodespaceAccessDialog
                 codespace={showAccess && running ? codespace : null}

@@ -19,19 +19,24 @@ const ConnectionStringField = ({ value }: ConnectionStringFieldProps) => {
 
     return (
         <div className='flex flex-col gap-1.5'>
-            <span className='label-caps text-muted'>Connection string</span>
+            <span className='text-xs font-medium text-muted'>Connection string</span>
 
-            <div className='flex items-center gap-2'>
-                <code className='min-w-0 flex-1 truncate border border-border px-3 py-2 font-mono text-[0.8125rem] text-foreground'>
+            <div className='flex items-center gap-1.5'>
+                <code className='block h-8 min-w-0 flex-1 truncate rounded-md border border-border bg-surface-secondary px-2.5 font-mono text-xs leading-[1.875rem] text-foreground'>
                     {revealed ? value : '•'.repeat(24)}
                 </code>
 
-                <Button variant='secondary' onPress={() => setRevealed((current) => !current)}>
-                    {revealed ? <EyeOff aria-hidden='true' className='size-4' /> : <Eye aria-hidden='true' className='size-4' />}
+                <Button
+                    isIconOnly
+                    variant='secondary'
+                    aria-label={revealed ? 'Hide connection string' : 'Show connection string'}
+                    onPress={() => setRevealed((current) => !current)}
+                >
+                    {revealed ? <EyeOff aria-hidden='true' /> : <Eye aria-hidden='true' />}
                 </Button>
 
-                <Button variant='secondary' onPress={handleCopy}>
-                    {copied ? <Check aria-hidden='true' className='size-4' /> : <Copy aria-hidden='true' className='size-4' />}
+                <Button isIconOnly variant='secondary' aria-label={copied ? 'Copied' : 'Copy connection string'} onPress={handleCopy}>
+                    {copied ? <Check aria-hidden='true' /> : <Copy aria-hidden='true' />}
                 </Button>
             </div>
         </div>
