@@ -1,46 +1,44 @@
 import { Link } from 'react-router-dom';
 import { buttonVariants } from '@heroui/react';
-import { ArrowRight } from 'lucide-react';
-import GithubIcon from '@/shared/components/icons/GithubIcon';
-import LandingWindow from '@/modules/home/components/LandingWindow';
-import LandingSheet from '@/modules/home/components/LandingSheet';
-import LandingDashboard from '@/modules/home/components/LandingDashboard';
-import LandingWords from '@/modules/home/components/LandingWords';
+import { ArrowRight, ChevronRight } from 'lucide-react';
+import CommandChip from '@/modules/home/components/CommandChip';
+import LandingShot from '@/modules/home/components/LandingShot';
 import { GITHUB_URL } from '@/modules/home/utils/links';
+import { ACCENT_TEXT, EYEBROW, GRADIENT_TITLE, LEDE, WRAP } from '@/modules/home/utils/classes';
 
-const FIRST_LINE = 'Deploy anything.';
-
-const SECOND_LINE = 'On a server you own.';
+const INSTALL = `git clone ${GITHUB_URL} && cd Quantum && bash scripts/deploy.sh`;
 
 const LandingHero = () => (
-    <section className='relative pt-[clamp(64px,10vw,168px)]'>
-        <div className='lp-wrap'>
-            <h1 className='lp-display'>
-                <span className='block'><LandingWords text={FIRST_LINE} from={0} /></span>
-                <span className='block lp-dim'><LandingWords text={SECOND_LINE} from={2} /></span>
+    <section aria-labelledby='hero-title' className='relative pt-[clamp(3.5rem,8vw,6rem)]'>
+        <div aria-hidden='true' className='pointer-events-none absolute inset-x-0 -top-15 h-[45rem] bg-[radial-gradient(60%_50%_at_50%_0%,var(--glow),transparent_70%)]' />
+
+        <div className={`${WRAP} relative grid grid-cols-1 gap-5.5`}>
+            <Link to='/get-started' className={`${EYEBROW} transition-colors hover:text-foreground motion-reduce:transition-none`}>
+                <span className={`shrink-0 rounded-full bg-accent/15 px-2 py-px font-medium ${ACCENT_TEXT}`}>Self-hosted</span>
+                <span className='truncate'>Runs on a Linux server with Docker</span>
+                <ChevronRight aria-hidden='true' className='size-3.5 shrink-0 text-subtle' />
+            </Link>
+
+            <h1 id='hero-title' className={`${GRADIENT_TITLE} text-[length:clamp(2.5rem,7vw,4.75rem)] leading-[1.02] tracking-[-0.045em]`}>
+                <span className='block'>Deploy anything.</span>{' '}
+                <span className='block'>On a server you own.</span>
             </h1>
 
-            <div className='lp-enter mt-[clamp(40px,4.4vw,72px)] flex flex-wrap items-center gap-3'>
+            <p className={LEDE}>
+                Deploy GitHub repositories, databases, one-click templates and Docker Compose stacks on your own server, with logs, a shell,
+                environment variables, persistent volumes, metrics and VS Code in the browser for every one of them.
+            </p>
+
+            <div className='flex flex-wrap items-center gap-2.5'>
                 <Link to='/get-started' className={buttonVariants({ size: 'lg' })}>
-                    Get started
-                    <ArrowRight aria-hidden='true' className='size-4' />
+                    Deploy Quantum
+                    <ArrowRight aria-hidden='true' />
                 </Link>
 
-                <a href={GITHUB_URL} target='_blank' rel='noreferrer' className={buttonVariants({ size: 'lg', variant: 'secondary' })}>
-                    <GithubIcon className='size-4' />
-                    View on GitHub
-                </a>
+                <CommandChip command={INSTALL} />
             </div>
-        </div>
 
-        <div className='lp-wrap relative mt-[clamp(64px,8vw,136px)]'>
-            <div aria-hidden='true' className='lp-glow' />
-
-            <LandingWindow title='Quantum · Applications' className='lp-aperture max-md:w-[175vw]'>
-                <LandingSheet title='The Applications page of a Quantum dashboard' width={1440} height={860} path='/applications'>
-                    <LandingDashboard />
-                </LandingSheet>
-            </LandingWindow>
+            <LandingShot />
         </div>
     </section>
 );

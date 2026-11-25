@@ -5,7 +5,6 @@ import { ContainerStatus, PortBindingProtocol } from '@quantum/contracts/modules
 import { DatabaseEngine, DatabaseStatus } from '@quantum/contracts/modules/database/domain';
 import { TemplateInstallStatus } from '@quantum/contracts/modules/template/domain';
 import type { Database } from '@quantum/contracts/modules/database/domain';
-import type { Row } from '@/modules/application/utils/application-rows';
 import type { Repository } from '@quantum/contracts/modules/repository/domain';
 import type { TemplateInstall, TemplateInstallService } from '@quantum/contracts/modules/template/domain';
 
@@ -82,7 +81,7 @@ const service = (name: string, kind: TemplateInstallService['kind'], image: stri
     address: address(ip, `stack-${name}`)
 });
 
-export const STACK_SERVICES: TemplateInstallService[] = [
+const STACK_SERVICES: TemplateInstallService[] = [
     service('postgres', 'database', 'postgres:18-alpine', '172.30.0.10'),
     service('redis', 'app', 'redis:7-alpine', '172.30.0.11'),
     service('api', 'app', 'quantum-stack-9-api:4be1c07a9e2d', '172.30.0.12', [[20004, 8080]]),
@@ -145,9 +144,4 @@ const INSTALLS = [
     })
 ];
 
-export const DEMO_CONNECTION_STRING = 'postgresql://qdb_7f3a91c2:hQ2v9XkLr0sTz4Wm8bYc1nPe6dGfJ3aU@postgres-orders-3f9a:5432/postgres_9b41d7e0';
-
 export const DEMO_ROWS = buildRows(REPOSITORIES, DATABASES, INSTALLS);
-
-export const databaseRows = (status: DatabaseStatus): Row[] =>
-    buildRows([], DATABASES.map((entry, index) => (index === 0 ? { ...entry, status } : entry)), []);

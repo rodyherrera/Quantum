@@ -1,82 +1,43 @@
-import { lazy } from 'react';
 import { Link } from 'react-router-dom';
 import { buttonVariants } from '@heroui/react';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Server } from 'lucide-react';
+import GithubIcon from '@/shared/components/icons/GithubIcon';
+import SectionHeading from '@/modules/home/components/SectionHeading';
 import CommandBlock from '@/modules/home/components/CommandBlock';
-import LandingSection from '@/modules/home/components/LandingSection';
-import LandingDeferred from '@/modules/home/components/LandingDeferred';
+import GuideText from '@/modules/home/components/GuideText';
 import { GITHUB_URL } from '@/modules/home/utils/links';
-import { order } from '@/modules/home/utils/order';
+import { WRAP } from '@/modules/home/utils/classes';
 
-const DeployTranscript = lazy(() => import('@/modules/home/components/DeployTranscript'));
-
-const CONTAINERS = [
-    { name: 'quantum-web', port: ':5050', role: 'The dashboard you are reading about.' },
-    { name: 'quantum-api', port: ':7080', role: 'Talks to Docker and runs everything you deploy.' },
-    { name: 'quantum-postgres', port: '127.0.0.1:5432', role: 'Remembers your apps, people and settings.' }
-];
-
-const FACTS = [
-    {
-        title: 'Your data stays on your disk.',
-        body: 'Postgres keeps its data in the postgres_data volume, repositories live under /var/lib/quantum and everything else in Docker volumes.'
-    },
-    {
-        title: 'Back on its own after a reboot.',
-        body: 'Every five minutes Quantum compares what runs with what should, and starts whatever is missing.'
-    }
-];
+const COMMANDS = [`git clone ${GITHUB_URL}`, 'cd Quantum', 'bash scripts/deploy.sh'];
 
 const LandingSelfHost = () => (
-    <LandingSection
-        id='self-host'
-        index='03'
-        label='Self-host'
-        title='Three containers.'
-        subtitle='One command.'
-    >
-        <div className='grid gap-14 lg:grid-cols-12 lg:gap-6'>
-            <div className='flex flex-col gap-12 lg:col-span-5 lg:pr-12'>
-                <ul className='lp-reveal border-t border-[var(--lp-line)]'>
-                    {CONTAINERS.map((container) => (
-                        <li key={container.name} className='grid grid-cols-[minmax(0,1fr)_auto] gap-x-6 gap-y-1.5 border-b border-[var(--lp-line)] py-5'>
-                            <span className='font-mono text-[0.9375rem] text-white'>{container.name}</span>
-                            <span className='lp-index self-center'>{container.port}</span>
-                            <span className='lp-body col-span-2'>{container.role}</span>
-                        </li>
-                    ))}
-                </ul>
+    <section id='self-host' aria-labelledby='self-host-title' className='pt-[clamp(5rem,10vw,7.5rem)]'>
+        <div className={WRAP}>
+            <div className='grid grid-cols-1 gap-4.5 rounded-[0.875rem] border border-separator bg-surface bg-[radial-gradient(80%_120%_at_100%_0%,var(--glow),transparent_60%)] px-5 py-6.5 sm:p-10'>
+                <SectionHeading
+                    id='self-host-title'
+                    icon={Server}
+                    label='Self-host'
+                    title='Three containers and a .env file.'
+                    lead={<GuideText text='The deploy script writes `.env` from `.env.example`, generates the secrets, builds the images and starts quantum-api, quantum-web and quantum-postgres. The dashboard answers on port 5050 and the API on 7080.' />}
+                />
 
-                <dl className='lp-reveal grid gap-8 sm:grid-cols-2 lg:grid-cols-1' style={order(1)}>
-                    {FACTS.map((fact) => (
-                        <div key={fact.title}>
-                            <dt className='text-[1.0625rem] tracking-[-0.01em] text-white'>{fact.title}</dt>
-                            <dd className='lp-body mt-2'>{fact.body}</dd>
-                        </div>
-                    ))}
-                </dl>
+                <CommandBlock label='On a Linux machine with Docker' command={COMMANDS} />
 
-                <div className='lp-reveal flex flex-wrap items-center gap-x-8 gap-y-4' style={order(2)}>
+                <div className='flex flex-wrap gap-2'>
                     <Link to='/get-started' className={buttonVariants({ size: 'lg' })}>
-                        Follow the guide
-                        <ArrowRight aria-hidden='true' className='size-4' />
+                        Open the guide
+                        <ArrowRight aria-hidden='true' />
                     </Link>
 
-                    <a href={`${GITHUB_URL}#deploy-quantum`} target='_blank' rel='noreferrer' className='label-caps lp-link'>Read the README</a>
+                    <a href={`${GITHUB_URL}#deploy-quantum`} target='_blank' rel='noreferrer' className={buttonVariants({ size: 'lg', variant: 'secondary' })}>
+                        <GithubIcon className='size-3.5' />
+                        Read the README
+                    </a>
                 </div>
-            </div>
-
-            <div className='flex min-w-0 flex-col gap-6 lg:col-span-7'>
-                <div className='lp-reveal'>
-                    <CommandBlock label='On a Linux machine with Docker' command={`git clone ${GITHUB_URL} && cd Quantum`} />
-                </div>
-
-                <LandingDeferred className='lp-reveal min-h-[40rem] sm:min-h-[38rem]'>
-                    <DeployTranscript />
-                </LandingDeferred>
             </div>
         </div>
-    </LandingSection>
+    </section>
 );
 
 export default LandingSelfHost;

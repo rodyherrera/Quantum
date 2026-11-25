@@ -1,36 +1,22 @@
-import { order } from '@/modules/home/utils/order';
+import SectionHeading from '@/modules/home/components/SectionHeading';
+import { WRAP } from '@/modules/home/utils/classes';
 import type { ReactNode } from 'react';
+import type { LucideIcon } from 'lucide-react';
 
 interface LandingSectionProps{
     id: string;
-    index: string;
+    icon: LucideIcon;
     label: string;
     title: string;
-    subtitle: string;
-    lead?: ReactNode;
+    lead: ReactNode;
     children: ReactNode;
 }
 
-const LandingSection = ({ id, index, label, title, subtitle, lead, children }: LandingSectionProps) => (
-    <section id={id} aria-labelledby={`${id}-title`} className='lp-section lp-rule'>
-        <div className='lp-wrap'>
-            <header className='grid gap-8 lg:grid-cols-12 lg:gap-6'>
-                <p className='lp-reveal flex items-center gap-4 self-start lg:col-span-3 lg:pt-4'>
-                    <span className='lp-index'>{index}</span>
-                    <span className='label-caps lp-dim'>{label}</span>
-                </p>
-
-                <div className='lg:col-span-9'>
-                    <h2 id={`${id}-title`} className='lp-heading lp-reveal' style={order(1)}>
-                        {title}
-                        <span className='block lp-dim'>{subtitle}</span>
-                    </h2>
-
-                    {lead !== undefined && <p className='lp-lead lp-reveal mt-8 max-w-[50ch]' style={order(2)}>{lead}</p>}
-                </div>
-            </header>
-
-            <div className='mt-[clamp(56px,6.4vw,112px)]'>{children}</div>
+const LandingSection = ({ id, icon, label, title, lead, children }: LandingSectionProps) => (
+    <section id={id} aria-labelledby={`${id}-title`} className='pt-[clamp(4.5rem,10vw,7rem)]'>
+        <div className={`${WRAP} grid grid-cols-1 gap-10`}>
+            <SectionHeading id={`${id}-title`} icon={icon} label={label} title={title} lead={lead} />
+            {children}
         </div>
     </section>
 );
