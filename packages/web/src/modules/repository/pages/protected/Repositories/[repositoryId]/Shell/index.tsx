@@ -6,10 +6,12 @@ const Shell = () => {
     if(!repositoryId) return null;
 
     return (
-        <ShellTerminal
-            channelPath={`/repository/${repositoryId}/terminal`}
-            description={`Interactive terminal session for repository #${repositoryId}.`}
-        />
+        <div className='flex min-h-[28rem] flex-1 flex-col'>
+            <ShellTerminal
+                channelPath={`/repository/${repositoryId}/terminal`}
+                description={`Interactive terminal session for repository #${repositoryId}.`}
+            />
+        </div>
     );
 };
 
