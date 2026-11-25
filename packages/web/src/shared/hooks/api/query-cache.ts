@@ -16,7 +16,7 @@ type Listener = () => void;
 const IDLE: QuerySnapshot = Object.freeze({ data: null, loading: false, refreshing: false, error: undefined, status: 'pending' });
 const PENDING: QuerySnapshot = Object.freeze({ data: null, loading: true, refreshing: false, error: undefined, status: 'pending' });
 
-export const keyOf = (key: QueryKey): string => JSON.stringify(key);
+const keyOf = (key: QueryKey): string => JSON.stringify(key);
 
 const inFlight = (current: QuerySnapshot | undefined): QuerySnapshot => {
     const held = current !== undefined && current.data !== null;

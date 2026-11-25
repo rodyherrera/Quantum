@@ -96,7 +96,7 @@ export const stateOf = (row: Row): RowState => {
 };
 
 /* Attention first: what is changing, then what broke, then what is fine. */
-export const STATE_ORDER: readonly RowState[] = ['deploying', 'failed', 'running', 'stopped'];
+const STATE_ORDER: readonly RowState[] = ['deploying', 'failed', 'running', 'stopped'];
 
 export const STATE_STATUS: Record<RowState, RowStatus> = {
     deploying: { color: 'warning', label: 'Deploying', isTransient: true },

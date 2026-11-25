@@ -1,8 +1,4 @@
-const COMPACT = new Intl.NumberFormat('en-US', { notation: 'compact' });
-
 export const count = (value: number): string => value.toLocaleString('en-US');
-
-export const compact = (value: number): string => COMPACT.format(value);
 
 export const rate = (value: number): string => Number.isInteger(value)
     ? count(value)
