@@ -1,5 +1,5 @@
 import { Outlet, useParams } from 'react-router-dom';
-import { DetailSkeleton, PageSkeleton } from '@/shared/components/skeletons';
+import { DetailSkeleton } from '@/shared/components/skeletons';
 import { Button } from '@heroui/react';
 import {
     Boxes,
@@ -47,6 +47,9 @@ import type { TemplateInstall } from '@quantum/contracts/modules/template/domain
 import type { TemplateInstallOperation } from '@quantum/contracts/modules/template/http';
 
 const copy = errorCopy(templateErrorMessages);
+
+/* Before the stack loads its project is unknown, so the trail stops at Applications. */
+const LOADING_TRAIL = [{ label: 'Applications', to: '/applications' }];
 
 const tabsFor = (install: TemplateInstall): TabNavItem[] => [
     { label: 'Services', to: 'services', icon: Boxes, count: install.services.length },
@@ -247,16 +250,17 @@ const InstallLayout = () => {
 
     if(install.loading){
         return (
-            <PageSkeleton>
+            <>
+                <PageBar title='Stack' icon={Layers} trail={LOADING_TRAIL} />
                 <DetailSkeleton actions={5} tabs={4} />
-            </PageSkeleton>
+            </>
         );
     }
 
     if(install.error !== undefined){
         return (
             <>
-                <PageBar title='Stack' icon={Layers} trail={[{ label: 'Applications', to: '/applications' }]} />
+                <PageBar title='Stack' icon={Layers} trail={LOADING_TRAIL} />
                 <CenterState>
                     <ErrorState title='Could not load the install' description={copy(install.error)} onRetry={install.reload} />
                 </CenterState>

@@ -29,7 +29,7 @@ const InstallShell = () => {
     }
 
     return (
-        <PageBody fill className='min-h-[32rem] xl:min-h-0'>
+        <PageBody fill>
             <ShellTerminal
                 key={service}
                 channelPath={`/template/install/${installId}/terminal`}

@@ -6,12 +6,10 @@ const Logs = () => {
     if(!repositoryId) return null;
 
     return (
-        <div className='flex min-h-[28rem] flex-1 flex-col'>
-            <LogsTerminal
-                channelPath={`/repository/${repositoryId}/logs`}
-                description='Output from the process serving this deployment.'
-            />
-        </div>
+        <LogsTerminal
+            channelPath={`/repository/${repositoryId}/logs`}
+            description='Output from the process serving this deployment.'
+        />
     );
 };
 

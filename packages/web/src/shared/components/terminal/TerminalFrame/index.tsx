@@ -43,7 +43,7 @@ const TerminalFrame = ({ title, description, connection, actions, error, onDismi
             </div>
         )}
 
-        <div className='flex min-h-[24rem] flex-1 flex-col overflow-hidden rounded-lg border border-separator bg-terminal lg:min-h-0'>
+        <div className='flex min-h-[24rem] flex-1 flex-col overflow-hidden rounded-lg border border-separator bg-terminal xl:min-h-0'>
             <div ref={containerRef} className='min-h-0 flex-1 overflow-hidden p-3' />
         </div>
     </div>

@@ -29,7 +29,7 @@ const InstallLogs = () => {
     }
 
     return (
-        <PageBody fill className='min-h-[32rem] xl:min-h-0'>
+        <PageBody fill>
             <LogsTerminal
                 key={service}
                 channelPath={`/template/install/${installId}/logs`}

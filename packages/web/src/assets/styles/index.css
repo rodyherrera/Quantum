@@ -330,6 +330,7 @@ body {
     border-bottom: 1px solid var(--separator);
     border-radius: 0;
     color: var(--muted);
+    font-size: 0.8125rem;
     font-variant-numeric: tabular-nums;
 }
 
