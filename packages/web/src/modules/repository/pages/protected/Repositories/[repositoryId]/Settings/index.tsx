@@ -41,6 +41,7 @@ interface RepositorySettingsFormValues{
     runtime: string;
     runtimeVersion: string;
     port: string;
+    healthCheckPath: string;
     buildStrategy: BuildStrategy;
     dockerfilePath: string;
     image: string;
@@ -58,6 +59,7 @@ const toRepositorySettingsFormValues = (repository: Repository): RepositorySetti
     runtime: repository.runtime ?? '',
     runtimeVersion: repository.runtimeVersion ?? '',
     port: repository.port === null ? '' : String(repository.port),
+    healthCheckPath: repository.healthCheckPath ?? '',
     buildStrategy: repository.buildStrategy,
     dockerfilePath: repository.dockerfilePath ?? '',
     image: repository.image ?? ''
@@ -95,6 +97,8 @@ const toUpdateRepositoryInput = (values: RepositorySettingsFormValues): UpdateRe
         ...(runtime !== undefined ? { runtime } : {}),
         ...(runtimeVersion !== undefined ? { runtimeVersion } : {}),
         ...(port !== undefined ? { port: Number(port) } : {}),
+        // Always sent, since clearing it is how a repository goes back to waiting for the port alone.
+        healthCheckPath: values.healthCheckPath.trim(),
         buildStrategy: values.buildStrategy,
         ...(dockerfilePath !== undefined ? { dockerfilePath } : {}),
         ...(image !== undefined ? { image } : {})
@@ -182,6 +186,15 @@ const RepositorySettingsForm = ({ repository, onSaved }: RepositorySettingsFormP
                     {form.values.buildStrategy === BuildStrategy.PrebuiltImage && (
                         <Field form={form} name='image' label='Image' placeholder='registry.example.com/app:latest' />
                     )}
+                </SettingsBlock>
+            </SettingsSection>
+
+            <SettingsSection
+                title='Health check'
+                description='A new version takes traffic only once it answers here. Left blank, the port accepting connections is enough.'
+            >
+                <SettingsBlock>
+                    <Field form={form} name='healthCheckPath' label='Path' placeholder='/health' />
                 </SettingsBlock>
             </SettingsSection>
 

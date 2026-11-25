@@ -10,7 +10,7 @@ import type { Repository } from '@quantum/contracts/modules/repository/domain';
 const repository = (volumes: string[]): Repository => ({
     id: 3, name: 'Shop', alias: 'shop', owner: null, branch: 'main', webhookId: null, buildCommand: '', installCommand: '',
     startCommand: 'npm start', rootDirectory: '/', framework: null, runtime: 'node', runtimeVersion: null, outputDirectory: null,
-    buildStrategy: BuildStrategy.Exec, dockerfilePath: null, image: null, url: 'https://github.com/acme/shop', port: 3000,
+    buildStrategy: BuildStrategy.Exec, dockerfilePath: null, image: null, url: 'https://github.com/acme/shop', port: 3000, healthCheckPath: null,
     containerStatus: null, ports: [], address: null, volumes, userId: 1, organizationId: 1, projectId: 1, sourceType: SourceType.Github,
     createdAt: '2026-01-01T00:00:00.000Z', updatedAt: '2026-01-01T00:00:00.000Z'
 });

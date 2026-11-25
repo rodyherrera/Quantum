@@ -22,14 +22,14 @@ const ensureAttachableNetwork = async (name: string): Promise<void> => {
     }
 };
 
-export const joinOrganizationNetwork = async (containerRef: string, organizationId: number, alias: string): Promise<string> => {
+export const joinOrganizationNetwork = async (containerRef: string, organizationId: number, alias?: string): Promise<string> => {
     const name = organizationNetworkName(organizationId);
     await ensureAttachableNetwork(name);
 
     try{
         await getDockerHost().client().getNetwork(name).connect({
             Container: containerRef,
-            EndpointConfig: { Aliases: [alias] }
+            EndpointConfig: alias === undefined ? {} : { Aliases: [alias] }
         });
     }catch(error){
         if(!ALREADY_CONNECTED.has((error as { statusCode?: number }).statusCode ?? 0)) throw error;

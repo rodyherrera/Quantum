@@ -43,6 +43,7 @@ const repository = ({ id, name, framework, status, ip, externalPort, minutes }: 
     image: null,
     url: `https://github.com/${OWNER}/${name}.git`,
     port: 3000,
+    healthCheckPath: null,
     containerStatus: status,
     ports: [{ internalPort: 3000, externalPort, protocol: PortBindingProtocol.Tcp }],
     address: address(ip, `repository-${id}`),
