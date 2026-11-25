@@ -1,5 +1,6 @@
 import { useOutletContext } from 'react-router-dom';
 import { Layers } from 'lucide-react';
+import PageBody from '@/shared/components/layout/PageBody';
 import EmptyState from '@/shared/components/EmptyState';
 import CenterState from '@/shared/components/CenterState';
 import DeploymentProgress from '@/modules/template/components/DeploymentProgress';
@@ -16,29 +17,23 @@ const InstallServices = () => {
     const deploying = isInstallTransient(install.status);
     const showProgress = deploying || install.status === TemplateInstallStatus.Error;
 
-    if(install.services.length === 0){
-        return (
-            <div className='flex flex-col gap-10'>
-                {showProgress && <DeploymentProgress installId={install.id} active={deploying} />}
-                {!deploying && (
-                    <CenterState className='h-full'>
-                        <EmptyState
-                            icon={Layers}
-                            title='No services yet'
-                            description='The services of this stack appear here once it has been provisioned.'
-                            compact
-                        />
-                    </CenterState>
-                )}
-            </div>
-        );
-    }
-
     return (
-        <div className='flex flex-col gap-10'>
+        <PageBody fill className='gap-5'>
             {showProgress && <DeploymentProgress installId={install.id} active={deploying} />}
-            <ServicesTable host={host} services={install.services} />
-        </div>
+
+            {install.services.length > 0 && <ServicesTable host={host} services={install.services} status={install.status} />}
+
+            {install.services.length === 0 && !deploying && (
+                <CenterState>
+                    <EmptyState
+                        icon={Layers}
+                        title='No services yet'
+                        description='The services of this stack appear here once it has been provisioned.'
+                        compact
+                    />
+                </CenterState>
+            )}
+        </PageBody>
     );
 };
 

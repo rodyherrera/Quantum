@@ -1,5 +1,6 @@
 import { useOutletContext, useParams, useSearchParams } from 'react-router-dom';
 import { Layers } from 'lucide-react';
+import PageBody from '@/shared/components/layout/PageBody';
 import EmptyState from '@/shared/components/EmptyState';
 import CenterState from '@/shared/components/CenterState';
 import LogsTerminal from '@/shared/components/terminal/LogsTerminal';
@@ -16,7 +17,7 @@ const InstallLogs = () => {
 
     if(service === undefined){
         return (
-            <CenterState className='h-full'>
+            <CenterState className='flex-1 py-10'>
                 <EmptyState
                     icon={Layers}
                     title='No services yet'
@@ -28,7 +29,7 @@ const InstallLogs = () => {
     }
 
     return (
-        <div className='flex min-h-0 flex-1 flex-col'>
+        <PageBody fill className='min-h-[32rem] xl:min-h-0'>
             <LogsTerminal
                 key={service}
                 channelPath={`/template/install/${installId}/logs`}
@@ -36,7 +37,7 @@ const InstallLogs = () => {
                 actions={<ServicePicker services={install.services} value={service} onChange={(name) => setParams({ service: name })} />}
                 description={`Output of the ${service} container.`}
             />
-        </div>
+        </PageBody>
     );
 };
 

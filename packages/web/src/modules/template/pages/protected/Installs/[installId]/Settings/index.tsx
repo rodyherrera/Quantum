@@ -1,16 +1,19 @@
 import { useState } from 'react';
 import { useOutletContext, useParams } from 'react-router-dom';
-import { Input, Label, TextField } from '@heroui/react';
-import SettingsSection from '@/shared/components/SettingsSection';
+import { Input, TextField } from '@heroui/react';
+import PageBody from '@/shared/components/layout/PageBody';
+import SettingsRow from '@/shared/components/SettingsRow';
 import EntitySelect from '@/shared/components/EntitySelect';
 import ErrorState from '@/shared/components/ErrorState';
-import CenterState from '@/shared/components/CenterState';
 import SaveStatus from '@/shared/components/forms/SaveStatus';
+import GithubIcon from '@/shared/components/icons/GithubIcon';
 import EnvironmentVariablesEditor from '@/shared/components/EnvironmentVariablesEditor';
+import Panel from '@/modules/template/components/Panel';
 import { FieldsSkeleton } from '@/shared/components/skeletons';
 import { useQuery } from '@/shared/hooks/api/use-query';
 import { useAutosave } from '@/shared/hooks/forms/use-autosave';
 import { templateInstallApi } from '@/modules/template/api/api';
+import { DEPLOY_TRIGGERS, deployTriggerLabel } from '@/modules/template/utils/deploy-trigger';
 import { templateErrorMessages } from '@/modules/template/utils/error-messages';
 import { errorCopy } from '@/shared/utils/error-copy';
 import type { StackDeployTrigger, StackSource, TemplateInstall } from '@quantum/contracts/modules/template/domain';
@@ -18,10 +21,7 @@ import type { UpdateStackSourceInput } from '@quantum/contracts/modules/template
 
 const copy = errorCopy(templateErrorMessages);
 
-const TRIGGERS: Array<{ key: StackDeployTrigger; label: (branch: string) => string }> = [
-    { key: 'push', label: (branch) => `Every push to ${branch}` },
-    { key: 'release', label: () => 'Every published release' }
-];
+const CONTROL = 'w-64 max-w-full';
 
 interface SourceSectionProps{
     installId: number;
@@ -39,41 +39,71 @@ const SourceSection = ({ installId, source }: SourceSectionProps) => {
     });
 
     return (
-        <SettingsSection title='Source' description='Where the compose file comes from. Changes apply on the next deploy.'>
-            <div className='flex flex-wrap items-center justify-between gap-4'>
-                <a
-                    href={`https://github.com/${source.owner}/${source.repo}`}
-                    target='_blank'
-                    rel='noreferrer'
-                    className='font-mono text-[0.8125rem] text-foreground underline-offset-4 hover:underline'
-                >
-                    {source.owner}/{source.repo}
-                </a>
-                <SaveStatus state={saver.state} />
-            </div>
+        <Panel title='Source' description='Where the compose file comes from. Changes apply on the next deploy.' aside={<SaveStatus state={saver.state} />}>
+            <SettingsRow
+                title='Repository'
+                description='Quantum reads the compose file from it on every deploy.'
+                action={(
+                    <a
+                        href={`https://github.com/${source.owner}/${source.repo}`}
+                        target='_blank'
+                        rel='noreferrer'
+                        className='inline-flex items-center gap-2 font-mono text-xs text-foreground underline-offset-4 hover:underline'
+                    >
+                        <GithubIcon className='size-3.5 text-subtle' />
+                        {source.owner}/{source.repo}
+                    </a>
+                )}
+            />
 
-            <TextField value={form.branch} onChange={(branch) => setForm((current) => ({ ...current, branch }))} validationBehavior='aria' fullWidth>
-                <Label>Branch</Label>
-                <Input className='font-mono' autoComplete='off' />
-            </TextField>
+            <SettingsRow
+                title='Branch'
+                action={(
+                    <TextField
+                        aria-label='Branch'
+                        value={form.branch}
+                        onChange={(branch) => setForm((current) => ({ ...current, branch }))}
+                        validationBehavior='aria'
+                        fullWidth
+                        className={CONTROL}
+                    >
+                        <Input className='font-mono' autoComplete='off' />
+                    </TextField>
+                )}
+            />
 
-            <TextField value={form.composePath} onChange={(composePath) => setForm((current) => ({ ...current, composePath }))} validationBehavior='aria' fullWidth>
-                <Label>Compose file</Label>
-                <Input className='font-mono' autoComplete='off' />
-            </TextField>
+            <SettingsRow
+                title='Compose file'
+                action={(
+                    <TextField
+                        aria-label='Compose file'
+                        value={form.composePath}
+                        onChange={(composePath) => setForm((current) => ({ ...current, composePath }))}
+                        validationBehavior='aria'
+                        fullWidth
+                        className={CONTROL}
+                    >
+                        <Input className='font-mono' autoComplete='off' />
+                    </TextField>
+                )}
+            />
 
-            <div className='flex flex-col gap-1.5'>
-                <Label>Deploy on</Label>
-                <EntitySelect
-                    items={TRIGGERS}
-                    getKey={(entry) => entry.key}
-                    getLabel={(entry) => entry.label(form.branch)}
-                    value={form.deployOn}
-                    onChange={(key) => setForm((current) => ({ ...current, deployOn: key as StackDeployTrigger }))}
-                    ariaLabel='Deploy on'
-                />
-            </div>
-        </SettingsSection>
+            <SettingsRow
+                title='Deploy on'
+                action={(
+                    <div className={CONTROL}>
+                        <EntitySelect
+                            items={DEPLOY_TRIGGERS}
+                            getKey={(entry) => entry}
+                            getLabel={(entry) => deployTriggerLabel(entry, form.branch)}
+                            value={form.deployOn}
+                            onChange={(key) => setForm((current) => ({ ...current, deployOn: key as StackDeployTrigger }))}
+                            ariaLabel='Deploy on'
+                        />
+                    </div>
+                )}
+            />
+        </Panel>
     );
 };
 
@@ -86,15 +116,13 @@ const InstallSettings = () => {
     if(id === undefined || install.compose === null) return null;
 
     return (
-        <div className='flex flex-col gap-10 [&>section:first-child]:border-t-0 [&>section:first-child]:pt-0'>
+        <PageBody className='flex max-w-[52rem] flex-col gap-6'>
             {install.source !== null && <SourceSection installId={id} source={install.source} />}
 
             {variables.loading && <FieldsSkeleton rows={2} />}
 
             {variables.error !== undefined && (
-                <CenterState>
-                    <ErrorState title='Could not load the variables' description={copy(variables.error)} onRetry={variables.reload} />
-                </CenterState>
+                <ErrorState title='Could not load the variables' description={copy(variables.error)} onRetry={variables.reload} />
             )}
 
             {!variables.loading && variables.error === undefined && (
@@ -108,7 +136,7 @@ const InstallSettings = () => {
                     fills={false}
                 />
             )}
-        </div>
+        </PageBody>
     );
 };
 
